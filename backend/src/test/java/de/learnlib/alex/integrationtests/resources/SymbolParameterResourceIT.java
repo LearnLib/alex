@@ -66,7 +66,7 @@ public class SymbolParameterResourceIT extends AbstractResourceIT {
 
     @Test
     public void shouldCreateAPublicInputStringParameter() throws Exception {
-        final Response res = symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test", false), jwtUser1);
+        final Response res = symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test"), jwtUser1);
         Assert.assertEquals(res.getStatus(), Response.Status.CREATED.getStatusCode());
 
         final JsonNode symbol = getSymbol();
@@ -74,13 +74,12 @@ public class SymbolParameterResourceIT extends AbstractResourceIT {
 
         Assert.assertEquals(1, inputs.size());
         Assert.assertTrue(inputs.get(0).hasNonNull("id"));
-        Assert.assertFalse(inputs.get(0).get("private").asBoolean());
         Assert.assertEquals("STRING", inputs.get(0).get("parameterType").asText());
     }
 
     @Test
     public void shouldCreateAPrivateInputStringParameter() throws Exception {
-        final Response res = symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test", true), jwtUser1);
+        final Response res = symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test"), jwtUser1);
         Assert.assertEquals(res.getStatus(), Response.Status.CREATED.getStatusCode());
 
         final JsonNode symbol = getSymbol();
@@ -88,13 +87,12 @@ public class SymbolParameterResourceIT extends AbstractResourceIT {
 
         Assert.assertEquals(1, inputs.size());
         Assert.assertTrue(inputs.get(0).hasNonNull("id"));
-        Assert.assertTrue(inputs.get(0).get("private").asBoolean());
         Assert.assertEquals("STRING", inputs.get(0).get("parameterType").asText());
     }
 
     @Test
     public void shouldCreateAPublicInputCounterParameter() throws Exception {
-        final Response res = symbolParameterApi.create(projectId, symbolId, createInputCounterParam(symbolId, "test", false), jwtUser1);
+        final Response res = symbolParameterApi.create(projectId, symbolId, createInputCounterParam(symbolId, "test"), jwtUser1);
         Assert.assertEquals(res.getStatus(), Response.Status.CREATED.getStatusCode());
 
         final JsonNode symbol = getSymbol();
@@ -102,13 +100,12 @@ public class SymbolParameterResourceIT extends AbstractResourceIT {
 
         Assert.assertEquals(1, inputs.size());
         Assert.assertTrue(inputs.get(0).hasNonNull("id"));
-        Assert.assertFalse(inputs.get(0).get("private").asBoolean());
         Assert.assertEquals("COUNTER", inputs.get(0).get("parameterType").asText());
     }
 
     @Test
     public void shouldCreateAPrivateInputCounterParameter() throws Exception {
-        final Response res = symbolParameterApi.create(projectId, symbolId, createInputCounterParam(symbolId, "test", true), jwtUser1);
+        final Response res = symbolParameterApi.create(projectId, symbolId, createInputCounterParam(symbolId, "test"), jwtUser1);
         Assert.assertEquals(res.getStatus(), Response.Status.CREATED.getStatusCode());
 
         final JsonNode symbol = getSymbol();
@@ -116,7 +113,6 @@ public class SymbolParameterResourceIT extends AbstractResourceIT {
 
         Assert.assertEquals(1, inputs.size());
         Assert.assertTrue(inputs.get(0).hasNonNull("id"));
-        Assert.assertTrue(inputs.get(0).get("private").asBoolean());
         Assert.assertEquals("COUNTER", inputs.get(0).get("parameterType").asText());
     }
 
@@ -148,11 +144,11 @@ public class SymbolParameterResourceIT extends AbstractResourceIT {
 
     @Test
     public void shouldNotCreateInputParameterIfNameIsTaken() throws Exception {
-        symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test", false), jwtUser1);
-        final Response res1 = symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test", false), jwtUser1);
+        symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test"), jwtUser1);
+        final Response res1 = symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test"), jwtUser1);
         Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), res1.getStatus());
 
-        final Response res2 = symbolParameterApi.create(projectId, symbolId, createInputCounterParam(symbolId, "test", false), jwtUser1);
+        final Response res2 = symbolParameterApi.create(projectId, symbolId, createInputCounterParam(symbolId, "test"), jwtUser1);
         Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), res2.getStatus());
 
         final JsonNode symbol = getSymbol();
@@ -174,11 +170,10 @@ public class SymbolParameterResourceIT extends AbstractResourceIT {
 
     @Test
     public void shouldUpdateInputParameter() throws Exception {
-        final Response res1 = symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test", false), jwtUser1);
+        final Response res1 = symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test"), jwtUser1);
         final JsonNode paramNode = objectMapper.readTree(res1.readEntity(String.class));
 
         ((ObjectNode) paramNode).put("name", "newName");
-        ((ObjectNode) paramNode).put("private", true);
 
         final Response res2 = symbolParameterApi.update(projectId, symbolId, paramNode.get("id").asInt(), paramNode.toString(), jwtUser1);
         Assert.assertEquals(Response.Status.OK.getStatusCode(), res2.getStatus());
@@ -199,8 +194,8 @@ public class SymbolParameterResourceIT extends AbstractResourceIT {
 
     @Test
     public void shouldNotUpdateInputParameterIfNameIsTaken() throws Exception {
-        symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test", false), jwtUser1);
-        final Response res1 = symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test2", false), jwtUser1);
+        symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test"), jwtUser1);
+        final Response res1 = symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test2"), jwtUser1);
         final JsonNode paramNode = objectMapper.readTree(res1.readEntity(String.class));
         ((ObjectNode) paramNode).put("name", "test");
 
@@ -231,7 +226,7 @@ public class SymbolParameterResourceIT extends AbstractResourceIT {
 
     @Test
     public void shouldDeleteInputParameter() throws Exception {
-        final Response res1 = symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test", false), jwtUser1);
+        final Response res1 = symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test"), jwtUser1);
         final int id = JsonPath.read(res1.readEntity(String.class), "$.id");
 
         final Response res2 = symbolParameterApi.delete(projectId, symbolId, id, jwtUser1);
@@ -259,10 +254,9 @@ public class SymbolParameterResourceIT extends AbstractResourceIT {
         return om.readTree(symbols).get(0);
     }
 
-    private String createInputParam(int symId, String name, boolean isPrivate, String parameterType) {
+    private String createInputParam(int symId, String name, String parameterType) {
         return "{\"symbol\":\"" + symId + "\""
                 + ",\"name\":\"" + name + "\""
-                + ",\"private\":" + (isPrivate ? "true" : "false")
                 + ",\"type\":\"input\""
                 + ",\"parameterType\": \"" + parameterType + "\"}";
     }
@@ -274,12 +268,12 @@ public class SymbolParameterResourceIT extends AbstractResourceIT {
                 + ",\"parameterType\": \"" + parameterType + "\"}";
     }
 
-    private String createInputStringParam(int symId, String name, boolean isPrivate) {
-        return createInputParam(symId, name, isPrivate, "STRING");
+    private String createInputStringParam(int symId, String name) {
+        return createInputParam(symId, name, "STRING");
     }
 
-    private String createInputCounterParam(int symId, String name, boolean isPrivate) {
-        return createInputParam(symId, name, isPrivate, "COUNTER");
+    private String createInputCounterParam(int symId, String name) {
+        return createInputParam(symId, name, "COUNTER");
     }
 
     private String createOutputStringParam(int symId, String name) {

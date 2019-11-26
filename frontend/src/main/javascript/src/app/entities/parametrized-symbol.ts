@@ -64,8 +64,7 @@ export class ParametrizedSymbol {
     pSymbol.symbol = <any>{
       id: symbol.id,
       name: symbol.name,
-      expectedResult: symbol.expectedResult,
-      outputs: symbol.outputs
+      expectedResult: symbol.expectedResult
     };
     pSymbol.parameterValues = symbol.inputs.map(input => ({parameter: input, value: null}));
     pSymbol.outputMappings = symbol.outputs.map(output => ({parameter: output, name: output.name}));

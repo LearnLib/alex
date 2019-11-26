@@ -102,8 +102,16 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
         this.symbol = symbol;
     }
 
+    private boolean allInputValuesDefined() {
+        return parameterValues.isEmpty() || parameterValues.stream().allMatch(pv -> pv.getValue() != null);
+    }
+
     @Override
     public ExecuteResult execute(ConnectorManager connectors) throws SULException {
+        if (!allInputValuesDefined()) {
+            return new ExecuteResult(false, "Undefined input value");
+        }
+
         // global scope
         final VariableStoreConnector variableStore = connectors.getConnector(VariableStoreConnector.class);
         final CounterStoreConnector counterStore = connectors.getConnector(CounterStoreConnector.class);
@@ -121,12 +129,7 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
             for (final SymbolInputParameter in : symbol.getInputs()) {
                 if (in.getParameterType().equals(SymbolParameter.ParameterType.STRING)) {
                     final String userValue = pvMap.get(in.getName());
-
-                    if (userValue == null) {
-                        localVariableStore.set(in.getName(), variableStore.get(in.getName()));
-                    } else {
-                        localVariableStore.set(in.getName(), SearchHelper.insertVariableValues(connectors, symbol.getProjectId(), userValue));
-                    }
+                    localVariableStore.set(in.getName(), SearchHelper.insertVariableValues(connectors, symbol.getProjectId(), userValue));
                 } else {
                     localCounterStore.set(symbol.getProjectId(), in.getName(), counterStore.get(in.getName()));
                 }
@@ -144,17 +147,10 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
         try {
             for (final SymbolOutputParameter out : symbol.getOutputs()) {
                 if (out.getParameterType().equals(SymbolParameter.ParameterType.STRING) && result.isSuccess()) {
-                    final Optional<SymbolOutputMapping> outputMappingOptional = getOutputMappingFor(out.getName());
-                    if (outputMappingOptional.isPresent()) {
-                        final SymbolOutputMapping outputMapping = outputMappingOptional.get();
-                        variableStore.set(outputMapping.getName(), localVariableStore.get(out.getName()));
-                    } else if (localVariableStore.contains(out.getName())) {
-                        variableStore.set(out.getName(), localVariableStore.get(out.getName()));
-                    }
-                } else {
-                    if (localCounterStore.contains(out.getName())) {
-                        counterStore.set(symbol.getProjectId(), out.getName(), localCounterStore.get(out.getName()));
-                    }
+                    final SymbolOutputMapping outputMapping = getOutputMappingFor(out.getName());
+                    variableStore.set(outputMapping.getName(), localVariableStore.get(out.getName()));
+                } else if (out.getParameterType().equals(SymbolParameter.ParameterType.COUNTER)) {
+                    counterStore.set(symbol.getProjectId(), out.getName(), localCounterStore.get(out.getName()));
                 }
             }
         } catch (IllegalStateException e) {
@@ -167,13 +163,13 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
         return result;
     }
 
-    private Optional<SymbolOutputMapping> getOutputMappingFor(String name) {
+    private SymbolOutputMapping getOutputMappingFor(String name) {
         for (SymbolOutputMapping m: outputMappings) {
             if (m.getParameter().getName().equals(name)) {
-                return Optional.of(m);
+                return m;
             }
         }
-        return Optional.empty();
+        throw new IllegalStateException("No mapping for " + name + " found");
     }
 
     public Long getId() {
@@ -213,7 +209,11 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
     }
 
     public void setAlias(String alias) {
-        this.alias = alias.trim();
+        if (alias == null || alias.trim().equals("")) {
+            this.alias = null;
+        } else {
+            this.alias = alias;
+        }
     }
 
     /**

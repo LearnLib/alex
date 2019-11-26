@@ -25,6 +25,8 @@ import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolInputParameter;
+import de.learnlib.alex.data.entities.SymbolOutputMapping;
+import de.learnlib.alex.data.entities.SymbolOutputParameter;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestCase;
@@ -115,7 +117,7 @@ public class TestDAOImpl implements TestDAO {
     @Override
     @Transactional
     public Test createByGenerate(User user, Project project, Test test) {
-        beforeSaving(user, test, project);
+        beforeSaving(user, project, test);
         if (test instanceof TestCase) {
             final TestCase testCase = (TestCase) test;
 
@@ -270,8 +272,8 @@ public class TestDAOImpl implements TestDAO {
 
     @Override
     @Transactional
-    public void update(User user, Test test) throws NotFoundException {
-        final Project project = projectRepository.findById(test.getProjectId()).orElse(null);
+    public void update(User user, Long projectId, Test test) throws NotFoundException {
+        final Project project = projectRepository.findById(projectId).orElse(null);
         checkAccess(user, project, test);
 
         // make sure the name of the Test Case is unique
@@ -315,7 +317,7 @@ public class TestDAOImpl implements TestDAO {
     }
 
     private void updateTestCase(User user, TestCase testCase, Project project) throws NotFoundException {
-        beforeSaving(user, testCase, project);
+        beforeSaving(user, project, testCase);
 
         testCase.setGenerated(false);
         testCase.setUpdatedOn(ZonedDateTime.now());
@@ -337,7 +339,7 @@ public class TestDAOImpl implements TestDAO {
 
     private void updateTestSuite(User user, TestSuite testSuite, Project project) throws NotFoundException {
         testSuite.getTests().forEach(t -> t.setParent(null));
-        beforeSaving(user, testSuite, project);
+        beforeSaving(user, project, testSuite);
         testRepository.save(testSuite);
     }
 
@@ -365,7 +367,7 @@ public class TestDAOImpl implements TestDAO {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void delete(User user, Long projectId, List<Long> ids) throws NotFoundException, ValidationException {
-        for (long id : ids) {
+        for (Long id : ids) {
             delete(user, projectId, id);
         }
     }
@@ -491,12 +493,20 @@ public class TestDAOImpl implements TestDAO {
             // if a parameter value has no id yet, because it is imported, we have to set the reference
             // to the parameter manually.
             // name -> parameter
-            final Map<String, SymbolInputParameter> parameterMap = step.getPSymbol().getSymbol().getInputs().stream()
+            final Map<String, SymbolInputParameter> inputMap = step.getPSymbol().getSymbol().getInputs().stream()
                     .collect(Collectors.toMap(SymbolInputParameter::getName, Function.identity()));
 
             step.getPSymbol().getParameterValues().forEach(value ->
-                    value.setParameter(parameterMap.get(value.getParameter().getName()))
+                    value.setParameter(inputMap.get(value.getParameter().getName()))
             );
+
+            // do the same for outputs
+            final Map<String, SymbolOutputParameter> outputMap = step.getPSymbol().getSymbol().getOutputs().stream()
+                    .collect(Collectors.toMap(SymbolOutputParameter::getName, Function.identity()));
+
+            step.getPSymbol().getOutputMappings().forEach(om -> {
+                om.setParameter(outputMap.get(om.getParameter().getName()));
+            });
 
             parameterizedSymbolDAO.create(step.getPSymbol());
         });
@@ -505,13 +515,7 @@ public class TestDAOImpl implements TestDAO {
     private Test get(User user, Project project, Long testId) {
         final Test test = testRepository.findById(testId).orElse(null);
         checkAccess(user, project, test);
-
-        if (test == null) {
-            throw new NotFoundException("Could not find a test with the id " + testId);
-        }
-
         loadLazyRelations(test);
-
         return test;
     }
 
@@ -541,7 +545,7 @@ public class TestDAOImpl implements TestDAO {
         }
     }
 
-    private void beforeSaving(User user, Test test, Project project) throws NotFoundException {
+    private void beforeSaving(User user, Project project, Test test) throws NotFoundException {
         if (test instanceof TestSuite) {
             TestSuite testSuite = (TestSuite) test;
             for (Long testId : testSuite.getTestsAsIds()) {

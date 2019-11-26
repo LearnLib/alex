@@ -215,4 +215,16 @@ export class LearnerSetupViewComponent {
   get project(): Project {
     return this.appStore.project;
   }
+
+  get allParametrizedSymbols(): ParametrizedSymbol[] {
+    const ps = [];
+    if (this.pResetSymbol != null) {
+      ps.push(this.pResetSymbol);
+    }
+    this.pSymbols.forEach(s => ps.push(s));
+    if (this.pPostSymbol != null) {
+      ps.push(this.pPostSymbol);
+    }
+    return ps;
+  }
 }

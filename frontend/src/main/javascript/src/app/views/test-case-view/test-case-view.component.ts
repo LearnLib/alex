@@ -34,6 +34,8 @@ import { TestQueueItem, TestReportStatus } from '../../entities/test-status';
 import { TestReportApiService } from '../../services/api/test-report-api.service';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { TestCase } from '../../entities/test-case';
+import { ParametrizedSymbol } from '../../entities/parametrized-symbol';
 
 @Component({
   selector: 'test-case-view',
@@ -65,7 +67,6 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
               private testConfigApi: TestConfigApiService,
               private settingsApi: SettingsApiService,
               private testReportApi: TestReportApiService) {
-
     this.testCase = null;
     this.symbolMap = {};
   }
@@ -204,23 +205,11 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
     return this.appStore.project;
   }
 
-  get dataContext(): string[] {
-    const variables: string[] = [];
-
-    const getOutputVariables = (step) => {
-      step.pSymbol.outputMappings.map(o => o.name).forEach(n => {
-        if (!variables.includes(n)) variables.push(n);
-      });
-    };
-
-    this.testCase.preSteps.forEach(getOutputVariables);
-    this.testCase.steps.forEach(getOutputVariables);
-    this.testCase.postSteps.forEach(getOutputVariables);
-
-    return variables;
-  }
-
-  private getOutputVariables(step: any) {
-    return step.pSymbol.outputMappings.map(o => o.name);
+  get allParametrizedSymbols(): ParametrizedSymbol[] {
+    const ps = [];
+    this.testCase.preSteps.forEach(s => ps.push(s.pSymbol));
+    this.testCase.steps.map(s => ps.push(s.pSymbol));
+    this.testCase.postSteps.map(s => ps.push(s.pSymbol));
+    return ps;
   }
 }

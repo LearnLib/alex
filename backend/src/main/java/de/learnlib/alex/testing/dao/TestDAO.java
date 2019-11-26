@@ -143,7 +143,7 @@ public interface TestDAO {
      * @throws NotFoundException
      *         If the test could not be found.
      */
-    void update(User user, Test test) throws NotFoundException;
+    void update(User user, Long projectId, Test test) throws NotFoundException;
 
     /**
      * Deletes a test.

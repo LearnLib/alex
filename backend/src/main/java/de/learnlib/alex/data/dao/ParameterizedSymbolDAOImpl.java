@@ -18,6 +18,7 @@ package de.learnlib.alex.data.dao;
 
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.data.entities.SymbolOutputMapping;
 import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
 import de.learnlib.alex.data.repositories.SymbolOutputMappingRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterValueRepository;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
+import java.util.stream.Collectors;
 
 /**
  * The implementation of the {@link ParameterizedSymbolDAO}.
@@ -57,6 +59,16 @@ public class ParameterizedSymbolDAOImpl implements ParameterizedSymbolDAO {
         final Symbol symbol = symbolRepository.findById(pSymbol.getSymbol().getId()).orElse(null);
         pSymbol.setSymbol(symbol);
         pSymbol.setParameterValues(symbolParameterValueRepository.saveAll(pSymbol.getParameterValues()));
+
+        if (pSymbol.getOutputMappings().size() != pSymbol.getSymbol().getOutputs().size()) {
+            pSymbol.setOutputMappings(pSymbol.getSymbol().getOutputs().stream().map(out -> {
+                final SymbolOutputMapping mapping = new SymbolOutputMapping();
+                mapping.setParameter(out);
+                mapping.setName(out.getName());
+                return mapping;
+            }).collect(Collectors.toList()));
+        }
+
         pSymbol.setOutputMappings(symbolOutputMappingRepository.saveAll(pSymbol.getOutputMappings()));
         return parameterizedSymbolRepository.save(pSymbol);
     }

@@ -250,20 +250,12 @@ public class TestResource {
                                  @PathVariable("testId") Long testId,
                                  @RequestBody Test test) {
         final User user = authContext.getUser();
+        LOGGER.traceEntry("update(projectId: {}, testId: {})", projectId, testId);
 
-        if (!test.getId().equals(testId)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-
-        if (test.getId() == null) {
-            test.setId(testId);
-        }
-
-        test.setProjectId(projectId);
-
-        testDAO.update(user, test);
+        testDAO.update(user, projectId, test);
 
         webhookService.fireEvent(user, new TestEvent.Updated(test));
+        LOGGER.traceExit("update");
         return ResponseEntity.ok(test);
     }
 

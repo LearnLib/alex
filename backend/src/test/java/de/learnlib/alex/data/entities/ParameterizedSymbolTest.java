@@ -44,30 +44,6 @@ public class ParameterizedSymbolTest {
     }
 
     @Test
-    public void shouldIgnorePrivateParametersInComputedName() {
-        final SymbolInputParameter privateParam1 = new SymbolInputParameter();
-        privateParam1.setName("privateString");
-        privateParam1.setParameterType(SymbolParameter.ParameterType.STRING);
-
-        final SymbolInputParameter privateParam2 = new SymbolInputParameter();
-        privateParam2.setName("privateCounter");
-        privateParam2.setParameterType(SymbolParameter.ParameterType.COUNTER);
-
-        final SymbolParameterValue value1 = new SymbolParameterValue();
-        value1.setValue("p1");
-        value1.setParameter(privateParam1);
-
-        final SymbolParameterValue value2 = new SymbolParameterValue();
-        value2.setValue("p2");
-        value2.setParameter(privateParam2);
-
-        final ParameterizedSymbol ps = createDefaultPSymbol();
-        ps.getParameterValues().addAll(Arrays.asList(value1, value2));
-
-        assertEquals("s1 <v1, v2>", ps.getAliasOrComputedName());
-    }
-
-    @Test
     public void shouldIgnoreNullParametersInComputedName() {
         final SymbolInputParameter privateParam1 = new SymbolInputParameter();
         privateParam1.setName("privateString");

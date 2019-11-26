@@ -46,6 +46,7 @@ public class SymbolParameterValue implements Serializable {
 
     /** The value for the parameter. */
     @Column(name = "\"value\"")
+    @NotEmpty
     private String value;
 
     public Long getId() {
