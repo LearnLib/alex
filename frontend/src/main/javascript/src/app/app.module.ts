@@ -17,7 +17,7 @@ import { SelectableCheckboxMultipleComponent } from './common/selectable-checkbo
 import { AppStoreService } from './services/app-store.service';
 import { SettingsApiService } from './services/api/settings-api.service';
 import { TestCaseTableComponent } from './views/test-case-view/test-case-table/test-case-table.component';
-import { SymbolParametersComponent } from './common/symbol-parameters/symbol-parameters.component';
+import { SymbolInputValuesComponent } from './common/symbol-input-values/symbol-input-values.component';
 import { OutputErrorTraceComponent } from './common/output-error-trace/output-error-trace.component';
 import { TestCaseTablePrePostStepsComponent } from './views/test-case-view/test-case-table/test-case-table-pre-post-steps/test-case-table-pre-post-steps.component';
 import { TestCaseTableSymbolColumnComponent } from './views/test-case-view/test-case-table/test-case-table-symbol-column/test-case-table-symbol-column.component';
@@ -242,7 +242,7 @@ import { TestReportProgressComponent } from './common/test-report-progress/test-
     SelectableCheckboxComponent,
     SelectableCheckboxMultipleComponent,
     TestCaseTableComponent,
-    SymbolParametersComponent,
+    SymbolInputValuesComponent,
     OutputErrorTraceComponent,
     TestCaseTablePrePostStepsComponent,
     TestCaseTableSymbolColumnComponent,

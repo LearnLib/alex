@@ -1,0 +1,59 @@
+<div>
+  <div *ngIf="parameterizedSymbol.parameterValues.length > 0">
+    <small class="head text-muted">Inputs</small>
+    <div class="pl-2">
+      <div
+        *ngFor="let pv of parameterizedSymbol.parameterValues"
+        class="symbol-parameter-values d-flex flex-row text-muted"
+      >
+        <div class="flex-shrink-0">
+          <em>{{pv.parameter.name}}</em>
+          <i class="fas fa-fw fa-arrow-left mx-1"></i>
+        </div>
+        <div class="w-100 symbol-input-value">
+          <i
+            (click)="pv.value = null"
+            class="fas fa-fw fa-times cursor-pointer"
+          >
+          </i>
+          <input
+            [(ngModel)]="pv.value"
+            [placeholder]="pv.value == null ? 'null' : ''"
+            class="w-100 d-block"
+            type="text"
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="parameterizedSymbol.outputMappings.length > 0">
+    <small class="head text-muted">Outputs</small>
+    <div class="pl-2">
+      <div
+        class="d-flex flex-row align-items-center text-muted"
+        *ngFor="let mapping of parameterizedSymbol.outputMappings; let i = index"
+      >
+        <div class="flex-shrink-0">
+          <em>{{mapping.parameter.name}}</em>
+          <i class="fas fa-fw fa-arrow-right mx-1"></i>
+        </div>
+        <div class="w-100 symbol-output-mapping">
+          <i
+            (click)="mapping.name = mapping.parameter.name"
+            class="fas fa-fw fa-times cursor-pointer"
+          >
+          </i>
+          <input
+            class="w-100 d-block"
+            type="text"
+            [(ngModel)]="mapping.name"
+            [name]="'om-' + i"
+            [placeholder]="null"
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

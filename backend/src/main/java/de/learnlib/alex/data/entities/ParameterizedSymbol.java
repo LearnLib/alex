@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -63,6 +64,8 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
     )
     private Symbol symbol;
 
+    private String alias;
+
     /**
      * The parameter values for the symbol to execute.
      */
@@ -73,10 +76,20 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
     private List<SymbolParameterValue> parameterValues;
 
     /**
+     * The parameter values for the symbol to execute.
+     */
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE}
+    )
+    private List<SymbolOutputMapping> outputMappings;
+
+    /**
      * Constructor.
      */
     public ParameterizedSymbol() {
         this.parameterValues = new ArrayList<>();
+        this.outputMappings = new ArrayList<>();
     }
 
     /**
@@ -131,7 +144,11 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
         try {
             for (final SymbolOutputParameter out : symbol.getOutputs()) {
                 if (out.getParameterType().equals(SymbolParameter.ParameterType.STRING) && result.isSuccess()) {
-                    if (localVariableStore.contains(out.getName())) {
+                    final Optional<SymbolOutputMapping> outputMappingOptional = getOutputMappingFor(out.getName());
+                    if (outputMappingOptional.isPresent()) {
+                        final SymbolOutputMapping outputMapping = outputMappingOptional.get();
+                        variableStore.set(outputMapping.getName(), localVariableStore.get(out.getName()));
+                    } else if (localVariableStore.contains(out.getName())) {
                         variableStore.set(out.getName(), localVariableStore.get(out.getName()));
                     }
                 } else {
@@ -148,6 +165,15 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
         connectors.addConnector(counterStore);
 
         return result;
+    }
+
+    private Optional<SymbolOutputMapping> getOutputMappingFor(String name) {
+        for (SymbolOutputMapping m: outputMappings) {
+            if (m.getParameter().getName().equals(name)) {
+                return Optional.of(m);
+            }
+        }
+        return Optional.empty();
     }
 
     public Long getId() {
@@ -174,6 +200,22 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
         this.parameterValues = parameterValues;
     }
 
+    public List<SymbolOutputMapping> getOutputMappings() {
+        return outputMappings;
+    }
+
+    public void setOutputMappings(List<SymbolOutputMapping> outputMappings) {
+        this.outputMappings = outputMappings;
+    }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias.trim();
+    }
+
     /**
      * If there are no parameter values defined, the name will be "NAME". Otherwise it will be "NAME <value1, value2>"
      * where "value1" and "value2" are concrete values for the parameters.
@@ -181,13 +223,20 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
      * @return The computed name based on the parameters.
      */
     @JsonIgnore
-    public String getComputedName() {
-        final List<String> parameters = parameterValues.stream()
-                .filter(pv -> !((SymbolInputParameter) pv.getParameter()).isPrivate() && pv.getValue() != null)
-                .map(SymbolParameterValue::getValue)
-                .collect(Collectors.toList());
-        final String suffix = parameters.isEmpty() ? "" : " <" + String.join(", ", parameters) + ">";
-        return getSymbol().getName() + suffix;
+    public String getAliasOrComputedName() {
+        if (alias != null && !alias.equals("")) {
+            return alias;
+        } else {
+            final List<String> parameters = parameterValues.stream()
+                    .filter(pv -> pv.getValue() != null)
+                    .map(SymbolParameterValue::getValue)
+                    .collect(Collectors.toList());
+            if (parameters.isEmpty()) {
+                return getSymbol().getName();
+            } else {
+                return getSymbol().getName() + " <" + String.join(", ", parameters) + ">";
+            }
+        }
     }
 
     /**
@@ -199,6 +248,14 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
     public ParameterizedSymbol copy() {
         final ParameterizedSymbol pSymbol = new ParameterizedSymbol();
         pSymbol.setSymbol(symbol);
+        pSymbol.setOutputMappings(
+                outputMappings.stream().map(om -> {
+                    final SymbolOutputMapping mapping = new SymbolOutputMapping();
+                    mapping.setParameter(om.getParameter());
+                    mapping.setName(om.getName());
+                    return mapping;
+                }).collect(Collectors.toList())
+        );
         pSymbol.setParameterValues(
                 parameterValues.stream().map(pv -> {
                     final SymbolParameterValue value = new SymbolParameterValue();

@@ -304,7 +304,7 @@ public class LearnerService {
             // search symbols in configuration where symbol.name == counterexample.input
             for (SampleEQOracleProxy.InputOutputPair io : counterexample) {
                 Optional<ParameterizedSymbol> symbol = lastResult.getSymbols().stream()
-                        .filter(s -> s.getComputedName().equals(io.getInput()))
+                        .filter(s -> s.getAliasOrComputedName().equals(io.getInput()))
                         .findFirst();
 
                 // collect all outputs in order to compare it with the result of learner.readOutputs()

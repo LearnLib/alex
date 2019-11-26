@@ -74,10 +74,10 @@
                     <strong>{{pResetSymbol.symbol.name}}</strong>
                   </a>
                 </div>
-                <symbol-parameters
-                  [parameterValues]="pResetSymbol.parameterValues"
+                <symbol-input-values
+                  [parameterizedSymbol]="pResetSymbol"
                 >
-                </symbol-parameters>
+                </symbol-input-values>
               </div>
               <div class="flex-shrink-0">
                 <button (click)="selectResetSymbol()" class="btn btn-sm btn-default">
@@ -97,8 +97,9 @@
                   <a [routerLink]="['/app', 'projects', project.id, 'symbols', pSymbol.symbol.id]">
                     <strong>{{pSymbol.symbol.name}}</strong>
                   </a>
+                  <input type="text" [(ngModel)]="pSymbol.alias" [name]="'alias-' + i">
                 </div>
-                <symbol-parameters [parameterValues]="pSymbol.parameterValues"></symbol-parameters>
+                <symbol-input-values [parameterizedSymbol]="pSymbol"></symbol-input-values>
               </div>
               <div style="flex-shrink: 0">
                 <i (click)="pSymbols.splice(i, 1)"
@@ -132,10 +133,10 @@
                     <strong>{{pPostSymbol.symbol.name}}</strong>
                   </a>
                 </div>
-                <symbol-parameters
-                  [parameterValues]="pPostSymbol.parameterValues"
+                <symbol-input-values
+                  [parameterizedSymbol]="pPostSymbol"
                 >
-                </symbol-parameters>
+                </symbol-input-values>
               </div>
               <div class="flex-shrink-0">
                 <div class="btn btn-group btn-group-sm">

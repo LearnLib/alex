@@ -39,32 +39,6 @@ public class CompactMealyTransitionProxy implements Serializable {
     private String output;
 
     /**
-     * Default constructor.
-     */
-    public CompactMealyTransitionProxy() {
-        // this constructor only exists so one has not to use the advanced constructor.
-    }
-
-    /**
-     * Constructor that initialises all fields.
-     *
-     * @param from
-     *         The start of the transition.
-     * @param input
-     *         The input that triggers the transition.
-     * @param to
-     *         The end of the transition.
-     * @param output
-     *         The output during the transition.
-     */
-    public CompactMealyTransitionProxy(int from, String input, int to, String output) {
-        this.from = from;
-        this.to = to;
-        this.input = input;
-        this.output = output;
-    }
-
-    /**
      * Get the number of the state this transition starts.
      *
      * @return The start state of the transition.

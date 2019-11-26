@@ -39,6 +39,5 @@ export class SymbolParameterFormGroupsComponent implements OnInit {
   ngOnInit(): void {
     this.form.addControl('name', new FormControl(this.parameter.name, [Validators.required]));
     this.form.addControl('parameterType', new FormControl(this.parameter.parameterType, [Validators.required]));
-    this.form.addControl('private', new FormControl(this.parameter.private));
   }
 }

@@ -152,7 +152,7 @@
                       </a>
                     </span>
                     <br>
-                    <symbol-parameters [parameterValues]="step.pSymbol.parameterValues"></symbol-parameters>
+                    <symbol-input-values [parameterizedSymbol]="step.pSymbol"></symbol-input-values>
 
                     <div *ngIf="showOutputs">
                       <ng-container *ngFor="let out of step.pSymbol.symbol.outputs">

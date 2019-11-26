@@ -39,25 +39,13 @@
           </h4>
           <small class="text-muted">Updated: {{testCase.updatedOn | date : 'EEE, dd.MM.yyyy, HH:mm'}}</small>
         </div>
-        <div>
-          <div class="btn-group btn-group-sm" ngbDropdown>
-            <button class="btn btn-default" ngbDropdownToggle type="button">
-              <i class="fas fa-cogs"></i>
-            </button>
-            <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu role="menu">
-              <button (click)="options.showSymbolOutputs = !options.showSymbolOutputs" ngbDropdownItem>
-                <i [ngClass]="{'fa-check': options.showSymbolOutputs}" class="fas fa-fw"></i> Show symbol outputs
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
 
       <hr>
       <div class="row">
         <div class="col-md-3 col-sm-5">
 
-          <div class="card">
+          <div class="card mb-4">
             <div class="card-header">
               <strong>Symbols</strong>
             </div>
@@ -74,12 +62,22 @@
             </div>
           </div>
 
+          <div class="card">
+            <div class="card-header">
+              <strong>Data context</strong>
+            </div>
+            <div class="card-body">
+              <div class="list-group">
+                <div class="list-group-item" *ngFor="let v of dataContext">{{v}}</div>
+              </div>
+            </div>
+          </div>
+
         </div>
         <div class="col-md-9 col-sm-7">
 
           <test-case-table
             *ngIf="testCase != null"
-            [options]="options"
             [result]="result"
             [symbolMap]="symbolMap"
             [testCase]="testCase"

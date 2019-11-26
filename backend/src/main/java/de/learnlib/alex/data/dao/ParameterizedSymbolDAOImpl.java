@@ -19,6 +19,7 @@ package de.learnlib.alex.data.dao;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
+import de.learnlib.alex.data.repositories.SymbolOutputMappingRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterValueRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
 import org.hibernate.Hibernate;
@@ -36,15 +37,18 @@ public class ParameterizedSymbolDAOImpl implements ParameterizedSymbolDAO {
     private SymbolRepository symbolRepository;
     private SymbolParameterValueRepository symbolParameterValueRepository;
     private ParameterizedSymbolRepository parameterizedSymbolRepository;
+    private SymbolOutputMappingRepository symbolOutputMappingRepository;
 
     @Inject
     public ParameterizedSymbolDAOImpl(
             SymbolRepository symbolRepository,
             SymbolParameterValueRepository symbolParameterValueRepository,
-            ParameterizedSymbolRepository parameterizedSymbolRepository) {
+            ParameterizedSymbolRepository parameterizedSymbolRepository,
+            SymbolOutputMappingRepository symbolOutputMappingRepository) {
         this.symbolRepository = symbolRepository;
         this.symbolParameterValueRepository = symbolParameterValueRepository;
         this.parameterizedSymbolRepository = parameterizedSymbolRepository;
+        this.symbolOutputMappingRepository = symbolOutputMappingRepository;
     }
 
     @Override
@@ -52,13 +56,14 @@ public class ParameterizedSymbolDAOImpl implements ParameterizedSymbolDAO {
     public ParameterizedSymbol create(ParameterizedSymbol pSymbol) {
         final Symbol symbol = symbolRepository.findById(pSymbol.getSymbol().getId()).orElse(null);
         pSymbol.setSymbol(symbol);
-
         pSymbol.setParameterValues(symbolParameterValueRepository.saveAll(pSymbol.getParameterValues()));
+        pSymbol.setOutputMappings(symbolOutputMappingRepository.saveAll(pSymbol.getOutputMappings()));
         return parameterizedSymbolRepository.save(pSymbol);
     }
 
     public static void loadLazyRelations(ParameterizedSymbol pSymbol) {
         Hibernate.initialize(pSymbol.getParameterValues());
+        Hibernate.initialize(pSymbol.getOutputMappings());
         SymbolDAOImpl.loadLazyRelations(pSymbol.getSymbol());
     }
 }

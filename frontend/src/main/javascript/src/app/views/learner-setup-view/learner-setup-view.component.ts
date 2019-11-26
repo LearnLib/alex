@@ -179,15 +179,18 @@ export class LearnerSetupViewComponent {
     this.learnerConfiguration.resetSymbol = result.resetSymbol;
     this.learnerConfiguration.resetSymbol.id = null;
     this.learnerConfiguration.resetSymbol.parameterValues.forEach(v => v.id = null);
+    this.learnerConfiguration.resetSymbol.outputMappings.forEach(v => v.id = null);
     if (result.postSymbol != null) {
       this.learnerConfiguration.postSymbol = result.postSymbol;
       this.learnerConfiguration.postSymbol.id = null;
       this.learnerConfiguration.postSymbol.parameterValues.forEach(v => v.id = null);
+      this.learnerConfiguration.postSymbol.outputMappings.forEach(v => v.id = null);
     }
     this.learnerConfiguration.symbols = result.symbols;
     this.learnerConfiguration.symbols.forEach(s => {
       s.id = null;
       s.parameterValues.forEach(v => v.id = null);
+      s.outputMappings.forEach(v => v.id = null);
     });
 
     this.pSymbols = this.learnerConfiguration.symbols;

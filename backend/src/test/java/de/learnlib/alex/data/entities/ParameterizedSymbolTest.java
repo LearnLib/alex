@@ -40,7 +40,7 @@ public class ParameterizedSymbolTest {
     @Test
     public void shouldGetTheComputedName() {
         final ParameterizedSymbol ps = createDefaultPSymbol();
-        assertEquals("s1 <v1, v2>", ps.getComputedName());
+        assertEquals("s1 <v1, v2>", ps.getAliasOrComputedName());
     }
 
     @Test
@@ -48,12 +48,10 @@ public class ParameterizedSymbolTest {
         final SymbolInputParameter privateParam1 = new SymbolInputParameter();
         privateParam1.setName("privateString");
         privateParam1.setParameterType(SymbolParameter.ParameterType.STRING);
-        privateParam1.setPrivate(true);
 
         final SymbolInputParameter privateParam2 = new SymbolInputParameter();
         privateParam2.setName("privateCounter");
         privateParam2.setParameterType(SymbolParameter.ParameterType.COUNTER);
-        privateParam2.setPrivate(true);
 
         final SymbolParameterValue value1 = new SymbolParameterValue();
         value1.setValue("p1");
@@ -66,7 +64,7 @@ public class ParameterizedSymbolTest {
         final ParameterizedSymbol ps = createDefaultPSymbol();
         ps.getParameterValues().addAll(Arrays.asList(value1, value2));
 
-        assertEquals("s1 <v1, v2>", ps.getComputedName());
+        assertEquals("s1 <v1, v2>", ps.getAliasOrComputedName());
     }
 
     @Test
@@ -74,12 +72,10 @@ public class ParameterizedSymbolTest {
         final SymbolInputParameter privateParam1 = new SymbolInputParameter();
         privateParam1.setName("privateString");
         privateParam1.setParameterType(SymbolParameter.ParameterType.STRING);
-        privateParam1.setPrivate(true);
 
         final SymbolInputParameter privateParam2 = new SymbolInputParameter();
         privateParam2.setName("privateCounter");
         privateParam2.setParameterType(SymbolParameter.ParameterType.COUNTER);
-        privateParam2.setPrivate(true);
 
         final SymbolParameterValue value1 = new SymbolParameterValue();
         value1.setValue(null);
@@ -92,7 +88,7 @@ public class ParameterizedSymbolTest {
         final ParameterizedSymbol ps = createDefaultPSymbol();
         ps.getParameterValues().addAll(Arrays.asList(value1, value2));
 
-        assertEquals("s1 <v1, v2>", ps.getComputedName());
+        assertEquals("s1 <v1, v2>", ps.getAliasOrComputedName());
     }
 
     @Test
@@ -100,7 +96,7 @@ public class ParameterizedSymbolTest {
         final ParameterizedSymbol ps = createDefaultPSymbol();
         ps.setParameterValues(new ArrayList<>());
 
-        assertEquals("s1", ps.getComputedName());
+        assertEquals("s1", ps.getAliasOrComputedName());
     }
 
     private ParameterizedSymbol createDefaultPSymbol() {
@@ -113,14 +109,12 @@ public class ParameterizedSymbolTest {
         parameter1.setId(0L);
         parameter1.setName("input1");
         parameter1.setParameterType(SymbolParameter.ParameterType.STRING);
-        parameter1.setPrivate(false);
 
         final SymbolInputParameter parameter2 = new SymbolInputParameter();
         parameter2.setSymbol(symbol);
         parameter2.setId(1L);
         parameter2.setName("input2");
         parameter2.setParameterType(SymbolParameter.ParameterType.COUNTER);
-        parameter2.setPrivate(false);
 
         final List<SymbolParameterValue> values = new ArrayList<>();
 

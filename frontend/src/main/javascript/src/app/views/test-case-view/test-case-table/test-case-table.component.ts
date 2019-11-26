@@ -27,9 +27,6 @@ export class TestCaseTableComponent implements OnInit, OnDestroy {
   testCase: any;
 
   @Input()
-  options: any;
-
-  @Input()
   result: any;
 
   @Input()

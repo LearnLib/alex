@@ -88,7 +88,7 @@ public class TestSuiteEQOracleProxy extends AbstractEquivalenceOracleProxy
             testDAO.getTestCases(user, result.getProjectId(), testSuiteId, includeChildTestSuites).forEach(tc -> {
                 final Word<String> input = Word.fromList(
                         tc.getSteps().stream()
-                                .map(step -> step.getPSymbol().getComputedName())
+                                .map(step -> step.getPSymbol().getAliasOrComputedName())
                                 .collect(Collectors.toList())
                 );
                 testCases.add(input);

@@ -29,9 +29,6 @@ export class TestCaseTableSymbolColumnComponent {
   pSymbol: ParametrizedSymbol;
 
   @Input()
-  options: any;
-
-  @Input()
   symbolMap: any;
 
   constructor(public appStore: AppStoreService) {

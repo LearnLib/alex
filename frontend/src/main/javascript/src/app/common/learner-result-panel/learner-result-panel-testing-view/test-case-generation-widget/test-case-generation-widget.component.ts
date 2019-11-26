@@ -75,7 +75,7 @@ export class TestCaseGenerationWidgetComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.result.symbols.forEach(s => this.symbolMap[s.getComputedName()] = s);
+    this.result.symbols.forEach(s => this.symbolMap[s.getAliasOrComputedName()] = s);
     this.form.controls.name.setValue(this.testCase.name);
 
     const preStep = TestCaseStep.fromSymbol(this.result.resetSymbol.symbol);

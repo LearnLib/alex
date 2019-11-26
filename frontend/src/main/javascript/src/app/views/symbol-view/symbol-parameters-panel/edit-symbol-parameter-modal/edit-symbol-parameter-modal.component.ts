@@ -49,9 +49,6 @@ export class EditSymbolParameterModalComponent {
 
     this.parameter.name = values.name;
     this.parameter.parameterType = values.parameterType;
-    if (this.parameter.type === 'input') {
-      this.parameter.private = values.private;
-    }
 
     this.symbolParameterApi.update(this.symbol.project, this.symbol.id, this.parameter).subscribe(
       param => this.modal.close(param),

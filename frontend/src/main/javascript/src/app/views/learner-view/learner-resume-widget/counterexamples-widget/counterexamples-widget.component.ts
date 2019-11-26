@@ -131,7 +131,7 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
       const testSymbols = [];
 
       const pSymbols = this.result.symbols;
-      const pSymbolNames = pSymbols.map(ps => ps.getComputedName());
+      const pSymbolNames = pSymbols.map(ps => ps.getAliasOrComputedName());
 
       for (let i = 0; i < this.counterexample.length; i++) {
         const j = pSymbolNames.findIndex(name => name === this.counterexample[i].input);

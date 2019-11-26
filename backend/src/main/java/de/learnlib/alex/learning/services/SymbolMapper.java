@@ -53,7 +53,7 @@ public class SymbolMapper implements SULMapper<
      */
     public SymbolMapper(List<ParameterizedSymbol> symbols) {
         this.symbolMap = symbols.stream()
-                .collect(Collectors.toMap(ParameterizedSymbol::getComputedName, Function.identity()));
+                .collect(Collectors.toMap(ParameterizedSymbol::getAliasOrComputedName, Function.identity()));
     }
 
     /**
@@ -76,7 +76,7 @@ public class SymbolMapper implements SULMapper<
      *         The symbol to add.
      */
     public void addSymbol(ParameterizedSymbol symbol) {
-        this.symbolMap.putIfAbsent(symbol.getComputedName(), symbol);
+        this.symbolMap.putIfAbsent(symbol.getAliasOrComputedName(), symbol);
     }
 
     @Override

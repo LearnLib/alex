@@ -22,11 +22,13 @@ import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolInputParameter;
+import de.learnlib.alex.data.entities.SymbolOutputMapping;
 import de.learnlib.alex.data.entities.SymbolOutputParameter;
 import de.learnlib.alex.data.entities.SymbolParameter;
 import de.learnlib.alex.data.entities.SymbolParameterValue;
 import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
+import de.learnlib.alex.data.repositories.SymbolOutputMappingRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterValueRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
@@ -59,6 +61,8 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
     /** The injected repository for {@link ParameterizedSymbol}. */
     private ParameterizedSymbolRepository parameterizedSymbolRepository;
 
+    private SymbolOutputMappingRepository outputMappingRepository;
+
     /** The symbol DAO to use. */
     private SymbolDAO symbolDAO;
 
@@ -84,13 +88,15 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
                                   SymbolParameterRepository symbolParameterRepository,
                                   SymbolParameterValueRepository symbolParameterValueRepository,
                                   ParameterizedSymbolRepository parameterizedSymbolRepository,
-                                  SymbolDAO symbolDAO) {
+                                  SymbolDAO symbolDAO,
+                                  SymbolOutputMappingRepository outputMappingRepository) {
         this.projectRepository = projectRepository;
         this.symbolRepository = symbolRepository;
         this.symbolParameterRepository = symbolParameterRepository;
         this.symbolParameterValueRepository = symbolParameterValueRepository;
         this.parameterizedSymbolRepository = parameterizedSymbolRepository;
         this.symbolDAO = symbolDAO;
+        this.outputMappingRepository = outputMappingRepository;
     }
 
     @Override
@@ -131,8 +137,8 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
 
         // If a new parameter is created for a symbol, it may be that there are tests that use the symbol.
         // Therefore we have to add a new parameter value to the test steps that use the symbol.
+        final List<ParameterizedSymbol> pSymbols = parameterizedSymbolRepository.findAllBySymbol_Id(symbol.getId());
         if (parameter instanceof SymbolInputParameter) {
-            final List<ParameterizedSymbol> pSymbols = parameterizedSymbolRepository.findAllBySymbol_Id(symbol.getId());
             pSymbols.forEach(pSymbol -> {
                 final SymbolParameterValue value = new SymbolParameterValue();
                 value.setParameter(parameter);
@@ -140,6 +146,14 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
                 symbolParameterValueRepository.saveAll(pSymbol.getParameterValues());
             });
             parameterizedSymbolRepository.saveAll(pSymbols);
+        } else if (parameter instanceof SymbolOutputParameter) {
+            pSymbols.forEach(pSymbol -> {
+                final SymbolOutputMapping om = new SymbolOutputMapping();
+                om.setParameter(parameter);
+                om.setName(parameter.getName());
+                pSymbol.getOutputMappings().add(om);
+                outputMappingRepository.saveAll(pSymbol.getOutputMappings());
+            });
         }
 
         return createdParameter;
@@ -154,23 +168,6 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
 
         checkAccess(user, project, symbol, parameter);
         checkIfTypeWithNameExists(symbol, parameter);
-
-        // if a parameter is not private, we have to set all referenced values to null so that previously set values
-        // are not saved.
-        if (parameter instanceof SymbolInputParameter) {
-            final SymbolParameter parameterInDb = symbolParameterRepository.findById(parameter.getId()).orElse(null);
-            if (((SymbolInputParameter) parameter).isPrivate() && !((SymbolInputParameter) parameterInDb).isPrivate()) {
-                final List<ParameterizedSymbol> pSymbols = parameterizedSymbolRepository.findAllBySymbol_Id(symbolId);
-                for (ParameterizedSymbol pSymbol : pSymbols) {
-                    pSymbol.getParameterValues().forEach(pv -> {
-                        if (pv.getParameter().getId().equals(parameter.getId())) {
-                            pv.setValue(null);
-                        }
-                    });
-                }
-                parameterizedSymbolRepository.saveAll(pSymbols);
-            }
-        }
 
         return symbolParameterRepository.save(parameter);
     }
@@ -198,6 +195,7 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
 
         // also delete all values for the parameter
         symbolParameterValueRepository.removeAllByParameter_Id(parameterId);
+        outputMappingRepository.removeAllByParameter_Id(parameterId);
         symbolParameterRepository.delete(parameter);
     }
 

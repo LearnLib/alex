@@ -144,7 +144,7 @@ public abstract class AbstractLearnerProcess<T extends AbstractLearnerConfigurat
 
         this.abstractAlphabet = new SimpleAlphabet<>(new HashSet<>(// remove duplicate names with set
                 result.getSymbols().stream()
-                        .map(ParameterizedSymbol::getComputedName)
+                        .map(ParameterizedSymbol::getAliasOrComputedName)
                         .sorted(String::compareTo)
                         .collect(Collectors.toList())
         ));

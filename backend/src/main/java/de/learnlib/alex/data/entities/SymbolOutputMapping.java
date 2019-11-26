@@ -16,7 +16,6 @@
 
 package de.learnlib.alex.data.entities;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -26,15 +25,11 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
-/**
- * The value of a symbol parameter.
- */
 @Entity
-public class SymbolParameterValue implements Serializable {
+public class SymbolOutputMapping implements Serializable {
 
-    private static final long serialVersionUID = 2125637165072908329L;
+    private static final long serialVersionUID = -1110680538349672576L;
 
-    /** The id of the value in the db. */
     @Id
     @GeneratedValue
     private Long id;
@@ -44,9 +39,9 @@ public class SymbolParameterValue implements Serializable {
     @JoinColumn(name = "symbolParameterId")
     private SymbolParameter parameter;
 
-    /** The value for the parameter. */
-    @Column(name = "\"value\"")
-    private String value;
+    /** The name for the parameter. */
+    @NotEmpty
+    private String name;
 
     public Long getId() {
         return id;
@@ -64,11 +59,11 @@ public class SymbolParameterValue implements Serializable {
         this.parameter = parameter;
     }
 
-    public String getValue() {
-        return value;
+    public String getName() {
+        return name;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setName(String name) {
+        this.name = name;
     }
 }

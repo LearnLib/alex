@@ -206,7 +206,7 @@ public class LearnerResource {
                 LearnerResultStep latestStep = result.getSteps().get(result.getSteps().size() - 1);
                 Alphabet<String> alphabet = latestStep.getHypothesis().createAlphabet();
 
-                result.getSymbols().removeIf(s -> !alphabet.contains(s.getComputedName()));
+                result.getSymbols().removeIf(s -> !alphabet.contains(s.getAliasOrComputedName()));
 
                 // add the new alphabet symbols to the config.
                 if (configuration.getSymbolsToAdd().size() > 0) {

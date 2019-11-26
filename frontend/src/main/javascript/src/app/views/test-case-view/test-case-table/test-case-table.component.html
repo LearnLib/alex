@@ -5,7 +5,6 @@
   <div class="card-body p-0 bg-white">
     <test-case-table-pre-post-steps
       (stepsChange)="testCase.preSteps = $event"
-      [options]="options"
       [steps]="testCase.preSteps"
       [symbolMap]="symbolMap"
     >
@@ -39,7 +38,6 @@
 
           <td>
             <test-case-table-symbol-column
-              [options]="options"
               [pSymbol]="step.pSymbol"
               [symbolMap]="symbolMap"
             >
@@ -91,7 +89,6 @@
   <div class="card-body p-0">
     <test-case-table-pre-post-steps
       (stepsChange)="testCase.postSteps = $event"
-      [options]="options"
       [steps]="testCase.postSteps"
       [symbolMap]="symbolMap"
     >

@@ -280,7 +280,7 @@ public class LearnerResult implements Serializable {
     @Transient
     @JsonIgnore
     public List<String> getSigma() {
-        return symbols.stream().map(ParameterizedSymbol::getComputedName).collect(Collectors.toList());
+        return symbols.stream().map(ParameterizedSymbol::getAliasOrComputedName).collect(Collectors.toList());
     }
 
     /**

@@ -81,7 +81,7 @@
               <div *ngFor="let pSymbol of configuration.symbolsToAdd; let i = index" class="list-group-item d-flex">
                 <div class="w-100">
                   <strong>{{pSymbol.symbol.name}}</strong><br>
-                  <symbol-parameters [parameterValues]="pSymbol.parameterValues"></symbol-parameters>
+                  <symbol-input-values [parameterizedSymbol]="pSymbol"></symbol-input-values>
                 </div>
                 <div class="text-muted">
                   <i (click)="configuration.symbolsToAdd.splice(i, 1)"

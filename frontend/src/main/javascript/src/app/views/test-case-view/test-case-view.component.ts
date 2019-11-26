@@ -46,8 +46,6 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
   testCase: any;
   /** Map id -> symbol. */
   symbolMap: any;
-  /** Display options */
-  options: any;
   /** The config used for testing. */
   testConfig: any;
 
@@ -70,10 +68,6 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
 
     this.testCase = null;
     this.symbolMap = {};
-
-    this.options = {
-      showSymbolOutputs: false
-    };
   }
 
   ngOnInit(): void {
@@ -208,5 +202,25 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
 
   get project(): Project {
     return this.appStore.project;
+  }
+
+  get dataContext(): string[] {
+    const variables: string[] = [];
+
+    const getOutputVariables = (step) => {
+      step.pSymbol.outputMappings.map(o => o.name).forEach(n => {
+        if (!variables.includes(n)) variables.push(n);
+      });
+    };
+
+    this.testCase.preSteps.forEach(getOutputVariables);
+    this.testCase.steps.forEach(getOutputVariables);
+    this.testCase.postSteps.forEach(getOutputVariables);
+
+    return variables;
+  }
+
+  private getOutputVariables(step: any) {
+    return step.pSymbol.outputMappings.map(o => o.name);
   }
 }

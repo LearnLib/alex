@@ -16,19 +16,29 @@
 
 import { AlphabetSymbol } from './alphabet-symbol';
 
+export interface SymbolOutputMapping {
+  id?: number,
+  name: string,
+  parameter: any
+}
+
 /**
  * The parametrized symbol.
  */
 export class ParametrizedSymbol {
 
   /** The ID of the parameterized symbol. */
-  public id: number;
+  id: number;
 
   /** The symbol to execute. */
-  public symbol: AlphabetSymbol;
+  symbol: AlphabetSymbol;
 
   /** The parameter values for the symbol. */
-  public parameterValues: any[];
+  parameterValues: any[];
+
+  outputMappings: SymbolOutputMapping[];
+
+  alias: string;
 
   /**
    * Constructor.
@@ -39,6 +49,8 @@ export class ParametrizedSymbol {
     this.id = obj.id == null ? null : obj.id;
     this.symbol = obj.symbol != null ? new AlphabetSymbol(obj.symbol) : null;
     this.parameterValues = obj.parameterValues || [];
+    this.outputMappings = obj.outputMappings || [];
+    this.alias = obj.alias;
   }
 
   /**
@@ -52,22 +64,28 @@ export class ParametrizedSymbol {
     pSymbol.symbol = <any>{
       id: symbol.id,
       name: symbol.name,
-      expectedResult: symbol.expectedResult
+      expectedResult: symbol.expectedResult,
+      outputs: symbol.outputs
     };
     pSymbol.parameterValues = symbol.inputs.map(input => ({parameter: input, value: null}));
+    pSymbol.outputMappings = symbol.outputs.map(output => ({parameter: output, name: output.name}));
     return pSymbol;
   }
 
   /** Get the string representation of the symbol with parameter values. */
-  getComputedName(): string {
-    const params = this.parameterValues
-      .filter(v => !v.parameter.private && v.value != null)
-      .map(v => v.value);
-
-    if (params.length === 0) {
-      return this.symbol.name;
+  getAliasOrComputedName(): string {
+    if (this.alias != null && this.alias !== '') {
+      return this.alias;
     } else {
-      return `${this.symbol.name} <${params.join(', ')}>`;
+      const params = this.parameterValues
+        .filter(v => v.value != null)
+        .map(v => v.value);
+
+      if (params.length === 0) {
+        return this.symbol.name;
+      } else {
+        return `${this.symbol.name} <${params.join(', ')}>`;
+      }
     }
   }
 }

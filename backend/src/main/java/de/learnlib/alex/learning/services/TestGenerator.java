@@ -347,7 +347,7 @@ public class TestGenerator {
 
     private List<Long> convertWordToPSymbolIds(Word<String> word, List<ParameterizedSymbol> pSymbols) {
         final Map<String, ParameterizedSymbol> symbolMap = pSymbols.stream()
-                .collect(Collectors.toMap(ParameterizedSymbol::getComputedName, Function.identity()));
+                .collect(Collectors.toMap(ParameterizedSymbol::getAliasOrComputedName, Function.identity()));
 
         return word.stream().map(symbol -> symbolMap.get(symbol).getId()).collect(Collectors.toList());
     }

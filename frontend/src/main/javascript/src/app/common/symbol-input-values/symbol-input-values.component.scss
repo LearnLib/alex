@@ -1,4 +1,5 @@
-.input-parameter-value {
+.symbol-input-value,
+.symbol-output-mapping {
   position: relative;
 
   i {
@@ -31,4 +32,8 @@
       border-bottom: 1px solid #ddd;
     }
   }
+}
+
+.head {
+  border-bottom: 1px solid #dadada;
 }
