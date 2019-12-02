@@ -58,6 +58,8 @@ public class UserResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
+    private static final int MAX_USERNAME_LENGTH = 32;
+
     /** The security context containing the user of the request. */
     private AuthContext authContext;
 
@@ -100,7 +102,7 @@ public class UserResource {
             throw new ValidationException("The email is not valid");
         }
 
-        if (newUser.getUsername().length() > 32 || !newUser.getUsername().matches("^[a-zA-Z][a-zA-Z0-9]*$")) {
+        if (newUser.getUsername().length() > MAX_USERNAME_LENGTH || !newUser.getUsername().matches("^[a-zA-Z][a-zA-Z0-9]*$")) {
             throw new ValidationException("The username is not valid!");
         }
 
@@ -300,7 +302,7 @@ public class UserResource {
         String username = (String) json.get("username");
         User realUser = userDAO.getById(userId);
 
-        if (username.length() > 32 || !username.matches("^[a-zA-Z][a-zA-Z0-9]*$")) {
+        if (username.length() > MAX_USERNAME_LENGTH || !username.matches("^[a-zA-Z][a-zA-Z0-9]*$")) {
             throw new ValidationException("The username is invalid!");
         }
 

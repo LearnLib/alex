@@ -282,7 +282,6 @@ public abstract class AbstractLearnerProcess<T extends AbstractLearnerConfigurat
      *         The current step.
      */
     protected void doLearn(LearnerResultStep currentStep) {
-
         final EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> eqOracle;
         if (configuration.getEqOracle() instanceof TestSuiteEQOracleProxy) {
             eqOracle = ((TestSuiteEQOracleProxy) configuration.getEqOracle()).createEqOracle(mqOracle, testDAO, user, result);

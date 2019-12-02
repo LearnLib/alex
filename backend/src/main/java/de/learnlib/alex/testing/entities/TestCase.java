@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.common.Constants;
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -89,7 +90,8 @@ public class TestCase extends Test {
     }
 
     @OneToMany(
-            orphanRemoval = true
+            orphanRemoval = true,
+            cascade = {CascadeType.ALL}
     )
     @JoinTable(
             name = "testCase_steps",
@@ -106,7 +108,8 @@ public class TestCase extends Test {
     }
 
     @OneToMany(
-            orphanRemoval = true
+            orphanRemoval = true,
+            cascade = {CascadeType.ALL}
     )
     @JoinTable(
             name = "testCase_preSteps",
@@ -123,7 +126,8 @@ public class TestCase extends Test {
     }
 
     @OneToMany(
-            orphanRemoval = true
+            orphanRemoval = true,
+            cascade = {CascadeType.ALL}
     )
     @JoinTable(
             name = "testCase_postSteps",

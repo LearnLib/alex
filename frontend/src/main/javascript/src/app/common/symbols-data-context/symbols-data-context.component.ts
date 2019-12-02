@@ -14,30 +14,61 @@
  * limitations under the License.
  */
 
-import { Component, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { ParametrizedSymbol } from '../../entities/parametrized-symbol';
+import { uniqBy } from 'lodash';
+
+interface DataContextItem {
+  name: string,
+  parameterType: string
+}
 
 @Component({
   selector: 'symbols-data-context',
-  templateUrl: './symbols-data-context.component.html',
-  styleUrls: ['./symbols-data-context.component.scss']
+  templateUrl: './symbols-data-context.component.html'
 })
-export class SymbolsDataContextComponent {
+export class SymbolsDataContextComponent implements OnChanges {
 
   @Input()
   parametrizedSymbols: ParametrizedSymbol[] = [];
 
-  get dataContext(): string[] {
-    const variables: string[] = [];
+  dataContext: DataContextItem[] = [];
 
+  constructor(private cd: ChangeDetectorRef) {
+  }
+
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.dataContext = this.createDataContext();
+  }
+
+  getCopyData(item: DataContextItem): string {
+    return item.parameterType === 'STRING' ? `{{$${item.name}}}` : `{{#${item.name}}}`;
+  }
+
+  trackByFn(index, item: DataContextItem) {
+    return item.name + '_' + item.parameterType;
+  }
+
+  private createDataContext(): DataContextItem[] {
+    const dataContext: DataContextItem[] = [];
     this.parametrizedSymbols.forEach(ps => {
       ps.outputMappings.forEach(om => {
-         if (!variables.includes(om.name)) {
-           variables.push(om.name);
-         }
+        if (dataContext.findIndex(v => {
+          return v.name === om.name && v.parameterType === om.parameter.parameterType;
+        }) === -1) {
+          dataContext.push({
+            name: om.name,
+            parameterType: om.parameter.parameterType
+          });
+        }
       });
     });
-
-    return variables;
+    return dataContext;
   }
+
+  get hasDuplicateParameterNames(): boolean {
+    return uniqBy(this.dataContext, 'name').length < this.dataContext.length;
+  }
+
 }

@@ -19,7 +19,6 @@ package de.learnlib.alex.integrationtests.resources;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import de.learnlib.alex.common.utils.RESTError;
 import de.learnlib.alex.config.entities.Settings;
 import org.junit.After;
 import org.junit.Before;

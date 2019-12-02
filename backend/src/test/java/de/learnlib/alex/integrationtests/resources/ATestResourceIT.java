@@ -17,7 +17,6 @@
 package de.learnlib.alex.integrationtests.resources;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import de.learnlib.alex.integrationtests.resources.api.ProjectApi;
 import de.learnlib.alex.integrationtests.resources.api.SymbolApi;
@@ -27,7 +26,6 @@ import de.learnlib.alex.testing.entities.TestCase;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
 
 import javax.ws.rs.core.Response;
 import java.util.Arrays;

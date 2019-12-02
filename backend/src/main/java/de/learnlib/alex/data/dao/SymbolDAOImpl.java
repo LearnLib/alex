@@ -24,6 +24,7 @@ import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.data.entities.SymbolActionStep;
 import de.learnlib.alex.data.entities.SymbolGroup;
+import de.learnlib.alex.data.entities.SymbolOutputMapping;
 import de.learnlib.alex.data.entities.SymbolPSymbolStep;
 import de.learnlib.alex.data.entities.SymbolParameter;
 import de.learnlib.alex.data.entities.SymbolStep;
@@ -40,6 +41,7 @@ import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
 import de.learnlib.alex.data.repositories.SymbolStepRepository;
 import de.learnlib.alex.data.repositories.SymbolSymbolStepRepository;
+import de.learnlib.alex.data.utils.SymbolOutputMappingUtils;
 import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
 import de.learnlib.alex.testing.repositories.TestExecutionResultRepository;
 import net.automatalib.graphs.base.compact.CompactSimpleGraph;
@@ -386,6 +388,15 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
     }
 
+    private void checkIfOutputMappingNamesAreUnique(Symbol symbol) {
+        final ArrayList<SymbolOutputMapping> oms = new ArrayList<>();
+        symbol.getSteps().stream()
+                .filter(s -> s instanceof SymbolPSymbolStep)
+                .forEach(s -> oms.addAll(((SymbolPSymbolStep) s).getPSymbol().getOutputMappings()));
+
+        SymbolOutputMappingUtils.checkIfMappedNamesAreUnique(oms);
+    }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<Symbol> update(User user, Long projectId, List<Symbol> symbols) throws NotFoundException, ValidationException {
@@ -415,6 +426,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
 
         checkLabelsConsistency(symbol);
+        checkIfOutputMappingNamesAreUnique(symbol);
 
         // update meta info
         Symbol symbolInDb = symbolRepository.findById(symbol.getId()).orElse(null);

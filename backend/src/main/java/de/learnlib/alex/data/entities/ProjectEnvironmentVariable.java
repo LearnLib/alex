@@ -63,7 +63,7 @@ public class ProjectEnvironmentVariable {
 
     @JsonProperty("environment")
     public Long getEnvironmentId() {
-        return environment.getId();
+        return environment != null ? environment.getId() : null;
     }
 
     @JsonProperty("environment")

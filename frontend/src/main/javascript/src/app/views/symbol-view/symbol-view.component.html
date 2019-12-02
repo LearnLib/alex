@@ -27,164 +27,192 @@
       </div>
       <hr>
 
-      <div *ngIf="symbol.description != null && symbol.description !== ''" class="card mb-4">
-        <div class="card-header">
-          <strong>Description</strong>
-        </div>
-        <div class="card-body">
-          <p class="text-muted" style="white-space:pre-wrap;">
-            <strong class="mr-2">Description</strong>
-            {{symbol.description}}
-          </p>
-          <hr>
-          <p class="text-muted mb-0 pb-0" style="white-space: pre-wrap;">
-            <strong class="mr-2">Expected result</strong>
-            {{symbol.expectedResult}}
-          </p>
-        </div>
-      </div>
+      <div class="row">
+        <div class="col-3">
 
-      <div class="card mb-4">
-        <div class="card-header">
-          <strong>Actions</strong>
-        </div>
-        <div class="px-3 py-2 border-bottom d-flex flex-row align-items-center">
-          <selectable-checkbox-multiple
-            *ngIf="selectedSteps != null"
-            [selectable]="selectedSteps"
-          >
-          </selectable-checkbox-multiple>
-          <div class="w-100 ml-3">
-
-            <div class="btn-group btn-group-sm mr-2" ngbDropdown>
-              <button class="btn btn-primary" ngbDropdownToggle>
-                Add
-              </button>
-              <div class="dropdown-menu" ngbDropdownMenu role="menu">
-                <button (click)="openActionCreateModal()" ngbDropdownItem>
-                  Action
-                </button>
-                <button (click)="addSymbolStep()" ngbDropdownItem>
-                  Symbol
-                </button>
-              </div>
+          <div *ngIf="symbol.description != null && symbol.description !== ''" class="card mb-4">
+            <div class="card-header">
+              <strong>Description</strong>
             </div>
-
-            <div class="btn-group btn-group-sm mr-2">
-              <button
-                (click)="editSelectedAction()"
-                [disabled]="selectedSteps.getSelected().length !== 1"
-                class="btn btn-default"
-              >
-                Edit
-              </button>
-              <button
-                (click)="deleteSelectedSteps()"
-                [disabled]="selectedSteps.getSelected().length === 0"
-                class="btn btn-default"
-              >
-                Delete
-              </button>
+            <div class="card-body">
+              <p class="text-muted" style="white-space:pre-wrap;">
+                <strong class="mr-2">Description</strong>
+                {{symbol.description}}
+              </p>
+              <hr>
+              <p class="text-muted mb-0 pb-0" style="white-space: pre-wrap;">
+                <strong class="mr-2">Expected result</strong>
+                {{symbol.expectedResult}}
+              </p>
             </div>
-
-            <div class="btn-group btn-group-sm">
-              <button (click)="copySelectedSteps()" class="btn btn-default" ngbTooltip="Copy" placement="bottom" [disabled]="selectedSteps.getSelected().length === 0">
-                <i class="fas fa-copy fa-fw"></i>
-              </button>
-              <button (click)="cutSelectedSteps()" class="btn btn-default" ngbTooltip="Cut" placement="bottom" [disabled]="selectedSteps.getSelected().length === 0">
-                <i class="fas fa-cut fa-fw"></i>
-              </button>
-              <button (click)="pasteSteps()" class="btn btn-default" ngbTooltip="Paste" placement="bottom" [disabled]="!clipboardService.canPaste(project.id, 'symbolSteps')">
-                <i class="fas fa-paste fa-fw"></i>
-              </button>
-            </div>
-
-            <div class="btn-group btn-group-sm ml-2" ngbDropdown placement="bottom-right">
-              <button class="btn btn-default no-caret" ngbDropdownToggle>
-                <i class="fas fa-fw fa-cogs"></i>
-              </button>
-              <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu role="menu">
-                <button (click)="showOutputs = !showOutputs" ngbDropdownItem>
-                  <i class="far fa-fw" [class.fa-square]="!showOutputs" [class.fa-check-square]="showOutputs"></i> Show outputs
-                </button>
-              </div>
-            </div>
-
           </div>
-        </div>
-        <div class="card-body p-0">
-          <div
-            class="action-list"
-            dragula="SYMBOL_STEPS"
-            [dragulaModel]="symbol.steps"
-            (dragulaModelChange)="symbol.steps = $event"
-            *ngIf="symbol.steps.length > 0"
+
+          <div class="card mb-4">
+            <div class="card-header">
+              <strong>Output on success</strong>
+            </div>
+            <div class="card-body pb-0">
+              <div class="form-group">
+                <input
+                  [(ngModel)]="symbol.successOutput"
+                  class="form-control"
+                  placeholder="Ok"
+                  type="text"
+                >
+              </div>
+            </div>
+          </div>
+
+          <symbols-data-context
+            [parametrizedSymbols]="parameterizedSymbolSteps"
+            class="d-block mb-4"
           >
-            <div
-              class="action-list-item"
-              [ngClass]="{'disabled': step.disabled}"
-              (dblclick)="editStep(step)"
-              *ngFor="let step of symbol.steps; let i = index"
-            >
+          </symbols-data-context>
 
-              <div class="d-flex flex-row align-items-center">
-                <div>
-                  <selectable-checkbox
-                    [item]="step"
-                    [selectable]="selectedSteps"
-                  >
-                  </selectable-checkbox>
-                </div>
+        </div>
+        <div class="col-9">
 
-                <div class="text-muted" style="padding: 0 10px">
-                  <span>{{i + 1}})</span>
-                </div>
+          <div class="card mb-4">
+            <div class="card-header">
+              <strong>Actions</strong>
+            </div>
+            <div class="px-3 py-2 border-bottom d-flex flex-row align-items-center">
+              <selectable-checkbox-multiple
+                *ngIf="selectedSteps != null"
+                [selectable]="selectedSteps"
+              >
+              </selectable-checkbox-multiple>
+              <div class="w-100 ml-3">
 
-                <div class="w-100 action-step mr-2">
-                  <div *ngIf="step.type === 'action'" class="action-description">
-                    {{step.action.toString()}}
+                <div class="btn-group btn-group-sm mr-2" ngbDropdown>
+                  <button class="btn btn-primary" ngbDropdownToggle>
+                    Add
+                  </button>
+                  <div class="dropdown-menu" ngbDropdownMenu role="menu">
+                    <button (click)="openActionCreateModal()" ngbDropdownItem>
+                      Action
+                    </button>
+                    <button (click)="addSymbolStep()" ngbDropdownItem>
+                      Symbol
+                    </button>
                   </div>
-                  <div *ngIf="step.type === 'symbol'" class="symbol-description">
+                </div>
+
+                <div class="btn-group btn-group-sm mr-2">
+                  <button
+                    (click)="editSelectedAction()"
+                    [disabled]="selectedSteps.getSelected().length !== 1"
+                    class="btn btn-default"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    (click)="deleteSelectedSteps()"
+                    [disabled]="selectedSteps.getSelected().length === 0"
+                    class="btn btn-default"
+                  >
+                    Delete
+                  </button>
+                </div>
+
+                <div class="btn-group btn-group-sm">
+                  <button (click)="copySelectedSteps()" class="btn btn-default" ngbTooltip="Copy" placement="bottom" [disabled]="selectedSteps.getSelected().length === 0">
+                    <i class="fas fa-copy fa-fw"></i>
+                  </button>
+                  <button (click)="cutSelectedSteps()" class="btn btn-default" ngbTooltip="Cut" placement="bottom" [disabled]="selectedSteps.getSelected().length === 0">
+                    <i class="fas fa-cut fa-fw"></i>
+                  </button>
+                  <button (click)="pasteSteps()" class="btn btn-default" ngbTooltip="Paste" placement="bottom" [disabled]="!clipboardService.canPaste(project.id, 'symbolSteps')">
+                    <i class="fas fa-paste fa-fw"></i>
+                  </button>
+                </div>
+
+                <div class="btn-group btn-group-sm ml-2" ngbDropdown placement="bottom-right">
+                  <button class="btn btn-default no-caret" ngbDropdownToggle>
+                    <i class="fas fa-fw fa-cogs"></i>
+                  </button>
+                  <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu role="menu">
+                    <button (click)="showOutputs = !showOutputs" ngbDropdownItem>
+                      <i class="far fa-fw" [class.fa-square]="!showOutputs" [class.fa-check-square]="showOutputs"></i> Show outputs
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            <div class="card-body p-0">
+              <div
+                class="action-list"
+                dragula="SYMBOL_STEPS"
+                [dragulaModel]="symbol.steps"
+                (dragulaModelChange)="symbol.steps = $event"
+                *ngIf="symbol.steps.length > 0"
+              >
+                <div
+                  class="action-list-item"
+                  [ngClass]="{'disabled': step.disabled}"
+                  (dblclick)="editStep(step)"
+                  *ngFor="let step of symbol.steps; let i = index"
+                >
+
+                  <div class="d-flex flex-row align-items-center">
+                    <div>
+                      <selectable-checkbox
+                        [item]="step"
+                        [selectable]="selectedSteps"
+                      >
+                      </selectable-checkbox>
+                    </div>
+
+                    <div class="text-muted" style="padding: 0 10px">
+                      <span>{{i + 1}})</span>
+                    </div>
+
+                    <div class="w-100 action-step mr-2">
+                      <div *ngIf="step.type === 'action'" class="action-description">
+                        {{step.action.toString()}}
+                      </div>
+                      <div *ngIf="step.type === 'symbol'" class="symbol-description">
                     <span class="symbol-description">
                       Execute symbol
                       <a [routerLink]="['..', step.pSymbol.symbol.id]">
                         <strong>{{step.pSymbol.symbol.name}}</strong>
                       </a>
                     </span>
-                    <br>
-                    <symbol-input-values [parameterizedSymbol]="step.pSymbol"></symbol-input-values>
+                        <br>
+                        <symbol-input-values [parameterizedSymbol]="step.pSymbol"></symbol-input-values>
 
-                    <div *ngIf="showOutputs">
-                      <ng-container *ngFor="let out of step.pSymbol.symbol.outputs">
-                        <div *ngIf="out.parameterType === 'STRING'" class="d-flex flex-row align-items-center mt-1">
-                          <i class="fas fa-fw fa-level-up-alt fa-rotate-90"></i> <span class="badge badge-secondary ml-1">{{out.name}}</span>
+                        <div *ngIf="showOutputs">
+                          <ng-container *ngFor="let out of step.pSymbol.symbol.outputs">
+                            <div *ngIf="out.parameterType === 'STRING'" class="d-flex flex-row align-items-center mt-1">
+                              <i class="fas fa-fw fa-level-up-alt fa-rotate-90"></i> <span class="badge badge-secondary ml-1">{{out.name}}</span>
+                            </div>
+                          </ng-container>
                         </div>
-                      </ng-container>
-                    </div>
-                  </div>
+                      </div>
 
-                  <div class="step-labels">
-                    <span *ngIf="step.negated" class="badge badge-info mr-1">Negate</span>
-                    <span *ngIf="step.ignoreFailure" class="badge badge-danger">Ignore Failure</span>
-                  </div>
-                  <div class="step-output text-muted d-flex">
-                    <div class="flex-shrink-0">
-                      <em>Output on error:&nbsp;</em>
+                      <div class="step-labels">
+                        <span *ngIf="step.negated" class="badge badge-info mr-1">Negate</span>
+                        <span *ngIf="step.ignoreFailure" class="badge badge-danger">Ignore Failure</span>
+                      </div>
+                      <div class="step-output text-muted d-flex">
+                        <div class="flex-shrink-0">
+                          <em>Output on error:&nbsp;</em>
+                        </div>
+                        <div class="w-100 input-parameter-value position-relative">
+                          <i (click)="step.errorOutput = null" class="fas fa-fw fa-times cursor-pointer"></i>
+                          <input
+                            [(ngModel)]="step.errorOutput"
+                            [placeholder]="'Failed (' + (i + 1) + ')'"
+                            [name]="'step' + i"
+                            class="w-100 d-block"
+                            type="text"
+                          >
+                        </div>
+                      </div>
                     </div>
-                    <div class="w-100 input-parameter-value position-relative">
-                      <i (click)="step.errorOutput = null" class="fas fa-fw fa-times cursor-pointer"></i>
-                      <input
-                        [(ngModel)]="step.errorOutput"
-                        [placeholder]="'Failed (' + (i + 1) + ')'"
-                        [name]="'step' + i"
-                        class="w-100 d-block"
-                        type="text"
-                      >
-                    </div>
-                  </div>
-                </div>
 
-                <div>
+                    <div>
                   <span (click)="toggleDisableAction(step)" class="btn btn-sm">
                       <span *ngIf="!step.disabled" ngbTooltip="Disable" placement="left">
                           <i class="fas fa-toggle-on fa-fw text-success"></i>
@@ -193,75 +221,66 @@
                           <i class="fas fa-toggle-off fa-fw text-danger"></i>
                       </span>
                   </span>
-                </div>
-
-                <div>
-                  <div class="btn-group btn-group-sm" ngbDropdown>
-                    <button class="btn btn-icon no-caret" ngbDropdownToggle type="button">
-                      <i class="fas fa-bars"></i>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu role="menu">
-                      <button (click)="editStep(step)" ngbDropdownItem>
-                        <i class="fas fa-edit fa-fw"></i> Edit
-                      </button>
-                      <button (click)="deleteStep(i)" ngbDropdownItem>
-                        <i class="fas fa-trash fa-fw"></i> Delete
-                      </button>
-                      <div class="dropdown-divider"></div>
-                      <button (click)="cutStep(i)" ngbDropdownItem>
-                        <i class="fas fa-cut fa-fw"></i> Cut
-                      </button>
-                      <button (click)="copyStep(i)" ngbDropdownItem>
-                        <i class="fas fa-copy fa-fw"></i> Copy
-                      </button>
-                      <div class="dropdown-divider"></div>
-                      <button (click)="step.negated = !step.negated" ngbDropdownItem>
-                        <i [ngClass]="{'fa-check-square': step.negated, 'fa-square': !step.negated}" class="far fa-fw"></i>
-                        Negate result
-                      </button>
-                      <button (click)="step.ignoreFailure = !step.ignoreFailure" ngbDropdownItem>
-                        <i [ngClass]="{'fa-check-square': step.ignoreFailure, 'fa-square': !step.ignoreFailure}" class="far fa-fw"></i>
-                        Ignore failure
-                      </button>
                     </div>
-                  </div>
-                </div>
 
+                    <div>
+                      <div class="btn-group btn-group-sm" ngbDropdown>
+                        <button class="btn btn-icon no-caret" ngbDropdownToggle type="button">
+                          <i class="fas fa-bars"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu role="menu">
+                          <button (click)="editStep(step)" ngbDropdownItem>
+                            <i class="fas fa-edit fa-fw"></i> Edit
+                          </button>
+                          <button (click)="deleteStep(i)" ngbDropdownItem>
+                            <i class="fas fa-trash fa-fw"></i> Delete
+                          </button>
+                          <div class="dropdown-divider"></div>
+                          <button (click)="cutStep(i)" ngbDropdownItem>
+                            <i class="fas fa-cut fa-fw"></i> Cut
+                          </button>
+                          <button (click)="copyStep(i)" ngbDropdownItem>
+                            <i class="fas fa-copy fa-fw"></i> Copy
+                          </button>
+                          <div class="dropdown-divider"></div>
+                          <button (click)="step.negated = !step.negated" ngbDropdownItem>
+                            <i [ngClass]="{'fa-check-square': step.negated, 'fa-square': !step.negated}" class="far fa-fw"></i>
+                            Negate result
+                          </button>
+                          <button (click)="step.ignoreFailure = !step.ignoreFailure" ngbDropdownItem>
+                            <i [ngClass]="{'fa-check-square': step.ignoreFailure, 'fa-square': !step.ignoreFailure}" class="far fa-fw"></i>
+                            Ignore failure
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                </div>
               </div>
 
+              <div *ngIf="symbol.steps.length === 0" class="alert alert-info" style="margin: 15px">
+                You haven't created any steps for this symbol.
+              </div>
             </div>
           </div>
 
-          <div *ngIf="symbol.steps.length === 0" class="alert alert-info" style="margin: 15px">
-            You haven't created any steps for this symbol.
-          </div>
+          <symbol-parameters-panel
+            (inputsChange)="symbol.inputs = $event"
+            (outputsChange)="symbol.outputs = $event"
+            *ngIf="symbol != null"
+            [symbol]="symbol"
+            class="d-block mb-4"
+          >
+          </symbol-parameters-panel>
+
         </div>
       </div>
 
-      <symbol-parameters-panel
-        (inputsChange)="symbol.inputs = $event"
-        (outputsChange)="symbol.outputs = $event"
-        *ngIf="symbol != null"
-        [symbol]="symbol"
-        class="d-block mb-4"
-      >
-      </symbol-parameters-panel>
 
-      <div class="card">
-        <div class="card-header">
-          <strong>Output on success</strong>
-        </div>
-        <div class="card-body" style="padding-bottom: 0">
-          <div class="form-group">
-            <input
-              [(ngModel)]="symbol.successOutput"
-              class="form-control"
-              placeholder="Ok"
-              type="text"
-            >
-          </div>
-        </div>
-      </div>
+
+
 
     </div>
   </div>

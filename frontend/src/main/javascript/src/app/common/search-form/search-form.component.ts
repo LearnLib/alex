@@ -97,7 +97,7 @@ export class SearchFormComponent {
     let target = e.target;
 
     while (target !== document.body) {
-      if (target === this.element.nativeElement) {
+      if (target === this.element.nativeElement || target == null) {
         return;
       }
       target = target.parentNode;

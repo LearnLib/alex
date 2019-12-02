@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.learning.entities.learnlibproxies.eqproxies;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.learning.entities.LearnerResult;
@@ -27,9 +28,12 @@ import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.words.Word;
 
 import javax.annotation.Nullable;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Queue;
 import java.util.stream.Collectors;
 
@@ -39,6 +43,8 @@ import java.util.stream.Collectors;
 @JsonTypeName("test_suite")
 public class TestSuiteEQOracleProxy extends AbstractEquivalenceOracleProxy
         implements Serializable, EquivalenceOracle.MealyEquivalenceOracle<String, String> {
+
+    private static final long serialVersionUID = -3870595994346964299L;
 
     /** The ID of the test suite to use for testing. */
     private Long testSuiteId;
@@ -85,10 +91,13 @@ public class TestSuiteEQOracleProxy extends AbstractEquivalenceOracleProxy
         this.batchSize = batchSize;
 
         try {
+            Map<String, String> symbolNameMapping = new HashMap<>();
+            result.getSymbols().forEach(s -> symbolNameMapping.put(s.getComputedName(), s.getAliasOrComputedName()));
+
             testDAO.getTestCases(user, result.getProjectId(), testSuiteId, includeChildTestSuites).forEach(tc -> {
                 final Word<String> input = Word.fromList(
                         tc.getSteps().stream()
-                                .map(step -> step.getPSymbol().getAliasOrComputedName())
+                                .map(step -> symbolNameMapping.get(step.getPSymbol().getComputedName()))
                                 .collect(Collectors.toList())
                 );
                 testCases.add(input);
@@ -150,7 +159,6 @@ public class TestSuiteEQOracleProxy extends AbstractEquivalenceOracleProxy
                 }
             } catch (Exception e) {
                 // if something does not work, we simply skip the word.
-                e.printStackTrace();
             }
         }
 

@@ -95,11 +95,13 @@
             <div *ngFor="let pSymbol of pSymbols; let i = index"
                  class="list-group-item d-flex flex-row">
               <div class="w-100">
-                <div>
-                  <a [routerLink]="['/app', 'projects', project.id, 'symbols', pSymbol.symbol.id]">
+                <div class="d-flex flex-row">
+                  <a class="flex-shrink-0" [routerLink]="['/app', 'projects', project.id, 'symbols', pSymbol.symbol.id]">
                     <strong>{{pSymbol.symbol.name}}</strong>
                   </a>
-                  <input type="text" [(ngModel)]="pSymbol.alias" [name]="'alias-' + i">
+                  <span class="text-muted w-100 d-flex flex-row ml-1">
+                    <em>as</em> <input class="symbol-alias w-100 ml-1" [placeholder]="pSymbol.symbol.name" type="text" [(ngModel)]="pSymbol.alias" [name]="'alias-' + i">
+                  </span>
                 </div>
                 <symbol-input-values [parameterizedSymbol]="pSymbol"></symbol-input-values>
               </div>

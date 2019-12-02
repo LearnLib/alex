@@ -227,15 +227,20 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
         if (alias != null && !alias.equals("")) {
             return alias;
         } else {
-            final List<String> parameters = parameterValues.stream()
-                    .filter(pv -> pv.getValue() != null)
-                    .map(SymbolParameterValue::getValue)
-                    .collect(Collectors.toList());
-            if (parameters.isEmpty()) {
-                return getSymbol().getName();
-            } else {
-                return getSymbol().getName() + " <" + String.join(", ", parameters) + ">";
-            }
+            return getComputedName();
+        }
+    }
+
+    @JsonIgnore
+    public String getComputedName() {
+        final List<String> parameters = parameterValues.stream()
+                .filter(pv -> pv.getValue() != null)
+                .map(SymbolParameterValue::getValue)
+                .collect(Collectors.toList());
+        if (parameters.isEmpty()) {
+            return getSymbol().getName();
+        } else {
+            return getSymbol().getName() + " <" + String.join(", ", parameters) + ">";
         }
     }
 

@@ -29,7 +29,7 @@ import javax.ws.rs.core.Response;
 
 import static org.junit.Assert.assertEquals;
 
-public class SettingsResource extends AbstractResourceIT {
+public class SettingsResourceIT extends AbstractResourceIT {
 
     private SettingsApi settingsApi;
 
@@ -69,7 +69,7 @@ public class SettingsResource extends AbstractResourceIT {
 
     @Test
     public void registeredUserShouldNotUpdateSettings() throws Exception {
-       shouldNotUpdateSettings(userJwt);
+        shouldNotUpdateSettings(userJwt);
     }
 
     @Test

@@ -16,7 +16,6 @@
 
 import { Component, Input } from '@angular/core';
 import { ParametrizedSymbol, SymbolOutputMapping } from '../../entities/parametrized-symbol';
-import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'symbol-input-values',
@@ -28,25 +27,9 @@ export class SymbolInputValuesComponent {
   @Input()
   parameterizedSymbol: ParametrizedSymbol;
 
-  addOutputMappingForm = new FormGroup({
-    selectedOutput: new FormControl(''),
-    mapping: new FormControl('')
-  });
-
-  addOutputMapping(): void {
-    const name = this.addOutputMappingForm.controls.selectedOutput.value;
-    const parameter = this.parameterizedSymbol.symbol.outputs.find(o => o.name === name);
-
-    const mapping: SymbolOutputMapping = {
-      name: this.addOutputMappingForm.controls.mapping.value,
-      parameter: parameter
-    };
-
-    this.parameterizedSymbol.outputMappings.push(mapping);
-  }
-
-  get unmappedOutputs(): any[] {
-    const names = this.parameterizedSymbol.outputMappings.map(m => m.parameter.name);
-    return this.parameterizedSymbol.symbol.outputs.filter(o => !names.includes(o));
+  handleOutputBlur(mapping: SymbolOutputMapping, value: string): void {
+    if (value === '') {
+      mapping.name = mapping.parameter.name;
+    }
   }
 }

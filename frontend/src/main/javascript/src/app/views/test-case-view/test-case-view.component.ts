@@ -149,7 +149,8 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
             this.toastService.info('The test case could not be executed. ' + res.error.message);
           }
         );
-      }
+      },
+      res => this.toastService.danger('The test could not be executed. ' + res.error.message)
     );
   }
 

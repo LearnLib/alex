@@ -24,11 +24,14 @@ import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.ProjectUrlRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
+import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolStepRepository;
+import de.learnlib.alex.data.repositories.UploadableFileRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.repositories.TestExecutionConfigRepository;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
+import de.learnlib.alex.testing.repositories.TestRepository;
 import org.hamcrest.MatcherAssert;
 import org.junit.Before;
 import org.junit.Test;
@@ -95,6 +98,15 @@ public class ProjectDAOImplTest {
     @Mock
     private SymbolGroupDAO symbolGroupDAO;
 
+    @Mock
+    private TestRepository testRepository;
+
+    @Mock
+    private SymbolParameterRepository symbolParameterRepository;
+
+    @Mock
+    private UploadableFileRepository uploadableFileRepository;
+
     private ProjectDAO projectDAO;
 
     private User user;
@@ -103,7 +115,8 @@ public class ProjectDAOImplTest {
     public void setUp() {
         projectDAO = new ProjectDAOImpl(projectRepository, learnerResultRepository, testReportRepository, fileDAO,
                 parameterizedSymbolRepository, symbolStepRepository, symbolActionRepository, environmentDAO,
-                projectUrlRepository, testExecutionConfigRepository, testDAO, environmentRepository, symbolGroupDAO);
+                projectUrlRepository, testExecutionConfigRepository, testDAO, environmentRepository, symbolGroupDAO,
+                testRepository, symbolParameterRepository, uploadableFileRepository);
         user = new User();
         user.setId(USER_ID);
     }

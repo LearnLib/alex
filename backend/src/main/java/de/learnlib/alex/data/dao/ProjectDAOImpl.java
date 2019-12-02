@@ -31,13 +31,16 @@ import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.ProjectUrlRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
+import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolStepRepository;
+import de.learnlib.alex.data.repositories.UploadableFileRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestSuite;
 import de.learnlib.alex.testing.repositories.TestExecutionConfigRepository;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
+import de.learnlib.alex.testing.repositories.TestRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -77,6 +80,9 @@ public class ProjectDAOImpl implements ProjectDAO {
     private ProjectEnvironmentRepository environmentRepository;
     private SymbolGroupDAO symbolGroupDAO;
     private TestDAO testDAO;
+    private TestRepository testRepository;
+    private SymbolParameterRepository symbolParameterRepository;
+    private UploadableFileRepository uploadableFileRepository;
 
     @Inject
     public ProjectDAOImpl(ProjectRepository projectRepository,
@@ -91,7 +97,10 @@ public class ProjectDAOImpl implements ProjectDAO {
                           TestExecutionConfigRepository testExecutionConfigRepository,
                           @Lazy TestDAO testDAO,
                           ProjectEnvironmentRepository environmentRepository,
-                          @Lazy SymbolGroupDAO symbolGroupDAO) {
+                          @Lazy SymbolGroupDAO symbolGroupDAO,
+                          TestRepository testRepository,
+                          SymbolParameterRepository symbolParameterRepository,
+                          UploadableFileRepository uploadableFileRepository) {
         this.projectRepository = projectRepository;
         this.learnerResultRepository = learnerResultRepository;
         this.fileDAO = fileDAO;
@@ -105,6 +114,9 @@ public class ProjectDAOImpl implements ProjectDAO {
         this.environmentRepository = environmentRepository;
         this.symbolGroupDAO = symbolGroupDAO;
         this.testDAO = testDAO;
+        this.testRepository = testRepository;
+        this.symbolParameterRepository = symbolParameterRepository;
+        this.uploadableFileRepository = uploadableFileRepository;
     }
 
     @Override
@@ -201,8 +213,11 @@ public class ProjectDAOImpl implements ProjectDAO {
         symbolStepRepository.deleteAllBySymbol_Project_Id(projectId);
         parameterizedSymbolRepository.deleteAllBySymbol_Project_Id(projectId);
         testReportRepository.deleteAllByProject_Id(projectId);
+        testRepository.deleteAllByProject_Id(projectId);
         learnerResultRepository.deleteAllByProject_Id(projectId);
         testExecutionConfigRepository.deleteAllByProject_Id(projectId);
+        symbolParameterRepository.deleteAllBySymbol_Project_Id(projectId);
+        uploadableFileRepository.deleteAllByProject_Id(projectId);
 
         // delete the project directory
         try {

@@ -79,7 +79,7 @@ export class FileApiService extends BaseApiService {
    */
   download(projectId: number, file: UploadableFile): Observable<any> {
     const options = {
-      headers: this.defaultHttpHeaders.append('Accept', 'application/octet-stream'),
+      headers: this.defaultHttpHeaders.set('Accept', 'application/octet-stream'),
       responseType: 'blob',
       observe: 'response'
     };

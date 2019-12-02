@@ -48,7 +48,7 @@ export class DiscriminationTreeComponent implements OnChanges {
         dTree.discriminator = (i++) + '_' + dTree.discriminator;
 
         this.nodes.push({
-          id: dTree.discriminator,
+          id: this.generateNodeId(dTree.discriminator),
           label: dTree.discriminator.replace(/^[0-9]+_/, '')
         });
       }
@@ -57,17 +57,19 @@ export class DiscriminationTreeComponent implements OnChanges {
         dTree.data = (i++) + '_' + dTree.data;
 
         this.nodes.push({
-          id: dTree.data,
+          id: this.generateNodeId(dTree.data),
           label: dTree.data.replace(/^[0-9]+_/, '')
         });
       } else if (dTree.children) {
         dTree.children.forEach(buildTree);
         dTree.children.forEach(child => {
-          const target = child.discriminator ? child.discriminator : child.data;
+          const targetId = this.generateNodeId(child.discriminator ? child.discriminator : child.data);
+          const sourceId = this.generateNodeId(dTree.discriminator);
+
           this.links.push({
-            id: `link-${dTree.discriminator}-${target}`,
-            source: dTree.discriminator,
-            target: target,
+            id: `link-${sourceId}-${targetId}`,
+            source: sourceId,
+            target: targetId,
             label: child.edgeLabel
           });
         });
@@ -84,5 +86,9 @@ export class DiscriminationTreeComponent implements OnChanges {
     } else {
       return {x: 0, y: 0};
     }
+  }
+
+  private generateNodeId(val: string) {
+    return val.replace(/ /g, '-');
   }
 }

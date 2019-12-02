@@ -182,21 +182,21 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
 
         checkAccess(user, project, symbol, parameter);
 
-        symbol.removeParameter(parameter);
-        symbolRepository.save(symbol);
-
         final List<ParameterizedSymbol> pSymbols = parameterizedSymbolRepository.findAllBySymbol_Id(symbolId);
         for (ParameterizedSymbol pSymbol : pSymbols) {
-            pSymbol.setParameterValues(pSymbol.getParameterValues().stream()
-                    .filter(pv -> !pv.getParameter().getId().equals(parameterId))
-                    .collect(Collectors.toList()));
+            pSymbol.getParameterValues().removeIf(pv -> pv.getParameter().getId().equals(parameterId));
+            pSymbol.getOutputMappings().removeIf(pv -> pv.getParameter().getId().equals(parameterId));
         }
         parameterizedSymbolRepository.saveAll(pSymbols);
 
         // also delete all values for the parameter
         symbolParameterValueRepository.removeAllByParameter_Id(parameterId);
         outputMappingRepository.removeAllByParameter_Id(parameterId);
-        symbolParameterRepository.delete(parameter);
+
+        symbol.removeParameter(parameter);
+        symbolRepository.save(symbol);
+
+        symbolParameterRepository.deleteById(parameterId);
     }
 
     @Override

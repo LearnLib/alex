@@ -108,7 +108,7 @@ export class TestApiService extends BaseApiService {
    * @param targetId The id of the target test suite.
    */
   moveMany(projectId: number, testIds: number[], targetId: number): Observable<any> {
-    return this.http.put(`${env.apiUrl}/projects/${projectId}/tests/batch/${testIds.join(',')}/moveTo/${targetId}`, null, this.defaultHttpOptions);
+    return this.http.put(`${env.apiUrl}/projects/${projectId}/tests/batch/${testIds.join(',')}/moveTo/${targetId}`, {}, this.defaultHttpOptions);
   }
 
   /**

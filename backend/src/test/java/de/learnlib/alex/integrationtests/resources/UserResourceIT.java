@@ -285,7 +285,7 @@ public class UserResourceIT extends AbstractResourceIT {
         settings.setAllowUserRegistration(false);
         settingsApi.update(settings, adminJwt);
 
-        final Response res1 = userApi.create(createUserJson("test@test.de","test"));
+        final Response res1 = userApi.create(createUserJson("test@test.de", "test"));
         assertEquals(HttpStatus.FORBIDDEN.value(), res1.getStatus());
         JsonPath.read(res1.readEntity(String.class), "message");
 

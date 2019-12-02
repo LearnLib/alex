@@ -3,8 +3,33 @@
     <strong>Data context</strong>
   </div>
   <div class="card-body">
-    <div class="list-group">
-      <div class="list-group-item" *ngFor="let v of dataContext">{{v}}</div>
+    <div class="list-group" *ngIf="dataContext.length > 0">
+      <div
+        class="list-group-item d-flex flex-row align-items-center"
+        *ngFor="let v of dataContext; trackBy: trackByFn">
+        <span class="w-100">
+          {{v.name}}: <em class="text-muted">{{v.parameterType | normalizeUpperCase}}</em>
+        </span>
+        <button
+          class="btn btn-default btn-sm ml-2"
+          ngxClipboard
+          *ngxClipboardIfSupported
+          [cbContent]="getCopyData(v)"
+          ngbTooltip="Copy to clipboard"
+          placement="left"
+        >
+          <i class="far fa-fw fa-clipboard"></i>
+        </button>
+      </div>
     </div>
+
+    <div class="alert alert-info mb-0" *ngIf="dataContext.length === 0">
+      Data context is empty.
+    </div>
+
+    <div class="alert alert-danger mb-0 mt-3" *ngIf="hasDuplicateParameterNames">
+      Names not unique.
+    </div>
+
   </div>
 </div>

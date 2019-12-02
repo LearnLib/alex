@@ -7,7 +7,7 @@
         class="symbol-parameter-values d-flex flex-row text-muted"
       >
         <div class="flex-shrink-0">
-          <em>{{pv.parameter.name}}</em>
+          <span>{{pv.parameter.name}}: <em>{{pv.parameter.parameterType | normalizeUpperCase}}</em></span>
           <i class="fas fa-fw fa-arrow-left mx-1"></i>
         </div>
         <div class="w-100 symbol-input-value">
@@ -35,7 +35,7 @@
         *ngFor="let mapping of parameterizedSymbol.outputMappings; let i = index"
       >
         <div class="flex-shrink-0">
-          <em>{{mapping.parameter.name}}</em>
+          <span>{{mapping.parameter.name}}: <em>{{mapping.parameter.parameterType | normalizeUpperCase}}</em></span>
           <i class="fas fa-fw fa-arrow-right mx-1"></i>
         </div>
         <div class="w-100 symbol-output-mapping">
@@ -50,6 +50,7 @@
             [(ngModel)]="mapping.name"
             [name]="'om-' + i"
             [placeholder]="null"
+            (blur)="handleOutputBlur(mapping, $event.target.value)"
           >
         </div>
       </div>

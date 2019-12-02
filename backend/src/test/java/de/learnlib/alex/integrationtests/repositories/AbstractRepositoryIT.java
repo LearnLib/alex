@@ -19,7 +19,6 @@ package de.learnlib.alex.integrationtests.repositories;
 import de.learnlib.alex.auth.dao.UserDAO;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.repositories.UserRepository;
-import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.ProjectUrl;

@@ -38,7 +38,8 @@ import { Router } from '@angular/router';
  */
 @Component({
   selector: 'learner-setup-view',
-  templateUrl: './learner-setup-view.component.html'
+  templateUrl: './learner-setup-view.component.html',
+  styleUrls: ['./learner-setup-view.component.scss']
 })
 export class LearnerSetupViewComponent {
 
@@ -142,6 +143,8 @@ export class LearnerSetupViewComponent {
         if (this.pPostSymbol != null) {
           config.postSymbol = JSON.parse(JSON.stringify(this.pPostSymbol));
           config.postSymbol.symbol = {id: config.postSymbol.symbol.id};
+        } else {
+          config.postSymbol = null;
         }
         config.environments = this.learnerConfiguration.environments.map(u => u.id);
 
@@ -185,6 +188,8 @@ export class LearnerSetupViewComponent {
       this.learnerConfiguration.postSymbol.id = null;
       this.learnerConfiguration.postSymbol.parameterValues.forEach(v => v.id = null);
       this.learnerConfiguration.postSymbol.outputMappings.forEach(v => v.id = null);
+    } else {
+      this.learnerConfiguration.postSymbol = null;
     }
     this.learnerConfiguration.symbols = result.symbols;
     this.learnerConfiguration.symbols.forEach(s => {

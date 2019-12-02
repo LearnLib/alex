@@ -28,6 +28,7 @@ import de.learnlib.alex.data.entities.SymbolInputParameter;
 import de.learnlib.alex.data.entities.SymbolOutputMapping;
 import de.learnlib.alex.data.entities.SymbolOutputParameter;
 import de.learnlib.alex.data.repositories.ProjectRepository;
+import de.learnlib.alex.data.utils.SymbolOutputMappingUtils;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestCase;
 import de.learnlib.alex.testing.entities.TestCaseResult;
@@ -143,6 +144,19 @@ public class TestDAOImpl implements TestDAO {
         return testRepository.save(test);
     }
 
+    private Test getParent(User user, Long projectId, Long parentId) {
+        if (parentId == null) {
+            return null;
+        }
+
+        final Test parent = get(user, projectId, parentId);
+        if (parent instanceof TestCase) {
+            throw new ValidationException("The parent can only be a Test Suite.");
+        }
+
+        return parent;
+    }
+
     @Override
     @Transactional
     public Test create(User user, Long projectId, Test test) throws NotFoundException, ValidationException {
@@ -166,16 +180,7 @@ public class TestDAOImpl implements TestDAO {
 
         final Project project = projectDAO.getByID(user, projectId);
         test.setProject(project);
-
-        if (test.getParentId() != null) {
-            Test parent = get(user, projectId, test.getParentId());
-
-            if (parent instanceof TestCase) {
-                throw new ValidationException("The parent can only be a Test Suite.");
-            }
-
-            test.setParent(parent);
-        }
+        test.setParent(getParent(user, projectId, test.getParentId()));
 
         final Test createdTest = createByGenerate(user, project, test);
         LOGGER.traceExit(test);
@@ -291,16 +296,7 @@ public class TestDAOImpl implements TestDAO {
 
         test.setId(testInDB.getId());
         test.setProject(testInDB.getProject());
-
-        if (test.getParentId() != null) {
-            Test parent = get(user, test.getProjectId(), test.getParentId());
-
-            if (parent instanceof TestCase) {
-                throw new ValidationException("The parent can only be a Test Suite.");
-            }
-
-            test.setParent(parent);
-        }
+        test.setParent(getParent(user, projectId, testInDB.getParentId()));
 
         if (test instanceof TestSuite) {
             updateTestSuite(user, (TestSuite) test, test.getProject());
@@ -317,6 +313,8 @@ public class TestDAOImpl implements TestDAO {
     }
 
     private void updateTestCase(User user, TestCase testCase, Project project) throws NotFoundException {
+        checkIfOutputMappingNamesAreUnique(testCase);
+
         beforeSaving(user, project, testCase);
 
         testCase.setGenerated(false);
@@ -335,6 +333,17 @@ public class TestDAOImpl implements TestDAO {
         saveTestCaseSteps(testCase.getPostSteps());
 
         testRepository.save(testCase);
+    }
+
+    private void checkIfOutputMappingNamesAreUnique(TestCase testCase) {
+        final ArrayList<TestCaseStep> steps = new ArrayList<>();
+        steps.addAll(testCase.getPreSteps());
+        steps.addAll(testCase.getSteps());
+        steps.addAll(testCase.getPostSteps());
+
+        final ArrayList<SymbolOutputMapping> oms = new ArrayList<>();
+        steps.forEach(s -> oms.addAll(s.getPSymbol().getOutputMappings()));
+        SymbolOutputMappingUtils.checkIfMappedNamesAreUnique(oms);
     }
 
     private void updateTestSuite(User user, TestSuite testSuite, Project project) throws NotFoundException {

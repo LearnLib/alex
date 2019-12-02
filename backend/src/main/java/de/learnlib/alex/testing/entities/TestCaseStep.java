@@ -64,7 +64,7 @@ public class TestCaseStep implements Serializable {
     /** The symbol to execute. */
     @OneToOne(
             fetch = FetchType.EAGER,
-            cascade = CascadeType.REMOVE
+            cascade = CascadeType.ALL
     )
     private ParameterizedSymbol pSymbol;
 

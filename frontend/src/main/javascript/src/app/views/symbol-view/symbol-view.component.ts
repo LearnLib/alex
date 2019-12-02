@@ -205,7 +205,7 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
         this.selectedSteps.addItems(this.symbol.steps);
       },
       res => {
-        this.toastService.danger('<p><strong>Error updating symbol</strong></p>' + res.error.message);
+        this.toastService.danger('<strong>Error updating symbol</strong><div>' + res.error.message + '</div>');
       }
     );
   }
@@ -312,6 +312,13 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
   openActionCreateModal(): void {
     const modalRef = this.modalService.open(CreateActionModalComponent, {size: 'xl'});
     modalRef.componentInstance.created.subscribe(a => this.addAction(a));
+  }
+
+
+  get parameterizedSymbolSteps(): any[] {
+    return this.symbol == null ? [] : this.symbol.steps
+      .filter(s => s.type === 'symbol')
+      .map(s => s.pSymbol);
   }
 
   private handleKeyDown(e: KeyboardEvent) {

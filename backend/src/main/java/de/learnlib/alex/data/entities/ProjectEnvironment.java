@@ -128,7 +128,7 @@ public class ProjectEnvironment implements Serializable {
 
     @JsonProperty("project")
     public Long getProjectId() {
-        return project.getId();
+        return project == null ? null : project.getId();
     }
 
     @JsonProperty("project")

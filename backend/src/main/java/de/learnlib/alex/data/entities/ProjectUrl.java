@@ -88,7 +88,7 @@ public class ProjectUrl {
 
     @JsonProperty("environment")
     public Long getEnvironmentId() {
-        return environment.getId();
+        return environment == null ? null : environment.getId();
     }
 
     @JsonProperty("environment")

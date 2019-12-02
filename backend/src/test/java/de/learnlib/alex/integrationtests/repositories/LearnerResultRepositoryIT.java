@@ -98,7 +98,8 @@ public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
     }
 
     @Test
-    public void shouldFetchAllLearnerResultsOfAProject() { LearnerResult result1 = createLearnerResult(project, 0L);
+    public void shouldFetchAllLearnerResultsOfAProject() {
+        LearnerResult result1 = createLearnerResult(project, 0L);
         learnerResultRepository.save(result1);
         LearnerResult result2 = createLearnerResult(project, 1L);
         learnerResultRepository.save(result2);

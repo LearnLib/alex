@@ -65,7 +65,7 @@ public class SymbolParameterResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void shouldCreateAPublicInputStringParameter() throws Exception {
+    public void shouldCreateAnInputStringParameter() throws Exception {
         final Response res = symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test"), jwtUser1);
         Assert.assertEquals(res.getStatus(), Response.Status.CREATED.getStatusCode());
 
@@ -78,33 +78,7 @@ public class SymbolParameterResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void shouldCreateAPrivateInputStringParameter() throws Exception {
-        final Response res = symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test"), jwtUser1);
-        Assert.assertEquals(res.getStatus(), Response.Status.CREATED.getStatusCode());
-
-        final JsonNode symbol = getSymbol();
-        final JsonNode inputs = symbol.get("inputs");
-
-        Assert.assertEquals(1, inputs.size());
-        Assert.assertTrue(inputs.get(0).hasNonNull("id"));
-        Assert.assertEquals("STRING", inputs.get(0).get("parameterType").asText());
-    }
-
-    @Test
-    public void shouldCreateAPublicInputCounterParameter() throws Exception {
-        final Response res = symbolParameterApi.create(projectId, symbolId, createInputCounterParam(symbolId, "test"), jwtUser1);
-        Assert.assertEquals(res.getStatus(), Response.Status.CREATED.getStatusCode());
-
-        final JsonNode symbol = getSymbol();
-        final JsonNode inputs = symbol.get("inputs");
-
-        Assert.assertEquals(1, inputs.size());
-        Assert.assertTrue(inputs.get(0).hasNonNull("id"));
-        Assert.assertEquals("COUNTER", inputs.get(0).get("parameterType").asText());
-    }
-
-    @Test
-    public void shouldCreateAPrivateInputCounterParameter() throws Exception {
+    public void shouldCreateAnInputCounterParameter() throws Exception {
         final Response res = symbolParameterApi.create(projectId, symbolId, createInputCounterParam(symbolId, "test"), jwtUser1);
         Assert.assertEquals(res.getStatus(), Response.Status.CREATED.getStatusCode());
 
