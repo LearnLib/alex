@@ -16,6 +16,8 @@
 
 package de.learnlib.alex.data.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -23,6 +25,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
@@ -71,5 +74,17 @@ public class SymbolParameterValue implements Serializable {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    @JsonIgnore
+    @Transient
+    public void setDefaultValueByParameter(SymbolParameter parameter) {
+        if (parameter != null) {
+            if (parameter.getParameterType().equals(SymbolParameter.ParameterType.STRING)) {
+                value = "{{$" + parameter.getName() + "}}";
+            } else {
+                value = "{{#" + parameter.getName() + "}}";
+            }
+        }
     }
 }

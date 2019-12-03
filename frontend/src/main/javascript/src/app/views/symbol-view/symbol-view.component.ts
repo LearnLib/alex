@@ -55,8 +55,6 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
   /** The selected actions. */
   selectedSteps: Selectable<any, any>;
 
-  showOutputs: boolean;
-
   constructor(private symbolApi: SymbolApiService,
               private appStore: AppStoreService,
               private toastService: ToastService,
@@ -70,7 +68,6 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
 
     this.symbol = null;
     this.groups = [];
-    this.showOutputs = false;
     this.selectedSteps = new Selectable(s => s._id);
 
     currentRoute.paramMap.subscribe(map => {
@@ -316,9 +313,18 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
 
 
   get parameterizedSymbolSteps(): any[] {
-    return this.symbol == null ? [] : this.symbol.steps
+    const pSymbols = this.symbol == null ? [] : this.symbol.steps
       .filter(s => s.type === 'symbol')
       .map(s => s.pSymbol);
+
+    if (this.symbol.inputs.length > 0) {
+      const ps = new ParametrizedSymbol();
+      ps.outputMappings = this.symbol.inputs.map(i => ({name: i.name, parameter: i}));
+      ps.symbol = this.symbol;
+      pSymbols.unshift(ps);
+    }
+
+    return pSymbols;
   }
 
   private handleKeyDown(e: KeyboardEvent) {

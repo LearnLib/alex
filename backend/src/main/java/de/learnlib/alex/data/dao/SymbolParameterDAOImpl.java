@@ -142,6 +142,7 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
             pSymbols.forEach(pSymbol -> {
                 final SymbolParameterValue value = new SymbolParameterValue();
                 value.setParameter(parameter);
+                value.setDefaultValueByParameter(parameter);
                 pSymbol.getParameterValues().add(value);
                 symbolParameterValueRepository.saveAll(pSymbol.getParameterValues());
             });

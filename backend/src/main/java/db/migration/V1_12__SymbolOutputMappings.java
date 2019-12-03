@@ -41,6 +41,9 @@ public class V1_12__SymbolOutputMappings extends BaseJavaMigration {
     }
 
     private void deleteUnusedParameterReferences(Connection connection) throws Exception {
+        // fix null references
+        connection.createStatement().executeUpdate("update symbol_parameter sp set symbol_id = (select symbol_id from symbol_inputs si where si.inputs_id = sp.id) where symbol_id is null");
+
         final String q = ""
                 + "select id from PUBLIC.symbol_parameter where symbol_id is null "
                 + "union "
@@ -78,7 +81,7 @@ public class V1_12__SymbolOutputMappings extends BaseJavaMigration {
     }
 
     private void setDefaultParameterValuesForNullValues(Connection connection) throws Exception {
-        final ResultSet parameterValueRows = connection.createStatement().executeQuery("select id, symbol_parameter_id from PUBLIC.symbol_parameter_value where \"value\" is null");
+        final ResultSet parameterValueRows = connection.createStatement().executeQuery("select id, symbol_parameter_id from PUBLIC.symbol_parameter_value where \"value\" is null or \"value\" = ''");
         while (parameterValueRows.next()) {
             final String valueId = parameterValueRows.getString(1);
             final String parameterId = parameterValueRows.getString(2);

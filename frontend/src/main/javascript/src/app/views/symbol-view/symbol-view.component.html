@@ -127,17 +127,6 @@
                   </button>
                 </div>
 
-                <div class="btn-group btn-group-sm ml-2" ngbDropdown placement="bottom-right">
-                  <button class="btn btn-default no-caret" ngbDropdownToggle>
-                    <i class="fas fa-fw fa-cogs"></i>
-                  </button>
-                  <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu role="menu">
-                    <button (click)="showOutputs = !showOutputs" ngbDropdownItem>
-                      <i class="far fa-fw" [class.fa-square]="!showOutputs" [class.fa-check-square]="showOutputs"></i> Show outputs
-                    </button>
-                  </div>
-                </div>
-
               </div>
             </div>
             <div class="card-body p-0">
@@ -173,22 +162,14 @@
                         {{step.action.toString()}}
                       </div>
                       <div *ngIf="step.type === 'symbol'" class="symbol-description">
-                    <span class="symbol-description">
-                      Execute symbol
-                      <a [routerLink]="['..', step.pSymbol.symbol.id]">
-                        <strong>{{step.pSymbol.symbol.name}}</strong>
-                      </a>
-                    </span>
+                        <span class="symbol-description">
+                          Execute symbol
+                          <a [routerLink]="['..', step.pSymbol.symbol.id]">
+                            <strong>{{step.pSymbol.symbol.name}}</strong>
+                          </a>
+                        </span>
                         <br>
                         <symbol-input-values [parameterizedSymbol]="step.pSymbol"></symbol-input-values>
-
-                        <div *ngIf="showOutputs">
-                          <ng-container *ngFor="let out of step.pSymbol.symbol.outputs">
-                            <div *ngIf="out.parameterType === 'STRING'" class="d-flex flex-row align-items-center mt-1">
-                              <i class="fas fa-fw fa-level-up-alt fa-rotate-90"></i> <span class="badge badge-secondary ml-1">{{out.name}}</span>
-                            </div>
-                          </ng-container>
-                        </div>
                       </div>
 
                       <div class="step-labels">
