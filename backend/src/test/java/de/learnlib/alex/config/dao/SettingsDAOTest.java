@@ -12,6 +12,7 @@ import javax.validation.ValidationException;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -19,7 +20,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SettingsDAOImplTest {
+public class SettingsDAOTest {
 
     private static final String PATH_TO_CHROME  = "path/to/chrome";
     private static final String PATH_TO_FIREFOX = "path/to/firefox";
@@ -32,7 +33,7 @@ public class SettingsDAOImplTest {
 
     @Before
     public void setUp() {
-        settingsDAO = new SettingsDAOImpl(settingsRepository);
+        settingsDAO = new SettingsDAO(settingsRepository);
     }
 
     @Test
@@ -59,9 +60,9 @@ public class SettingsDAOImplTest {
 
         settingsDAO.create(settings);
 
-        assertThat(System.getProperty("webdriver.chrome.driver"), is(equalTo(PATH_TO_CHROME)));
-        assertThat(System.getProperty("webdriver.gecko.driver"),  is(equalTo(PATH_TO_FIREFOX)));
-        assertThat(System.getProperty("webdriver.edge.driver"), is(equalTo(PATH_TO_EDGE)));
+        assertEquals("null/system/" + PATH_TO_CHROME, System.getProperty("webdriver.chrome.driver"));
+        assertEquals( "null/system/" + PATH_TO_FIREFOX, System.getProperty("webdriver.gecko.driver"));
+        assertEquals("null/system/" + PATH_TO_EDGE, System.getProperty("webdriver.edge.driver"));
     }
 
     @Test
@@ -103,9 +104,9 @@ public class SettingsDAOImplTest {
 
         settingsDAO.update(settings);
 
-        assertThat(System.getProperty("webdriver.chrome.driver"), is(equalTo("new/" + PATH_TO_CHROME)));
-        assertThat(System.getProperty("webdriver.gecko.driver"),  is(equalTo("new/" + PATH_TO_FIREFOX)));
-        assertThat(System.getProperty("webdriver.edge.driver"),  is(equalTo("new/" + PATH_TO_EDGE)));
+        assertEquals("null/system/new/" + PATH_TO_CHROME, System.getProperty("webdriver.chrome.driver"));
+        assertEquals( "null/system/new/" + PATH_TO_FIREFOX, System.getProperty("webdriver.gecko.driver"));
+        assertEquals("null/system/new/" + PATH_TO_EDGE, System.getProperty("webdriver.edge.driver"));
     }
 
 }

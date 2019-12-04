@@ -32,7 +32,10 @@ export class AdminSettingsViewComponent {
 
   constructor(private settingsApi: SettingsApiService,
               private toastService: ToastService) {
+    this.init();
+  }
 
+  private init(): void {
     this.settingsApi.get().subscribe(
       settings => this.settings = settings,
       console.error
@@ -52,6 +55,25 @@ export class AdminSettingsViewComponent {
     } else {
       this.settings.driver.defaultDriver = webBrowser.HTML_UNIT;
     }
+  }
+
+  uploadDriver(driver: string, file: File): void {
+    this.settingsApi.uploadDriver(driver, file).subscribe(
+      () => this.init(),
+      err => this.toastService.danger(err)
+    );
+  }
+
+  deleteDriver(driver: string): void {
+    this.settingsApi.deleteDriver(driver).subscribe(
+      () => this.init(),
+      err => this.toastService.danger(err)
+    );
+  }
+
+  canMakeDefault(driver: string): boolean {
+    const d = this.settings.driver[driver];
+    return d != null && d.trim() !== '';
   }
 
   getDefaultButtonClass(driver: string): any {

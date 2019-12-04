@@ -235,6 +235,7 @@ import { TestStatusComponent } from './common/test-status/test-status.component'
 import { TestReportProgressComponent } from './common/test-report-progress/test-report-progress.component';
 import { SymbolsDataContextComponent } from './common/symbols-data-context/symbols-data-context.component';
 import { ClipboardModule } from 'ngx-clipboard';
+import { WebdriverSettingsFormComponent } from './views/admin-settings-view/webdriver-settings-form/webdriver-settings-form.component';
 
 
 @NgModule({
@@ -430,7 +431,8 @@ import { ClipboardModule } from 'ngx-clipboard';
     CreateLabelActionFormComponent,
     TestStatusComponent,
     TestReportProgressComponent,
-    SymbolsDataContextComponent
+    SymbolsDataContextComponent,
+    WebdriverSettingsFormComponent
   ],
   imports: [
     BrowserModule,

@@ -136,10 +136,10 @@ public class DriverSettings implements Serializable {
      *         If the executable cannot be found or is not executable.
      */
     public void checkValidity() throws ValidationException {
-        checkDriver(firefox, "geckodriver", WebDrivers.FIREFOX);
-        checkDriver(chrome, "chromedriver", WebDrivers.CHROME);
-        checkDriver(edge, "edgedriver", WebDrivers.EDGE);
-        checkDriver(ie, "iedriver", WebDrivers.IE);
+        checkDriver(firefox, WebDrivers.FIREFOX);
+        checkDriver(chrome, WebDrivers.CHROME);
+        checkDriver(edge, WebDrivers.EDGE);
+        checkDriver(ie, WebDrivers.IE);
 
         if (!WebDrivers.asList().contains(defaultDriver)) {
             throw new ValidationException("You specified an invalid default driver.");
@@ -151,15 +151,8 @@ public class DriverSettings implements Serializable {
         }
     }
 
-    private void checkDriver(String executable, String name, String webBrowser) throws ValidationException {
-        if (executable != null && !executable.trim().isEmpty()) {
-            File driverExecutable = new File(executable);
-            if (!driverExecutable.exists()) {
-                throw new ValidationException("The " + name + " cannot be found.");
-            } else if (!driverExecutable.canExecute()) {
-                throw new ValidationException("The " + name + " is not executable.");
-            }
-        } else if (webBrowser.equals(defaultDriver)) {
+    private void checkDriver(String executable, String webBrowser) throws ValidationException {
+        if ((executable == null || executable.equals("")) && webBrowser.equals(defaultDriver)) {
             throw new ValidationException("The default Selenium Web Driver cannot be " + webBrowser
                     + " because the driver executable is not specified.");
         }

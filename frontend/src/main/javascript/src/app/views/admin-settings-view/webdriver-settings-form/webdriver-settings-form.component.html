@@ -1,0 +1,9 @@
+<div class="alert alert-success d-flex align-items-center" *ngIf="driver !== ''">
+  <i class="fas fa-fw fa-check"></i>
+  <span class="ml-2">The driver has been setup</span>
+  <button class="btn btn-sm btn-success ml-auto" (click)="remove.emit()">Remove</button>
+</div>
+
+<file-dropzone (filesLoaded)="upload.emit($event[0])" [multiple]="false" *ngIf="driver == null || driver === ''">
+  Click here to upload the driver executable
+</file-dropzone>

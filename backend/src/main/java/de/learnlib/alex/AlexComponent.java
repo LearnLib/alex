@@ -23,6 +23,7 @@ import de.learnlib.alex.config.dao.SettingsDAO;
 import de.learnlib.alex.config.entities.DriverSettings;
 import de.learnlib.alex.config.entities.Settings;
 import de.learnlib.alex.learning.entities.LearnerResult;
+import de.learnlib.alex.learning.entities.webdrivers.WebDrivers;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
@@ -37,6 +38,10 @@ import org.springframework.web.filter.CorsFilter;
 
 import javax.annotation.PostConstruct;
 import javax.validation.ValidationException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -110,6 +115,19 @@ public class AlexComponent {
         }
     }
 
+    @PostConstruct
+    public void createSystemFilesDirectory() {
+        try {
+            final String path = env.getProperty("alex.filesRootDir");
+            if (Files.notExists(Paths.get(path, "system"))) {
+                Files.createDirectories(Paths.get(path, "system"));
+            }
+        } catch (IOException e) {
+            System.err.println("Failed to initialize system files directory.");
+            System.exit(0);
+        }
+    }
+
     /**
      * Initialize system properties and create the settings object if needed.
      */
@@ -120,11 +138,11 @@ public class AlexComponent {
             try {
                 settings = new Settings();
 
-                String chromeDriverPath = System.getProperty("webdriver.chrome.driver", "");
-                String geckoDriverPath = System.getProperty("webdriver.gecko.driver", "");
-                String edgeDriverPath = System.getProperty("webdriver.edge.driver", "");
-                String ieDriverPath = System.getProperty("webdriver.ie.driver", "");
-                String remoteDriverURL = System.getProperty("webdriver.remote.url", "");
+                final String chromeDriverPath = System.getProperty("webdriver.chrome.driver", "");
+                final String geckoDriverPath = System.getProperty("webdriver.gecko.driver", "");
+                final String edgeDriverPath = System.getProperty("webdriver.edge.driver", "");
+                final String ieDriverPath = System.getProperty("webdriver.ie.driver", "");
+                final String remoteDriverURL = System.getProperty("webdriver.remote.url", "");
 
                 final DriverSettings driverSettings = new DriverSettings(chromeDriverPath, geckoDriverPath,
                         edgeDriverPath, remoteDriverURL, ieDriverPath);
@@ -138,46 +156,40 @@ public class AlexComponent {
         }
 
         // overwrite web driver paths if specified as command line arguments
-        final String chromeDriver = env.getProperty("chromeDriver");
-        final String geckoDriver = env.getProperty("geckoDriver");
-        final String edgeDriver = env.getProperty("edgeDriver");
-        final String ieDriver = env.getProperty("ieDriver");
-        final String remoteDriver = env.getProperty("remoteDriver");
-
-        if (!chromeDriver.isEmpty()) {
-            settings.getDriverSettings().setChrome(chromeDriver);
-        }
-
-        if (!geckoDriver.isEmpty()) {
-            settings.getDriverSettings().setFirefox(geckoDriver);
-        }
-
-        if (!edgeDriver.isEmpty()) {
-            settings.getDriverSettings().setEdge(edgeDriver);
-        }
-
-        if (!ieDriver.isEmpty()) {
-            settings.getDriverSettings().setIe(ieDriver);
-        }
-
-        if (!remoteDriver.isEmpty()) {
-            settings.getDriverSettings().setRemote(remoteDriver);
-        }
-
         try {
-            settings.checkValidity();
-        } catch (ValidationException e) {
+            final String chromeDriver = env.getProperty("chromeDriver");
+            if (!chromeDriver.isEmpty()) {
+                final File f = new File(chromeDriver);
+                settingsDAO.updateDriver(new FileInputStream(f), f.getName(), WebDrivers.CHROME);
+            }
+
+            final String geckoDriver = env.getProperty("geckoDriver");
+            if (!geckoDriver.isEmpty()) {
+                final File f = new File(geckoDriver);
+                settingsDAO.updateDriver(new FileInputStream(f), f.getName(), WebDrivers.FIREFOX);
+            }
+
+            final String edgeDriver = env.getProperty("edgeDriver");
+            if (!edgeDriver.isEmpty()) {
+                final File f = new File(edgeDriver);
+                settingsDAO.updateDriver(new FileInputStream(f), f.getName(), WebDrivers.EDGE);
+            }
+
+            final String ieDriver = env.getProperty("ieDriver");
+            if (!ieDriver.isEmpty()) {
+                final File f = new File(ieDriver);
+                settingsDAO.updateDriver(new FileInputStream(f), f.getName(), WebDrivers.IE);
+            }
+
+            final String remoteDriver = env.getProperty("remoteDriver");
+            if (!remoteDriver.isEmpty()) {
+                new URL(remoteDriver);
+                settings.getDriverSettings().setRemote(remoteDriver);
+            }
+        } catch (Exception e) {
             e.printStackTrace();
             System.exit(0);
         }
-
-        settingsDAO.update(settings);
-
-        System.setProperty("webdriver.chrome.driver", settings.getDriverSettings().getChrome());
-        System.setProperty("webdriver.gecko.driver", settings.getDriverSettings().getFirefox());
-        System.setProperty("webdriver.edge.driver", settings.getDriverSettings().getEdge());
-        System.setProperty("webdriver.ie.driver", settings.getDriverSettings().getIe());
-        System.setProperty("webdriver.remote.url", settings.getDriverSettings().getRemote());
     }
 
     /**
