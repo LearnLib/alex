@@ -43,6 +43,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
@@ -128,6 +129,15 @@ public class AlexComponent {
         }
     }
 
+    private String getDriverPath(String driver) {
+        final Path driverPath = Paths.get(env.getProperty("alex.filesRootDir"), "system", driver);
+        if (Files.notExists(driverPath)) {
+            return "";
+        } else {
+            return driver;
+        }
+    }
+
     /**
      * Initialize system properties and create the settings object if needed.
      */
@@ -154,6 +164,13 @@ public class AlexComponent {
                 System.exit(0);
             }
         }
+
+        final DriverSettings driverSettings = settings.getDriverSettings();
+        driverSettings.setChrome(getDriverPath(driverSettings.getChrome()));
+        driverSettings.setFirefox(getDriverPath(driverSettings.getFirefox()));
+        driverSettings.setEdge(getDriverPath(driverSettings.getEdge()));
+        driverSettings.setIe(getDriverPath(driverSettings.getIe()));
+        settingsDAO.update(settings);
 
         // overwrite web driver paths if specified as command line arguments
         try {
