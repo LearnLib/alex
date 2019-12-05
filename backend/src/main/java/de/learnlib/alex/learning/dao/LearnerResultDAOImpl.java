@@ -18,6 +18,7 @@ package de.learnlib.alex.learning.dao;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
+import de.learnlib.alex.data.dao.ParameterizedSymbolDAOImpl;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.dao.SymbolDAOImpl;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
@@ -338,19 +339,15 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     private void initializeLazyRelations(List<LearnerResult> results, boolean includeSteps) {
         results.forEach(r -> {
             Hibernate.initialize(r.getResetSymbol());
-            Hibernate.initialize(r.getResetSymbol().getParameterValues());
-            SymbolDAOImpl.loadLazyRelations(r.getResetSymbol().getSymbol());
+            ParameterizedSymbolDAOImpl.loadLazyRelations(r.getResetSymbol());
+
             if (r.getPostSymbol() != null) {
                 Hibernate.initialize(r.getPostSymbol());
-                Hibernate.initialize(r.getPostSymbol().getParameterValues());
-                SymbolDAOImpl.loadLazyRelations(r.getPostSymbol().getSymbol());
+                ParameterizedSymbolDAOImpl.loadLazyRelations(r.getPostSymbol());
             }
 
             Hibernate.initialize(r.getSymbols());
-            r.getSymbols().forEach(s -> {
-                Hibernate.initialize(s.getParameterValues());
-                SymbolDAOImpl.loadLazyRelations(s.getSymbol());
-            });
+            r.getSymbols().forEach(ParameterizedSymbolDAOImpl::loadLazyRelations);
 
             Hibernate.initialize(r.getEnvironments());
             Hibernate.initialize(r.getDriverConfig());
