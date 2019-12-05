@@ -170,7 +170,8 @@ public class SettingsDAO {
         System.setProperty("webdriver.chrome.driver", Paths.get(getSystemFilesPath(), driverSettings.getChrome()).toString());
         System.setProperty("webdriver.gecko.driver", Paths.get(getSystemFilesPath(), driverSettings.getFirefox()).toString());
         System.setProperty("webdriver.edge.driver", Paths.get(getSystemFilesPath(), driverSettings.getEdge()).toString());
-        System.setProperty("webdriver.remote.url", Paths.get(getSystemFilesPath(), driverSettings.getRemote()).toString());
+        System.setProperty("webdriver.ie.driver",  Paths.get(getSystemFilesPath(), driverSettings.getIe()).toString());
+        System.setProperty("webdriver.remote.url", driverSettings.getRemote());
     }
 
     private String getSystemFilesPath() {
