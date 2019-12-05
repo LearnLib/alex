@@ -100,7 +100,7 @@
                     <strong>{{pSymbol.symbol.name}}</strong>
                   </a>
                   <span class="text-muted w-100 d-flex flex-row ml-1">
-                    <em>as</em> <input class="symbol-alias w-100 ml-1" [placeholder]="pSymbol.symbol.name" type="text" [(ngModel)]="pSymbol.alias" [name]="'alias-' + i">
+                    <em>as</em> <input class="symbol-alias w-100 ml-1" [placeholder]="pSymbol.getAliasOrComputedName()" type="text" [(ngModel)]="pSymbol.alias" [name]="'alias-' + i">
                   </span>
                 </div>
                 <symbol-input-values [parameterizedSymbol]="pSymbol"></symbol-input-values>
