@@ -256,26 +256,12 @@ public class LearnerResultDAOImplTest {
         learnerResultDAO.getAll(user, PROJECT_ID, testNos, true); // should fail
     }
 
-    @Test
-    public void shouldGetOneResult() throws NotFoundException {
-        User user = new User();
-
-        LearnerResult result = createLearnerResultsList().get(0);
-
-        given(learnerResultRepository.findByProject_IdAndTestNoIn(PROJECT_ID, Collections.singletonList(0L)))
-                .willReturn(Collections.singletonList(result));
-
-        LearnerResult resultFromDAO = learnerResultDAO.get(user, PROJECT_ID, 0L, true);
-
-        assertThat(resultFromDAO, is(equalTo(result)));
-    }
-
     @Test(expected = NotFoundException.class)
     public void ensureThatGettingANonExistingResultThrowsAnException() throws NotFoundException {
         User user = new User();
 
-        given(learnerResultRepository.findByProject_IdAndTestNoIn(PROJECT_ID, Collections.singletonList(0L)))
-                .willReturn(Collections.emptyList());
+        given(learnerResultRepository.findOneByProject_IdAndTestNo(PROJECT_ID, 0L))
+                .willReturn(null);
 
         learnerResultDAO.get(user, PROJECT_ID, 0L, true); // should fail
     }
