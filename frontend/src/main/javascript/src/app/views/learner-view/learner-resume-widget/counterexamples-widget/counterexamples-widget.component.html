@@ -13,7 +13,10 @@
             <span class="badge badge-secondary">{{io.output}}</span>
           </div>
         </div>
-        <button class="btn btn-default btn-sm btn-block">Add counterexample</button>
+        <button class="btn btn-default btn-sm btn-block" [disabled]="loading">
+          <span *ngIf="!loading">Add counterexample</span>
+          <span *ngIf="loading"><i class="fas fa-fw fa-circle-notch fa-spin"></i> Testing counterexample</span>
+        </button>
       </div>
     </form>
     <div *ngIf="tmpCounterexamples.length > 0">

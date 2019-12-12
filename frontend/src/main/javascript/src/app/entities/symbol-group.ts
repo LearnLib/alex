@@ -59,7 +59,7 @@ export class SymbolGroup {
 
   walk(groupFn: (SymbolGroup) => void, symbolFn: (AlphabetSymbol) => void): void {
     groupFn(this);
-    this.groups.forEach(g => groupFn(g));
+    this.groups.forEach(g => g.walk(groupFn, symbolFn));
     this.symbols.forEach(s => symbolFn(s));
   }
 }

@@ -64,7 +64,7 @@ export class SymbolsViewStoreService {
           this.groupsCollapsedMap.set(group.id, false);
           group.walk(g => {
             this.groupsMap.set(g.id, g);
-            this.symbolsSelectable.addItems(group.symbols);
+            this.symbolsSelectable.addItems(g.symbols);
           }, () => {
           })
         });
@@ -157,7 +157,7 @@ export class SymbolsViewStoreService {
         const groups: SymbolGroup[] = data.groups;
         groups.forEach(group => group.walk(g => {
           this.symbolsSelectable.addItems(g.symbols);
-          this._addGroup(group);
+          this._addGroup(g);
         }, () => {}));
       }
     }).catch(() => {});

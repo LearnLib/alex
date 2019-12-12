@@ -51,6 +51,8 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
   /** A list of counterexamples for editing purposes without manipulation the actual model. */
   tmpCounterexamples: Counterexample[] = [];
 
+  loading = false;
+
   constructor(private learnerApi: LearnerApiService,
               private toastService: ToastService,
               private symbolApi: SymbolApiService,
@@ -98,6 +100,7 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
    * Adds a new counterexample to the scope and the model.
    */
   testAndAddCounterExample(): void {
+    this.loading = true;
     this.testCounterExample()
       .then(counterexample => {
         this.toastService.success('The selected word is a counterexample');
@@ -109,6 +112,8 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
       })
       .catch(() => {
         this.toastService.danger('The word is not a counterexample');
+      }).finally(() => {
+        this.loading = false;
       });
   }
 

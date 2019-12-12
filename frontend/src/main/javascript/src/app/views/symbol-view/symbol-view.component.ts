@@ -265,6 +265,7 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
           step.action = this.actionService.create(step.action);
         }
         this.symbol.steps.push(step);
+        this.selectedSteps.addItem(step);
       });
       this.toastService.info(steps.length + ' step[s] pasted from clipboard');
     }

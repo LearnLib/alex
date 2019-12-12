@@ -170,23 +170,14 @@ public class LearnerResource {
     public ResponseEntity resume(@PathVariable("projectId") Long projectId,
                                  @PathVariable("testNo") Long testNo,
                                  @RequestBody LearnerResumeConfiguration configuration) {
-        User user = authContext.getUser();
+        final User user = authContext.getUser();
         LOGGER.traceEntry("resume({}, {}, {}) for user {}.", projectId, testNo, configuration, user);
 
         try {
             configuration.setTestNo(testNo);
+            configuration.setUserId(user.getId());
             configuration.checkConfiguration();
-            Project project = projectDAO.getByID(user, projectId); // check if project exists
             LearnerResult result = learnerResultDAO.get(user, projectId, testNo, true);
-
-            if (result == null) {
-                throw new NotFoundException("No last result to resume found!");
-            }
-
-            if (result.getProjectId() != projectId || result.getTestNo() != testNo) {
-                LOGGER.info(LoggerMarkers.LEARNER, "could not resume the learner of another project or with an wrong test run.");
-                throw new IllegalArgumentException("The given project id or test no does not match with the latest learn result!");
-            }
 
             if (configuration.getStepNo() > result.getSteps().size()) {
                 throw new IllegalArgumentException("The step number is not valid.");
@@ -220,15 +211,9 @@ public class LearnerResource {
                 learnerResultRepository.saveAndFlush(result);
             }
 
-            configuration.setUserId(user.getId());
-
-            learnerService.resume(user, project, result, configuration);
+            learnerService.resume(user, result.getProject(), result, configuration);
             webhookService.fireEvent(user, new LearnerEvent.Resumed(result));
             return ResponseEntity.ok(result);
-        } catch (IllegalStateException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "tried to restart the learning while the learner is running.");
-            LOGGER.traceExit(e);
-            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.resume", HttpStatus.BAD_REQUEST, e);

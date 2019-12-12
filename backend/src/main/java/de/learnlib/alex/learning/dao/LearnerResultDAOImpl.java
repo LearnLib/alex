@@ -198,19 +198,13 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     @Override
     @Transactional(readOnly = true)
     public LearnerResult get(User user, Long projectId, Long testNo, boolean includeSteps) throws NotFoundException {
-        projectDAO.getByID(user, projectId); // access check
+        final Project project = projectDAO.getByID(user, projectId); // access check
+        final LearnerResult result = learnerResultRepository.findOneByProject_IdAndTestNo(projectId, testNo);
+        checkAccess(user, project, result);
 
-        List<Long> testNos = Collections.singletonList(testNo);
-        List<LearnerResult> results = learnerResultRepository.findByProject_IdAndTestNoIn(projectId, testNos);
-        if (results.size() != 1) {
-            throw new NotFoundException("Could not find the Result with the test nos. " + testNo
-                    + " in the Project " + projectId + " for the User " + user
-                    + " were found.");
-        }
+        initializeLazyRelations(Collections.singletonList(result), includeSteps);
 
-        initializeLazyRelations(results, includeSteps);
-
-        return results.get(0);
+        return result;
     }
 
     @Override

@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ public class LearnerResumeConfiguration extends AbstractLearnerConfiguration imp
 
     /** The step number from where to continue. */
     @NotNull
+    @Min(0)
     private int stepNo;
 
     /** The ids of the symbols to add. */
