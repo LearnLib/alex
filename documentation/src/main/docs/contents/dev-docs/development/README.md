@@ -19,7 +19,7 @@ Make sure that you `mvn install`ed ALEX once before executing any of the followi
 
 | Command                                 | Description                                                          |
 |-----------------------------------------|----------------------------------------------------------------------|
-| `mvn test`                              | Execute all backend tests.                                           |
+| `mvn test -Pintegration-tests`          | Execute all backend tests.                                           |
 | `mvn checkstyle:check -Pcode-analysis`  | Check if the code style is according to the specifications.          |
 | `mvn spring-boot:run`                   | Start the REST API of ALEX.                                          |
 
@@ -29,12 +29,12 @@ In addition, the following parameters can be used for the build file or the `mvn
 |-------------------|-------------------------------------------------------------------------------------------------------|
 | `server.port`     | The path where ALEX should run `mvn spring-boot:run "-Dserver.port=8000"`                             |
 | `alex.dbpath`     | The path where the HSQLDB is stored. `mvn spring-boot:run "-Dalex.dbpath=mem:testdb"`                 |
-| `chromeDriver`    | The absolute path to the Chrome driver executable on your system                                      |
-| `edgeDriver`      | The absolute path to the Edge driver executable on your system                                        |
-| `firefoxDriver`   | The absolute path to the Gecko driver executable on your system                                       |
+| `chromeDriver`    | The absolute path to the Chrome driver executable                                                     |
+| `edgeDriver`      | The absolute path to the Edge driver executable                                                       |
+| `firefoxDriver`   | The absolute path to the Gecko driver executable                                                      |
 | `ieDriver`        | The absolute path to the Internet Explorer executable                                                 |
 | `remoteDriver`    | The URI to the remote Selenium server                                                                 |
-| `ltsmin.path`     | The path to the compiles binaries of the LTSmin library                                               |
+| `ltsmin.path`     | The path to the compiled binaries of the LTSmin library                                               |
 
 
 ## Frontend development

@@ -52,7 +52,6 @@ module.exports = {
                     ['/contents/dev-docs/cli/', 'CLI']
                 ]
             },
-            ['/contents/faq/', 'FAQ'],
             ['/contents/about/', 'About']
         ],
         nav: [

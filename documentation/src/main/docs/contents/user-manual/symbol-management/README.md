@@ -98,11 +98,6 @@ Local modifications of variables and counters do not affect the global context u
     <img src="./assets/symbol-parameters-3.png">
 </figure>
 
-In addition, we differentiate between **private** and **public** input parameters.
-If an input parameter is defined as public (displayed with an open lock), its value can be set by the user in test cases and learning processes manually.
-This is not the case if the parameter is set to private (displayed with closed lock).
-Then, the value for the parameter is fetched automatically from the global data context.
-
 If you use a variable or a counter that has not been defined, the execution of the symbols fails and the output is: *Undefined variable: Name*, or *Undefined counter: Name* respectively.
 
 
@@ -150,40 +145,8 @@ In the next sections, we go a little deeper into the single categories of action
 
 ### Web actions
 
-Web actions are used to interact with a browser interface like a normal user would. 
-They are based on Selenium and ALEX offers a subset of the Selenium functionality that are presented in the table below.
-
-| Name                   | Description                                                                  |
-|------------------------|------------------------------------------------------------------------------|
-| Alert - Accept/Dismiss | Accepts or dismisses an alert dialog.                                        |
-| Alert - Get Text       | Save the displayed text of an alert/confirm/prompt window in a variable.     |
-| Alert - Send keys      | Send user input to a prompt alert.                                           |
-| Browser                | Refresh or restart the browser instance.                                     |
-| Check Attribute        | Checks the value of an attribute of an element                               |
-| Check Node             | Check if a certain element is present on the website.                        |
-| Check Node Selected    | Check if a radio button, a checkbox or an option in a select box is selected.|
-| Check Text             | Check if a certain text is part of the website body.                         |
-| Check Title            | Checks if the page title is a certain string.                                |
-| Clear                  | Clear an input field.                                                        |
-| Click                  | Click or double click on an element.                                         |
-| Click Link By Text     | Click on a link with a specific text value.                                  |
-| Execute JavaScript     | Execute a JavaScript snipped in the page.                                    |
-| Fill                   | Clear and fill an input field with some text.                                |
-| Open URL               | Request a specific site.                                                     |
-| Move Mouse             | Move the cursor to a specific element or coordinates                         |
-| Press Key              | Press a special key on the keyboard                                          |
-| Submit                 | Submit a form.                                                               |
-| Select                 | Select an option form an select input field.                                 |
-| Switch to              | Switch back to the parent content or the default content from another frame. |
-| Switch to Frame        | Switch the Selenium context to another frame.                                |
-| Wait for Attribute     | Wait until an attribute of an element has or contains a specific value.      |
-| Wait for Text          | Wait until a specific text is visible on the website.                        |
-| Wait for Title         | Wait until the title of a page changes.                                      |
-| Wait for Node          | Wait until the state of an element changes.                                  |
-
-More detailed information about the parameters of each web action is omitted here, since the forms in the frontend should be labeled sufficiently.
-
-Most web actions require that you define a locator to the element to interact with. 
+Web actions are used to interact with a browser interface like a normal user would and are based on the Selenium framework. 
+Most web actions require that a *locator* to the element to interact with is specified. 
 There are three possible options how to define such a locator:
 
 | Type  | Description                                                                                     |
@@ -195,52 +158,38 @@ There are three possible options how to define such a locator:
 
 ### REST actions
 
-REST actions are the counterpart to web actions. They are used to communicate with REST APIs. 
-The table below shows a list of available actions.
+REST actions are used to communicate with HTTP-based APIs and offer the possibility to perform HTTP requests and assert the contents of HTTP responses. 
+Most REST actions assume that the response body is formatted in JSON.
 
-| Name                   | Description                                                     |
-|------------------------|-----------------------------------------------------------------|
-| Check Attribute        | Check if the response has an specific attribute.                |
-| Check Attribute Type   | Check if an attribute in the response has a specific type.      |
-| Check Attribute Value  | Check if an attribute in the response has a specific value.     |
-| Check Header Field     | Check if the response has a certain header field.               |
-| Check Status           | Check if a previous response returned the expected HTTP status. |
-| Make Request           | Makes an HTTP request                                           |
-| Search in Body         | Search for a piece of text in the HTTP response body.           |
-| Validate JSON          | Validate the body of a response against a JSON schema.          |
-
-Keep in mind that working with HTTP requests and responses follows a certain pattern. 
-Normally, you make a request and analyze the results. 
-The order of your REST actions should also look like that. 
-Start with a *Make Request* action and use other actions to work with the response.
+Working with HTTP requests and responses follows a certain pattern. 
+When modeling symbols, start with a *Make Request* action and use other actions to work with the response.
 The context of the *Make Request* action, namely the HTTP response, is passed to the following actions until the next *Make Request* action is made.
 
 
 ### General actions
 
-Actions of this group allow the interaction between different symbols and actions, for example by storing and passing String and Integer values to other actions.
+Actions of this group allow the interaction between different symbols and actions, for example by storing and passing *String* and *Integer* values to other actions.
+This is achieved by using *Variables* and *Counters* respectively, which are explained later on this page.
 
-| Name                           | Description                                                         |
-|--------------------------------|---------------------------------------------------------------------|
-| Assert Counter                 | Asserts the value of a counter.                                     |
-| Assert Variable                | Asserts the value of a variable.                                    |
-| Increment Counter              | Increment a counter by a given value.                               |
-| Set Counter                    | Set a counter to a new value.                                       |
-| Set Variable                   | Set a variable to a new value.                                      |
-| Set Variable by Cookie         | Set a variable to the value of a cookie                             |
-| Set Variable by HTML Element   | Set a variable to a value form a website element.                   |
-| Set Variable by HTTP Response  | Set a variable to the body of a HTTP response.                      |
-| Set Variable by HTTP Status    | Set a variable to the status of the last HTTP response              |
-| Set Variable by JSON Attribute | Set a variable to a value form a JSON response.                     |
-| Set Variable by Node Attribute | Set a variable to the value of an attribute of an element.          |
-| Set Variable by Node Count     | Set a variable to the number of elements matching a selector.       |
-| Set Variable by Regex Group    | Set a variable to a group in a regex match.                         |
-| Wait                           | Wait for a specific amount of time.                                 |
+
+### Label actions
+
+There are to kinds of actions of this type:
+
+The **Create Label** action is used to define certain points inside the action sequence of a symbol that can be jumped to during the execution.
+
+The **Jump to Label** action can be used to conditionally jump to an existing label *L* inside the action sequence.
+It expects a JavaScript snipped that returns a boolean value.
+If the script returns `true` then execution continues with the action that comes after *L*.
+Otherwise the action sequence is continued normally.
+
+Both actions will never return a failed output.
+
 
 ## Variables and counters
 
-Many web applications handle dynamic data and allow file uploads. 
-In order to model and learn such behaviors and to pass data between symbols, actions and learn processes, *variables*, *counters* and *files* can be used.
+Many web applications handle dynamic data. 
+In order to model and learn such behaviors and to pass data between symbols, actions and learn processes, *variables* and *counters*.
 
 <definition term="Variable">
     A variable is a string value that is kept in the scope of a membership query.

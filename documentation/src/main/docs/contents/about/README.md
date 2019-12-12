@@ -17,7 +17,7 @@ Copyright 2015 - 2019 TU Dortmund
 ## Issue management
 
 We use GitHub for the issue management.
-If you find a bug in the software, inaccuracies related to this documentation or have other suggestions, please file an issue [here][issues] or submit a pull request.
+If you find a bug in the software, inaccuracies in this documentation or have other suggestions, please file an issue [here][issues] or submit a pull request.
 
 
 [apache2]: https://www.apache.org/licenses/LICENSE-2.0

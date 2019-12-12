@@ -7,8 +7,7 @@ There are two roles in ALEX which are listed below.
 | Registered | Default user role.                                                            | 
 | Admin      | All rights of a user, plus user management and can edit application settings. |
 
-The first time ALEX is started, a default admin account is created which you can use to login instantly.
-The account is:
+The first time ALEX is started, a default admin account is created which can be used to login instantly:
 
 Email: *admin@alex.example</em>* <br>
 Password: *admin*
@@ -20,7 +19,6 @@ Password: *admin*
 
 The picture above shows the start page of ALEX. 
 You can either create a new account <span class="label">1</span> or sign in <span class="label">2</span> with an existing account.
-In both cases, all you need to enter is an email address and a password.
 
 
 ## Updating the user profile
