@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
  * The implementation of the {@link WebhookDAO}.
  */
 @Service
+@Transactional(rollbackOn = Exception.class)
 public class WebhookDAOImpl implements WebhookDAO {
 
     /**
@@ -53,7 +54,6 @@ public class WebhookDAOImpl implements WebhookDAO {
     }
 
     @Override
-    @Transactional
     public Webhook create(User user, Webhook webhook) throws ValidationException {
         if (webhookRepository.findByUser_IdAndUrl(user.getId(), webhook.getUrl()) != null) {
             throw new ValidationException("A webhook under the given URL is already registered. "
@@ -65,7 +65,6 @@ public class WebhookDAOImpl implements WebhookDAO {
     }
 
     @Override
-    @Transactional
     public List<Webhook> getAll(User user) {
         final List<Webhook> webhooks = webhookRepository.findByUser_id(user.getId());
         webhooks.forEach(this::loadLazyRelations);
@@ -73,7 +72,13 @@ public class WebhookDAOImpl implements WebhookDAO {
     }
 
     @Override
-    @Transactional
+    public List<Webhook> getByEvent(EventType event) {
+        final List<Webhook> webhooks = webhookRepository.findAllByEventsContains(event);
+        webhooks.forEach(this::loadLazyRelations);
+        return webhooks;
+    }
+
+    @Override
     public List<Webhook> getByUserAndEvent(User user, EventType event) {
         final List<Webhook> webhooks = webhookRepository.findByUser_id(user.getId()).stream()
                 .filter(webhook -> webhook.getEvents().contains(event))
@@ -83,7 +88,6 @@ public class WebhookDAOImpl implements WebhookDAO {
     }
 
     @Override
-    @Transactional
     public void delete(User user, Long id) throws NotFoundException {
         final Webhook webhook = webhookRepository.findById(id).orElse(null);
         checkAccess(user, webhook);
@@ -91,7 +95,6 @@ public class WebhookDAOImpl implements WebhookDAO {
     }
 
     @Override
-    @Transactional(rollbackOn = Exception.class)
     public void delete(User user, List<Long> ids) throws NotFoundException {
         for (Long id : ids) {
             delete(user, id);
@@ -99,7 +102,6 @@ public class WebhookDAOImpl implements WebhookDAO {
     }
 
     @Override
-    @Transactional
     public Webhook update(User user, Webhook webhook) throws NotFoundException, ValidationException {
         final Webhook webhookInDb = webhookRepository.findById(webhook.getId()).orElse(null);
         checkAccess(user, webhookInDb);

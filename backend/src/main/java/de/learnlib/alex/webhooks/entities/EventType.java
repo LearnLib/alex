@@ -52,6 +52,9 @@ public enum EventType {
     /** Fired when LTS formulas have been checked. */
     LTS_FORMULAS_CHECKED,
 
+    /** Fired when the application settings are updated. */
+    SETTINGS_UPDATED,
+
     /** Fired when a symbol is created. */
     SYMBOL_CREATED,
 

@@ -64,6 +64,14 @@ public interface WebhookDAO {
     List<Webhook> getByUserAndEvent(User user, EventType event);
 
     /**
+     * Get all webhooks that contain a certain event.
+     *
+     * @param event The event.
+     * @return The webhooks that contain the event.
+     */
+    List<Webhook> getByEvent(EventType event);
+
+    /**
      * Delete a webhook.
      *
      * @param user

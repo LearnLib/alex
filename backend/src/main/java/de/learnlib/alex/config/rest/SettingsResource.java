@@ -18,10 +18,11 @@ package de.learnlib.alex.config.rest;
 
 import de.learnlib.alex.config.dao.SettingsDAO;
 import de.learnlib.alex.config.entities.Settings;
+import de.learnlib.alex.config.events.SettingsEvent;
+import de.learnlib.alex.webhooks.services.WebhookService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,15 +46,13 @@ public class SettingsResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    @Value("${alex.filesRootDir}")
-    private String filesRootDir;
-
-    /** The {@link SettingsDAO} to use. */
     private SettingsDAO settingsDAO;
+    private WebhookService webhookService;
 
     @Autowired
-    public SettingsResource(SettingsDAO settingsDAO) {
+    public SettingsResource(SettingsDAO settingsDAO, WebhookService webhookService) {
         this.settingsDAO = settingsDAO;
+        this.webhookService = webhookService;
     }
 
     /**
@@ -86,6 +85,7 @@ public class SettingsResource {
         LOGGER.traceEntry("update({})", settings);
         settings.checkValidity();
         settingsDAO.update(settings);
+        webhookService.fireEvent(new SettingsEvent.Updated(settings));
         LOGGER.traceExit(settings);
         return ResponseEntity.ok(settings);
     }
@@ -97,8 +97,12 @@ public class SettingsResource {
     )
     public ResponseEntity uploadDriver(@RequestParam("file") MultipartFile fileToUpload,
                                        @PathVariable("driver") String driver) {
+        LOGGER.traceEntry("uploadDriver({})", driver);
         settingsDAO.uploadDriver(fileToUpload, driver);
-        return ResponseEntity.ok(settingsDAO.get());
+        final Settings settings = settingsDAO.get();
+        webhookService.fireEvent(new SettingsEvent.Updated(settings));
+        LOGGER.traceExit(settings);
+        return ResponseEntity.ok(settings);
     }
 
     @DeleteMapping(
@@ -106,7 +110,11 @@ public class SettingsResource {
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity deleteDriver(@PathVariable("driver") String driver) {
+        LOGGER.traceEntry("deleteDriver({})", driver);
         settingsDAO.removeDriver(driver);
-        return ResponseEntity.ok(settingsDAO.get());
+        final Settings settings = settingsDAO.get();
+        webhookService.fireEvent(new SettingsEvent.Updated(settings));
+        LOGGER.traceExit(settings);
+        return ResponseEntity.ok(settings);
     }
 }

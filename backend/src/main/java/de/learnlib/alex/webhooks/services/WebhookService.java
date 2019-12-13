@@ -72,6 +72,24 @@ public class WebhookService {
     public <T> void fireEvent(User user, Event<T> event) {
         LOGGER.traceEntry();
         final List<Webhook> webhooks = webhookDAO.getByUserAndEvent(user, event.getEventType());
+        triggerWebhooks(event, webhooks);
+        LOGGER.traceExit();
+    }
+
+    /**
+     * Sends the event to all subscribers.
+     *
+     * @param event The event that occurred.
+     * @param <T>   The type of the event.
+     */
+    public <T> void fireEvent(Event<T> event) {
+        LOGGER.traceEntry();
+        final List<Webhook> webhooks = webhookDAO.getByEvent(event.getEventType());
+        triggerWebhooks(event, webhooks);
+        LOGGER.traceExit();
+    }
+
+    private  <T> void triggerWebhooks(Event<T> event, List<Webhook> webhooks) {
         for (final Webhook webhook : webhooks) {
             new Thread(() -> {
                 LOGGER.info("send {} to {}", event, webhook.getUrl());
@@ -80,6 +98,5 @@ public class WebhookService {
                         .post(Entity.json(event));
             }).start();
         }
-        LOGGER.traceExit();
     }
 }

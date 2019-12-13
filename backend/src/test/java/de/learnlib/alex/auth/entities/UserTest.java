@@ -20,11 +20,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
+import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.webhooks.entities.Webhook;
 import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class UserTest {
 
@@ -73,6 +79,36 @@ public class UserTest {
         final String userString = om.writeValueAsString(user);
         final String expectedUserString = "{\"id\":1, \"username\": \"user1\", \"email\": \"admin@alex.com\", \"role\": \"ADMIN\"}";
         JSONAssert.assertEquals(expectedUserString, userString, true);
+    }
+
+    @Test(expected = PathNotFoundException.class)
+    public void shouldNotSerializeProjects() throws Exception {
+        final Project p = new Project();
+        p.setId(2L);
+
+        final User user = new User();
+        user.setId(1L);
+        user.setUsername("user");
+        user.setEmail("user@alex.com");
+        user.setProjects(Collections.singleton(p));
+
+        final String userString = om.writeValueAsString(user);
+        JsonPath.read(userString, "projects");
+    }
+
+    @Test(expected = PathNotFoundException.class)
+    public void shouldNotSerializeWebhooks() throws Exception {
+        final Webhook w = new Webhook();
+        w.setId(2L);
+
+        final User user = new User();
+        user.setId(1L);
+        user.setUsername("user");
+        user.setEmail("user@alex.com");
+        user.setWebhooks(Collections.singletonList(w));
+
+        final String userString = om.writeValueAsString(user);
+        JsonPath.read(userString, "webhooks");
     }
 
     @Test
