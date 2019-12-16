@@ -61,6 +61,9 @@ public class TestCaseStep implements Serializable {
     @JsonIgnore
     private int number;
 
+    /** If disabled, the step is not executed. */
+    private boolean disabled;
+
     /** The symbol to execute. */
     @OneToOne(
             fetch = FetchType.EAGER,
@@ -83,6 +86,7 @@ public class TestCaseStep implements Serializable {
         this.expectedResult = "";
         this.expectedOutputSuccess = true;
         this.expectedOutputMessage = "";
+        this.disabled = false;
     }
 
     @Transient
@@ -158,6 +162,14 @@ public class TestCaseStep implements Serializable {
 
     public void setExpectedOutputMessage(String expectedOutputMessage) {
         this.expectedOutputMessage = expectedOutputMessage;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 
     public boolean behavesLike(TestCaseStep step) {

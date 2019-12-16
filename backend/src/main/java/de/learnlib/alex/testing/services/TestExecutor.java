@@ -164,6 +164,11 @@ public class TestExecutor {
                 if (aborted) break;
 
                 final TestCaseStep step = testCase.getSteps().get(i);
+                if (step.isDisabled()) {
+                    outputs.add(new ExecuteResult(true,"Skipped"));
+                    continue;
+                }
+
                 final ExecuteResult result = executeStep(connectors, step);
                 outputs.add(result);
 

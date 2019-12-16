@@ -271,15 +271,6 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Toggles the disabled flag on an action.
-   *
-   * @param step The step to enable or disable.
-   */
-  toggleDisableAction(step: any): void {
-    step.disabled = !step.disabled;
-  }
-
   editStep(step: any): void {
     if (step.type === 'symbol') {
       this.editSymbolStep(step);

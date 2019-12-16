@@ -193,15 +193,11 @@
                       </div>
                     </div>
 
-                    <div>
-                  <span (click)="toggleDisableAction(step)" class="btn btn-sm">
-                      <span *ngIf="!step.disabled" ngbTooltip="Disable" placement="left">
-                          <i class="fas fa-toggle-on fa-fw text-success"></i>
-                      </span>
-                      <span *ngIf="step.disabled" ngbTooltip="Enable" placement="left">
-                          <i class="fas fa-toggle-off fa-fw text-danger"></i>
-                      </span>
-                  </span>
+                    <div class="px-2">
+                      <toggle-button
+                        [enabled]="!step.disabled"
+                        (toggle)="step.disabled = !$event"
+                      ></toggle-button>
                     </div>
 
                     <div>
@@ -258,10 +254,6 @@
 
         </div>
       </div>
-
-
-
-
 
     </div>
   </div>

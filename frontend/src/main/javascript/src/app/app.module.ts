@@ -236,6 +236,7 @@ import { TestReportProgressComponent } from './common/test-report-progress/test-
 import { SymbolsDataContextComponent } from './common/symbols-data-context/symbols-data-context.component';
 import { ClipboardModule } from 'ngx-clipboard';
 import { WebdriverSettingsFormComponent } from './views/admin-settings-view/webdriver-settings-form/webdriver-settings-form.component';
+import { ToggleButtonComponent } from './common/toggle-button/toggle-button.component';
 
 
 @NgModule({
@@ -432,7 +433,8 @@ import { WebdriverSettingsFormComponent } from './views/admin-settings-view/webd
     TestStatusComponent,
     TestReportProgressComponent,
     SymbolsDataContextComponent,
-    WebdriverSettingsFormComponent
+    WebdriverSettingsFormComponent,
+    ToggleButtonComponent
   ],
   imports: [
     BrowserModule,

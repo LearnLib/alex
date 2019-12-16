@@ -28,6 +28,8 @@ export class TestCaseStep {
 
   expectedOutputMessage: string;
 
+  disabled: boolean;
+
   /**
    * Constructor.
    *
@@ -38,6 +40,7 @@ export class TestCaseStep {
     this.expectedOutputSuccess = obj.expectedOutputSuccess != null ? obj.expectedOutputSuccess : true;
     this.expectedOutputMessage = obj.expectedOutputMessage || '';
     this.pSymbol = obj.pSymbol == null ? null : new ParametrizedSymbol(obj.pSymbol);
+    this.disabled = obj.disabled == null ? false : obj.disabled;
   }
 
   /**

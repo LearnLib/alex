@@ -19,6 +19,7 @@ import { DragulaService } from 'ng2-dragula';
 
 @Component({
   selector: 'test-case-table',
+  styleUrls: ['./test-case-table.component.scss'],
   templateUrl: './test-case-table.component.html'
 })
 export class TestCaseTableComponent implements OnInit, OnDestroy {

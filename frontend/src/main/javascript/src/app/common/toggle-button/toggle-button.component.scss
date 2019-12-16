@@ -1,0 +1,10 @@
+.toggle-button {
+
+  &.enabled {
+      color: #28a745;
+  }
+
+  &.disabled {
+    color: #555;
+  }
+}
