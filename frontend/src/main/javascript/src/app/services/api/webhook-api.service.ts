@@ -73,7 +73,7 @@ export class WebhookApiService extends BaseApiService {
    * @return The updated webhook.
    */
   update(webhook: Webhook): Observable<Webhook> {
-    return this.http.put(this.url(), webhook, this.defaultHttpOptions)
+    return this.http.put(`${this.url()}/${webhook.id}`, webhook, this.defaultHttpOptions)
       .pipe(
         map(body => Webhook.fromData(body))
       );

@@ -105,19 +105,22 @@ public class WebhookResource {
     /**
      * Update a webhook.
      *
+     * @param webhookId
+     *         The ID of the webhook to update.
      * @param webhook
      *         The updated webhook.
      * @return The updated webhook on success.
      */
     @PutMapping(
+            value = "/{webhookId}",
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity update(@RequestBody Webhook webhook) {
+    public ResponseEntity update(@PathVariable("webhookId") Long webhookId, @RequestBody Webhook webhook) {
         final User user = authContext.getUser();
         LOGGER.traceEntry("update webhook '{}' for user '{}'", webhook, user);
 
-        final Webhook updatedWebhook = webhookDAO.update(user, webhook);
+        final Webhook updatedWebhook = webhookDAO.update(user, webhookId, webhook);
         LOGGER.traceExit("Webhook '{}' updated", updatedWebhook);
         return ResponseEntity.ok(updatedWebhook);
     }

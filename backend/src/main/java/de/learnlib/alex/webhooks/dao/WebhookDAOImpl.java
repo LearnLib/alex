@@ -102,8 +102,8 @@ public class WebhookDAOImpl implements WebhookDAO {
     }
 
     @Override
-    public Webhook update(User user, Webhook webhook) throws NotFoundException, ValidationException {
-        final Webhook webhookInDb = webhookRepository.findById(webhook.getId()).orElse(null);
+    public Webhook update(User user, Long webhookId, Webhook webhook) throws NotFoundException, ValidationException {
+        final Webhook webhookInDb = webhookRepository.findById(webhookId).orElse(null);
         checkAccess(user, webhookInDb);
 
         // check if there is another webhook registered to the new URL.

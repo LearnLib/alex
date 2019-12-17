@@ -16,11 +16,10 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
 import de.learnlib.alex.integrationtests.resources.api.WebhookApi;
+import de.learnlib.alex.webhooks.entities.Webhook;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -94,26 +93,25 @@ public class WebhookResourceIT extends AbstractResourceIT {
         final String wh1 = createWebhookJson("test", "http://test", Collections.singletonList("PROJECT_CREATED"));
         final Response res1 = webhookApi.create(wh1, jwtUser1);
 
-        final JsonNode whNode = objectMapper.readTree(res1.readEntity(String.class));
-        ((ObjectNode) whNode).put("name", "updatedName");
-        ((ObjectNode) whNode).put("url", "http://test2");
+        final Webhook webhook = res1.readEntity(Webhook.class);
+        webhook.setName("updatedName");
+        webhook.setUrl("http://test2");
 
-        final Response res2 = webhookApi.update(whNode.toString(), jwtUser1);
+        final Response res2 = webhookApi.update(webhook.getId().intValue(), objectMapper.writeValueAsString(webhook), jwtUser1);
 
         Assert.assertEquals(Response.Status.OK.getStatusCode(), res2.getStatus());
-        JSONAssert.assertEquals(whNode.toString(), res2.readEntity(String.class), true);
+        JSONAssert.assertEquals(objectMapper.writeValueAsString(webhook), res2.readEntity(String.class), true);
     }
 
     @Test
     public void shouldFailToUpdateWebhookIfEventsAreEmpty() throws Exception {
         final String wh1 = createWebhookJson("test", "http://test", Collections.singletonList("PROJECT_CREATED"));
         final Response res1 = webhookApi.create(wh1, jwtUser1);
-        final String wh1String = res1.readEntity(String.class);
 
-        final JsonNode whNode = objectMapper.readTree(wh1String);
-        ((ObjectNode) whNode).putArray("events");
+        final Webhook webhook = res1.readEntity(Webhook.class);
+        webhook.getEvents().clear();
 
-        final Response res2 = webhookApi.update(whNode.toString(), jwtUser1);
+        final Response res2 = webhookApi.update(webhook.getId().intValue(), objectMapper.writeValueAsString(webhook), jwtUser1);
         Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), res2.getStatus());
     }
 
@@ -122,12 +120,11 @@ public class WebhookResourceIT extends AbstractResourceIT {
         webhookApi.create(createWebhookJson("test", "http://exists", Collections.singletonList("PROJECT_CREATED")), jwtUser1);
         final String wh1 = createWebhookJson("test", "http://test", Collections.singletonList("PROJECT_CREATED"));
         final Response res1 = webhookApi.create(wh1, jwtUser1);
-        final String wh1String = res1.readEntity(String.class);
 
-        final JsonNode whNode = objectMapper.readTree(wh1String);
-        ((ObjectNode) whNode).put("url", "http://exists");
+        final Webhook webhook = res1.readEntity(Webhook.class);
+        webhook.setUrl("http://exists");
 
-        final Response res2 = webhookApi.update(whNode.toString(), jwtUser1);
+        final Response res2 = webhookApi.update(webhook.getId().intValue(), objectMapper.writeValueAsString(webhook), jwtUser1);
         Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), res2.getStatus());
     }
 

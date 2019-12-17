@@ -100,6 +100,8 @@ public interface WebhookDAO {
      *
      * @param user
      *         The user.
+     * @param webhookId
+     *         The ID of the webhook to update.
      * @param webhook
      *         The updated webhook.
      * @return The updated webhook.
@@ -108,7 +110,7 @@ public interface WebhookDAO {
      * @throws ValidationException
      *         If another webhook with the URL is already registered.
      */
-    Webhook update(User user, Webhook webhook) throws NotFoundException, ValidationException;
+    Webhook update(User user, Long webhookId, Webhook webhook) throws NotFoundException, ValidationException;
 
     /**
      * Checks if the user is allowed to access or modify a webhook.
