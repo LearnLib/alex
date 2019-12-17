@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.learnlib.alex.config.repositories;
+package de.learnlib.alex.settings.repositories;
 
-import de.learnlib.alex.config.entities.Settings;
+import de.learnlib.alex.settings.entities.Settings;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

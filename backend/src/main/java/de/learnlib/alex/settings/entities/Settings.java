@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.config.entities;
+package de.learnlib.alex.settings.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;

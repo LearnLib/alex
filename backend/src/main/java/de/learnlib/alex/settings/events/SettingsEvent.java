@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.config.events;
+package de.learnlib.alex.settings.events;
 
-import de.learnlib.alex.config.entities.Settings;
+import de.learnlib.alex.settings.entities.Settings;
 import de.learnlib.alex.webhooks.entities.Event;
 import de.learnlib.alex.webhooks.entities.EventType;
 

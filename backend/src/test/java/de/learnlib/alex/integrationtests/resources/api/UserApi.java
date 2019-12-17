@@ -17,6 +17,7 @@
 package de.learnlib.alex.integrationtests.resources.api;
 
 import com.jayway.jsonpath.JsonPath;
+import de.learnlib.alex.auth.entities.UserRole;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
@@ -100,16 +101,10 @@ public class UserApi extends AbstractApi {
                 .delete();
     }
 
-    public Response demote(int userId, String jwt) {
-        return client.target(url() + "/" + userId + "/demote").request()
+    public Response changeRole(int userId, UserRole role, String jwt) {
+        return client.target(url() + "/" + userId + "/role").request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
-                .put(Entity.json(""));
-    }
-
-    public Response promote(int userId, String jwt) {
-        return client.target(url() + "/" + userId + "/promote").request()
-                .header(HttpHeaders.AUTHORIZATION, jwt)
-                .put(Entity.json(""));
+                .put(Entity.json("{\"role\":\"" + role.toString() + "\"}"));
     }
 
     public String url() {

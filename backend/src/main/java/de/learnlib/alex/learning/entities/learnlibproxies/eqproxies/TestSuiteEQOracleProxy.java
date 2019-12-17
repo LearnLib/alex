@@ -16,7 +16,6 @@
 
 package de.learnlib.alex.learning.entities.learnlibproxies.eqproxies;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.learning.entities.LearnerResult;
@@ -28,7 +27,6 @@ import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.words.Word;
 
 import javax.annotation.Nullable;
-import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.Collection;

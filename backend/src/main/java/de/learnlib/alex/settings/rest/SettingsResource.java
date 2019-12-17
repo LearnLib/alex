@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.config.rest;
+package de.learnlib.alex.settings.rest;
 
-import de.learnlib.alex.config.dao.SettingsDAO;
-import de.learnlib.alex.config.entities.Settings;
-import de.learnlib.alex.config.events.SettingsEvent;
+import de.learnlib.alex.settings.dao.SettingsDAO;
+import de.learnlib.alex.settings.entities.Settings;
+import de.learnlib.alex.settings.events.SettingsEvent;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -15,7 +15,7 @@
  */
 
 import { environment as env } from '../../../environments/environment';
-import { User } from '../../entities/user';
+import { User, UserRole } from '../../entities/user';
 import { BaseApiService } from './base-api.service';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -69,6 +69,13 @@ export class UserApiService extends BaseApiService {
    */
   changeUsername(user: User, username: string): Observable<User> {
     return this.http.put(`${env.apiUrl}/users/${user.id}/username`, {username}, this.defaultHttpOptions)
+      .pipe(
+        map((body: any) => User.fromData(body))
+      );
+  }
+
+  changeRole(user: User, role: UserRole): Observable<User> {
+    return this.http.put(`${env.apiUrl}/users/${user.id}/role`, {role}, this.defaultHttpOptions)
       .pipe(
         map((body: any) => User.fromData(body))
       );
@@ -140,32 +147,6 @@ export class UserApiService extends BaseApiService {
    */
   removeManyUsers(userIds: number[]): Observable<any> {
     return this.http.delete(`${env.apiUrl}/users/batch/${userIds.join(',')}`, this.defaultHttpOptions);
-  }
-
-  /**
-   * Gives a registered user admin rights.
-   *
-   * @param user The user to promote.
-   * @returns The promise.
-   */
-  promote(user: User): Observable<User> {
-    return this.http.put(`${env.apiUrl}/users/${user.id}/promote`, {}, this.defaultHttpOptions)
-      .pipe(
-        map((body: any) => User.fromData(body))
-      );
-  }
-
-  /**
-   * Takes the admin rights of a user.
-   *
-   * @param user The user to demote.
-   * @returns The promise.
-   */
-  demote(user: User): Observable<User> {
-    return this.http.put(`${env.apiUrl}/users/${user.id}/demote`, {}, this.defaultHttpOptions)
-      .pipe(
-        map((body: any) => User.fromData(body))
-      );
   }
 
   myself(): Observable<User> {

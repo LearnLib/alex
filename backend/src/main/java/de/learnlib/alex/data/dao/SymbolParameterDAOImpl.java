@@ -40,7 +40,6 @@ import javax.transaction.Transactional;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /** The concrete DAO for symbol parameters. */
 @Service

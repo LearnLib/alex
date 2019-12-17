@@ -21,10 +21,7 @@ import de.learnlib.alex.data.entities.SymbolParameter;
 
 import javax.validation.ValidationException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class SymbolOutputMappingUtils {
 

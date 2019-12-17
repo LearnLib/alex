@@ -15,7 +15,7 @@
  */
 
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
-import { User } from '../../../entities/user';
+import { User, UserRole } from '../../../entities/user';
 import { UserApiService } from '../../../services/api/user-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { PromptService } from '../../../services/prompt.service';
@@ -23,7 +23,6 @@ import { AppStoreService } from '../../../services/app-store.service';
 import { userRole } from '../../../constants';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import {isNotNullOrUndefined} from "codelyzer/util/isNotNullOrUndefined";
 
 @Component({
   selector: 'edit-user-modal',
@@ -119,7 +118,7 @@ export class EditUserModalComponent implements OnInit {
    */
   promoteUser(): void {
     this.error = null;
-    this.userApi.promote(this.user).subscribe(
+    this.userApi.changeRole(this.user, UserRole.ADMIN).subscribe(
       user => {
         this.toastService.success('The user now has admin rights.');
         this.updated.emit(user);
@@ -137,7 +136,7 @@ export class EditUserModalComponent implements OnInit {
    */
   demoteUser(): void {
     this.error = null;
-    this.userApi.demote(this.user).subscribe(
+    this.userApi.changeRole(this.user, UserRole.REGISTERED).subscribe(
       user => {
         if (this.currentUser.id === this.user.id) {
           this.appStore.logout();

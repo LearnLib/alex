@@ -14,30 +14,25 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.config.dao;
+package de.learnlib.alex.settings.dao;
 
 import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.config.entities.DriverSettings;
-import de.learnlib.alex.config.entities.Settings;
-import de.learnlib.alex.config.repositories.SettingsRepository;
 import de.learnlib.alex.learning.entities.webdrivers.WebDrivers;
+import de.learnlib.alex.settings.entities.DriverSettings;
+import de.learnlib.alex.settings.entities.Settings;
+import de.learnlib.alex.settings.repositories.SettingsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.inject.Inject;
 import javax.validation.ValidationException;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 

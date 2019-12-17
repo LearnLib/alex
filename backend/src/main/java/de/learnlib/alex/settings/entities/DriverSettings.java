@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.config.entities;
+package de.learnlib.alex.settings.entities;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.learnlib.alex.learning.entities.webdrivers.WebDrivers;
 
 import javax.persistence.Embeddable;
 import javax.validation.ValidationException;
-import java.io.File;
 import java.io.Serializable;
 import java.util.Objects;
 
