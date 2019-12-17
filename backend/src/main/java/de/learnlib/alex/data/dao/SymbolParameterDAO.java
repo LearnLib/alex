@@ -24,7 +24,6 @@ import de.learnlib.alex.data.entities.SymbolParameter;
 import org.apache.shiro.authz.UnauthorizedException;
 
 import javax.validation.ValidationException;
-import java.util.List;
 
 /**
  * The DAO for symbol parameters.
@@ -51,28 +50,6 @@ public interface SymbolParameterDAO {
      *         If the parameter is not valid.
      */
     SymbolParameter create(User user, Long projectId, Long symbolId, SymbolParameter parameter)
-            throws NotFoundException, UnauthorizedException, ValidationException;
-
-    /**
-     * Creates multiple symbol parameters at once.
-     *
-     * @param user
-     *         The user.
-     * @param projectId
-     *         The id of the project.
-     * @param symbolId
-     *         The id of the symbol.
-     * @param parameters
-     *         The parameters to create.
-     * @return The created parameters.
-     * @throws NotFoundException
-     *         If the project could not be found.
-     * @throws UnauthorizedException
-     *         If the user no access to one of the resources.
-     * @throws ValidationException
-     *         If one of the parameters is not valid.
-     */
-    List<SymbolParameter> create(User user, Long projectId, Long symbolId, List<SymbolParameter> parameters)
             throws NotFoundException, UnauthorizedException, ValidationException;
 
     /**

@@ -38,11 +38,12 @@ import org.springframework.stereotype.Service;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.validation.ValidationException;
-import java.util.ArrayList;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 /** The concrete DAO for symbol parameters. */
 @Service
+@Transactional(rollbackOn = Exception.class)
 public class SymbolParameterDAOImpl implements SymbolParameterDAO {
 
     /** The project repository to use. */
@@ -99,7 +100,6 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
     }
 
     @Override
-    @Transactional
     public SymbolParameter create(User user, Long projectId, Long symbolId, SymbolParameter parameter)
             throws NotFoundException, UnauthorizedException, ValidationException {
         final Project project = projectRepository.findById(projectId).orElse(null);
@@ -109,17 +109,59 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
     }
 
     @Override
-    @Transactional(rollbackOn = Exception.class)
-    public List<SymbolParameter> create(User user, Long projectId, Long symbolId, List<SymbolParameter> parameters)
+    public SymbolParameter update(User user, Long projectId, Long symbolId, SymbolParameter parameter)
             throws NotFoundException, UnauthorizedException, ValidationException {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final Symbol symbol = symbolRepository.findById(symbolId).orElse(null);
 
-        final List<SymbolParameter> createdParameters = new ArrayList<>();
-        for (final SymbolParameter param : parameters) {
-            createdParameters.add(create(user, project, symbol, param));
+        checkAccess(user, project, symbol, parameter);
+        checkIfTypeWithNameExists(symbol, parameter);
+
+        symbol.setUpdatedOn(ZonedDateTime.now());
+        symbolRepository.save(symbol);
+
+        return symbolParameterRepository.save(parameter);
+    }
+
+    @Override
+    public void delete(User user, Long projectId, Long symbolId, Long parameterId)
+            throws NotFoundException, UnauthorizedException {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final Symbol symbol = symbolRepository.findById(symbolId).orElse(null);
+        final SymbolParameter parameter = symbolParameterRepository.findById(parameterId).orElse(null);
+
+        checkAccess(user, project, symbol, parameter);
+
+        final List<ParameterizedSymbol> pSymbols = parameterizedSymbolRepository.findAllBySymbol_Id(symbolId);
+        for (ParameterizedSymbol pSymbol : pSymbols) {
+            pSymbol.getParameterValues().removeIf(pv -> pv.getParameter().getId().equals(parameterId));
+            pSymbol.getOutputMappings().removeIf(pv -> pv.getParameter().getId().equals(parameterId));
         }
-        return createdParameters;
+        parameterizedSymbolRepository.saveAll(pSymbols);
+
+        // also delete all values for the parameter
+        symbolParameterValueRepository.removeAllByParameter_Id(parameterId);
+        outputMappingRepository.removeAllByParameter_Id(parameterId);
+
+        symbol.removeParameter(parameter);
+        symbol.setUpdatedOn(ZonedDateTime.now());
+        symbolRepository.save(symbol);
+
+        symbolParameterRepository.deleteById(parameterId);
+    }
+
+    @Override
+    public void checkAccess(User user, Project project, Symbol symbol, SymbolParameter parameter)
+            throws NotFoundException, UnauthorizedException {
+        symbolDAO.checkAccess(user, project, symbol);
+
+        if (parameter == null) {
+            throw new NotFoundException("The parameter could not be found.");
+        }
+
+        if (!symbol.containsParameter(parameter)) {
+            throw new UnauthorizedException("You are not allowed to access the parameter.");
+        }
     }
 
     private SymbolParameter create(User user, Project project, Symbol symbol, SymbolParameter parameter)
@@ -132,6 +174,7 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
         symbol.addParameter(parameter);
 
         final SymbolParameter createdParameter = symbolParameterRepository.save(parameter);
+        symbol.setUpdatedOn(ZonedDateTime.now());
         symbolRepository.save(symbol);
 
         // If a new parameter is created for a symbol, it may be that there are tests that use the symbol.
@@ -157,60 +200,6 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
         }
 
         return createdParameter;
-    }
-
-    @Override
-    @Transactional
-    public SymbolParameter update(User user, Long projectId, Long symbolId, SymbolParameter parameter)
-            throws NotFoundException, UnauthorizedException, ValidationException {
-        final Project project = projectRepository.findById(projectId).orElse(null);
-        final Symbol symbol = symbolRepository.findById(symbolId).orElse(null);
-
-        checkAccess(user, project, symbol, parameter);
-        checkIfTypeWithNameExists(symbol, parameter);
-
-        return symbolParameterRepository.save(parameter);
-    }
-
-    @Override
-    @Transactional
-    public void delete(User user, Long projectId, Long symbolId, Long parameterId)
-            throws NotFoundException, UnauthorizedException {
-        final Project project = projectRepository.findById(projectId).orElse(null);
-        final Symbol symbol = symbolRepository.findById(symbolId).orElse(null);
-        final SymbolParameter parameter = symbolParameterRepository.findById(parameterId).orElse(null);
-
-        checkAccess(user, project, symbol, parameter);
-
-        final List<ParameterizedSymbol> pSymbols = parameterizedSymbolRepository.findAllBySymbol_Id(symbolId);
-        for (ParameterizedSymbol pSymbol : pSymbols) {
-            pSymbol.getParameterValues().removeIf(pv -> pv.getParameter().getId().equals(parameterId));
-            pSymbol.getOutputMappings().removeIf(pv -> pv.getParameter().getId().equals(parameterId));
-        }
-        parameterizedSymbolRepository.saveAll(pSymbols);
-
-        // also delete all values for the parameter
-        symbolParameterValueRepository.removeAllByParameter_Id(parameterId);
-        outputMappingRepository.removeAllByParameter_Id(parameterId);
-
-        symbol.removeParameter(parameter);
-        symbolRepository.save(symbol);
-
-        symbolParameterRepository.deleteById(parameterId);
-    }
-
-    @Override
-    public void checkAccess(User user, Project project, Symbol symbol, SymbolParameter parameter)
-            throws NotFoundException, UnauthorizedException {
-        symbolDAO.checkAccess(user, project, symbol);
-
-        if (parameter == null) {
-            throw new NotFoundException("The parameter could not be found.");
-        }
-
-        if (!symbol.containsParameter(parameter)) {
-            throw new UnauthorizedException("You are not allowed to access the parameter.");
-        }
     }
 
     private void checkIfTypeWithNameExists(Symbol symbol, SymbolParameter parameter) throws ValidationException {
