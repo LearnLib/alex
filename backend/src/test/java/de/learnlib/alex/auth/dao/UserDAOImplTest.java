@@ -20,7 +20,7 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.entities.UserRole;
 import de.learnlib.alex.auth.repositories.UserRepository;
 import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.data.dao.FileDAOImpl;
+import de.learnlib.alex.data.dao.FileDAO;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import org.junit.Assert;
@@ -57,7 +57,7 @@ public class UserDAOImplTest {
     private UserRepository userRepository;
 
     @Mock
-    private FileDAOImpl fileDAO;
+    private FileDAO fileDAO;
 
     @Mock
     private ProjectDAO projectDAO;

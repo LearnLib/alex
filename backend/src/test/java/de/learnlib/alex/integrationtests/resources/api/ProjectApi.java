@@ -35,6 +35,12 @@ public class ProjectApi extends AbstractApi {
                 .post(Entity.json(project));
     }
 
+    public Response importProject(String project, String jwt) {
+        return client.target(url() + "/import").request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .post(Entity.json(project));
+    }
+
     public Response getAll(String jwt) {
         return client.target(url()).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)

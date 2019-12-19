@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.data.dao;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
@@ -65,7 +66,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SymbolDAOImplTest {
+public class SymbolDAOTest {
 
     private static final long USER_ID = 21L;
     private static final long PROJECT_ID = 42L;
@@ -116,15 +117,21 @@ public class SymbolDAOImplTest {
     @Mock
     private ProjectEnvironmentRepository projectEnvironmentRepository;
 
+    @Mock
+    private ObjectMapper objectMapper;
+
+    @Mock
+    private SymbolParameterDAO symbolParameterDAO;
 
     private SymbolDAO symbolDAO;
 
     @Before
     public void setUp() {
-        symbolDAO = new SymbolDAOImpl(projectRepository, projectDAO, symbolGroupRepository, symbolRepository,
+        symbolDAO = new SymbolDAO(projectRepository, projectDAO, symbolGroupRepository, symbolRepository,
                 symbolActionRepository, symbolGroupDAO, symbolParameterRepository, symbolStepRepository,
                 parameterizedSymbolDAO, parameterizedSymbolRepository, symbolSymbolStepRepository,
-                testCaseStepRepository, testExecutionResultRepository, projectEnvironmentRepository);
+                testCaseStepRepository, testExecutionResultRepository, projectEnvironmentRepository,
+                objectMapper, symbolParameterDAO);
     }
 
     @Test

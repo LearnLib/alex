@@ -60,6 +60,13 @@ export class SymbolApiService extends BaseApiService {
       );
   }
 
+  importSymbols(projectId: number, importableEntity: any): Observable<AlphabetSymbol[]> {
+    return this.http.post(`${env.apiUrl}/projects/${projectId}/symbols/import`, importableEntity, this.defaultHttpOptions)
+      .pipe(
+        map((body: any) => body.map(s => new AlphabetSymbol(s)))
+      );
+  }
+
   /**
    * Creates a new symbol.
    *

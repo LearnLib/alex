@@ -22,6 +22,7 @@ import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolUsageResult;
 import de.learnlib.alex.data.entities.export.ExportableEntity;
 import de.learnlib.alex.data.entities.export.SymbolsExportConfig;
+import de.learnlib.alex.data.entities.export.SymbolsImportableEntity;
 import de.learnlib.alex.data.events.SymbolEvent;
 import de.learnlib.alex.data.services.SymbolUsageService;
 import de.learnlib.alex.data.services.export.SymbolsExporter;
@@ -119,6 +120,20 @@ public class SymbolResource {
         LOGGER.traceExit(createdSymbols);
         webhookService.fireEvent(user, new SymbolEvent.CreatedMany(createdSymbols));
         return ResponseEntity.status(HttpStatus.CREATED).body(createdSymbols);
+    }
+
+    @PostMapping(
+            value = "/import",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity importSymbols(@PathVariable("projectId") Long projectId,
+                                        @RequestBody SymbolsImportableEntity symbolsImportable) {
+
+        final User user = authContext.getUser();
+        final List<Symbol> importedSymbols = symbolDAO.importSymbols(user, projectId, symbolsImportable);
+        webhookService.fireEvent(user, new SymbolEvent.CreatedMany(importedSymbols));
+        return ResponseEntity.status(HttpStatus.CREATED).body(importedSymbols);
     }
 
     /**
@@ -361,19 +376,19 @@ public class SymbolResource {
      *
      * @param projectId
      *         The ID of the project.
-     * @param ids
+     * @param symbolIds
      *         The IDs of the symbols to hide.
      * @return On success no content will be returned; an error message on failure..
      */
     @PostMapping(
-            value = "/batch/{ids}/hide",
+            value = "/batch/{symbolIds}/hide",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity hide(@PathVariable("projectId") Long projectId, @PathVariable("ids") List<Long> ids) {
+    public ResponseEntity hide(@PathVariable("projectId") Long projectId, @PathVariable("symbolIds") List<Long> symbolIds) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("hide({}, {}) for user {}.", projectId, ids, user);
+        LOGGER.traceEntry("hide({}, {}) for user {}.", projectId, symbolIds, user);
 
-        final List<Symbol> archivedSymbols = symbolDAO.hide(user, projectId, ids);
+        final List<Symbol> archivedSymbols = symbolDAO.hide(user, projectId, symbolIds);
 
         LOGGER.traceExit(archivedSymbols);
         webhookService.fireEvent(user, new SymbolEvent.UpdatedMany(archivedSymbols));

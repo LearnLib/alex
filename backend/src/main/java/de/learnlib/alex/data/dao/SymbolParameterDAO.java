@@ -18,97 +18,201 @@ package de.learnlib.alex.data.dao;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
+import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.data.entities.SymbolInputParameter;
+import de.learnlib.alex.data.entities.SymbolOutputMapping;
+import de.learnlib.alex.data.entities.SymbolOutputParameter;
 import de.learnlib.alex.data.entities.SymbolParameter;
+import de.learnlib.alex.data.entities.SymbolParameterValue;
+import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
+import de.learnlib.alex.data.repositories.ProjectRepository;
+import de.learnlib.alex.data.repositories.SymbolOutputMappingRepository;
+import de.learnlib.alex.data.repositories.SymbolParameterRepository;
+import de.learnlib.alex.data.repositories.SymbolParameterValueRepository;
+import de.learnlib.alex.data.repositories.SymbolRepository;
 import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.stereotype.Service;
 
+import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.validation.ValidationException;
+import java.time.ZonedDateTime;
+import java.util.List;
 
-/**
- * The DAO for symbol parameters.
- */
-public interface SymbolParameterDAO {
+/** The concrete DAO for symbol parameters. */
+@Service
+@Transactional(rollbackOn = Exception.class)
+public class SymbolParameterDAO {
 
-    /**
-     * Creates a new symbol parameter.
-     *
-     * @param user
-     *         The user.
-     * @param projectId
-     *         The id of the project.
-     * @param symbolId
-     *         The id of the symbol.
-     * @param parameter
-     *         The parameter to create.
-     * @return The created parameter.
-     * @throws NotFoundException
-     *         If the project or the symbol could not be found.
-     * @throws UnauthorizedException
-     *         If the user has no access to one of the resources.
-     * @throws ValidationException
-     *         If the parameter is not valid.
-     */
-    SymbolParameter create(User user, Long projectId, Long symbolId, SymbolParameter parameter)
-            throws NotFoundException, UnauthorizedException, ValidationException;
+    /** The project repository to use. */
+    private ProjectRepository projectRepository;
 
-    /**
-     * Updates an existing symbol parameter.
-     *
-     * @param user
-     *         The user.
-     * @param projectId
-     *         The id of the project.
-     * @param symbolId
-     *         The id of the symbol.
-     * @param parameter
-     *         The parameter to update.
-     * @return The updated parameter.
-     * @throws NotFoundException
-     *         If the project or the symbol could not be found.
-     * @throws UnauthorizedException
-     *         If the user has no access to one of the resources.
-     * @throws ValidationException
-     *         If the parameter is not valid.
-     */
-    SymbolParameter update(User user, Long projectId, Long symbolId, SymbolParameter parameter)
-            throws NotFoundException, UnauthorizedException, ValidationException;
+    /** The symbol repository to use. */
+    private SymbolRepository symbolRepository;
+
+    /** The symbol parameter repository to use. */
+    private SymbolParameterRepository symbolParameterRepository;
+
+    /** The injected repository for {@link SymbolParameterValue}. */
+    private SymbolParameterValueRepository symbolParameterValueRepository;
+
+    /** The injected repository for {@link ParameterizedSymbol}. */
+    private ParameterizedSymbolRepository parameterizedSymbolRepository;
+
+    private SymbolOutputMappingRepository outputMappingRepository;
+
+    /** The symbol DAO to use. */
+    private SymbolDAO symbolDAO;
 
     /**
-     * Deletes a symbol parameter.
+     * Constructor.
      *
-     * @param user
-     *         The user.
-     * @param projectId
-     *         The id of the project.
-     * @param symbolId
-     *         The id of the symbol.
-     * @param parameterId
-     *         The id of the parameter to delete.
-     * @throws NotFoundException
-     *         If the project, the symbol or the parameter could not be found.
-     * @throws UnauthorizedException
-     *         If the user has no access to one of the resources.
+     * @param projectRepository
+     *         {@link #projectRepository}
+     * @param symbolRepository
+     *         {@link #symbolRepository}
+     * @param symbolParameterRepository
+     *         {@link #symbolParameterRepository}
+     * @param symbolParameterValueRepository
+     *         {@link #symbolParameterValueRepository}
+     * @param parameterizedSymbolRepository
+     *         {@link #parameterizedSymbolRepository}
+     * @param symbolDAO
+     *         {@link #symbolDAO}
      */
-    void delete(User user, Long projectId, Long symbolId, Long parameterId)
-            throws NotFoundException, UnauthorizedException;
+    @Inject
+    public SymbolParameterDAO(ProjectRepository projectRepository,
+                              SymbolRepository symbolRepository,
+                              SymbolParameterRepository symbolParameterRepository,
+                              SymbolParameterValueRepository symbolParameterValueRepository,
+                              ParameterizedSymbolRepository parameterizedSymbolRepository,
+                              SymbolDAO symbolDAO,
+                              SymbolOutputMappingRepository outputMappingRepository) {
+        this.projectRepository = projectRepository;
+        this.symbolRepository = symbolRepository;
+        this.symbolParameterRepository = symbolParameterRepository;
+        this.symbolParameterValueRepository = symbolParameterValueRepository;
+        this.parameterizedSymbolRepository = parameterizedSymbolRepository;
+        this.symbolDAO = symbolDAO;
+        this.outputMappingRepository = outputMappingRepository;
+    }
 
-    /**
-     * Check if the user is allowed to access or modify the symbol parameter.
-     *
-     * @param user
-     *         The user.
-     * @param project
-     *         The project.
-     * @param symbol
-     *         The symbol.
-     * @param parameter
-     *         The symbol parameter.
-     * @throws NotFoundException
-     *         If one of the resources can not be found.
-     * @throws UnauthorizedException
-     *         If one of the resources can not be accessed.
-     */
-    void checkAccess(User user, Project project, Symbol symbol, SymbolParameter parameter)
-            throws NotFoundException, UnauthorizedException;
+    public SymbolParameter create(User user, Long projectId, Long symbolId, SymbolParameter parameter)
+            throws NotFoundException, UnauthorizedException, ValidationException {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final Symbol symbol = symbolRepository.findById(symbolId).orElse(null);
+
+        return create(user, project, symbol, parameter);
+    }
+
+    public SymbolParameter update(User user, Long projectId, Long symbolId, SymbolParameter parameter)
+            throws NotFoundException, UnauthorizedException, ValidationException {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final Symbol symbol = symbolRepository.findById(symbolId).orElse(null);
+
+        checkAccess(user, project, symbol, parameter);
+        checkIfTypeWithNameExists(symbol, parameter);
+
+        symbol.setUpdatedOn(ZonedDateTime.now());
+        symbolRepository.save(symbol);
+
+        return symbolParameterRepository.save(parameter);
+    }
+
+    public void delete(User user, Long projectId, Long symbolId, Long parameterId)
+            throws NotFoundException, UnauthorizedException {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final Symbol symbol = symbolRepository.findById(symbolId).orElse(null);
+        final SymbolParameter parameter = symbolParameterRepository.findById(parameterId).orElse(null);
+
+        checkAccess(user, project, symbol, parameter);
+
+        final List<ParameterizedSymbol> pSymbols = parameterizedSymbolRepository.findAllBySymbol_Id(symbolId);
+        for (ParameterizedSymbol pSymbol : pSymbols) {
+            pSymbol.getParameterValues().removeIf(pv -> pv.getParameter().getId().equals(parameterId));
+            pSymbol.getOutputMappings().removeIf(pv -> pv.getParameter().getId().equals(parameterId));
+        }
+        parameterizedSymbolRepository.saveAll(pSymbols);
+
+        // also delete all values for the parameter
+        symbolParameterValueRepository.removeAllByParameter_Id(parameterId);
+        outputMappingRepository.removeAllByParameter_Id(parameterId);
+
+        symbol.removeParameter(parameter);
+        symbol.setUpdatedOn(ZonedDateTime.now());
+        symbolRepository.save(symbol);
+
+        symbolParameterRepository.deleteById(parameterId);
+    }
+
+    public void checkAccess(User user, Project project, Symbol symbol, SymbolParameter parameter)
+            throws NotFoundException, UnauthorizedException {
+        symbolDAO.checkAccess(user, project, symbol);
+
+        if (parameter == null) {
+            throw new NotFoundException("The parameter could not be found.");
+        }
+
+        if (!symbol.containsParameter(parameter)) {
+            throw new UnauthorizedException("You are not allowed to access the parameter.");
+        }
+    }
+
+    private SymbolParameter create(User user, Project project, Symbol symbol, SymbolParameter parameter)
+            throws NotFoundException, UnauthorizedException, ValidationException {
+
+        symbolDAO.checkAccess(user, project, symbol);
+        checkIfTypeWithNameExists(symbol, parameter);
+
+        parameter.setSymbol(symbol);
+        symbol.addParameter(parameter);
+
+        final SymbolParameter createdParameter = symbolParameterRepository.save(parameter);
+        symbol.setUpdatedOn(ZonedDateTime.now());
+        symbolRepository.save(symbol);
+
+        // If a new parameter is created for a symbol, it may be that there are tests that use the symbol.
+        // Therefore we have to add a new parameter value to the test steps that use the symbol.
+        final List<ParameterizedSymbol> pSymbols = parameterizedSymbolRepository.findAllBySymbol_Id(symbol.getId());
+        if (parameter instanceof SymbolInputParameter) {
+            pSymbols.forEach(pSymbol -> {
+                final SymbolParameterValue value = new SymbolParameterValue();
+                value.setParameter(parameter);
+                value.setDefaultValueByParameter(parameter);
+                pSymbol.getParameterValues().add(value);
+                symbolParameterValueRepository.saveAll(pSymbol.getParameterValues());
+            });
+            parameterizedSymbolRepository.saveAll(pSymbols);
+        } else if (parameter instanceof SymbolOutputParameter) {
+            pSymbols.forEach(pSymbol -> {
+                final SymbolOutputMapping om = new SymbolOutputMapping();
+                om.setParameter(parameter);
+                om.setName(parameter.getName());
+                pSymbol.getOutputMappings().add(om);
+                outputMappingRepository.saveAll(pSymbol.getOutputMappings());
+            });
+        }
+
+        return createdParameter;
+    }
+
+    private void checkIfTypeWithNameExists(Symbol symbol, SymbolParameter parameter) throws ValidationException {
+        if (parameter instanceof SymbolInputParameter) {
+            if (typeWithNameExists(symbol.getInputs(), parameter)) {
+                throw new ValidationException("The name of the input parameter already exists.");
+            }
+        } else if (parameter instanceof SymbolOutputParameter) {
+            if (typeWithNameExists(symbol.getOutputs(), parameter)) {
+                throw new ValidationException("The name of the output parameter already exists.");
+            }
+        }
+    }
+
+    private boolean typeWithNameExists(List<? extends SymbolParameter> parameters, SymbolParameter parameter) {
+        return parameters.stream().anyMatch(p ->
+                p.getName().equals(parameter.getName()) && !p.getId().equals(parameter.getId())
+        );
+    }
 }

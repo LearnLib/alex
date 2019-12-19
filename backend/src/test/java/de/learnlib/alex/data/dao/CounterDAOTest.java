@@ -43,7 +43,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CounterDAOImplTest {
+public class CounterDAOTest {
 
     private static final long USER_ID = 21L;
     private static final long PROJECT_ID = 42L;
@@ -64,7 +64,7 @@ public class CounterDAOImplTest {
 
     @Before
     public void setUp() {
-        counterDAO = new CounterDAOImpl(projectDAO, counterRepository, projectRepository);
+        counterDAO = new CounterDAO(projectDAO, counterRepository, projectRepository);
     }
 
     @Test

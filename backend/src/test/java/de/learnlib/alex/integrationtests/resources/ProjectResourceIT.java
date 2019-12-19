@@ -28,6 +28,8 @@ import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
 import javax.ws.rs.core.Response;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -111,6 +113,15 @@ public class ProjectResourceIT extends AbstractResourceIT {
         final Response res = projectApi.create(project, adminJwt);
 
         assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
+    }
+
+    @Test
+    public void shouldImportProject() throws Exception {
+        final String path = Thread.currentThread().getContextClassLoader().getResource("integrationtest/ALEX-rest.project.json").getPath();
+        final String content = new String(Files.readAllBytes(Paths.get(path)));
+
+        final Response res = projectApi.importProject(content, adminJwt);
+        assertEquals(HttpStatus.CREATED.value(), res.getStatus());
     }
 
     @Test

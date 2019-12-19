@@ -16,21 +16,14 @@
 
 package de.learnlib.alex.data.dao;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.SymbolGroup;
-import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
-import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
-import de.learnlib.alex.data.repositories.SymbolActionRepository;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
-import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
-import de.learnlib.alex.data.repositories.SymbolStepRepository;
-import de.learnlib.alex.data.repositories.SymbolSymbolStepRepository;
-import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
-import de.learnlib.alex.testing.repositories.TestExecutionResultRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,12 +43,11 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SymbolGroupDAOImplTest {
+public class SymbolGroupDAOTest {
 
     private static final long USER_ID = 21L;
     private static final long PROJECT_ID = 42L;
     private static final long GROUP_ID = 84L;
-    private static final String GROUP_NAME = "testGroup";
     private static final long DEFAULT_GROUP_ID = 0L;
     private static final int TEST_GROUP_COUNT = 3;
 
@@ -72,40 +64,16 @@ public class SymbolGroupDAOImplTest {
     private SymbolRepository symbolRepository;
 
     @Mock
-    private SymbolActionRepository symbolActionRepository;
+    private SymbolDAO symbolDAO;
 
     @Mock
-    private SymbolParameterRepository symbolParameterRepository;
-
-    @Mock
-    private ParameterizedSymbolDAO parameterizedSymbolDAO;
-
-    @Mock
-    private SymbolStepRepository symbolStepRepository;
-
-    @Mock
-    private SymbolSymbolStepRepository symbolSymbolStepRepository;
-
-    @Mock
-    private ParameterizedSymbolRepository parameterizedSymbolRepository;
-
-    @Mock
-    private TestCaseStepRepository testCaseStepRepository;
-
-    @Mock
-    private TestExecutionResultRepository testExecutionResultRepository;
-
-    @Mock
-    private ProjectEnvironmentRepository projectEnvironmentRepository;
+    private ObjectMapper objectMapper;
 
     private SymbolGroupDAO symbolGroupDAO;
 
     @Before
     public void setUp() {
-        symbolGroupDAO = new SymbolGroupDAOImpl(projectRepository, projectDAO, symbolGroupRepository, symbolRepository,
-                symbolActionRepository, symbolParameterRepository, parameterizedSymbolDAO, symbolStepRepository,
-                parameterizedSymbolRepository, testCaseStepRepository, testExecutionResultRepository,
-                symbolSymbolStepRepository, projectEnvironmentRepository);
+        symbolGroupDAO = new SymbolGroupDAO(projectRepository, projectDAO, symbolGroupRepository, symbolRepository, symbolDAO, objectMapper);
     }
 
     @Test

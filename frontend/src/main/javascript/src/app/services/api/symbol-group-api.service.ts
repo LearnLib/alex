@@ -57,8 +57,8 @@ export class SymbolGroupApiService extends BaseApiService {
       );
   }
 
-  importMany(projectId: number, groups: SymbolGroup[]): Observable<SymbolGroup[]> {
-    return this.http.post(`${env.apiUrl}/projects/${projectId}/groups/import`, groups, this.defaultHttpOptions)
+  importSymbolGroups(projectId: number, symbolGroupsImportable: any): Observable<SymbolGroup[]> {
+    return this.http.post(`${env.apiUrl}/projects/${projectId}/groups/import`, symbolGroupsImportable, this.defaultHttpOptions)
       .pipe(
         map((body: any) => body.map(g => new SymbolGroup(g)))
       );

@@ -221,6 +221,6 @@ public class ProjectResource {
         final User user = authContext.getUser();
         final Project importedProject = projectDAO.importProject(user, project);
         webhookService.fireEvent(user, new ProjectEvent.Created(importedProject));
-        return ResponseEntity.ok(importedProject);
+        return ResponseEntity.status(HttpStatus.CREATED).body(importedProject);
     }
 }

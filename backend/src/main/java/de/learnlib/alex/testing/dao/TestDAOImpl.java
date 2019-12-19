@@ -19,7 +19,6 @@ package de.learnlib.alex.testing.dao;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.ParameterizedSymbolDAO;
-import de.learnlib.alex.data.dao.ParameterizedSymbolDAOImpl;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.Project;
@@ -546,11 +545,11 @@ public class TestDAOImpl implements TestDAO {
         } else if (test instanceof TestCase) {
             TestCase testCase = (TestCase) test;
             Hibernate.initialize(testCase.getSteps());
-            testCase.getSteps().forEach(step -> ParameterizedSymbolDAOImpl.loadLazyRelations((step.getPSymbol())));
+            testCase.getSteps().forEach(step -> ParameterizedSymbolDAO.loadLazyRelations((step.getPSymbol())));
             Hibernate.initialize(testCase.getPreSteps());
-            testCase.getPreSteps().forEach(step -> ParameterizedSymbolDAOImpl.loadLazyRelations((step.getPSymbol())));
+            testCase.getPreSteps().forEach(step -> ParameterizedSymbolDAO.loadLazyRelations((step.getPSymbol())));
             Hibernate.initialize(testCase.getPostSteps());
-            testCase.getPostSteps().forEach(step -> ParameterizedSymbolDAOImpl.loadLazyRelations((step.getPSymbol())));
+            testCase.getPostSteps().forEach(step -> ParameterizedSymbolDAO.loadLazyRelations((step.getPSymbol())));
         }
     }
 

@@ -53,7 +53,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ProjectDAOImplTest {
+public class ProjectDAOTest {
 
     private static final long USER_ID = 21L;
     private static final long PROJECT_ID = 42L;
@@ -63,7 +63,7 @@ public class ProjectDAOImplTest {
     private ProjectRepository projectRepository;
 
     @Mock
-    private FileDAOImpl fileDAO;
+    private FileDAO fileDAO;
 
     @Mock
     private LearnerResultRepository learnerResultRepository;
@@ -113,7 +113,7 @@ public class ProjectDAOImplTest {
 
     @Before
     public void setUp() {
-        projectDAO = new ProjectDAOImpl(projectRepository, learnerResultRepository, testReportRepository, fileDAO,
+        projectDAO = new ProjectDAO(projectRepository, learnerResultRepository, testReportRepository, fileDAO,
                 parameterizedSymbolRepository, symbolStepRepository, symbolActionRepository, environmentDAO,
                 projectUrlRepository, testExecutionConfigRepository, testDAO, environmentRepository, symbolGroupDAO,
                 testRepository, symbolParameterRepository, uploadableFileRepository);
