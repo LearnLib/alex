@@ -32,6 +32,7 @@ import { Component } from '@angular/core';
 import { LearnerSettingsModalComponent } from './learner-settings-modal/learner-settings-modal.component';
 import { reverse, takeRight } from 'lodash';
 import { Router } from '@angular/router';
+import { LearnerResultListModalComponent } from '../learner-results-compare-view/learner-result-list-modal/learner-result-list-modal.component';
 
 /**
  * The controller that handles the preparation of a learn process. Lists all symbol groups and its visible symbols.
@@ -123,6 +124,16 @@ export class LearnerSetupViewComponent {
 
   handleSymbolGroupSelected(group: SymbolGroup): void {
     group.symbols.forEach(s => this.pSymbols.push(ParametrizedSymbol.fromSymbol(s)));
+  }
+
+  selectLearnerResult(): void {
+    const modalRef = this.modalService.open(LearnerResultListModalComponent);
+    modalRef.componentInstance.results = this.learnerResults;
+    modalRef.componentInstance.allowForeignProjects = false;
+    modalRef.componentInstance.allowFromFile = false;
+    modalRef.result.then((lr: LearnerResult) => {
+      this.reuseConfigurationFromResult(lr);
+    }).catch(() => {});
   }
 
   /**

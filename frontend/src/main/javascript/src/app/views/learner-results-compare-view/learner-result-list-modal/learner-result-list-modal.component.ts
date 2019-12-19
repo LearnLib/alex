@@ -36,6 +36,12 @@ export class LearnerResultListModalComponent {
   @Input()
   results: LearnerResult[] = [];
 
+  @Input()
+  allowForeignProjects = true;
+
+  @Input()
+  allowFromFile = true;
+
   projects: Project[] = [];
 
   constructor(private projectApi: ProjectApiService,

@@ -179,6 +179,9 @@
                   <span *ngFor="let env of result.environments" class="badge badge-secondary mr-1">{{env.name}}</span>
                 </div>
               </div>
+              <div class="list-group-item">
+                <button class="btn btn-default d-block w-100" (click)="selectLearnerResult()">More</button>
+              </div>
             </div>
             <div *ngIf="learnerResults.length === 0" class="card-body">
               <div class="alert alert-info mb-0">
