@@ -34,12 +34,15 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
 
     private ProjectEnvironmentApi envApi;
+
+    private ProjectApi projectApi;
 
     private String adminJwt;
 
@@ -48,7 +51,7 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
     @Before
     public void pre() {
         final UserApi userApi = new UserApi(client, port);
-        final ProjectApi projectApi = new ProjectApi(client, port);
+        projectApi = new ProjectApi(client, port);
         envApi = new ProjectEnvironmentApi(client, port);
 
         adminJwt = userApi.login("admin@alex.example", "admin");
@@ -234,6 +237,122 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
 
         assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
         assertEquals(environment.getUrls().size(), getById(environment.getId()).getUrls().size());
+    }
+
+    @Test
+    public void shouldNotDeleteTheLastEnvironment() {
+        final Long envId = project.getEnvironments().get(0).getId();
+        final Response res = envApi.delete(project.getId(), envId, adminJwt);
+        assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
+        res.readEntity(SpringRestError.class);
+
+        final Project p = projectApi.get(project.getId().intValue(), adminJwt).readEntity(Project.class);
+        assertEquals(1, p.getEnvironments().size());
+    }
+
+    @Test
+    public void shouldMakeAnotherEnvironmentDefaultWhenDeletingDefaultEnvironment() {
+        final ProjectEnvironment env = new ProjectEnvironment();
+        env.setName("env2");
+
+        envApi.create(project.getId(), env, adminJwt);
+        project = projectApi.get(project.getId().intValue(), adminJwt).readEntity(Project.class);
+
+        final Long defaultEnvId = project.getDefaultEnvironment().getId();
+        final Response res = envApi.delete(project.getId(), defaultEnvId, adminJwt);
+        project = projectApi.get(project.getId().intValue(), adminJwt).readEntity(Project.class);
+
+        assertEquals(HttpStatus.NO_CONTENT.value(), res.getStatus());
+        assertEquals(1, project.getEnvironments().size());
+        assertNotEquals(defaultEnvId, project.getDefaultEnvironment().getId());
+    }
+
+    @Test
+    public void shouldNotUpdateEnvironmentIfNameExists() {
+        ProjectEnvironment env2 = new ProjectEnvironment();
+        env2.setName("env2");
+
+        ProjectEnvironment env3 = new ProjectEnvironment();
+        env3.setName("env3");
+
+        env2 = envApi.create(project.getId(), env2, adminJwt).readEntity(ProjectEnvironment.class);
+        env3 = envApi.create(project.getId(), env3, adminJwt).readEntity(ProjectEnvironment.class);
+
+        env2.setName("env3");
+        final Response res = envApi.update(project.getId(), env2.getId(), env2, adminJwt);
+        project = projectApi.get(project.getId().intValue(), adminJwt).readEntity(Project.class);
+
+        env2 = project.getEnvironments().stream().filter(e -> e.getName().equals("env2")).findFirst().orElse(null);
+        env3 = project.getEnvironments().stream().filter(e -> e.getName().equals("env3")).findFirst().orElse(null);
+
+        res.readEntity(SpringRestError.class);
+        assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
+        assertNotNull(env2);
+        assertNotNull(env3);
+    }
+
+    @Test
+    public void shouldMakeAnotherEnvironmentTheDefaultOne() {
+        ProjectEnvironment env2 = new ProjectEnvironment();
+        env2.setName("env2");
+        env2 = envApi.create(project.getId(), env2, adminJwt).readEntity(ProjectEnvironment.class);
+
+        env2.setDefault(true);
+        env2 = envApi.update(project.getId(), env2.getId(), env2, adminJwt).readEntity(ProjectEnvironment.class);
+
+        project = projectApi.get(project.getId().intValue(), adminJwt).readEntity(Project.class);
+
+        assertEquals(env2.getId(), project.getDefaultEnvironment().getId());
+        assertEquals(1, project.getEnvironments().stream().filter(ProjectEnvironment::isDefault).count());
+    }
+
+    @Test
+    public void shouldNotCreateVariableIfNameExists() {
+        final ProjectEnvironment env = project.getDefaultEnvironment();
+
+        final ProjectEnvironmentVariable var1 = new ProjectEnvironmentVariable();
+        var1.setName("var1");
+        var1.setValue("test");
+
+        envApi.createVariable(project.getId(), env.getId(), var1, adminJwt);
+
+        final ProjectEnvironmentVariable var2 = new ProjectEnvironmentVariable();
+        var2.setName("var1");
+        var2.setValue("test");
+
+        final Response res = envApi.createVariable(project.getId(), env.getId(), var1, adminJwt);
+        project = projectApi.get(project.getId().intValue(), adminJwt).readEntity(Project.class);
+
+        res.readEntity(SpringRestError.class);
+        assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
+        assertEquals(1, project.getDefaultEnvironment().getVariables().size());
+        assertEquals("var1", project.getDefaultEnvironment().getVariables().get(0).getName());
+    }
+
+    @Test
+    public void shouldNotUpdateVariableWithExistingName() {
+        ProjectEnvironmentVariable var1 = new ProjectEnvironmentVariable();
+        var1.setName("var1");
+        var1.setValue("test");
+
+        ProjectEnvironmentVariable var2 = new ProjectEnvironmentVariable();
+        var2.setName("var2");
+        var2.setValue("test");
+
+        var1 = envApi.createVariable(project.getId(), project.getDefaultEnvironment().getId(), var1, adminJwt)
+                .readEntity(ProjectEnvironmentVariable.class);
+        var2 = envApi.createVariable(project.getId(), project.getDefaultEnvironment().getId(), var2, adminJwt)
+                .readEntity(ProjectEnvironmentVariable.class);
+
+        var2.setName("var1");
+
+        final Response res = envApi.updateVariable(project.getId(), project.getDefaultEnvironment().getId(), var2.getId(), var2, adminJwt);
+        project = projectApi.get(project.getId().intValue(), adminJwt).readEntity(Project.class);
+
+        res.readEntity(SpringRestError.class);
+        assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
+        assertEquals(1,  project.getDefaultEnvironment().getVariables().stream().filter(v -> v.getName().equals("var1")).count());
+        assertEquals(1,  project.getDefaultEnvironment().getVariables().stream().filter(v -> v.getName().equals("var2")).count());
     }
 
     private void assertVariablesAreTheSame(ProjectEnvironment env1, ProjectEnvironment env2) {

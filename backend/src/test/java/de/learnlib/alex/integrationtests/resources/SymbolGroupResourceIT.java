@@ -91,6 +91,25 @@ public class SymbolGroupResourceIT extends AbstractResourceIT {
     }
 
     @Test
+    public void createAGroupWithAParent() throws Exception {
+        SymbolGroup parent = new SymbolGroup();
+        parent.setName("parent");
+
+        parent = symbolGroupApi.create(projectId1, objectMapper.writeValueAsString(parent), jwtUser1)
+                .readEntity(SymbolGroup.class);
+
+        SymbolGroup child = new SymbolGroup();
+        child.setName("child");
+        child.setParent(parent);
+
+        final Response res = symbolGroupApi.create(projectId1, objectMapper.writeValueAsString(child), jwtUser1);
+        child = res.readEntity(SymbolGroup.class);
+
+        assertEquals(HttpStatus.CREATED.value(), res.getStatus());
+        assertEquals(parent.getId(), child.getParent().getId());
+    }
+
+    @Test
     public void shouldFailToCreateAGroupIfNameIsEmpty() throws Exception {
         final String group2 = createSymbolGroupJson(projectId1, "", null);
         final Response res2 = symbolGroupApi.create(projectId1, group2, jwtUser1);

@@ -283,10 +283,6 @@ public class SymbolDAO {
             throw new ValidationException("The IDs of the projects do not match.");
         }
 
-        if (symbol.getId() != null) {
-            throw new ValidationException("To create a symbol it must not haven an ID");
-        }
-
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
