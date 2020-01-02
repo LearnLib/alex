@@ -49,7 +49,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
-public class UserDAOImplTest {
+public class UserDAOTest {
 
     private static final int TEST_USER_COUNT = 3;
 
@@ -69,7 +69,7 @@ public class UserDAOImplTest {
 
     @Before
     public void setUp() throws NotFoundException {
-        userDAO = new UserDAOImpl(userRepository, fileDAO, projectDAO, projectRepository);
+        userDAO = new UserDAO(userRepository, fileDAO, projectDAO, projectRepository);
     }
 
     @Test

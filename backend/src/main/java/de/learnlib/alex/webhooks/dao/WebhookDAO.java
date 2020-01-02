@@ -20,109 +20,109 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.webhooks.entities.EventType;
 import de.learnlib.alex.webhooks.entities.Webhook;
+import de.learnlib.alex.webhooks.repositories.WebhookRepository;
 import org.apache.shiro.authz.UnauthorizedException;
+import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import javax.validation.ValidationException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * The DAO for webhooks.
+ * The implementation of the {@link WebhookDAO}.
  */
-public interface WebhookDAO {
+@Service
+@Transactional(rollbackOn = Exception.class)
+public class WebhookDAO {
 
     /**
-     * Create a new webhook.
-     *
-     * @param user
-     *         The user that registers the webhook.
-     * @param webhook
-     *         The webhook to register.
-     * @return The created webhook.
-     * @throws ValidationException
-     *         If a webhook with the same URL is already registerd.
+     * The repository for webhooks.
      */
-    Webhook create(User user, Webhook webhook) throws ValidationException;
+    private WebhookRepository webhookRepository;
 
     /**
-     * Get all webhooks of a user.
+     * Constructor.
      *
-     * @param user
-     *         The user.
-     * @return The list of registered webhooks.
+     * @param webhookRepository The injected repository for webhooks.
      */
-    List<Webhook> getAll(User user);
+    @Autowired
+    public WebhookDAO(WebhookRepository webhookRepository) {
+        this.webhookRepository = webhookRepository;
+    }
 
-    /**
-     * Get all webhooks of a user that contains a specific event.
-     *
-     * @param user
-     *         The user.
-     * @param event
-     *         The event.
-     * @return The webhooks of the user that contain the event.
-     */
-    List<Webhook> getByUserAndEvent(User user, EventType event);
+    public Webhook create(User user, Webhook webhook) throws ValidationException {
+        if (webhookRepository.findByUser_IdAndUrl(user.getId(), webhook.getUrl()) != null) {
+            throw new ValidationException("A webhook under the given URL is already registered. "
+                    + "Update the existing one instead.");
+        }
 
-    /**
-     * Get all webhooks that contain a certain event.
-     *
-     * @param event The event.
-     * @return The webhooks that contain the event.
-     */
-    List<Webhook> getByEvent(EventType event);
+        webhook.setUser(user);
+        return webhookRepository.save(webhook);
+    }
 
-    /**
-     * Delete a webhook.
-     *
-     * @param user
-     *         The user.
-     * @param id
-     *         The id of the webhook.
-     * @throws NotFoundException
-     *         If the webhook with the given id cannot be found.
-     */
-    void delete(User user, Long id) throws NotFoundException;
+    public List<Webhook> getAll(User user) {
+        final List<Webhook> webhooks = webhookRepository.findByUser_id(user.getId());
+        webhooks.forEach(this::loadLazyRelations);
+        return webhooks;
+    }
 
-    /**
-     * Delete multiple webhooks at once.
-     *
-     * @param user
-     *         The user.
-     * @param ids
-     *         The ids of the webhooks to delete.
-     * @throws NotFoundException
-     *         If a webhook could not be found.
-     */
-    void delete(User user, List<Long> ids) throws NotFoundException;
+    public List<Webhook> getByEvent(EventType event) {
+        final List<Webhook> webhooks = webhookRepository.findAllByEventsContains(event);
+        webhooks.forEach(this::loadLazyRelations);
+        return webhooks;
+    }
 
-    /**
-     * Update an existing webhook.
-     *
-     * @param user
-     *         The user.
-     * @param webhookId
-     *         The ID of the webhook to update.
-     * @param webhook
-     *         The updated webhook.
-     * @return The updated webhook.
-     * @throws NotFoundException
-     *         If the webhook with the given id could not be found.
-     * @throws ValidationException
-     *         If another webhook with the URL is already registered.
-     */
-    Webhook update(User user, Long webhookId, Webhook webhook) throws NotFoundException, ValidationException;
+    public List<Webhook> getByUserAndEvent(User user, EventType event) {
+        final List<Webhook> webhooks = webhookRepository.findByUser_id(user.getId()).stream()
+                .filter(webhook -> webhook.getEvents().contains(event))
+                .collect(Collectors.toList());
+        webhooks.forEach(this::loadLazyRelations);
+        return webhooks;
+    }
 
-    /**
-     * Checks if the user is allowed to access or modify a webhook.
-     *
-     * @param user
-     *         The user.
-     * @param webhook
-     *         The webhook.
-     * @throws NotFoundException
-     *         If the webhook could not be found.
-     * @throws UnauthorizedException
-     *         If the user is not allowed to access the webhook.
-     */
-    void checkAccess(User user, Webhook webhook) throws NotFoundException, UnauthorizedException;
+    public void delete(User user, Long id) throws NotFoundException {
+        final Webhook webhook = webhookRepository.findById(id).orElse(null);
+        checkAccess(user, webhook);
+        webhookRepository.delete(webhook);
+    }
+
+    public void delete(User user, List<Long> ids) throws NotFoundException {
+        for (Long id : ids) {
+            delete(user, id);
+        }
+    }
+
+    public Webhook update(User user, Long webhookId, Webhook webhook) throws NotFoundException, ValidationException {
+        final Webhook webhookInDb = webhookRepository.findById(webhookId).orElse(null);
+        checkAccess(user, webhookInDb);
+
+        // check if there is another webhook registered to the new URL.
+        final Webhook webhookWithSameUrl = webhookRepository.findByUser_IdAndUrl(user.getId(), webhook.getUrl());
+        if (webhookWithSameUrl != null && !webhook.getId().equals(webhookWithSameUrl.getId())) {
+            throw new ValidationException("Another webhook is already registered to the URL.");
+        }
+
+        webhookInDb.setEvents(webhook.getEvents());
+        webhookInDb.setUrl(webhook.getUrl());
+        webhookInDb.setName(webhook.getName());
+
+        return webhookRepository.save(webhookInDb);
+    }
+
+    public void checkAccess(User user, Webhook webhook) throws NotFoundException, UnauthorizedException {
+        if (webhook == null) {
+            throw new NotFoundException("The webhook does not exist.");
+        }
+
+        if (!webhook.getUser().equals(user)) {
+            throw new UnauthorizedException("You are not allowed to access the webhook.");
+        }
+    }
+
+    private void loadLazyRelations(Webhook webhook) {
+        Hibernate.initialize(webhook.getEvents());
+    }
 }

@@ -60,7 +60,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class LearnerResultDAOImplTest {
+public class LearnerResultDAOTest {
 
     private static final long USER_ID = 21L;
     private static final long PROJECT_ID = 42L;
@@ -96,7 +96,7 @@ public class LearnerResultDAOImplTest {
 
     @Before
     public void setUp() {
-        learnerResultDAO = new LearnerResultDAOImpl(projectDAO, learnerResultRepository, learnerResultStepRepository,
+        learnerResultDAO = new LearnerResultDAO(projectDAO, learnerResultRepository, learnerResultStepRepository,
                 entityManager, parameterizedSymbolRepository, symbolParameterValueRepository, projectEnvironmentRepository);
     }
 
