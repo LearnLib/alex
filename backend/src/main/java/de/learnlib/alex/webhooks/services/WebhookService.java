@@ -31,6 +31,8 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * The service that emits events to all remote subscribers.
@@ -43,11 +45,16 @@ public class WebhookService {
     /** The client timeout. */
     private static final int READ_CONNECT_TIMEOUT = 3000;
 
+    private static final int MAX_THREADS = 4;
+
     /** HTTP client. */
     private final Client client;
 
     /** The webhook DAO to use. */
     private WebhookDAO webhookDAO;
+
+    /** The thread executor for webhooks. */
+    private ExecutorService executorService;
 
     /**
      * Constructor.
@@ -60,6 +67,8 @@ public class WebhookService {
         this.client = ClientBuilder.newClient()
                 .property(ClientProperties.READ_TIMEOUT, READ_CONNECT_TIMEOUT)
                 .property(ClientProperties.CONNECT_TIMEOUT, READ_CONNECT_TIMEOUT);
+
+        this.executorService = Executors.newFixedThreadPool(MAX_THREADS);
     }
 
     /**
@@ -89,14 +98,14 @@ public class WebhookService {
         LOGGER.traceExit();
     }
 
-    private  <T> void triggerWebhooks(Event<T> event, List<Webhook> webhooks) {
+    private <T> void triggerWebhooks(Event<T> event, List<Webhook> webhooks) {
         for (final Webhook webhook : webhooks) {
-            new Thread(() -> {
+            executorService.submit(() -> {
                 LOGGER.info("send {} to {}", event, webhook.getUrl());
                 client.target(webhook.getUrl())
                         .request(MediaType.APPLICATION_JSON)
                         .post(Entity.json(event));
-            }).start();
+            });
         }
     }
 }
