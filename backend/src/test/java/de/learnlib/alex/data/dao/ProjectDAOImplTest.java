@@ -128,7 +128,7 @@ public class ProjectDAOImplTest {
     public void shouldGetAProjectByItsID() throws NotFoundException {
         User user = new User(USER_ID);
         Project project = new Project();
-        project.setUser(user);
+        project.addOwner(user);
 
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
 
@@ -150,7 +150,7 @@ public class ProjectDAOImplTest {
         user.setId(USER_ID);
 
         Project project = new Project();
-        project.setUser(user);
+        project.addOwner(user);
         project.setId(PROJECT_ID);
 
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
@@ -167,7 +167,7 @@ public class ProjectDAOImplTest {
         user.setId(USER_ID);
 
         Project project = new Project();
-        project.setUser(user);
+        project.addOwner(user);
         project.setId(PROJECT_ID);
 
         projectDAO.update(user, PROJECT_ID, project);
@@ -179,7 +179,7 @@ public class ProjectDAOImplTest {
         user.setId(USER_ID);
 
         Project project = new Project();
-        project.setUser(user);
+        project.addOwner(user);
         project.setId(PROJECT_ID);
 
         given(projectRepository.save(project)).willThrow(ConstraintViolationException.class);
@@ -194,7 +194,7 @@ public class ProjectDAOImplTest {
         user.setId(USER_ID);
 
         Project project = new Project();
-        project.setUser(user);
+        project.addOwner(user);
 
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
 

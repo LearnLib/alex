@@ -17,6 +17,7 @@
 package de.learnlib.alex.data.dao;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.learnlib.alex.auth.dao.UserDAO;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.CreateProjectForm;
@@ -77,6 +78,7 @@ public class ProjectDAOImpl implements ProjectDAO {
     private ProjectEnvironmentRepository environmentRepository;
     private SymbolGroupDAO symbolGroupDAO;
     private TestDAO testDAO;
+    private UserDAO userDAO;
 
     @Inject
     public ProjectDAOImpl(ProjectRepository projectRepository,
@@ -91,7 +93,8 @@ public class ProjectDAOImpl implements ProjectDAO {
                           TestExecutionConfigRepository testExecutionConfigRepository,
                           @Lazy TestDAO testDAO,
                           ProjectEnvironmentRepository environmentRepository,
-                          @Lazy SymbolGroupDAO symbolGroupDAO) {
+                          @Lazy SymbolGroupDAO symbolGroupDAO,
+                          @Lazy UserDAO userDAO) {
         this.projectRepository = projectRepository;
         this.learnerResultRepository = learnerResultRepository;
         this.fileDAO = fileDAO;
@@ -105,6 +108,7 @@ public class ProjectDAOImpl implements ProjectDAO {
         this.environmentRepository = environmentRepository;
         this.symbolGroupDAO = symbolGroupDAO;
         this.testDAO = testDAO;
+        this.userDAO = userDAO;
     }
 
     @Override
@@ -113,7 +117,7 @@ public class ProjectDAOImpl implements ProjectDAO {
         LOGGER.traceEntry("create({})", projectForm);
 
         final Project project = new Project();
-        project.setUser(user);
+        project.addOwner(user);
         project.setName(projectForm.getName());
         project.setDescription(projectForm.getDescription());
 
@@ -247,7 +251,7 @@ public class ProjectDAOImpl implements ProjectDAO {
         final Project newProject = new Project();
         newProject.setName(project.getName());
         newProject.setDescription(project.getDescription());
-        newProject.setUser(user);
+        newProject.addOwner(user);
 
         final Project createdProject = projectRepository.save(newProject);
         createdProject.getEnvironments().addAll(project.getEnvironments());
@@ -346,8 +350,99 @@ public class ProjectDAOImpl implements ProjectDAO {
             throw new NotFoundException("The project does not exist.");
         }
 
-        if (!project.getUser().equals(user)) {
+        if (!project.getOwners().contains(user) && !project.getMembers().contains(user)) {
             throw new UnauthorizedException("You are not allowed to access the project.");
+        }
+    }
+
+    @Override
+    public Project addOwners(User user, Long projectId, List<Long> ownerIds) {
+        final Project projectInDb = projectRepository.findById(projectId).orElse(null);
+        checkAccess(user, projectInDb);
+
+        if (!projectInDb.getOwners().contains(user)) {
+            throw new UnauthorizedException("You are not allowed to add users as owners to the project.");
+        }
+
+        ownerIds.forEach(ownerId -> {
+            projectInDb.removeMember(userDAO.getById(ownerId));
+            projectInDb.addOwner(userDAO.getById(ownerId));
+        });
+
+        checkProjectIntegrity(projectInDb);
+
+        final Project updatedProject = projectRepository.save(projectInDb);
+        loadLazyRelations(updatedProject);
+
+        return updatedProject;
+    }
+
+    @Override
+    public Project addMembers(User user, Long projectId, List<Long> memberIds) {
+        final Project projectInDb = projectRepository.findById(projectId).orElse(null);
+        checkAccess(user, projectInDb);
+
+        if (!projectInDb.getOwners().contains(user)) {
+            throw new UnauthorizedException("You are not allowed to add users as members to the project.");
+        }
+
+        memberIds.forEach(memberId -> {
+            projectInDb.removeOwner(userDAO.getById(memberId));
+            projectInDb.addMember(userDAO.getById(memberId));
+        });
+
+        checkProjectIntegrity(projectInDb);
+
+        final Project updatedProject = projectRepository.save(projectInDb);
+        loadLazyRelations(updatedProject);
+
+        return updatedProject;
+    }
+
+    @Override
+    public Project removeOwners(User user, Long projectId, List<Long> ownerIds) {
+        final Project projectInDb = projectRepository.findById(projectId).orElse(null);
+        checkAccess(user, projectInDb);
+
+        if (!projectInDb.getOwners().contains(user)) {
+            throw new UnauthorizedException("You are not allowed to remove owners from the the project.");
+        }
+
+        ownerIds.forEach(ownerId -> {
+            projectInDb.removeOwner(userDAO.getById(ownerId));
+        });
+
+        checkProjectIntegrity(projectInDb);
+
+        final Project updatedProject = projectRepository.save(projectInDb);
+        loadLazyRelations(updatedProject);
+
+        return updatedProject;
+    }
+
+    @Override
+    public Project removeMembers(User user, Long projectId, List<Long> memberIds) {
+        final Project projectInDb = projectRepository.findById(projectId).orElse(null);
+        checkAccess(user, projectInDb);
+
+        if (!(projectInDb.getOwners().contains(user) || (memberIds.size() == 1 && memberIds.contains(user.getId())))) {
+            throw new UnauthorizedException("You are not allowed to remove members from the project.");
+        }
+
+        memberIds.forEach(memberId -> {
+            projectInDb.removeMember(userDAO.getById(memberId));
+        });
+
+        final Project updatedProject = projectRepository.save(projectInDb);
+        loadLazyRelations(updatedProject);
+
+        return updatedProject;
+    }
+
+    private void checkProjectIntegrity(Project project) {
+        //at least one owner has to remain
+        if (project.getOwners().isEmpty()) {
+            throw new ValidationException("There need to be at least one owner in the project.");
         }
     }
 }

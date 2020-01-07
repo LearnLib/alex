@@ -233,6 +233,8 @@ import { CreateLabelActionFormComponent } from './common/actions/misc/create-lab
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { TestStatusComponent } from './common/test-status/test-status.component';
 import { TestReportProgressComponent } from './common/test-report-progress/test-report-progress.component';
+import {ProjectUsersViewComponent} from "./views/project-users-view/project-users-view.component";
+import {AddUserModalComponent} from "./views/project-users-view/add-user-modal/add-user-modal.component";
 
 
 @NgModule({
@@ -427,7 +429,9 @@ import { TestReportProgressComponent } from './common/test-report-progress/test-
     JumpToLabelActionFormComponent,
     CreateLabelActionFormComponent,
     TestStatusComponent,
-    TestReportProgressComponent
+    TestReportProgressComponent,
+    ProjectUsersViewComponent,
+    AddUserModalComponent
   ],
   imports: [
     BrowserModule,
@@ -523,7 +527,8 @@ import { TestReportProgressComponent } from './common/test-report-progress/test-
     LearnerSettingsModalComponent,
     CreateActionModalComponent,
     EditActionModalComponent,
-    AboutModalComponent
+    AboutModalComponent,
+    AddUserModalComponent
   ],
   bootstrap: [AppComponent]
 })

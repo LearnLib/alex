@@ -87,6 +87,13 @@ export class UserApiService extends BaseApiService {
       );
   }
 
+  getManyUsers(userIds: number[]): Observable<User[]> {
+    return this.http.get(`${env.apiUrl}/users/batch/${userIds.join(',')}`, this.defaultHttpOptions)
+      .pipe(
+        map((body: any) => body.map(u => User.fromData(u)))
+      );
+  }
+
   /**
    * Gets a list of all users. Should only be called by admins.
    *

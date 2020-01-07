@@ -67,7 +67,7 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
     @Test(expected = TransactionSystemException.class)
     public void shouldFailToSaveAProjectWithoutAName() {
         Project project = new Project();
-        project.setUser(user);
+        project.addOwner(user);
         projectRepository.save(project); // should fail
     }
 

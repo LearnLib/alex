@@ -29,6 +29,7 @@ import { removeItems, replaceItem } from '../../utils/list-utils';
 import { EditProjectModalComponent } from './edit-project-modal/edit-project-modal.component';
 import { map } from 'rxjs/operators';
 import { orderBy } from 'lodash';
+import {AppStoreService} from "../../services/app-store.service";
 
 @Injectable()
 export class ProjectsViewStoreService {
@@ -36,7 +37,8 @@ export class ProjectsViewStoreService {
   public readonly projectsSelectable: Selectable<Project, number>;
   private projects: BehaviorSubject<Project[]>;
 
-  constructor(private projectApi: ProjectApiService,
+  constructor(private appStore: AppStoreService,
+              private projectApi: ProjectApiService,
               private modalService: NgbModal,
               private promptService: PromptService,
               private toastService: ToastService,
@@ -137,5 +139,22 @@ export class ProjectsViewStoreService {
     return this.projects$.pipe(
       map(projects => orderBy(projects, ['name']))
     );
+  }
+
+  leaveProject(project: Project): void {
+    if (project.members.includes(this.appStore.user.id)) {
+      this.projectApi.removeMembers(project.id, Array.of(this.appStore.user.id)).subscribe(() => {
+        this.projects.next(this.projects.value.filter(projectInt => projectInt.id != project.id));
+        this.projectsSelectable.remove(project);
+      },
+      res => this.toastService.danger(`${res.error.message}`))
+    }
+    if (project.owners.includes(this.appStore.user.id)) {
+      this.projectApi.removeOwners(project.id, Array.of(this.appStore.user.id)).subscribe(() => {
+        this.projects.next(this.projects.value.filter(projectInt => projectInt.id != project.id));
+        this.projectsSelectable.remove(project);
+      },
+        res => this.toastService.danger(`${res.error.message}`))
+    }
   }
 }

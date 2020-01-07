@@ -102,4 +102,34 @@ export class ProjectApiService extends BaseApiService {
         map(body => new Project(body))
       );
   }
+
+  addOwners(projectId: number, ownerIds: number[]): Observable<any> {
+    return this.http.post(`${env.apiUrl}/projects/${projectId}/owners`, ownerIds, this.defaultHttpOptions)
+      .pipe(
+        map(body => new Project(body))
+      );
+  }
+
+  addMembers(projectId: number, memberIds: number[]): Observable<any> {
+    return this.http.post(`${env.apiUrl}/projects/${projectId}/members`, memberIds, this.defaultHttpOptions)
+      .pipe(
+        map(body => new Project(body))
+      );
+  }
+
+  removeOwners(projectId: number, ownerIds: number[]): Observable<any> {
+    const ids = ownerIds.join(',');
+    return this.http.delete(`${env.apiUrl}/projects/${projectId}/owners/${ids}`, this.defaultHttpOptions)
+      .pipe(
+        map(body => new Project(body))
+      );
+  }
+
+  removeMembers(projectId: number, memberIds: number[]): Observable<any> {
+    const ids = memberIds.join(',');
+    return this.http.delete(`${env.apiUrl}/projects/${projectId}/members/${ids}`, this.defaultHttpOptions)
+      .pipe(
+        map(body => new Project(body))
+      );
+  }
 }

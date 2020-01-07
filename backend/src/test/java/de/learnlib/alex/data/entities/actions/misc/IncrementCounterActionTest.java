@@ -55,7 +55,7 @@ public class IncrementCounterActionTest {
         user.setId(USER_ID);
 
         Project project = new Project();
-        project.setUser(user);
+        project.addOwner(user);
         project.setId(PROJECT_ID);
 
         Symbol symbol = new Symbol();

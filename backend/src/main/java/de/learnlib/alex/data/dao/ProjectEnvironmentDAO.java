@@ -381,7 +381,7 @@ public class ProjectEnvironmentDAO {
             throw new NotFoundException("The environment could not be found.");
         }
 
-        if (!env.getProjectId().equals(project.getId())) {
+        if (!env.getProjectId().equals(project.getId()) || !project.getOwners().contains(user)) {
             throw new UnauthorizedException("You are not allowed to access the environment.");
         }
     }
@@ -394,7 +394,7 @@ public class ProjectEnvironmentDAO {
             throw new NotFoundException("The url could not be found.");
         }
 
-        if (!url.getEnvironmentId().equals(env.getId())) {
+        if (!url.getEnvironmentId().equals(env.getId()) || !project.getOwners().contains(user)) {
             throw new UnauthorizedException("You are not allowed to access the url.");
         }
     }
@@ -407,7 +407,7 @@ public class ProjectEnvironmentDAO {
             throw new NotFoundException("The variable could not be found.");
         }
 
-        if (!variable.getEnvironmentId().equals(env.getId())) {
+        if (!variable.getEnvironmentId().equals(env.getId()) || !project.getOwners().contains(user)) {
             throw new UnauthorizedException("You are not allowed to access the variable.");
         }
     }

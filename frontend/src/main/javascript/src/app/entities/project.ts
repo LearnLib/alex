@@ -39,8 +39,9 @@ export class Project {
   /** The id of the project. */
   public id: number;
 
-  /** The id of the user the project belongs to. */
-  public user: number;
+  public members: number[];
+
+  public owners: number[];
 
   /**
    * Constructor.
@@ -51,7 +52,8 @@ export class Project {
     this.name = obj.name || null;
     this.description = obj.description || null;
     this.id = obj.id;
-    this.user = obj.user;
+    this.members = obj.members;
+    this.owners = obj.owners;
 
     if (obj.environments != null && obj.environments.length > 0) {
       this.environments = obj.environments.map(o => ProjectEnvironment.fromData(o))

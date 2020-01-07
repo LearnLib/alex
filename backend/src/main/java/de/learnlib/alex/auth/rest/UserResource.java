@@ -47,6 +47,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.ValidationException;
 import javax.ws.rs.core.MediaType;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -161,6 +162,22 @@ public class UserResource {
         final User userById = userDAO.getById(userId);
         LOGGER.traceExit(userById);
         return ResponseEntity.ok(userById);
+    }
+
+    @GetMapping(
+            value = "/batch/{ids}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity getManyUsers(@PathVariable("ids") List<Long> userIds) {
+        final User user = authContext.getUser();
+        LOGGER.traceEntry("get({}) for user {}.", userIds, user);
+
+        final List<User> users = new ArrayList<>();
+        userIds.stream().forEach(userId -> {
+            users.add(userDAO.getById(userId));
+        });
+        LOGGER.traceExit(users);
+        return ResponseEntity.ok(users);
     }
 
     /**

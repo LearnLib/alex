@@ -223,4 +223,50 @@ public class ProjectResource {
         webhookService.fireEvent(user, new ProjectEvent.Created(importedProject));
         return ResponseEntity.ok(importedProject);
     }
+
+    @PostMapping(
+            value="/{projectId}/owners",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity addOwners(@PathVariable("projectId") Long projectId, @RequestBody List<Long> ownerIds) {
+        final User user = authContext.getUser();
+        final Project updatedProject = projectDAO.addOwners(user, projectId, ownerIds);
+
+        return ResponseEntity.ok(updatedProject);
+    }
+
+    @PostMapping(
+            value="/{projectId}/members",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity addMembers(@PathVariable("projectId") Long projectId, @RequestBody List<Long> memberIds) {
+        final User user = authContext.getUser();
+        final Project updatedProject = projectDAO.addMembers(user, projectId, memberIds);
+
+        return ResponseEntity.ok(updatedProject);
+    }
+
+    @DeleteMapping(
+            value="/{projectId}/owners/{ownerIds}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity removeOwner(@PathVariable("projectId") Long projectId, @PathVariable("ownerIds") List<Long> ownerIds) {
+        final User user = authContext.getUser();
+        final Project updatedProject = projectDAO.removeOwners(user, projectId, ownerIds);
+
+        return ResponseEntity.ok(updatedProject);
+    }
+
+    @DeleteMapping(
+            value="/{projectId}/members/{memberIds}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity removeMember(@PathVariable("projectId") Long projectId, @PathVariable("memberIds") List<Long> memberIds) {
+        final User user = authContext.getUser();
+        final Project updatedProject = projectDAO.removeMembers(user, projectId, memberIds);
+
+        return ResponseEntity.ok(updatedProject);
+    }
 }

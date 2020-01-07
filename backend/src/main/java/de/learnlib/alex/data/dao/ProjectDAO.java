@@ -118,4 +118,12 @@ public interface ProjectDAO {
      *         If the project does not belong to the project.
      */
     void checkAccess(User user, Project project) throws NotFoundException, UnauthorizedException;
+
+    Project addOwners(User user, Long projectId, List<Long> ownerIds);
+
+    Project addMembers(User user, Long projectId, List<Long> memberIds);
+
+    Project removeOwners(User user, Long projectId, List<Long> ownerIds);
+
+    Project removeMembers(User user, Long projectId, List<Long> memberIds);
 }

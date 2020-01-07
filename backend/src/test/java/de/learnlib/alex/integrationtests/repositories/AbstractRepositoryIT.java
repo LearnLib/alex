@@ -78,7 +78,7 @@ public abstract class AbstractRepositoryIT {
         env.getUrls().add(url);
 
         final Project project = new Project();
-        project.setUser(user);
+        project.addOwner(user);
         project.setName(name);
         project.getEnvironments().add(env);
         env.setProject(project);
