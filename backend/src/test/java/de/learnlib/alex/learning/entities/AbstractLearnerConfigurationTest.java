@@ -47,9 +47,11 @@ public class AbstractLearnerConfigurationTest {
                 + "\"eqOracle\":"
                 + "{\"batchSize\":20,\"type\":\"random_word\",\"minLength\":" + EQ_MIN_VALUE + ","
                 + "\"maxLength\":" + EQ_MAX_VALUE + ",\"seed\":42,\"maxNoOfTests\":1},"
-                + "\"maxAmountOfStepsToLearn\":-1,\"project\":null,\"resetSymbol\":null,\"postSymbol\":null,\"symbols\":[],"
+                + "\"resetSymbol\":null,"
+                + "\"postSymbol\":null,"
+                + "\"symbols\":[],"
                 + "\"environments\":[],"
-                + "\"useMQCache\":true,\"user\":null}";
+                + "\"useMQCache\":true}";
 
         LearnerStartConfiguration configuration = new LearnerStartConfiguration();
 
@@ -65,14 +67,11 @@ public class AbstractLearnerConfigurationTest {
                 + "\"comment\":\"test\","
                 + "\"driverConfig\":" + driverConfig + ","
                 + "\"eqOracle\":{\"batchSize\":20,\"type\":\"complete\",\"minDepth\":" + EQ_MIN_VALUE + ",\"maxDepth\":" + EQ_MAX_VALUE + "},"
-                + "\"maxAmountOfStepsToLearn\":-1,"
-                + "\"project\":null,"
                 + "\"resetSymbol\":null,"
                 + "\"postSymbol\":null,"
                 + "\"symbols\":[],"
                 + "\"environments\":[],"
-                + "\"useMQCache\":true,"
-                + "\"user\":null}";
+                + "\"useMQCache\":true}";
 
         LearnerStartConfiguration configuration = new LearnerStartConfiguration();
 

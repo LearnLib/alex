@@ -71,8 +71,6 @@ export class LearnerResult {
   /** If membership queries should be cached. */
   public useMQCache: boolean;
 
-  public maxAmountOfStepsToLearn: number;
-
   public status: LearnerResultStatus;
 
   /**
@@ -95,7 +93,6 @@ export class LearnerResult {
     this.comment = obj.comment;
     this.environments = obj.environments || [];
     this.useMQCache = obj.useMQCache;
-    this.maxAmountOfStepsToLearn = obj.maxAmountOfStepsToLearn == null ? -1 : obj.maxAmountOfStepsToLearn;
     this.status = obj.status;
   }
 }

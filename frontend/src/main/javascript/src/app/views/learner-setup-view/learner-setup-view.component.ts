@@ -187,7 +187,6 @@ export class LearnerSetupViewComponent {
   reuseConfigurationFromResult(result: LearnerResult): void {
     this.learnerConfiguration.algorithm = result.algorithm;
     this.learnerConfiguration.eqOracle = result.steps[0].eqOracle;
-    this.learnerConfiguration.maxAmountOfStepsToLearn = result.maxAmountOfStepsToLearn;
     this.learnerConfiguration.driverConfig = result.driverConfig;
     this.learnerConfiguration.environments = result.environments;
     this.learnerConfiguration.resetSymbol = result.resetSymbol;

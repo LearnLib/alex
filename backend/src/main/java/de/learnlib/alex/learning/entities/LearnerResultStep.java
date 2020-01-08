@@ -68,9 +68,6 @@ public class LearnerResultStep implements Serializable {
     /** The type of EQ oracle to find a counter example. */
     private AbstractEquivalenceOracleProxy eqOracle;
 
-    /** The amount of steps to learn without user interaction. */
-    private int stepsToLearn;
-
     /** The hypothesis of the result. */
     private CompactMealyMachineProxy hypothesis;
 
@@ -163,22 +160,6 @@ public class LearnerResultStep implements Serializable {
      */
     public void setEqOracle(AbstractEquivalenceOracleProxy eqOracle) {
         this.eqOracle = eqOracle;
-    }
-
-    /**
-     * @return The max amount of steps to learn without user interaction.
-     */
-    @Min(-1)
-    public int getStepsToLearn() {
-        return stepsToLearn;
-    }
-
-    /**
-     * @param stepsToLearn
-     *         The new max amount of steps to learn without user interaction.
-     */
-    public void setStepsToLearn(int stepsToLearn) {
-        this.stepsToLearn = stepsToLearn;
     }
 
     /**

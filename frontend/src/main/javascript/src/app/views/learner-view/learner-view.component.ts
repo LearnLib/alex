@@ -120,7 +120,6 @@ export class LearnerViewComponent implements OnInit, OnDestroy {
     const lastStep = this.currentResult.steps[this.currentResult.steps.length - 1];
     this.resumeConfig = {
       eqOracle: lastStep.eqOracle,
-      maxAmountOfStepsToLearn: lastStep.stepsToLearn,
       stepNo: lastStep.stepNo,
       symbolsToAdd: [],
       project: this.project.id,

@@ -174,7 +174,7 @@ public class LearnerService {
         }
 
         if (configuration.getEqOracle() instanceof SampleEQOracleProxy) {
-            validateCounterexample(user, configuration);
+            validateCounterexample(user, project, configuration);
         }
 
         final Symbol resetSymbol = symbolDAO.get(user, project.getId(), result.getResetSymbol().getSymbol().getId());
@@ -285,14 +285,14 @@ public class LearnerService {
      * @throws IllegalArgumentException
      *         If the new configuration is based on manual counterexamples and at least one of them is wrong.
      */
-    private void validateCounterexample(User user, LearnerResumeConfiguration configuration)
+    private void validateCounterexample(User user, Project project, LearnerResumeConfiguration configuration)
             throws IllegalArgumentException {
 
         final SampleEQOracleProxy oracle = (SampleEQOracleProxy) configuration.getEqOracle();
         final LearnerResult lastResult;
 
         try {
-            lastResult = learnerResultDAO.get(user, configuration.getProjectId(), configuration.getTestNo(), false);
+            lastResult = learnerResultDAO.get(user, project.getId(), configuration.getTestNo(), false);
         } catch (NotFoundException e) {
             throw new IllegalArgumentException(e);
         }

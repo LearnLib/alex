@@ -121,20 +121,11 @@ public class LearnerResource {
         LOGGER.traceEntry("start({}, {}) for user {}.", projectId, configuration, user);
 
         try {
-            if ((configuration.getUserId() != null && !user.getId().equals(configuration.getUserId()))
-                    || (configuration.getProjectId() != null && !configuration.getProjectId().equals(projectId))) {
-                throw new IllegalArgumentException("If an user or a project is provided in the configuration, "
-                        + "they must match the parameters in the path!");
-            }
-
-            configuration.setProjectId(projectId);
-
             if (configuration.getSymbols().contains(configuration.getResetSymbol())) {
                 throw new IllegalArgumentException("The reset may not be a part of the input alphabet");
             }
 
             final Project project = projectDAO.getByID(user, projectId);
-
             final LearnerResult learnerResult = learnerService.start(user, project, configuration);
 
             LOGGER.traceExit(learnerResult);
@@ -174,7 +165,6 @@ public class LearnerResource {
 
         try {
             configuration.setTestNo(testNo);
-            configuration.setUserId(user.getId());
             configuration.checkConfiguration();
             LearnerResult result = learnerResultDAO.get(user, projectId, testNo, true);
 

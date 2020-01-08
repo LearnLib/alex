@@ -290,9 +290,8 @@ public abstract class AbstractLearnerProcess<T extends AbstractLearnerConfigurat
         }
 
         long start, end;
-        long rounds = 0;
 
-        while (continueLearning(currentStep, rounds)) {
+        while (true) {
 
             // search for counterexamples
             learnerPhase = LearnerService.LearnerPhase.EQUIVALENCE_TESTING;
@@ -316,15 +315,9 @@ public abstract class AbstractLearnerProcess<T extends AbstractLearnerConfigurat
             } else {
                 break;
             }
-
-            rounds++;
         }
 
         webhookService.fireEvent(user, new LearnerEvent.Finished(result));
-    }
-
-    private boolean continueLearning(final LearnerResultStep step, final long rounds) {
-        return step.getStepsToLearn() == -1 || rounds < step.getStepsToLearn() - 1;
     }
 
     public void stopLearning() {

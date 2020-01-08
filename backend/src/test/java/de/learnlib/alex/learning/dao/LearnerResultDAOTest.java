@@ -275,12 +275,9 @@ public class LearnerResultDAOTest {
 
         LearnerResumeConfiguration configuration = new LearnerResumeConfiguration();
         configuration.setEqOracle(EXAMPLE_EQ_ORACLE);
-        configuration.setMaxAmountOfStepsToLearn(-1);
 
         LearnerResultStep step = learnerResultDAO.createStep(result, configuration);
-
         assertThat(step.getStepNo(), is(equalTo(1L)));
-        assertThat(step.getStepsToLearn(), is(equalTo(-1)));
     }
 
     @Test
@@ -292,14 +289,12 @@ public class LearnerResultDAOTest {
 
         LearnerResumeConfiguration configuration = new LearnerResumeConfiguration();
         configuration.setEqOracle(EXAMPLE_EQ_ORACLE);
-        configuration.setMaxAmountOfStepsToLearn(-1);
         LearnerResultStep step = learnerResultDAO.createStep(result, configuration);
         result.getSteps().add(step);
 
         LearnerResultStep newStep = learnerResultDAO.createStep(result);
 
         assertThat(newStep.getStepNo(), is(equalTo(2L)));
-        assertThat(newStep.getStepsToLearn(), is(equalTo(-1)));
     }
 
     @Test
@@ -313,7 +308,6 @@ public class LearnerResultDAOTest {
 
         LearnerResumeConfiguration configuration = new LearnerResumeConfiguration();
         configuration.setEqOracle(EXAMPLE_EQ_ORACLE);
-        configuration.setMaxAmountOfStepsToLearn(-1);
         LearnerResultStep step = learnerResultDAO.createStep(result, configuration);
 
         Statistics statistics = new Statistics();

@@ -23,20 +23,6 @@
               >
             </div>
 
-            <div class="form-group mb-0">
-              <label class="control-label">Steps to learn</label>
-              <input
-                [(ngModel)]="configuration.maxAmountOfStepsToLearn"
-                class="form-control"
-                min="-1"
-                name="max_steps"
-                placeholder="-1"
-                required
-                type="number"
-              >
-              <small class="form-text text-muted">(-1 := learn until no counterexample can be found)</small>
-            </div>
-
           </ng-template>
         </ngb-panel>
         <ngb-panel id="static-2" title="Equivalence oracle">

@@ -204,15 +204,7 @@ public class LearnerResultDAO {
         step.setResult(result);
         result.getSteps().add(step);
         step.setStepNo(latestStep.getStepNo() + 1);
-
         step.setEqOracle(latestStep.getEqOracle());
-        if (latestStep.getStepsToLearn() > 0) {
-            step.setStepsToLearn(latestStep.getStepsToLearn() - 1);
-        } else if (latestStep.getStepsToLearn() == -1) {
-            step.setStepsToLearn(-1);
-        } else {
-            throw new IllegalStateException("The previous step has a step to learn of 0 -> no new step can be crated!");
-        }
 
         learnerResultStepRepository.save(step);
 
@@ -279,10 +271,7 @@ public class LearnerResultDAO {
         final LearnerResultStep step = new LearnerResultStep();
         step.setResult(result);
         step.setStepNo((long) result.getSteps().size() + 1);
-
         step.setEqOracle(configuration.getEqOracle());
-        step.setStepsToLearn(configuration.getMaxAmountOfStepsToLearn());
-
         return step;
     }
 
