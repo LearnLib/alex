@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.AbstractEqui
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
 
 import javax.persistence.Transient;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -36,14 +35,6 @@ public abstract class AbstractLearnerConfiguration implements Serializable {
 
     private static final long serialVersionUID = 5863521579527593558L;
 
-    /** The ID of the user related to the configuration. */
-    @JsonProperty("user")
-    protected Long userId;
-
-    /** The ID of the project related to the configuration. */
-    @JsonProperty("project")
-    protected Long projectId;
-
     /** The ids of the URLs to use for learning. */
     @NotEmpty
     protected List<ProjectEnvironment> environments;
@@ -51,14 +42,6 @@ public abstract class AbstractLearnerConfiguration implements Serializable {
     /** The type of EQ oracle to find a counter example. */
     @NotNull
     protected AbstractEquivalenceOracleProxy eqOracle;
-
-    /**
-     * How many steps should the learner take before stopping the process. Must be greater or equal to -1, but not 0. -1
-     * := Do not stop until no counterexample is found.
-     */
-    @NotNull
-    @Min(-1)
-    protected int maxAmountOfStepsToLearn;
 
     /**
      * Checks if the configuration is correct.
@@ -75,11 +58,7 @@ public abstract class AbstractLearnerConfiguration implements Serializable {
      *         If the configuration is invalid.
      */
     protected void check() throws IllegalArgumentException {
-        if (maxAmountOfStepsToLearn < -1) {
-            throw new IllegalArgumentException("The MaxAmountOfStep property must not be less than -1.");
-        } else if (maxAmountOfStepsToLearn == 0) {
-            throw new IllegalArgumentException("The MaxAmountOfStep property must not be equal to 0.");
-        } else if (eqOracle == null) {
+        if (eqOracle == null) {
             throw new IllegalArgumentException("Could not find an EQ oracle.");
         } else if (environments.isEmpty()) {
             throw new IllegalArgumentException("At least one environment is required.");
@@ -90,24 +69,7 @@ public abstract class AbstractLearnerConfiguration implements Serializable {
     /** Constructor. */
     public AbstractLearnerConfiguration() {
         this.eqOracle = new MealyRandomWordsEQOracleProxy();
-        this.maxAmountOfStepsToLearn = -1;
         this.environments = new ArrayList<>();
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public Long getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(Long projectId) {
-        this.projectId = projectId;
     }
 
     public AbstractEquivalenceOracleProxy getEqOracle() {
@@ -116,14 +78,6 @@ public abstract class AbstractLearnerConfiguration implements Serializable {
 
     public void setEqOracle(AbstractEquivalenceOracleProxy eqOracle) {
         this.eqOracle = eqOracle;
-    }
-
-    public int getMaxAmountOfStepsToLearn() {
-        return maxAmountOfStepsToLearn;
-    }
-
-    public void setMaxAmountOfStepsToLearn(int maxAmountOfStepsToLearn) {
-        this.maxAmountOfStepsToLearn = maxAmountOfStepsToLearn;
     }
 
     public List<ProjectEnvironment> getEnvironments() {

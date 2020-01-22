@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package de.learnlib.alex.integrationtests.resources.api;
 
-import de.learnlib.alex.config.entities.Settings;
+import de.learnlib.alex.settings.entities.Settings;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;

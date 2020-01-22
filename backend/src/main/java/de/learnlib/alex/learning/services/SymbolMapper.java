@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ public class SymbolMapper implements SULMapper<
      */
     public SymbolMapper(List<ParameterizedSymbol> symbols) {
         this.symbolMap = symbols.stream()
-                .collect(Collectors.toMap(ParameterizedSymbol::getComputedName, Function.identity()));
+                .collect(Collectors.toMap(ParameterizedSymbol::getAliasOrComputedName, Function.identity()));
     }
 
     /**
@@ -76,7 +76,7 @@ public class SymbolMapper implements SULMapper<
      *         The symbol to add.
      */
     public void addSymbol(ParameterizedSymbol symbol) {
-        this.symbolMap.putIfAbsent(symbol.getComputedName(), symbol);
+        this.symbolMap.putIfAbsent(symbol.getAliasOrComputedName(), symbol);
     }
 
     @Override

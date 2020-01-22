@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,6 +55,13 @@ export class SymbolApiService extends BaseApiService {
    */
   getAll(projectId: number, includeHiddenSymbols = false): Observable<AlphabetSymbol[]> {
     return this.http.get(`${env.apiUrl}/projects/${projectId}/symbols`, this.defaultHttpOptions)
+      .pipe(
+        map((body: any) => body.map(s => new AlphabetSymbol(s)))
+      );
+  }
+
+  importSymbols(projectId: number, importableEntity: any): Observable<AlphabetSymbol[]> {
+    return this.http.post(`${env.apiUrl}/projects/${projectId}/symbols/import`, importableEntity, this.defaultHttpOptions)
       .pipe(
         map((body: any) => body.map(s => new AlphabetSymbol(s)))
       );

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,7 @@ package de.learnlib.alex.integrationtests.resources;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import de.learnlib.alex.common.utils.RESTError;
-import de.learnlib.alex.config.entities.Settings;
+import de.learnlib.alex.settings.entities.Settings;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;

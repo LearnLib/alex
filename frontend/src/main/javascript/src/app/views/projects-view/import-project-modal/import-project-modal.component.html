@@ -39,7 +39,9 @@
   </div>
 
   <div class="modal-footer">
-    <button class="btn btn-primary btn-sm" type="submit" [disabled]="form.invalid || importData == null">Import</button>
+    <button class="btn btn-primary btn-sm" type="submit" [disabled]="form.invalid || importData == null || loading">
+      <i class="fas fa-fw fa-spin fa-circle-notch" *ngIf="loading"></i> Import
+    </button>
     <button (click)="modal.dismiss(); $event.stopPropagation()" class="btn btn-default btn-sm">Cancel</button>
   </div>
 </form>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -160,7 +160,7 @@ public class CounterResourceIT extends AbstractResourceIT {
         assertEquals(HttpStatus.BAD_REQUEST.value(), res1.getStatus());
 
         final Response res2 = counterApi.getAll(projectId1, jwtUser1);
-        JSONAssert.assertEquals(res2.readEntity(String.class), "[" + createCounterJson(id,"counter1", projectId1, 1) + "]", true);
+        JSONAssert.assertEquals(res2.readEntity(String.class), "[" + createCounterJson(id, "counter1", projectId1, 1) + "]", true);
     }
 
     @Test
@@ -168,13 +168,13 @@ public class CounterResourceIT extends AbstractResourceIT {
         final String counter = createCounterJson("counter1", projectId1, 1);
         final Long id = getCounterId(counterApi.create(projectId1, counter, jwtUser1));
 
-        final String updatedCounter = createCounterJson(id,"counter1", projectId1, 5);
+        final String updatedCounter = createCounterJson(id, "counter1", projectId1, 5);
         final Response res1 = counterApi.update(projectId1, id, updatedCounter, jwtUser2);
 
         assertEquals(HttpStatus.UNAUTHORIZED.value(), res1.getStatus());
 
         final Response res2 = counterApi.getAll(projectId1, jwtUser1);
-        JSONAssert.assertEquals("[" + createCounterJson(id,"counter1", projectId1, 1) + "]", res2.readEntity(String.class), true);
+        JSONAssert.assertEquals("[" + createCounterJson(id, "counter1", projectId1, 1) + "]", res2.readEntity(String.class), true);
     }
 
     @Test

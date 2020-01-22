@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,8 @@ import { TestQueueItem, TestReportStatus } from '../../entities/test-status';
 import { TestReportApiService } from '../../services/api/test-report-api.service';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { TestCase } from '../../entities/test-case';
+import { ParametrizedSymbol } from '../../entities/parametrized-symbol';
 
 @Component({
   selector: 'test-case-view',
@@ -46,8 +48,6 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
   testCase: any;
   /** Map id -> symbol. */
   symbolMap: any;
-  /** Display options */
-  options: any;
   /** The config used for testing. */
   testConfig: any;
 
@@ -67,13 +67,8 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
               private testConfigApi: TestConfigApiService,
               private settingsApi: SettingsApiService,
               private testReportApi: TestReportApiService) {
-
     this.testCase = null;
     this.symbolMap = {};
-
-    this.options = {
-      showSymbolOutputs: false
-    };
   }
 
   ngOnInit(): void {
@@ -154,7 +149,8 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
             this.toastService.info('The test case could not be executed. ' + res.error.message);
           }
         );
-      }
+      },
+      res => this.toastService.danger('The test could not be executed. ' + res.error.message)
     );
   }
 
@@ -208,5 +204,13 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
 
   get project(): Project {
     return this.appStore.project;
+  }
+
+  get allParametrizedSymbols(): ParametrizedSymbol[] {
+    const ps = [];
+    this.testCase.preSteps.forEach(s => ps.push(s.pSymbol));
+    this.testCase.steps.map(s => ps.push(s.pSymbol));
+    this.testCase.postSteps.map(s => ps.push(s.pSymbol));
+    return ps;
   }
 }

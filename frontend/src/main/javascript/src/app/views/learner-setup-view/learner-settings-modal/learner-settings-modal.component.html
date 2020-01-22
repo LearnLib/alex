@@ -46,21 +46,6 @@
           <hr>
 
           <div class="form-group">
-            <label class="control-label">
-              Max amount of steps to learn (-1 := learn until no counterexample can be found)
-            </label>
-            <input
-              [(ngModel)]="learnConfiguration.maxAmountOfStepsToLearn"
-              class="form-control"
-              min="-1"
-              name="max_steps"
-              placeholder="-1"
-              required
-              type="number"
-            >
-          </div>
-
-          <div class="form-group">
             <label>Comment</label>
             <textarea
               [(ngModel)]="learnConfiguration.comment"

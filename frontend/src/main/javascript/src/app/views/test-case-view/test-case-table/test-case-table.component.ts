@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,13 @@ import { DragulaService } from 'ng2-dragula';
 
 @Component({
   selector: 'test-case-table',
+  styleUrls: ['./test-case-table.component.scss'],
   templateUrl: './test-case-table.component.html'
 })
 export class TestCaseTableComponent implements OnInit, OnDestroy {
 
   @Input()
   testCase: any;
-
-  @Input()
-  options: any;
 
   @Input()
   result: any;

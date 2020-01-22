@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,14 @@ package de.learnlib.alex.integrationtests.resources;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
+import de.learnlib.alex.data.entities.ParameterizedSymbol;
+import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.data.entities.SymbolActionStep;
+import de.learnlib.alex.data.entities.SymbolGroup;
+import de.learnlib.alex.data.entities.SymbolPSymbolStep;
+import de.learnlib.alex.data.entities.SymbolStep;
+import de.learnlib.alex.data.entities.actions.misc.WaitAction;
+import de.learnlib.alex.integrationtests.SpringRestError;
 import de.learnlib.alex.integrationtests.resources.api.ProjectApi;
 import de.learnlib.alex.integrationtests.resources.api.SymbolApi;
 import de.learnlib.alex.integrationtests.resources.api.SymbolGroupApi;
@@ -28,12 +36,17 @@ import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.http.HttpStatus;
 
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 public class SymbolResourceIT extends AbstractResourceIT {
@@ -132,6 +145,139 @@ public class SymbolResourceIT extends AbstractResourceIT {
     }
 
     @Test
+    public void shouldUpdateSymbolStepsWithSymbolUpdate() throws Exception {
+        Symbol s = createSymbol("s", (long) projectId1, jwtUser1);
+
+        final WaitAction a = new WaitAction();
+        a.setDuration(1L);
+
+        final SymbolActionStep step1 = new SymbolActionStep();
+        step1.setAction(a);
+
+        final SymbolActionStep step2 = new SymbolActionStep();
+        step2.setAction(a);
+
+        s.getSteps().add(step1);
+        s.getSteps().add(step2);
+
+        final Response res = symbolApi.update(projectId1, s.getId(), objectMapper.writeValueAsString(s), jwtUser1);
+        s = res.readEntity(Symbol.class);
+
+        assertEquals(HttpStatus.OK.value(), res.getStatus());
+        assertEquals(2, s.getSteps().size());
+    }
+
+    @Test
+    public void shouldMergeSymbolStepsOnUpdate() throws Exception {
+        Symbol s = createSymbolWithSteps();
+
+        final Long symbolStepIdToDelete = s.getSteps().get(0).getId();
+        final Long symbolStepIdToKeep = s.getSteps().get(1).getId();
+
+        s.getSteps().removeIf(st -> st.getId().equals(symbolStepIdToDelete));
+
+        final WaitAction a = new WaitAction();
+        a.setDuration(1L);
+
+        final SymbolActionStep step3 = new SymbolActionStep();
+        step3.setAction(a);
+
+        s.getSteps().add(step3);
+
+        final Response res2 = symbolApi.update(projectId1, s.getId(), objectMapper.writeValueAsString(s), jwtUser1);
+        s = res2.readEntity(Symbol.class);
+
+        assertEquals(HttpStatus.OK.value(), res2.getStatus());
+        assertEquals(2, s.getSteps().size());
+        assertEquals(symbolStepIdToKeep, s.getSteps().get(0).getId());
+        assertNotEquals(symbolStepIdToDelete, s.getSteps().get(1).getId());
+    }
+
+    @Test
+    public void shouldUpdateOrderOfStepsOnSymbolUpdate() throws Exception {
+        Symbol s = createSymbolWithSteps();
+
+        final SymbolStep step1 = s.getSteps().get(0);
+        final SymbolStep step2 = s.getSteps().get(1);
+
+        s.getSteps().clear();
+        s.getSteps().add(step2);
+        s.getSteps().add(step1);
+
+        final Response res = symbolApi.update(projectId1, s.getId(), objectMapper.writeValueAsString(s), jwtUser1);
+        s = res.readEntity(Symbol.class);
+
+        assertEquals(HttpStatus.OK.value(), res.getStatus());
+        assertEquals(step2.getId(), s.getSteps().get(0).getId());
+        assertEquals(step1.getId(), s.getSteps().get(1).getId());
+    }
+
+    @Test
+    public void shouldSaveSymbolWithSymbolStep() throws Exception {
+        final Symbol s1 = createSymbol("s1", (long) projectId1, jwtUser1);
+        final Symbol s2 = createSymbol("s2", (long) projectId1, jwtUser1);
+
+        final ParameterizedSymbol pSymbol = new ParameterizedSymbol();
+        pSymbol.setSymbol(s2);
+
+        final SymbolPSymbolStep step = new SymbolPSymbolStep();
+        step.setPSymbol(pSymbol);
+        s1.getSteps().add(step);
+
+        final Response res = symbolApi.update(projectId1, s1.getId(), objectMapper.writeValueAsString(s1), jwtUser1);
+        final Symbol updatedSymbol = res.readEntity(Symbol.class);
+
+        assertEquals(HttpStatus.OK.value(), res.getStatus());
+        assertEquals(1, updatedSymbol.getSteps().size());
+
+        final SymbolPSymbolStep pSymbolStep = (SymbolPSymbolStep) updatedSymbol.getSteps().get(0);
+        assertEquals(s2.getId(), pSymbolStep.getPSymbol().getSymbol().getId());
+    }
+
+    @Test
+    public void shouldFailToSaveSymbolThatReferencesItself() throws Exception {
+        Symbol s1 = createSymbol("s1", (long) projectId1, jwtUser1);
+
+        final Symbol s1ref = new Symbol();
+        s1ref.setId(s1.getId());
+
+        final ParameterizedSymbol pSymbol = new ParameterizedSymbol();
+        pSymbol.setSymbol(s1ref);
+
+        final SymbolPSymbolStep step = new SymbolPSymbolStep();
+        step.setPSymbol(pSymbol);
+        s1.getSteps().add(step);
+
+        final Response res = symbolApi.update(projectId1, s1.getId(), objectMapper.writeValueAsString(s1), jwtUser1);
+        s1 = symbolApi.get(projectId1, s1.getId(), jwtUser1).readEntity(Symbol.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
+        assertEquals(0, s1.getSteps().size());
+    }
+
+    private Symbol createSymbolWithSteps() throws Exception {
+        Symbol s = createSymbol("s", (long) projectId1, jwtUser1);
+
+        final WaitAction a = new WaitAction();
+        a.setDuration(1L);
+
+        final SymbolActionStep step1 = new SymbolActionStep();
+        step1.setAction(a);
+
+        final SymbolActionStep step2 = new SymbolActionStep();
+        step2.setAction(a);
+
+        final SymbolActionStep step3 = new SymbolActionStep();
+        step3.setAction(a);
+
+        s.getSteps().add(step1);
+        s.getSteps().add(step2);
+
+        final Response res = symbolApi.update(projectId1, s.getId(), objectMapper.writeValueAsString(s), jwtUser1);
+        return res.readEntity(Symbol.class);
+    }
+
+    @Test
     public void shouldNotCreateASymbolIfNameExists() throws Exception {
         final String symbol1 = createSymbolWithProjectJson(projectId1, "s1");
         final String symbol2 = createSymbolWithProjectJson(projectId1, "s1");
@@ -155,6 +301,189 @@ public class SymbolResourceIT extends AbstractResourceIT {
         final Response res2 = symbolGroupApi.getAll(projectId1, jwtUser1);
         final JsonNode groupNode = objectMapper.readTree(res2.readEntity(String.class));
         assertEquals(1, groupNode.get(1).get("symbols").size());
+    }
+
+    @Test
+    public void shouldGetASymbolByItsId() throws Exception {
+        final Symbol s = createSymbol("sym", (long) projectId1, jwtUser1);
+        final Response res2 = symbolApi.get(projectId1, s.getId(), jwtUser1);
+        final Symbol symbol = res2.readEntity(Symbol.class);
+
+        assertEquals(HttpStatus.OK.value(), res2.getStatus());
+        assertEquals(s.getId(), symbol.getId());
+        assertEquals("sym", symbol.getName());
+    }
+
+    @Test
+    public void shouldReturn404IfSymbolIdIsNotFoundWhenGettingASymbolById() throws Exception {
+        final Response res = symbolApi.get(projectId1, -1L, jwtUser1);
+        assertEquals(HttpStatus.NOT_FOUND.value(), res.getStatus());
+        res.readEntity(SpringRestError.class);
+    }
+
+    @Test
+    public void shouldGetMultipleSymbolsByTheirIds() throws Exception {
+        final Symbol s1 = createSymbol("s1", (long) projectId1, jwtUser1);
+        final Symbol s2 = createSymbol("s2", (long) projectId1, jwtUser1);
+        final Symbol s3 = createSymbol("s3", (long) projectId1, jwtUser1);
+
+        final Response res = symbolApi.get(projectId1, Arrays.asList(s1.getId(), s3.getId()), jwtUser1);
+        final List<Symbol> symbols = res.readEntity(new GenericType<List<Symbol>>(){});
+        final List<Long> symbolIds = symbols.stream().map(Symbol::getId).collect(Collectors.toList());
+
+        assertEquals(HttpStatus.OK.value(), res.getStatus());
+        assertEquals(2, symbolIds.size());
+        assertTrue(symbolIds.contains(s1.getId()));
+        assertTrue(symbolIds.contains(s3.getId()));
+    }
+
+    @Test
+    public void shouldUpdateNameExpectedResultAndDescriptionOfASymbol() throws Exception {
+        final Symbol s1 = createSymbol("s1", (long) projectId1, jwtUser1);
+        s1.setName("updatedName");
+        s1.setDescription("updatedDescription");
+        s1.setExpectedResult("updatedExpectedResult");
+
+        final Response res = symbolApi.update(projectId1, s1.getId(), objectMapper.writeValueAsString(s1), jwtUser1);
+        final Symbol updatedSymbol = res.readEntity(Symbol.class);
+        assertEquals(HttpStatus.OK.value(), res.getStatus());
+        assertEquals(s1.getName(), updatedSymbol.getName());
+        assertEquals(s1.getDescription(), updatedSymbol.getDescription());
+        assertEquals(s1.getExpectedResult(), updatedSymbol.getExpectedResult());
+    }
+
+    @Test
+    public void shouldUpdateTimestampOnUpdate() throws Exception {
+        final Symbol s1 = createSymbol("s1", (long) projectId1, jwtUser1);
+        s1.setName("updatedName");
+
+        final Response res = symbolApi.update(projectId1, s1.getId(), objectMapper.writeValueAsString(s1), jwtUser1);
+        final Symbol updatedSymbol = res.readEntity(Symbol.class);
+
+        assertEquals(HttpStatus.OK.value(), res.getStatus());
+        assertTrue(updatedSymbol.getUpdatedOn().isAfter(s1.getUpdatedOn()));
+    }
+
+    @Test
+    public void shouldMoveSymbolToAnotherGroup() throws Exception {
+        Symbol s = createSymbol("s", (long) projectId1, jwtUser1);
+        final SymbolGroup g = createGroup("g", (long) projectId1, jwtUser1);
+
+        final Response res = symbolApi.move(projectId1, s.getId(), g.getId(), jwtUser1);
+        s = symbolApi.get(projectId1, s.getId(), jwtUser1).readEntity(Symbol.class);
+
+        assertEquals(HttpStatus.OK.value(), res.getStatus());
+        assertEquals(g.getId(), s.getGroupId());
+    }
+
+    @Test
+    public void shouldMoveSymbolsToAnotherGroup() throws Exception {
+        final SymbolGroup g = createGroup("g", (long) projectId1, jwtUser1);
+        Symbol s1 = createSymbol("s1", (long) projectId1, jwtUser1);
+        Symbol s2 = createSymbol("s2", (long) projectId1, jwtUser1);
+
+        final Response res = symbolApi.move(projectId1, Arrays.asList(s1.getId(), s2.getId()), g.getId(), jwtUser1);
+        s1 = symbolApi.get(projectId1, s1.getId(), jwtUser1).readEntity(Symbol.class);
+        s2 = symbolApi.get(projectId1, s2.getId(), jwtUser1).readEntity(Symbol.class);
+
+        assertEquals(HttpStatus.OK.value(), res.getStatus());
+        assertEquals(g.getId(), s1.getGroupId());
+        assertEquals(g.getId(), s2.getGroupId());
+    }
+
+    @Test
+    public void shouldNotDeleteSymbolThatIsNotArchived() throws Exception {
+        final Symbol s = createSymbol("s", (long) projectId1, jwtUser1);
+
+        final Response res = symbolApi.delete(projectId1, s.getId(), jwtUser1);
+        assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
+        res.readEntity(SpringRestError.class);
+
+        final SymbolGroup group = symbolGroupApi.get((long) projectId1, s.getGroupId(), jwtUser1).readEntity(SymbolGroup.class);
+        assertEquals(1, group.getSymbols().size());
+    }
+
+    @Test
+    public void shouldDeleteSymbol() throws Exception {
+        final Symbol s = createSymbol("s", (long) projectId1, jwtUser1);
+        symbolApi.archive(projectId1, s.getId().intValue(), jwtUser1);
+
+        final Response res = symbolApi.delete(projectId1, s.getId(), jwtUser1);
+
+        assertEquals(HttpStatus.NO_CONTENT.value(), res.getStatus());
+        assertEquals("", res.readEntity(String.class));
+
+        final SymbolGroup group = symbolGroupApi.get((long) projectId1, s.getGroupId(), jwtUser1).readEntity(SymbolGroup.class);
+        assertEquals(0, group.getSymbols().size());
+    }
+
+    @Test
+    public void shouldDeleteSymbolsByIds() throws Exception {
+        final Symbol s1 = createSymbol("s1", (long) projectId1, jwtUser1);
+        final Symbol s2 = createSymbol("s2", (long) projectId1, jwtUser1);
+
+        symbolApi.archiveMany(projectId1, Arrays.asList(s1.getId().intValue(), s2.getId().intValue()), jwtUser1);
+        final Response res = symbolApi.delete(projectId1, Arrays.asList(s1.getId(), s2.getId()), jwtUser1);
+
+        assertEquals(HttpStatus.NO_CONTENT.value(), res.getStatus());
+        assertEquals("", res.readEntity(String.class));
+
+        final SymbolGroup group = symbolGroupApi.get((long) projectId1, s1.getGroupId(), jwtUser1).readEntity(SymbolGroup.class);
+        assertEquals(0, group.getSymbols().size());
+    }
+
+    @Test
+    public void shouldRestoreSymbolFromTheArchive() throws Exception {
+        Symbol s1 = createSymbol("s1", (long) projectId1, jwtUser1);
+        symbolApi.archive(projectId1, s1.getId().intValue(), jwtUser1);
+
+        final Response res = symbolApi.restore((long) projectId1, s1.getId(), jwtUser1);
+        final Symbol restoredSymbol = res.readEntity(Symbol.class);
+
+        s1 = symbolApi.get(projectId1, s1.getId(), jwtUser1).readEntity(Symbol.class);
+
+        assertEquals(HttpStatus.OK.value(), res.getStatus());
+        assertFalse(restoredSymbol.isHidden());
+        assertFalse(s1.isHidden());
+    }
+
+    @Test
+    public void shouldRestoreSymbolsFromTheArchive() throws Exception {
+        Symbol s1 = createSymbol("s1", (long) projectId1, jwtUser1);
+        Symbol s2 = createSymbol("s2", (long) projectId1, jwtUser1);
+        symbolApi.archive(projectId1, s1.getId().intValue(), jwtUser1);
+        symbolApi.archive(projectId1, s2.getId().intValue(), jwtUser1);
+
+        final Response res = symbolApi.restore((long) projectId1, Arrays.asList(s1.getId(), s2.getId()), jwtUser1);
+        final List<Symbol> restoredSymbols = res.readEntity(new GenericType<List<Symbol>>(){});
+
+        s1 = symbolApi.get(projectId1, s1.getId(), jwtUser1).readEntity(Symbol.class);
+        s2 = symbolApi.get(projectId1, s2.getId(), jwtUser1).readEntity(Symbol.class);
+
+        assertEquals(HttpStatus.OK.value(), res.getStatus());
+        for (Symbol s: restoredSymbols) {
+            assertFalse(s.isHidden());
+        }
+        assertFalse(s1.isHidden());
+        assertFalse(s2.isHidden());
+    }
+
+    private SymbolGroup createGroup(String name, Long projectId, String jwt) throws Exception {
+        final SymbolGroup s = new SymbolGroup();
+        s.setProjectId(projectId);
+        s.setName(name);
+
+        final Response res = symbolGroupApi.create(projectId1, objectMapper.writeValueAsString(s), jwt);
+        return res.readEntity(SymbolGroup.class);
+    }
+
+    private Symbol createSymbol(String name, Long projectId, String jwt) throws Exception {
+        final Symbol s = new Symbol();
+        s.setProjectId(projectId);
+        s.setName(name);
+
+        final Response res = symbolApi.create(projectId1, objectMapper.writeValueAsString(s), jwt);
+        return res.readEntity(Symbol.class);
     }
 
     @Test

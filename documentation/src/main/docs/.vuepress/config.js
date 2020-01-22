@@ -38,7 +38,6 @@ module.exports = {
                 title: 'Examples',
                 collapsable: true,
                 children: [
-                    ['/contents/examples/todo/', 'ToDo'],
                     ['/contents/examples/todomvc/', 'TodoMVC'],
                     ['/contents/examples/wordpress/', 'Wordpress']
                 ]
@@ -52,7 +51,6 @@ module.exports = {
                     ['/contents/dev-docs/cli/', 'CLI']
                 ]
             },
-            ['/contents/faq/', 'FAQ'],
             ['/contents/about/', 'About']
         ],
         nav: [

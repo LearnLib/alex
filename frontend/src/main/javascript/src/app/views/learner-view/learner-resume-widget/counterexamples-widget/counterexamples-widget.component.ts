@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,6 +51,8 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
   /** A list of counterexamples for editing purposes without manipulation the actual model. */
   tmpCounterexamples: Counterexample[] = [];
 
+  loading = false;
+
   constructor(private learnerApi: LearnerApiService,
               private toastService: ToastService,
               private symbolApi: SymbolApiService,
@@ -98,6 +100,7 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
    * Adds a new counterexample to the scope and the model.
    */
   testAndAddCounterExample(): void {
+    this.loading = true;
     this.testCounterExample()
       .then(counterexample => {
         this.toastService.success('The selected word is a counterexample');
@@ -109,6 +112,8 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
       })
       .catch(() => {
         this.toastService.danger('The word is not a counterexample');
+      }).finally(() => {
+        this.loading = false;
       });
   }
 
@@ -131,7 +136,7 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
       const testSymbols = [];
 
       const pSymbols = this.result.symbols;
-      const pSymbolNames = pSymbols.map(ps => ps.getComputedName());
+      const pSymbolNames = pSymbols.map(ps => ps.getAliasOrComputedName());
 
       for (let i = 0; i < this.counterexample.length; i++) {
         const j = pSymbolNames.findIndex(name => name === this.counterexample[i].input);

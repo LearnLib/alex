@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ export class CheckNodeAttributeValueAction extends Action {
       return `Check if the attribute "${this.attribute}" of the element "${this.node.selector}" exists`;
     } else {
       return `
-                Check if the attribute "${this.attribute}" of the element "${this.node.selector}" 
+                Check if the attribute "${this.attribute}" of the element "${this.node.selector}"
                 ${this.checkMethod.toLowerCase()} "${this.value}"`;
     }
   }

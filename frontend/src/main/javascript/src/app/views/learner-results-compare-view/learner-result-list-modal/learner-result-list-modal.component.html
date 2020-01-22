@@ -14,13 +14,15 @@
         <br>
 
         <div *ngIf="results">
-          <button (click)="switchProject()" class="btn btn-sm btn-primary">
-            <i class="fas fa-fw fa-exchange-alt"></i> Change project
-          </button>
-          <hr class="hr-sm">
+          <div *ngIf="allowForeignProjects">
+            <button (click)="switchProject()" class="btn btn-sm btn-primary">
+              <i class="fas fa-fw fa-exchange-alt"></i> Change project
+            </button>
+            <hr class="hr-sm">
+          </div>
           <div class="list-group">
             <a (click)="selectResult(result)" *ngFor="let result of orderedResults"
-               class="list-group-item">
+               class="list-group-item cursor-pointer">
               <span *ngIf="result.error" class="badge badge-danger float-right">Failed</span>
               <strong>Test No <span>{{result.testNo}}</span></strong>,
               [<span>{{result.algorithm.name|formatLearningAlgorithm}}</span>]
@@ -39,7 +41,7 @@
         </div>
       </ng-template>
     </ngb-tab>
-    <ngb-tab title="From file">
+    <ngb-tab title="From file" *ngIf="allowFromFile">
       <ng-template ngbTabContent>
         <br>
 

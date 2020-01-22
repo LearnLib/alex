@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import { Project } from '../../../entities/project';
 import { AppStoreService } from '../../../services/app-store.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Component, Input } from '@angular/core';
+import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 
 /**
  * The component for the symbols import modal window.
@@ -46,6 +47,8 @@ export class ImportSymbolsModalComponent {
   /** The data to import */
   importData: any = null;
 
+  conflicts: any[] = [];
+
   constructor(private symbolApi: SymbolApiService,
               private appStore: AppStoreService,
               private toastService: ToastService,
@@ -68,7 +71,34 @@ export class ImportSymbolsModalComponent {
       this.errorMessage = 'The file does not seem to contain symbols.';
     } else {
       this.importData = importData;
+
+      const existingSymbols = SymbolGroupUtils.getSymbols(this.groups);
+      let newSymbols: AlphabetSymbol[];
+      if (this.importData.type === 'symbols') {
+        newSymbols = this.importData.symbols.map(s => new AlphabetSymbol(s));
+      } else {
+        newSymbols = SymbolGroupUtils.getSymbols(this.importData.symbolGroups.map(g => new SymbolGroup(g)));
+      }
+
+      const conflicts = [];
+      newSymbols.forEach(symbol => {
+        const s = existingSymbols.find(s => s.name === symbol.name);
+        if (s != null) {
+          conflicts.push({
+            name: s.name,
+            updatedOnNew: symbol.updatedOn,
+            updatedOnExisting: s.updatedOn,
+            conflictResolution: symbol.updatedOn > s.updatedOn ? 'KEEP_NEW' : 'KEEP_EXISTING'
+          });
+        }
+      });
+
+      this.conflicts = conflicts;
     }
+  }
+
+  applyToAll(resolution: string): void {
+    this.conflicts.forEach(c => c.conflictResolution = resolution);
   }
 
   /**
@@ -77,13 +107,16 @@ export class ImportSymbolsModalComponent {
   importSymbols(): void {
     this.errorMessage = null;
 
+    this.importData.conflictResolutions = {};
+    this.conflicts.forEach(c => this.importData.conflictResolutions[c.name] = c.conflictResolution);
+
     if (this.importData.type === 'symbols') {
       const defaultGroup = SymbolGroupUtils.findDefaultGroup(this.groups);
       this.importData.symbols.forEach(symbol => {
         symbol.group = this.selectedGroup == null ? defaultGroup.id : this.selectedGroup.id;
       });
 
-      this.symbolApi.createMany(this.project.id, this.importData.symbols).subscribe(
+      this.symbolApi.importSymbols(this.project.id, this.importData).subscribe(
         createdSymbols => {
           this.toastService.success('The symbols have been imported');
           this.modal.close({type: 'symbols', symbols: createdSymbols});
@@ -93,7 +126,7 @@ export class ImportSymbolsModalComponent {
         }
       );
     } else {
-      this.symbolGroupApi.importMany(this.project.id, this.importData.symbolGroups).subscribe(
+      this.symbolGroupApi.importSymbolGroups(this.project.id, this.importData).subscribe(
         importedGroups => {
           this.toastService.success('The symbols have been imported');
           this.modal.close({type: 'symbolGroups', groups: importedGroups});

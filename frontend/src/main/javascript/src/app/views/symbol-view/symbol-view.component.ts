@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,8 +55,6 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
   /** The selected actions. */
   selectedSteps: Selectable<any, any>;
 
-  showOutputs: boolean;
-
   constructor(private symbolApi: SymbolApiService,
               private appStore: AppStoreService,
               private toastService: ToastService,
@@ -70,7 +68,6 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
 
     this.symbol = null;
     this.groups = [];
-    this.showOutputs = false;
     this.selectedSteps = new Selectable(s => s._id);
 
     currentRoute.paramMap.subscribe(map => {
@@ -205,7 +202,7 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
         this.selectedSteps.addItems(this.symbol.steps);
       },
       res => {
-        this.toastService.danger('<p><strong>Error updating symbol</strong></p>' + res.error.message);
+        this.toastService.danger('<strong>Error updating symbol</strong><div>' + res.error.message + '</div>');
       }
     );
   }
@@ -268,18 +265,10 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
           step.action = this.actionService.create(step.action);
         }
         this.symbol.steps.push(step);
+        this.selectedSteps.addItem(step);
       });
       this.toastService.info(steps.length + ' step[s] pasted from clipboard');
     }
-  }
-
-  /**
-   * Toggles the disabled flag on an action.
-   *
-   * @param step The step to enable or disable.
-   */
-  toggleDisableAction(step: any): void {
-    step.disabled = !step.disabled;
   }
 
   editStep(step: any): void {
@@ -312,6 +301,22 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
   openActionCreateModal(): void {
     const modalRef = this.modalService.open(CreateActionModalComponent, {size: 'xl'});
     modalRef.componentInstance.created.subscribe(a => this.addAction(a));
+  }
+
+
+  get parameterizedSymbolSteps(): any[] {
+    const pSymbols = this.symbol == null ? [] : this.symbol.steps
+      .filter(s => s.type === 'symbol')
+      .map(s => s.pSymbol);
+
+    if (this.symbol.inputs.length > 0) {
+      const ps = new ParametrizedSymbol();
+      ps.outputMappings = this.symbol.inputs.map(i => ({name: i.name, parameter: i}));
+      ps.symbol = this.symbol;
+      pSymbols.unshift(ps);
+    }
+
+    return pSymbols;
   }
 
   private handleKeyDown(e: KeyboardEvent) {

@@ -20,6 +20,42 @@
     <span class="badge badge-secondary">{{importData.version}}</span>
   </div>
 
+  <div class="mb-3" *ngIf="conflicts.length > 0">
+    <div class="alert alert-info">
+      There are conflicts that need to be resolved.
+    </div>
+
+    <div class="list-group mb-3">
+      <div class="list-group-item d-flex flex-row">
+        <select class="form-control w-100" #all>
+          <option disabled selected value="">Select a strategy</option>
+          <option value="KEEP_NEW">Keep new</option>
+          <option value="KEEP_EXISTING">Keep existing</option>
+          <option value="KEEP_BOTH">Keep both</option>
+        </select>
+        <button class="btn btn-default btn-sm flex-shrink-0 ml-3" [disabled]="all.value === ''" (click)="applyToAll(all.value)">Apply to all</button>
+      </div>
+    </div>
+
+    <div class="list-group" style="overflow: auto; max-height: 331px">
+      <div class="list-group-item d-flex flex-row" *ngFor="let c of conflicts; let i = index">
+        <div class="w-100">
+          <strong class="d-block">{{c.name}}</strong>
+          <span class="badge badge-primary" *ngIf="c.updatedOnNew > c.updatedOnExisting">Newer</span>
+          <span class="badge badge-info" *ngIf="c.updatedOnNew < c.updatedOnExisting">Outdated</span>
+          <span class="badge badge-secondary" *ngIf="c.updatedOnNew.getTime() === c.updatedOnExisting.getTime()">Unchanged</span>
+        </div>
+        <div>
+          <select class="form-control" [name]="'conflict' + i" [(ngModel)]="c.conflictResolution" style="width: 120px">
+            <option value="KEEP_NEW">Keep new</option>
+            <option value="KEEP_EXISTING">Keep existing</option>
+            <option value="KEEP_BOTH">Keep both</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div *ngIf="importData != null && importData.type === 'symbols'">
     <label>Select a target group</label>
     <div class="card">

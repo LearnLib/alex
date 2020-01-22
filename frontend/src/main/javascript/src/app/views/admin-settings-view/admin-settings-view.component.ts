@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,10 @@ export class AdminSettingsViewComponent {
 
   constructor(private settingsApi: SettingsApiService,
               private toastService: ToastService) {
+    this.init();
+  }
 
+  private init(): void {
     this.settingsApi.get().subscribe(
       settings => this.settings = settings,
       console.error
@@ -52,6 +55,25 @@ export class AdminSettingsViewComponent {
     } else {
       this.settings.driver.defaultDriver = webBrowser.HTML_UNIT;
     }
+  }
+
+  uploadDriver(driver: string, file: File): void {
+    this.settingsApi.uploadDriver(driver, file).subscribe(
+      () => this.init(),
+      err => this.toastService.danger(err)
+    );
+  }
+
+  deleteDriver(driver: string): void {
+    this.settingsApi.deleteDriver(driver).subscribe(
+      () => this.init(),
+      err => this.toastService.danger(err)
+    );
+  }
+
+  canMakeDefault(driver: string): boolean {
+    const d = this.settings.driver[driver];
+    return d != null && d.trim() !== '';
   }
 
   getDefaultButtonClass(driver: string): any {

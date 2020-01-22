@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,13 +32,15 @@ import { Component } from '@angular/core';
 import { LearnerSettingsModalComponent } from './learner-settings-modal/learner-settings-modal.component';
 import { reverse, takeRight } from 'lodash';
 import { Router } from '@angular/router';
+import { LearnerResultListModalComponent } from '../learner-results-compare-view/learner-result-list-modal/learner-result-list-modal.component';
 
 /**
  * The controller that handles the preparation of a learn process. Lists all symbol groups and its visible symbols.
  */
 @Component({
   selector: 'learner-setup-view',
-  templateUrl: './learner-setup-view.component.html'
+  templateUrl: './learner-setup-view.component.html',
+  styleUrls: ['./learner-setup-view.component.scss']
 })
 export class LearnerSetupViewComponent {
 
@@ -124,6 +126,16 @@ export class LearnerSetupViewComponent {
     group.symbols.forEach(s => this.pSymbols.push(ParametrizedSymbol.fromSymbol(s)));
   }
 
+  selectLearnerResult(): void {
+    const modalRef = this.modalService.open(LearnerResultListModalComponent);
+    modalRef.componentInstance.results = this.learnerResults;
+    modalRef.componentInstance.allowForeignProjects = false;
+    modalRef.componentInstance.allowFromFile = false;
+    modalRef.result.then((lr: LearnerResult) => {
+      this.reuseConfigurationFromResult(lr);
+    }).catch(() => {});
+  }
+
   /**
    * Starts the learning process if symbols are selected and a reset symbol is defined. Redirects to the
    * learning load screen on success.
@@ -142,6 +154,8 @@ export class LearnerSetupViewComponent {
         if (this.pPostSymbol != null) {
           config.postSymbol = JSON.parse(JSON.stringify(this.pPostSymbol));
           config.postSymbol.symbol = {id: config.postSymbol.symbol.id};
+        } else {
+          config.postSymbol = null;
         }
         config.environments = this.learnerConfiguration.environments.map(u => u.id);
 
@@ -173,21 +187,25 @@ export class LearnerSetupViewComponent {
   reuseConfigurationFromResult(result: LearnerResult): void {
     this.learnerConfiguration.algorithm = result.algorithm;
     this.learnerConfiguration.eqOracle = result.steps[0].eqOracle;
-    this.learnerConfiguration.maxAmountOfStepsToLearn = result.maxAmountOfStepsToLearn;
     this.learnerConfiguration.driverConfig = result.driverConfig;
     this.learnerConfiguration.environments = result.environments;
     this.learnerConfiguration.resetSymbol = result.resetSymbol;
     this.learnerConfiguration.resetSymbol.id = null;
     this.learnerConfiguration.resetSymbol.parameterValues.forEach(v => v.id = null);
+    this.learnerConfiguration.resetSymbol.outputMappings.forEach(v => v.id = null);
     if (result.postSymbol != null) {
       this.learnerConfiguration.postSymbol = result.postSymbol;
       this.learnerConfiguration.postSymbol.id = null;
       this.learnerConfiguration.postSymbol.parameterValues.forEach(v => v.id = null);
+      this.learnerConfiguration.postSymbol.outputMappings.forEach(v => v.id = null);
+    } else {
+      this.learnerConfiguration.postSymbol = null;
     }
     this.learnerConfiguration.symbols = result.symbols;
     this.learnerConfiguration.symbols.forEach(s => {
       s.id = null;
       s.parameterValues.forEach(v => v.id = null);
+      s.outputMappings.forEach(v => v.id = null);
     });
 
     this.pSymbols = this.learnerConfiguration.symbols;
@@ -211,5 +229,17 @@ export class LearnerSetupViewComponent {
 
   get project(): Project {
     return this.appStore.project;
+  }
+
+  get allParametrizedSymbols(): ParametrizedSymbol[] {
+    const ps = [];
+    if (this.pResetSymbol != null) {
+      ps.push(this.pResetSymbol);
+    }
+    this.pSymbols.forEach(s => ps.push(s));
+    if (this.pPostSymbol != null) {
+      ps.push(this.pPostSymbol);
+    }
+    return ps;
   }
 }

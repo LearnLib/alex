@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,33 +18,25 @@ package de.learnlib.alex;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
-
-import javax.ws.rs.ext.ContextResolver;
-import javax.ws.rs.ext.Provider;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * Jersey Provide to customise the Jackson ObjectMapper.
  */
-@Provider
-public class JacksonConfiguration implements ContextResolver<ObjectMapper> {
-
-    /** The Object Mapper to use. */
-    private final ObjectMapper mapper;
+@Configuration
+public class JacksonConfiguration {
 
     /**
      * Default constructor, which creates the ObjectMapper and add the custom modules.
      */
-    public JacksonConfiguration() {
+    @Bean
+    public ObjectMapper objectMapper() {
         Hibernate5Module hibernate5Module = new Hibernate5Module();
         hibernate5Module.configure(Hibernate5Module.Feature.USE_TRANSIENT_ANNOTATION, false);
 
-        mapper = new ObjectMapper();
+        final ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(hibernate5Module);
-    }
-
-    @Override
-    public ObjectMapper getContext(Class<?> type) {
         return mapper;
     }
-
 }

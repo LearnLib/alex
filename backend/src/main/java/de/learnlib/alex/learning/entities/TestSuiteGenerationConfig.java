@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,9 +42,6 @@ public class TestSuiteGenerationConfig {
     /** The name of the generated test suite. */
     private String name;
 
-    /** If concrete parameter values are generated as well. */
-    private boolean includeParameterValues;
-
     private Long testSuiteToUpdateId;
 
     /** which method is used. */
@@ -54,7 +51,6 @@ public class TestSuiteGenerationConfig {
     public TestSuiteGenerationConfig() {
         this.stepNo = 1L;
         this.name = "test suite";
-        this.includeParameterValues = true;
         this.method = GenerationMethod.DT;
     }
 
@@ -72,14 +68,6 @@ public class TestSuiteGenerationConfig {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public boolean isIncludeParameterValues() {
-        return includeParameterValues;
-    }
-
-    public void setIncludeParameterValues(boolean includeParameterValues) {
-        this.includeParameterValues = includeParameterValues;
     }
 
     public GenerationMethod getMethod() {

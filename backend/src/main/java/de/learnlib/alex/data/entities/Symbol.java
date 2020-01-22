@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -483,6 +483,20 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         }
 
         return labelsMap;
+    }
+
+    public SymbolInputParameter findInputByNameAndType(String name, SymbolParameter.ParameterType type) {
+        return this.inputs.stream()
+                .filter(i -> i.name.equals(name) && i.parameterType.equals(type))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public SymbolOutputParameter findOutputByNameAndType(String name, SymbolParameter.ParameterType type) {
+        return this.outputs.stream()
+                .filter(i -> i.name.equals(name) && i.parameterType.equals(type))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override

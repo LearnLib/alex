@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ export class WebhookApiService extends BaseApiService {
    * @return The updated webhook.
    */
   update(webhook: Webhook): Observable<Webhook> {
-    return this.http.put(this.url(), webhook, this.defaultHttpOptions)
+    return this.http.put(`${this.url()}/${webhook.id}`, webhook, this.defaultHttpOptions)
       .pipe(
         map(body => Webhook.fromData(body))
       );

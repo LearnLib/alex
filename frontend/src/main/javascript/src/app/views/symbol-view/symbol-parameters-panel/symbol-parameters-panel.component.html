@@ -23,9 +23,6 @@
                   <span (click)="removeInput(i)" class="btn-close float-right ml-1">
                     <i class="fas fa-times"></i>
                   </span>
-
-                  <i [ngClass]="{'fa-lock': input.private, 'fa-unlock': !input.private}"
-                     class="fas fa-fw fa-lock mr-2"></i>
                   <strong (click)="editInput(input, i)" class="cursor-pointer">{{input.name}}</strong>:
                   <em>{{input.parameterType | normalizeUpperCase}}</em>
                 </div>

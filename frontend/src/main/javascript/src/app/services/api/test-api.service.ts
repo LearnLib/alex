@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,7 +108,7 @@ export class TestApiService extends BaseApiService {
    * @param targetId The id of the target test suite.
    */
   moveMany(projectId: number, testIds: number[], targetId: number): Observable<any> {
-    return this.http.put(`${env.apiUrl}/projects/${projectId}/tests/batch/${testIds.join(',')}/moveTo/${targetId}`, null, this.defaultHttpOptions);
+    return this.http.put(`${env.apiUrl}/projects/${projectId}/tests/batch/${testIds.join(',')}/moveTo/${targetId}`, {}, this.defaultHttpOptions);
   }
 
   /**

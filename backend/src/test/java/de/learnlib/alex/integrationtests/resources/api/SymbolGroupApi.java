@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 
 package de.learnlib.alex.integrationtests.resources.api;
+
+import de.learnlib.alex.data.entities.SymbolGroup;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
@@ -36,13 +38,20 @@ public class SymbolGroupApi extends AbstractApi {
                 .get();
     }
 
+    public Response get(Long projectId, Long groupId, String jwt) {
+        return client.target(url(projectId.intValue(), groupId.intValue())).request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
+                .get();
+    }
+
     public Response create(int projectId, String group, String jwt) {
         return client.target(url(projectId)).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .post(Entity.json(group));
     }
 
-    public Response create(int projectId, List<String> groups, String jwt) {
+    public Response create(int projectId, List<SymbolGroup> groups, String jwt) {
         return client.target(url(projectId) + "/batch").request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .post(Entity.json(groups));
@@ -68,5 +77,9 @@ public class SymbolGroupApi extends AbstractApi {
 
     public String url(int projectId) {
         return baseUrl() + "/projects/" + projectId + "/groups";
+    }
+
+    public String url(int projectId, int groupId) {
+        return url(projectId) + "/" + groupId;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -164,6 +164,11 @@ public class TestExecutor {
                 if (aborted) break;
 
                 final TestCaseStep step = testCase.getSteps().get(i);
+                if (step.isDisabled()) {
+                    outputs.add(new ExecuteResult(true,"Skipped"));
+                    continue;
+                }
+
                 final ExecuteResult result = executeStep(connectors, step);
                 outputs.add(result);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,32 +37,6 @@ public class CompactMealyTransitionProxy implements Serializable {
 
     /** The output that happens during the transition. */
     private String output;
-
-    /**
-     * Default constructor.
-     */
-    public CompactMealyTransitionProxy() {
-        // this constructor only exists so one has not to use the advanced constructor.
-    }
-
-    /**
-     * Constructor that initialises all fields.
-     *
-     * @param from
-     *         The start of the transition.
-     * @param input
-     *         The input that triggers the transition.
-     * @param to
-     *         The end of the transition.
-     * @param output
-     *         The output during the transition.
-     */
-    public CompactMealyTransitionProxy(int from, String input, int to, String output) {
-        this.from = from;
-        this.to = to;
-        this.input = input;
-        this.output = output;
-    }
 
     /**
      * Get the number of the state this transition starts.

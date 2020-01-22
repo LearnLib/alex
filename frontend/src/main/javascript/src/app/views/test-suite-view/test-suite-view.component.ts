@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,7 +79,7 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
               private notificationService: NotificationService,
               private testConfigApi: TestConfigApiService) {
     this.testConfigs = [];
-    this.selectedTests = new Selectable(t => t.id);
+    this.selectedTests = new Selectable<any, any>(t => t.id);
     this.groups = [];
   }
 

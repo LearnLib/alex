@@ -7,16 +7,16 @@ On this page, you find information on how to configure ALEX.
 
 The following arguments can be passed to the bundled version of ALEX:
 
-| Argument          | Description                                                                                   |
-|-------------------|-----------------------------------------------------------------------------------------------|
+| Argument          | Description                                                                                            |
+|-------------------|--------------------------------------------------------------------------------------------------------|
 | `server.port`     | The port under which ALEX is available <br> `java -jar alex-1.8.0-SNAPSHOT.war --server.port=8000`     |
 | `alex.dbpath`     | The path where the HSQLDB is stored. <br> `java -jar alex-1.8.0-SNAPSHOT.war --alex.dbpath=mem:testdb` |
-| `chromeDriver`    | The absolute path to the Chrome driver executable on your system                              |
-| `edgeDriver`      | The absolute path to the Edge driver executable on your system                                |
-| `firefoxDriver`   | The absolute path to the Gecko driver executable on your system                               |
-| `ieDriver`        | The absolute path to the Internet Explorer executable                                         |
-| `remoteDriver`    | The URI to the remote Selenium server                                                         |
-| `ltsmin.path`     | The path to the compiles binaries of the LTSmin library                                       |
+| `chromeDriver`    | The absolute path to the Chrome driver executable on your system                                       |
+| `edgeDriver`      | The absolute path to the Edge driver executable on your system                                         |
+| `firefoxDriver`   | The absolute path to the Gecko driver executable on your system                                        |
+| `ieDriver`        | The absolute path to the Internet Explorer executable                                                  |
+| `remoteDriver`    | The URI to the remote Selenium server                                                                  |
+| `ltsmin.path`     | The path to the compiles binaries of the LTSmin library                                                |
 
 
 ## Using MySQL
@@ -37,7 +37,9 @@ spring.jpa.hibernate.ddl-auto=update
 Here, we assume that a MySQL server is running under port *3306* and a database called *alex* has been created.
 Then, start ALEX and include the *application.properties* file as command line argument:
 
-`java -jar alex-1.8.0-SNAPSHOT.war "--spring.config.location=/path/to/your/application.properties"`
+```bash
+java -jar alex-1.8.0-SNAPSHOT.war "--spring.config.location=/path/to/your/application.properties"
+```
 
 <div class="alert alert-info">
     Note that there is no automated migration to a MySQL database if the file-based HSQLDB has been used before.
@@ -45,20 +47,16 @@ Then, start ALEX and include the *application.properties* file as command line a
 </div>
 
 
-## WebDrivers
+## Selenium Web drivers
 
 By default, ALEX allows to execute tests in the headless [HtmlUnit](html-unit) browser.
 When logged in as a user with **admin** rights, you can also configure all other common web browsers.
 
-![webdriver1](./assets/webdrivers.png)
-
 On the settings page, various web browsers can be configured.
-For each browser, download the corresponding driver executable (as described in the UI) and specify the *absolute path* to the executable in the corresponding field.
+For each browser, download the corresponding driver executable (as described in the UI) and upload the executable in the corresponding field.
 
 There is also the possibility to set a default web driver for executing tests.
-Therefor, select the corresponding browser from a dropdown list on the same page.
-Ensure that the driver executable is setup before selecting a browser.
-
+Therefor, select the corresponding browser on the same page.
 
 ## User registration
 

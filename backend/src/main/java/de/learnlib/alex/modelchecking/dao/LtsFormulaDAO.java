@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,97 +18,101 @@ package de.learnlib.alex.modelchecking.dao;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
+import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.modelchecking.entities.LtsFormula;
+import de.learnlib.alex.modelchecking.repositories.LtsFormulaRepository;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
-/** The DAO for lts formulas. */
-public interface LtsFormulaDAO {
+@Service
+@Transactional(rollbackOn = Exception.class)
+public class LtsFormulaDAO {
+
+    /** The DAO for projects. */
+    private final ProjectDAO projectDAO;
+
+    /** The repository for projects. */
+    private final ProjectRepository projectRepository;
+
+    /** The repository for lts formulas. */
+    private final LtsFormulaRepository ltsFormulaRepository;
 
     /**
      * Constructor.
      *
-     * @param user
-     *         The user.
-     * @param projectId
-     *         The ID of the project.
-     * @return All formulas in the project.
-     * @throws NotFoundException
-     *         If the project could not be found.
+     * @param projectDAO
+     *         {@link #projectDAO}
+     * @param projectRepository
+     *         {@link #projectRepository}
+     * @param ltsFormulaRepository
+     *         {@link #ltsFormulaRepository}
      */
-    List<LtsFormula> getAll(User user, Long projectId) throws NotFoundException;
+    @Autowired
+    public LtsFormulaDAO(ProjectDAO projectDAO,
+                         ProjectRepository projectRepository,
+                         LtsFormulaRepository ltsFormulaRepository) {
+        this.projectDAO = projectDAO;
+        this.projectRepository = projectRepository;
+        this.ltsFormulaRepository = ltsFormulaRepository;
+    }
 
-    /**
-     * Constructor.
-     *
-     * @param user
-     *         The user.
-     * @param projectId
-     *         The ID of the project.
-     * @param formula
-     *         The formula to create.
-     * @return The created formula.
-     * @throws NotFoundException
-     *         If the project or formula could not be found.
-     */
-    LtsFormula create(User user, Long projectId, LtsFormula formula) throws NotFoundException;
+    public List<LtsFormula> getAll(User user, Long projectId) throws NotFoundException {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        projectDAO.checkAccess(user, project);
 
-    /**
-     * Constructor.
-     *
-     * @param user
-     *         The user.
-     * @param projectId
-     *         The ID of the project.
-     * @param formula
-     *         The formula to updated.
-     * @return The updated formula.
-     * @throws NotFoundException
-     *         If the project or formula could not be found.
-     */
-    LtsFormula update(User user, Long projectId, LtsFormula formula) throws NotFoundException;
+        return ltsFormulaRepository.findAllByProject_Id(projectId);
+    }
 
-    /**
-     * Constructor.
-     *
-     * @param user
-     *         The user.
-     * @param projectId
-     *         The ID of the project.
-     * @param formulaId
-     *         The ID of the formula to delete.
-     * @throws NotFoundException
-     *         If the project or formula could not be found.
-     */
-    void delete(User user, Long projectId, Long formulaId) throws NotFoundException;
+    public LtsFormula create(User user, Long projectId, LtsFormula formula) throws NotFoundException {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        projectDAO.checkAccess(user, project);
 
-    /**
-     * Constructor.
-     *
-     * @param user
-     *         The user.
-     * @param projectId
-     *         The ID of the project.
-     * @param formulaIds
-     *         The IDs of the formulas to delete.
-     * @throws NotFoundException
-     *         If the project or formula could not be found.
-     */
-    void delete(User user, Long projectId, List<Long> formulaIds) throws NotFoundException;
+        formula.setProject(project);
+        formula.setId(null);
 
-    /**
-     * Constructor.
-     *
-     * @param user
-     *         The user.
-     * @param project
-     *         The project.
-     * @param formula
-     *         The formula.
-     * @throws NotFoundException
-     *         If the project or formula could not be found.
-     */
-    void checkAccess(User user, Project project, LtsFormula formula) throws NotFoundException;
+        return ltsFormulaRepository.save(formula);
+    }
 
+    public LtsFormula update(User user, Long projectId, LtsFormula formula) throws NotFoundException {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final LtsFormula formulaInDb = ltsFormulaRepository.findById(formula.getId()).orElse(null);
+        checkAccess(user, project, formulaInDb);
+
+        formulaInDb.setName(formula.getName());
+        formulaInDb.setFormula(formula.getFormula());
+
+        return ltsFormulaRepository.save(formulaInDb);
+    }
+
+    public void delete(User user, Long projectId, Long formulaId) throws NotFoundException {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final LtsFormula formula = ltsFormulaRepository.findById(formulaId).orElse(null);
+        checkAccess(user, project, formula);
+
+        ltsFormulaRepository.deleteById(formulaId);
+    }
+
+    public void delete(User user, Long projectId, List<Long> formulaIds) throws NotFoundException {
+        for (final Long id : formulaIds) {
+            delete(user, projectId, id);
+        }
+    }
+
+    public void checkAccess(User user, Project project, LtsFormula formula) throws NotFoundException {
+        projectDAO.checkAccess(user, project);
+
+        if (formula == null) {
+            throw new NotFoundException("The formula could not be found.");
+        }
+
+        if (!formula.getProjectId().equals(project.getId())) {
+            throw new UnauthorizedException("You are not allowed to access this resource.");
+        }
+    }
 }

@@ -1,7 +1,7 @@
 package de.learnlib.alex.integrationtests.repositories;
 
-import de.learnlib.alex.config.entities.Settings;
-import de.learnlib.alex.config.repositories.SettingsRepository;
+import de.learnlib.alex.settings.entities.Settings;
+import de.learnlib.alex.settings.repositories.SettingsRepository;
 import org.junit.Test;
 
 import javax.inject.Inject;

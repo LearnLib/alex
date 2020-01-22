@@ -13,21 +13,7 @@
   >
     Not implemented
   </span>
-  <div *ngIf="pSymbol.parameterValues.length > 0">
-    <symbol-parameters [parameterValues]="pSymbol.parameterValues"></symbol-parameters>
-  </div>
-  <div
-    *ngIf="options.showSymbolOutputs && pSymbol.symbol.outputs.length > 0"
-    class="mt-1"
-  >
-    <div
-      *ngFor="let output of pSymbol.symbol.outputs"
-      style="margin-bottom: 4px"
-    >
-      <i class="fas fa-fw fa-level-up-alt fa-rotate-90"></i>
-      <span class="output">
-        <strong>{{output.name}}</strong>: <em>{{output.parameterType}}</em>
-      </span>
-    </div>
+  <div>
+    <symbol-input-values [parameterizedSymbol]="pSymbol"></symbol-input-values>
   </div>
 </div>

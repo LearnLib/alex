@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'file-dropzone',
@@ -22,14 +22,22 @@ import { Component, EventEmitter, Output } from '@angular/core';
 })
 export class FileDropzoneComponent {
 
+  @Input()
+  multiple: boolean;
+
   @Output()
-  public loaded: EventEmitter<any>;
+  loaded: EventEmitter<any>;
+
+  @Output()
+  filesLoaded: EventEmitter<File>;
 
   /** The file reader */
   private fileReader: FileReader;
 
   constructor() {
+    this.multiple = true;
     this.loaded = new EventEmitter<any>();
+    this.filesLoaded = new EventEmitter<File>();
 
     this.fileReader = new FileReader();
     this.fileReader.addEventListener('load', this.onLoad.bind(this));
@@ -50,8 +58,11 @@ export class FileDropzoneComponent {
   onClick(): void {
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
+    input.setAttribute('multiple', `${this.multiple}`);
     input.addEventListener('change', e => {
-      this.readFiles((<any>e.target).files);
+      const files = (<any>e.target).files;
+      this.filesLoaded.emit(files);
+      this.readFiles(files);
     }, false);
     input.click();
   }

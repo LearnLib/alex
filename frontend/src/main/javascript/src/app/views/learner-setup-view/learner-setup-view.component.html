@@ -49,6 +49,8 @@
               </simple-symbol-group-tree>
             </div>
           </div>
+
+          <symbols-data-context [parametrizedSymbols]="allParametrizedSymbols"></symbols-data-context>
         </div>
 
         <div class="col-md-4 col-lg-6">
@@ -74,10 +76,10 @@
                     <strong>{{pResetSymbol.symbol.name}}</strong>
                   </a>
                 </div>
-                <symbol-parameters
-                  [parameterValues]="pResetSymbol.parameterValues"
+                <symbol-input-values
+                  [parameterizedSymbol]="pResetSymbol"
                 >
-                </symbol-parameters>
+                </symbol-input-values>
               </div>
               <div class="flex-shrink-0">
                 <button (click)="selectResetSymbol()" class="btn btn-sm btn-default">
@@ -93,12 +95,15 @@
             <div *ngFor="let pSymbol of pSymbols; let i = index"
                  class="list-group-item d-flex flex-row">
               <div class="w-100">
-                <div>
-                  <a [routerLink]="['/app', 'projects', project.id, 'symbols', pSymbol.symbol.id]">
+                <div class="d-flex flex-row">
+                  <a class="flex-shrink-0" [routerLink]="['/app', 'projects', project.id, 'symbols', pSymbol.symbol.id]">
                     <strong>{{pSymbol.symbol.name}}</strong>
                   </a>
+                  <span class="text-muted w-100 d-flex flex-row ml-1">
+                    <em>as</em> <input class="symbol-alias w-100 ml-1" [placeholder]="pSymbol.getAliasOrComputedName()" type="text" [(ngModel)]="pSymbol.alias" [name]="'alias-' + i">
+                  </span>
                 </div>
-                <symbol-parameters [parameterValues]="pSymbol.parameterValues"></symbol-parameters>
+                <symbol-input-values [parameterizedSymbol]="pSymbol"></symbol-input-values>
               </div>
               <div style="flex-shrink: 0">
                 <i (click)="pSymbols.splice(i, 1)"
@@ -132,10 +137,10 @@
                     <strong>{{pPostSymbol.symbol.name}}</strong>
                   </a>
                 </div>
-                <symbol-parameters
-                  [parameterValues]="pPostSymbol.parameterValues"
+                <symbol-input-values
+                  [parameterizedSymbol]="pPostSymbol"
                 >
-                </symbol-parameters>
+                </symbol-input-values>
               </div>
               <div class="flex-shrink-0">
                 <div class="btn btn-group btn-group-sm">
@@ -173,6 +178,9 @@
                 <div>
                   <span *ngFor="let env of result.environments" class="badge badge-secondary mr-1">{{env.name}}</span>
                 </div>
+              </div>
+              <div class="list-group-item">
+                <button class="btn btn-default d-block w-100" (click)="selectLearnerResult()">More</button>
               </div>
             </div>
             <div *ngIf="learnerResults.length === 0" class="card-body">

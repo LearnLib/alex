@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -117,6 +119,15 @@ public class ProjectResourceIT extends AbstractResourceIT {
         final Response res = projectApi.create(project, adminJwt);
 
         assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
+    }
+
+    @Test
+    public void shouldImportProject() throws Exception {
+        final String path = Thread.currentThread().getContextClassLoader().getResource("integrationtest/ALEX-rest.project.json").getPath();
+        final String content = new String(Files.readAllBytes(Paths.get(path)));
+
+        final Response res = projectApi.importProject(content, adminJwt);
+        assertEquals(HttpStatus.CREATED.value(), res.getStatus());
     }
 
     @Test

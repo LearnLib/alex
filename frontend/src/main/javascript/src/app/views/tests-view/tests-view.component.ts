@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import { ActivatedRoute } from '@angular/router';
 export class TestsViewComponent implements OnInit {
 
   /** The test case or test suite. */
-  public test: any;
+  test: any;
 
   constructor(private route: ActivatedRoute,
               private appStore: AppStoreService,
@@ -43,6 +43,7 @@ export class TestsViewComponent implements OnInit {
 
     this.route.paramMap.subscribe(
       map => {
+        this.test = null;
         if (map.has('testId')) {
           const testId: number = parseInt(map.get('testId'));
           this.testApi.get(project.id, testId).subscribe(

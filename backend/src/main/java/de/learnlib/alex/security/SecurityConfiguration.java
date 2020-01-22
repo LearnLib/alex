@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,11 +47,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                     .antMatchers(HttpMethod.GET, "/rest/settings").permitAll()
                     .antMatchers(HttpMethod.PUT, "/rest/settings").hasAuthority(adminAuthority)
+                    .antMatchers("/rest/settings/drivers/**").hasAuthority(adminAuthority)
                     .antMatchers(HttpMethod.POST,"/rest/users/login").permitAll()
                     .antMatchers(HttpMethod.GET, "/rest/users").hasAuthority(adminAuthority)
                     .antMatchers(HttpMethod.POST, "/rest/users").permitAll()
-                    .antMatchers(HttpMethod.PUT, "/rest/users/{\\d+}/promote").hasAuthority(adminAuthority)
-                    .antMatchers(HttpMethod.PUT, "/rest/users/{\\d+}/demote").hasAuthority(adminAuthority)
+                    .antMatchers(HttpMethod.PUT, "/rest/users/{\\d+}/role").hasAuthority(adminAuthority)
                     .antMatchers(HttpMethod.DELETE, "/rest/users/batch/**").hasAuthority(adminAuthority)
                     .antMatchers("/rest/**").hasAnyAuthority(new String[]{registeredAuthority, adminAuthority}).and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and()

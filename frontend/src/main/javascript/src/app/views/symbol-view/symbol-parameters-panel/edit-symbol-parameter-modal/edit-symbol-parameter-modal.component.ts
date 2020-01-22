@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,9 +49,6 @@ export class EditSymbolParameterModalComponent {
 
     this.parameter.name = values.name;
     this.parameter.parameterType = values.parameterType;
-    if (this.parameter.type === 'input') {
-      this.parameter.private = values.private;
-    }
 
     this.symbolParameterApi.update(this.symbol.project, this.symbol.id, this.parameter).subscribe(
       param => this.modal.close(param),

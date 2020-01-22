@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.data.dao.SymbolGroupDAO;
 import de.learnlib.alex.data.entities.SymbolGroup;
+import de.learnlib.alex.data.entities.export.SymbolGroupsImportableEntity;
 import de.learnlib.alex.data.events.SymbolGroupEvent;
 import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.webhooks.services.WebhookService;
@@ -120,11 +121,10 @@ public class SymbolGroupResource {
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity importGroups(@PathVariable("projectId") Long projectId,
-                                       @RequestBody List<SymbolGroup> groups) {
+                                       @RequestBody SymbolGroupsImportableEntity symbolGroupsImportable) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("importGroups({}, {}) for user {}.", projectId, groups, user);
-
-        final List<SymbolGroup> importedGroups = symbolGroupDAO.importGroups(user, projectId, groups);
+        LOGGER.traceEntry("importGroups() for user {}.", projectId, user);
+        final List<SymbolGroup> importedGroups = symbolGroupDAO.importGroups(user, projectId, symbolGroupsImportable);
         webhookService.fireEvent(user, new SymbolGroupEvent.CreatedMany(importedGroups));
         LOGGER.traceExit(importedGroups);
         return ResponseEntity.status(HttpStatus.CREATED).body(importedGroups);

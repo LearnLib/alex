@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.config.entities.Settings;
+import de.learnlib.alex.auth.entities.UserRole;
+import de.learnlib.alex.settings.entities.Settings;
 import de.learnlib.alex.integrationtests.resources.api.SettingsApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
 import org.junit.Before;
@@ -122,7 +123,7 @@ public class UserResourceIT extends AbstractResourceIT {
         final int userId = JsonPath.read(res1.readEntity(String.class), "id");
         final String jwt = userApi.login("test@test.de", "test");
 
-        final Response res2 = userApi.promote(userId, jwt);
+        final Response res2 = userApi.changeRole(userId, UserRole.ADMIN, jwt);
 
         assertEquals(HttpStatus.FORBIDDEN.value(), res2.getStatus());
     }
@@ -132,7 +133,7 @@ public class UserResourceIT extends AbstractResourceIT {
         final Response res1 = userApi.create(createUserJson("test@test.de", "test"));
         final int userId = JsonPath.read(res1.readEntity(String.class), "id");
 
-        userApi.promote(userId, adminJwt);
+        userApi.changeRole(userId, UserRole.ADMIN, adminJwt);
 
         final String jwtUser = userApi.login("test@test.de", "test");
         final Response res2 = userApi.getProfile(jwtUser);
@@ -145,7 +146,7 @@ public class UserResourceIT extends AbstractResourceIT {
         final Response res1 = userApi.create(createUserJson("test@test.de", "test", "ADMIN"), adminJwt);
         final int userId = JsonPath.read(res1.readEntity(String.class), "id");
 
-        userApi.demote(userId, adminJwt);
+        userApi.changeRole(userId, UserRole.REGISTERED, adminJwt);
 
         final String jwtUser = userApi.login("test@test.de", "test");
         final Response res2 = userApi.getProfile(jwtUser);
@@ -158,7 +159,7 @@ public class UserResourceIT extends AbstractResourceIT {
         final Response res1 = userApi.getProfile(adminJwt);
         final int userId = JsonPath.read(res1.readEntity(String.class), "id");
 
-        userApi.demote(userId, adminJwt);
+        userApi.changeRole(userId, UserRole.REGISTERED, adminJwt);
 
         final Response res2 = userApi.getProfile(adminJwt);
         assertEquals("ADMIN", JsonPath.read(res2.readEntity(String.class), "role"));
@@ -285,7 +286,7 @@ public class UserResourceIT extends AbstractResourceIT {
         settings.setAllowUserRegistration(false);
         settingsApi.update(settings, adminJwt);
 
-        final Response res1 = userApi.create(createUserJson("test@test.de","test"));
+        final Response res1 = userApi.create(createUserJson("test@test.de", "test"));
         assertEquals(HttpStatus.FORBIDDEN.value(), res1.getStatus());
         JsonPath.read(res1.readEntity(String.class), "message");
 

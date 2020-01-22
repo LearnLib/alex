@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ export class SeparatingWordModalComponent {
   generateTestCase(which: number): void {
     const result = which == 1 ? this.result1 : this.result2;
     const symbolMap = {};
-    result.symbols.forEach(s => symbolMap[s.getComputedName()] = s);
+    result.symbols.forEach(s => symbolMap[s.getAliasOrComputedName()] = s);
 
     const tc = new TestCase();
     tc.name = 'Test Case';

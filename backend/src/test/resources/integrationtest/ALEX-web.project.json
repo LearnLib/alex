@@ -1,0 +1,1033 @@
+{
+  "version": "1.8.0-SNAPSHOT",
+  "type": "project",
+  "project": {
+    "name": "ALEX",
+    "environments": [
+      {
+        "name": "Production",
+        "urls": [
+          {
+            "name": "Base",
+            "url": "http://localhost:4200",
+            "default": true
+          }
+        ],
+        "variables": [
+          {
+            "name": "ADMIN_EMAIL",
+            "value": "admin@alex.example"
+          },
+          {
+            "name": "ADMIN_PASSWORD",
+            "value": "admin"
+          }
+        ],
+        "default": true
+      }
+    ]
+  },
+  "groups": [
+    {
+      "name": "Default group",
+      "symbols": [
+        {
+          "description": "",
+          "expectedResult": "",
+          "inputs": [],
+          "name": "reset",
+          "outputs": [],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_goto",
+                "url": "/",
+                "baseUrl": "Base",
+                "credentials": {
+                  "name": "",
+                  "password": ""
+                }
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_waitForNode",
+                "node": {
+                  "selector": "input",
+                  "type": "CSS"
+                },
+                "waitCriterion": "VISIBLE",
+                "maxWaitTime": 10
+              }
+            },
+            {
+              "type": "symbol",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "pSymbol": {
+                "parameterValues": [
+                  {
+                    "parameter": {
+                      "type": "input",
+                      "name": "email",
+                      "parameterType": "STRING"
+                    },
+                    "value": "admin@alex.example"
+                  },
+                  {
+                    "parameter": {
+                      "type": "input",
+                      "name": "password",
+                      "parameterType": "STRING"
+                    },
+                    "value": "admin"
+                  }
+                ],
+                "symbol": {
+                  "name": "login"
+                }
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_clickLinkByText",
+                "value": "User Management",
+                "node": {
+                  "selector": "#sidebar",
+                  "type": "CSS"
+                }
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_waitForText",
+                "value": "admin@alex.example",
+                "regexp": false,
+                "node": {
+                  "selector": "table",
+                  "type": "CSS"
+                },
+                "maxWaitTime": 10
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "jumpToLabel",
+                "label": "L1",
+                "script": "return document.querySelectorAll('table tbody tr').length === 1",
+                "async": false,
+                "timeout": 10
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_click",
+                "node": {
+                  "selector": "selectable-checkbox-multiple",
+                  "type": "CSS"
+                },
+                "doubleClick": false
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_clickElementByText",
+                "node": {
+                  "selector": "action-bar",
+                  "type": "CSS"
+                },
+                "tagName": "button",
+                "text": "Delete"
+              }
+            },
+            {
+              "type": "symbol",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "pSymbol": {
+                "parameterValues": [],
+                "symbol": {
+                  "name": "waitForModalOpen"
+                }
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_clickElementByText",
+                "node": {
+                  "selector": ".modal-content",
+                  "type": "CSS"
+                },
+                "tagName": "button",
+                "text": "Yes"
+              }
+            },
+            {
+              "type": "symbol",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "pSymbol": {
+                "parameterValues": [],
+                "symbol": {
+                  "name": "waitForModalClose"
+                }
+              }
+            },
+            {
+              "type": "symbol",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "pSymbol": {
+                "parameterValues": [
+                  {
+                    "parameter": {
+                      "type": "input",
+                      "name": "message",
+                      "parameterType": "STRING"
+                    },
+                    "value": "The users have been deleted"
+                  }
+                ],
+                "symbol": {
+                  "name": "assertToastMessage"
+                }
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "createLabel",
+                "label": "L1"
+              }
+            },
+            {
+              "type": "symbol",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "pSymbol": {
+                "parameterValues": [],
+                "symbol": {
+                  "name": "logout"
+                }
+              }
+            }
+          ],
+          "successOutput": null
+        },
+        {
+          "description": "",
+          "expectedResult": "",
+          "inputs": [
+            {
+              "type": "input",
+              "name": "email",
+              "parameterType": "STRING"
+            },
+            {
+              "type": "input",
+              "name": "password",
+              "parameterType": "STRING"
+            }
+          ],
+          "name": "login",
+          "outputs": [],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_clear",
+                "node": {
+                  "selector": "input[type=\"email\"]",
+                  "type": "CSS"
+                }
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_clear",
+                "node": {
+                  "selector": "input[type=\"password\"]",
+                  "type": "CSS"
+                }
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_fill",
+                "node": {
+                  "selector": "input[type=\"email\"]",
+                  "type": "CSS"
+                },
+                "value": "{{$email}}"
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_fill",
+                "node": {
+                  "selector": "input[type=\"password\"]",
+                  "type": "CSS"
+                },
+                "value": "{{$password}}"
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_submit",
+                "node": {
+                  "selector": "form",
+                  "type": "CSS"
+                }
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_waitForNode",
+                "node": {
+                  "selector": "#sidebar",
+                  "type": "CSS"
+                },
+                "waitCriterion": "VISIBLE",
+                "maxWaitTime": 10
+              }
+            }
+          ],
+          "successOutput": null
+        },
+        {
+          "description": "",
+          "expectedResult": "",
+          "inputs": [],
+          "name": "logout",
+          "outputs": [],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_click",
+                "node": {
+                  "selector": "nav .nav-link",
+                  "type": "CSS"
+                },
+                "doubleClick": false
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_waitForNode",
+                "node": {
+                  "selector": " nav .dropdown-menu",
+                  "type": "CSS"
+                },
+                "waitCriterion": "VISIBLE",
+                "maxWaitTime": 10
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_clickElementByText",
+                "node": {
+                  "selector": " nav .dropdown-menu",
+                  "type": "CSS"
+                },
+                "tagName": "a",
+                "text": "Logout"
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_waitForNode",
+                "node": {
+                  "selector": "input[type=\"password\"]",
+                  "type": "CSS"
+                },
+                "waitCriterion": "VISIBLE",
+                "maxWaitTime": 10
+              }
+            }
+          ],
+          "successOutput": null
+        },
+        {
+          "description": "",
+          "expectedResult": "",
+          "inputs": [
+            {
+              "type": "input",
+              "name": "email",
+              "parameterType": "STRING"
+            },
+            {
+              "type": "input",
+              "name": "password",
+              "parameterType": "STRING"
+            }
+          ],
+          "name": "register",
+          "outputs": [],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_clear",
+                "node": {
+                  "selector": "input[type=\"email\"]",
+                  "type": "CSS"
+                }
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_clear",
+                "node": {
+                  "selector": "input[type=\"password\"]",
+                  "type": "CSS"
+                }
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_fill",
+                "node": {
+                  "selector": "input[type=\"email\"]",
+                  "type": "CSS"
+                },
+                "value": "{{$email}}"
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_fill",
+                "node": {
+                  "selector": "input[type=\"password\"]",
+                  "type": "CSS"
+                },
+                "value": "{{$password}}"
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_clickElementByText",
+                "node": {
+                  "selector": "body",
+                  "type": "CSS"
+                },
+                "tagName": "button",
+                "text": "Sign up"
+              }
+            }
+          ],
+          "successOutput": null
+        }
+      ],
+      "groups": []
+    },
+    {
+      "name": "Utils",
+      "symbols": [
+        {
+          "description": "",
+          "expectedResult": "",
+          "inputs": [
+            {
+              "type": "input",
+              "name": "message",
+              "parameterType": "STRING"
+            }
+          ],
+          "name": "assertToastMessage",
+          "outputs": [],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_waitForNode",
+                "node": {
+                  "selector": "#toast-container .toast-message",
+                  "type": "CSS"
+                },
+                "waitCriterion": "CLICKABLE",
+                "maxWaitTime": 10
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_checkForText",
+                "value": "{{$message}}",
+                "regexp": false,
+                "node": {
+                  "selector": "#toast-container .toast-message",
+                  "type": "CSS"
+                }
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_click",
+                "node": {
+                  "selector": "#toast-container .toast-message",
+                  "type": "CSS"
+                },
+                "doubleClick": false
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_waitForNode",
+                "node": {
+                  "selector": "#toast-container .toast-message",
+                  "type": "CSS"
+                },
+                "waitCriterion": "REMOVED",
+                "maxWaitTime": 10
+              }
+            }
+          ],
+          "successOutput": null
+        },
+        {
+          "description": "",
+          "expectedResult": "",
+          "inputs": [],
+          "name": "waitForModalOpen",
+          "outputs": [],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_waitForNode",
+                "node": {
+                  "selector": ".modal-content",
+                  "type": "CSS"
+                },
+                "waitCriterion": "VISIBLE",
+                "maxWaitTime": 10
+              }
+            }
+          ],
+          "successOutput": null
+        },
+        {
+          "description": "",
+          "expectedResult": "",
+          "inputs": [],
+          "name": "waitForModalClose",
+          "outputs": [],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_waitForNode",
+                "node": {
+                  "selector": ".modal-content",
+                  "type": "CSS"
+                },
+                "waitCriterion": "REMOVED",
+                "maxWaitTime": 10
+              }
+            }
+          ],
+          "successOutput": null
+        }
+      ],
+      "groups": []
+    }
+  ],
+  "tests": [
+    {
+      "name": "Authentication",
+      "tests": [
+        {
+          "type": "case",
+          "name": "test login logout",
+          "preSteps": [
+            {
+              "expectedResult": "",
+              "expectedOutputSuccess": true,
+              "expectedOutputMessage": "",
+              "pSymbol": {
+                "parameterValues": [],
+                "symbol": {
+                  "name": "reset"
+                }
+              }
+            }
+          ],
+          "steps": [
+            {
+              "expectedResult": "",
+              "expectedOutputSuccess": true,
+              "expectedOutputMessage": "",
+              "pSymbol": {
+                "parameterValues": [
+                  {
+                    "parameter": {
+                      "type": "input",
+                      "name": "email",
+                      "parameterType": "STRING"
+                    },
+                    "value": "test@test.de"
+                  },
+                  {
+                    "parameter": {
+                      "type": "input",
+                      "name": "password",
+                      "parameterType": "STRING"
+                    },
+                    "value": "test"
+                  }
+                ],
+                "symbol": {
+                  "name": "register"
+                }
+              }
+            },
+            {
+              "expectedResult": "",
+              "expectedOutputSuccess": true,
+              "expectedOutputMessage": "",
+              "pSymbol": {
+                "parameterValues": [
+                  {
+                    "parameter": {
+                      "type": "input",
+                      "name": "message",
+                      "parameterType": "STRING"
+                    },
+                    "value": "Registration successful"
+                  }
+                ],
+                "symbol": {
+                  "name": "assertToastMessage"
+                }
+              }
+            },
+            {
+              "expectedResult": "",
+              "expectedOutputSuccess": true,
+              "expectedOutputMessage": "",
+              "pSymbol": {
+                "parameterValues": [
+                  {
+                    "parameter": {
+                      "type": "input",
+                      "name": "email",
+                      "parameterType": "STRING"
+                    },
+                    "value": "test@test.de"
+                  },
+                  {
+                    "parameter": {
+                      "type": "input",
+                      "name": "password",
+                      "parameterType": "STRING"
+                    },
+                    "value": "test"
+                  }
+                ],
+                "symbol": {
+                  "name": "login"
+                }
+              }
+            },
+            {
+              "expectedResult": "",
+              "expectedOutputSuccess": true,
+              "expectedOutputMessage": "",
+              "pSymbol": {
+                "parameterValues": [
+                  {
+                    "parameter": {
+                      "type": "input",
+                      "name": "message",
+                      "parameterType": "STRING"
+                    },
+                    "value": "You have logged in"
+                  }
+                ],
+                "symbol": {
+                  "name": "assertToastMessage"
+                }
+              }
+            },
+            {
+              "expectedResult": "",
+              "expectedOutputSuccess": true,
+              "expectedOutputMessage": "",
+              "pSymbol": {
+                "parameterValues": [],
+                "symbol": {
+                  "name": "logout"
+                }
+              }
+            }
+          ],
+          "postSteps": [],
+          "generated": false,
+          "status": "DONE"
+        },
+        {
+          "type": "case",
+          "name": "test register",
+          "preSteps": [
+            {
+              "expectedResult": "",
+              "expectedOutputSuccess": true,
+              "expectedOutputMessage": "",
+              "pSymbol": {
+                "parameterValues": [],
+                "symbol": {
+                  "name": "reset"
+                }
+              }
+            }
+          ],
+          "steps": [
+            {
+              "expectedResult": "",
+              "expectedOutputSuccess": true,
+              "expectedOutputMessage": "",
+              "pSymbol": {
+                "parameterValues": [
+                  {
+                    "parameter": {
+                      "type": "input",
+                      "name": "email",
+                      "parameterType": "STRING"
+                    },
+                    "value": "test@test.de"
+                  },
+                  {
+                    "parameter": {
+                      "type": "input",
+                      "name": "password",
+                      "parameterType": "STRING"
+                    },
+                    "value": "test"
+                  }
+                ],
+                "symbol": {
+                  "name": "register"
+                }
+              }
+            },
+            {
+              "expectedResult": "",
+              "expectedOutputSuccess": true,
+              "expectedOutputMessage": "",
+              "pSymbol": {
+                "parameterValues": [
+                  {
+                    "parameter": {
+                      "type": "input",
+                      "name": "message",
+                      "parameterType": "STRING"
+                    },
+                    "value": "Registration successful"
+                  }
+                ],
+                "symbol": {
+                  "name": "assertToastMessage"
+                }
+              }
+            },
+            {
+              "expectedResult": "",
+              "expectedOutputSuccess": true,
+              "expectedOutputMessage": "",
+              "pSymbol": {
+                "parameterValues": [
+                  {
+                    "parameter": {
+                      "type": "input",
+                      "name": "email",
+                      "parameterType": "STRING"
+                    },
+                    "value": "test@test.de"
+                  },
+                  {
+                    "parameter": {
+                      "type": "input",
+                      "name": "password",
+                      "parameterType": "STRING"
+                    },
+                    "value": "test"
+                  }
+                ],
+                "symbol": {
+                  "name": "login"
+                }
+              }
+            },
+            {
+              "expectedResult": "",
+              "expectedOutputSuccess": true,
+              "expectedOutputMessage": "",
+              "pSymbol": {
+                "parameterValues": [],
+                "symbol": {
+                  "name": "logout"
+                }
+              }
+            }
+          ],
+          "postSteps": [],
+          "generated": false,
+          "status": "DONE"
+        },
+        {
+          "type": "case",
+          "name": "test do not register twice",
+          "preSteps": [
+            {
+              "expectedResult": "",
+              "expectedOutputSuccess": true,
+              "expectedOutputMessage": "",
+              "pSymbol": {
+                "parameterValues": [],
+                "symbol": {
+                  "name": "reset"
+                }
+              }
+            }
+          ],
+          "steps": [
+            {
+              "expectedResult": "",
+              "expectedOutputSuccess": true,
+              "expectedOutputMessage": "",
+              "pSymbol": {
+                "parameterValues": [
+                  {
+                    "parameter": {
+                      "type": "input",
+                      "name": "email",
+                      "parameterType": "STRING"
+                    },
+                    "value": "test@test.de"
+                  },
+                  {
+                    "parameter": {
+                      "type": "input",
+                      "name": "password",
+                      "parameterType": "STRING"
+                    },
+                    "value": "test"
+                  }
+                ],
+                "symbol": {
+                  "name": "register"
+                }
+              }
+            },
+            {
+              "expectedResult": "",
+              "expectedOutputSuccess": true,
+              "expectedOutputMessage": "",
+              "pSymbol": {
+                "parameterValues": [
+                  {
+                    "parameter": {
+                      "type": "input",
+                      "name": "email",
+                      "parameterType": "STRING"
+                    },
+                    "value": "test@test.de"
+                  },
+                  {
+                    "parameter": {
+                      "type": "input",
+                      "name": "password",
+                      "parameterType": "STRING"
+                    },
+                    "value": "test"
+                  }
+                ],
+                "symbol": {
+                  "name": "register"
+                }
+              }
+            },
+            {
+              "expectedResult": "",
+              "expectedOutputSuccess": true,
+              "expectedOutputMessage": "",
+              "pSymbol": {
+                "parameterValues": [
+                  {
+                    "parameter": {
+                      "type": "input",
+                      "name": "message",
+                      "parameterType": "STRING"
+                    },
+                    "value": "Registration failed"
+                  }
+                ],
+                "symbol": {
+                  "name": "assertToastMessage"
+                }
+              }
+            }
+          ],
+          "postSteps": [],
+          "generated": false,
+          "status": "DONE"
+        }
+      ],
+      "type": "suite"
+    }
+  ]
+}

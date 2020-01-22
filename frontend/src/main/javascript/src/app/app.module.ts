@@ -17,7 +17,7 @@ import { SelectableCheckboxMultipleComponent } from './common/selectable-checkbo
 import { AppStoreService } from './services/app-store.service';
 import { SettingsApiService } from './services/api/settings-api.service';
 import { TestCaseTableComponent } from './views/test-case-view/test-case-table/test-case-table.component';
-import { SymbolParametersComponent } from './common/symbol-parameters/symbol-parameters.component';
+import { SymbolInputValuesComponent } from './common/symbol-input-values/symbol-input-values.component';
 import { OutputErrorTraceComponent } from './common/output-error-trace/output-error-trace.component';
 import { TestCaseTablePrePostStepsComponent } from './views/test-case-view/test-case-table/test-case-table-pre-post-steps/test-case-table-pre-post-steps.component';
 import { TestCaseTableSymbolColumnComponent } from './views/test-case-view/test-case-table/test-case-table-symbol-column/test-case-table-symbol-column.component';
@@ -235,6 +235,10 @@ import { TestStatusComponent } from './common/test-status/test-status.component'
 import { TestReportProgressComponent } from './common/test-report-progress/test-report-progress.component';
 import {ProjectUsersViewComponent} from "./views/project-users-view/project-users-view.component";
 import {AddUserModalComponent} from "./views/project-users-view/add-user-modal/add-user-modal.component";
+import { SymbolsDataContextComponent } from './common/symbols-data-context/symbols-data-context.component';
+import { ClipboardModule } from 'ngx-clipboard';
+import { WebdriverSettingsFormComponent } from './views/admin-settings-view/webdriver-settings-form/webdriver-settings-form.component';
+import { ToggleButtonComponent } from './common/toggle-button/toggle-button.component';
 
 
 @NgModule({
@@ -244,7 +248,7 @@ import {AddUserModalComponent} from "./views/project-users-view/add-user-modal/a
     SelectableCheckboxComponent,
     SelectableCheckboxMultipleComponent,
     TestCaseTableComponent,
-    SymbolParametersComponent,
+    SymbolInputValuesComponent,
     OutputErrorTraceComponent,
     TestCaseTablePrePostStepsComponent,
     TestCaseTableSymbolColumnComponent,
@@ -431,7 +435,10 @@ import {AddUserModalComponent} from "./views/project-users-view/add-user-modal/a
     TestStatusComponent,
     TestReportProgressComponent,
     ProjectUsersViewComponent,
-    AddUserModalComponent
+    AddUserModalComponent,
+    SymbolsDataContextComponent,
+    WebdriverSettingsFormComponent,
+    ToggleButtonComponent
   ],
   imports: [
     BrowserModule,
@@ -449,7 +456,8 @@ import {AddUserModalComponent} from "./views/project-users-view/add-user-modal/a
     DragulaModule.forRoot(),
     AceEditorModule,
     NgxGraphModule,
-    NgxChartsModule
+    NgxChartsModule,
+    ClipboardModule
   ],
   providers: [
     {

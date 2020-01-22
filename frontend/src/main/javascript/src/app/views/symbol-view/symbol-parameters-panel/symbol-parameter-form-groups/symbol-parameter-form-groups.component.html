@@ -23,13 +23,3 @@
     <option *ngFor="let type of types" [value]="type">{{type | normalizeUpperCase}}</option>
   </select>
 </div>
-
-<div *ngIf="parameter.type === 'input'" class="form-group form-check">
-  <input
-    class="form-check-input"
-    id="symbolParameterFormPrivate"
-    type="checkbox"
-    [formControl]="form.controls.private"
-  >
-  <label class="form-check-label" for="symbolParameterFormPrivate">Private</label>
-</div>

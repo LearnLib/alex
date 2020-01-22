@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,10 @@ import de.learnlib.alex.auth.entities.UserRole;
 import de.learnlib.alex.auth.events.UserEvent;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
-import de.learnlib.alex.config.dao.SettingsDAO;
-import de.learnlib.alex.config.entities.Settings;
 import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.security.JwtHelper;
+import de.learnlib.alex.settings.dao.SettingsDAO;
+import de.learnlib.alex.settings.entities.Settings;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -59,6 +59,8 @@ import java.util.List;
 public class UserResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final int MAX_USERNAME_LENGTH = 32;
 
     /** The security context containing the user of the request. */
     private AuthContext authContext;
@@ -102,7 +104,7 @@ public class UserResource {
             throw new ValidationException("The email is not valid");
         }
 
-        if (newUser.getUsername().length() > 32 || !newUser.getUsername().matches("^[a-zA-Z][a-zA-Z0-9]*$")) {
+        if (newUser.getUsername().length() > MAX_USERNAME_LENGTH || !newUser.getUsername().matches("^[a-zA-Z][a-zA-Z0-9]*$")) {
             throw new ValidationException("The username is not valid!");
         }
 
@@ -351,7 +353,7 @@ public class UserResource {
         String username = (String) json.get("username");
         User realUser = userDAO.getById(userId);
 
-        if (username.length() > 32 || !username.matches("^[a-zA-Z][a-zA-Z0-9]*$")) {
+        if (username.length() > MAX_USERNAME_LENGTH || !username.matches("^[a-zA-Z][a-zA-Z0-9]*$")) {
             throw new ValidationException("The username is invalid!");
         }
 
@@ -381,65 +383,41 @@ public class UserResource {
         }
     }
 
-    /**
-     * Promotes an user to be an administrator. This can only be done by administrators.
-     *
-     * @param userId
-     *         The ID of the user to promote.
-     * @return The account information of the new administrator.
-     */
     @PutMapping(
-            value = "/{id}/promote",
+            value = "/{id}/role",
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity promoteUser(@PathVariable("id") Long userId) {
+    public ResponseEntity changeRole(@PathVariable("id") Long userId, @RequestBody JSONObject json) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("promoteUser({}) for user {}.", userId, user);
+        LOGGER.traceEntry("update role for user {}.", userId);
 
-        User userToPromote = userDAO.getById(userId);
-        userToPromote.setRole(UserRole.ADMIN);
-        userDAO.update(userToPromote);
-        LOGGER.info("User {} promoted.", user);
-
-        LOGGER.traceExit(userToPromote);
-        webhookService.fireEvent(user, new UserEvent.RoleUpdated(userToPromote));
-        return ResponseEntity.ok(userToPromote);
-    }
-
-    /**
-     * Demotes an user to be an simple use (and no administrator anymore). This can only be done by administrators.
-     * Please also note: At least one administrator has to remain in the system.
-     *
-     * @param userId
-     *         The ID of the user to demote.
-     * @return The account information of the formally administrator.
-     */
-    @PutMapping(
-            value = "/{id}/demote",
-            consumes = MediaType.APPLICATION_JSON,
-            produces = MediaType.APPLICATION_JSON
-    )
-    public ResponseEntity demoteUser(@PathVariable("id") Long userId) {
-        final User user = authContext.getUser();
-        LOGGER.trace("UserResource.demoteUser(" + userId + ") for user " + user + ".");
-
-        // if the admin wants to revoke his own rights
-        // -> take care that always one admin is in the system
-        if (user.getId().equals(userId)) {
-            List<User> admins = userDAO.getAllByRole(UserRole.ADMIN);
-            if (admins.size() == 1) {
-                throw new ValidationException("The only admin left cannot take away his own admin rights!");
-            }
+        final User userToUpdate = userDAO.getById(userId);
+        final UserRole newRole = UserRole.valueOf((String) json.get("role"));
+        switch (newRole) {
+            case ADMIN:
+                userToUpdate.setRole(newRole);
+                break;
+            case REGISTERED:
+                // if the admin wants to revoke his own rights
+                // -> take care that always one admin is in the system
+                if (user.getId().equals(userId)) {
+                    final List<User> admins = userDAO.getAllByRole(UserRole.ADMIN);
+                    if (admins.size() == 1) {
+                        throw new ValidationException("The only admin left cannot take away his own admin rights!");
+                    }
+                }
+                userToUpdate.setRole(UserRole.REGISTERED);
+                break;
+            default:
+                throw new ValidationException("Cannot update role.");
         }
 
-        User userToDemote = userDAO.getById(userId);
-        userToDemote.setRole(UserRole.REGISTERED);
-        userDAO.update(userToDemote);
-
-        LOGGER.traceExit(userToDemote);
-        webhookService.fireEvent(user, new UserEvent.RoleUpdated(userToDemote));
-        return ResponseEntity.ok(userToDemote);
+        userDAO.update(userToUpdate);
+        LOGGER.info("Role of user {} updated.", user);
+        LOGGER.traceExit(userToUpdate);
+        webhookService.fireEvent(user, new UserEvent.RoleUpdated(userToUpdate));
+        return ResponseEntity.ok(userToUpdate);
     }
 
     /**

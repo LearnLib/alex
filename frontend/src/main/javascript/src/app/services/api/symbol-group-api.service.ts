@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,8 +57,8 @@ export class SymbolGroupApiService extends BaseApiService {
       );
   }
 
-  importMany(projectId: number, groups: SymbolGroup[]): Observable<SymbolGroup[]> {
-    return this.http.post(`${env.apiUrl}/projects/${projectId}/groups/import`, groups, this.defaultHttpOptions)
+  importSymbolGroups(projectId: number, symbolGroupsImportable: any): Observable<SymbolGroup[]> {
+    return this.http.post(`${env.apiUrl}/projects/${projectId}/groups/import`, symbolGroupsImportable, this.defaultHttpOptions)
       .pipe(
         map((body: any) => body.map(g => new SymbolGroup(g)))
       );

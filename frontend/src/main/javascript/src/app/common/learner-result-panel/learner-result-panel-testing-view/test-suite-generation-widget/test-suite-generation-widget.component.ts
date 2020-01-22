@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,6 @@ export class TestSuiteGenerationWidgetComponent implements OnInit {
 
   form = new FormGroup({
     stepNo: new FormControl(1, [Validators.required, Validators.min(1)]),
-    includeParameterValues: new FormControl(true),
     name: new FormControl('', [Validators.required]),
     method: new FormControl('DT')
   });
@@ -76,10 +75,7 @@ export class TestSuiteGenerationWidgetComponent implements OnInit {
 
   generateTestSuite(): void {
     const config = this.form.value;
-
-    if (this.selectedTestSuite != null) {
-      config.testSuiteToUpdateId = this.selectedTestSuite.id;
-    }
+    config.testSuiteToUpdateId = this.selectedTestSuite != null ? this.selectedTestSuite.id : null;
 
     this.learnerResultApi.generateTestSuite(this.result.project, this.result.testNo, config).subscribe(
       () => {

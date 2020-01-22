@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -144,7 +144,7 @@ public abstract class AbstractLearnerProcess<T extends AbstractLearnerConfigurat
 
         this.abstractAlphabet = new SimpleAlphabet<>(new HashSet<>(// remove duplicate names with set
                 result.getSymbols().stream()
-                        .map(ParameterizedSymbol::getComputedName)
+                        .map(ParameterizedSymbol::getAliasOrComputedName)
                         .sorted(String::compareTo)
                         .collect(Collectors.toList())
         ));
@@ -282,7 +282,6 @@ public abstract class AbstractLearnerProcess<T extends AbstractLearnerConfigurat
      *         The current step.
      */
     protected void doLearn(LearnerResultStep currentStep) {
-
         final EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> eqOracle;
         if (configuration.getEqOracle() instanceof TestSuiteEQOracleProxy) {
             eqOracle = ((TestSuiteEQOracleProxy) configuration.getEqOracle()).createEqOracle(mqOracle, testDAO, user, result);
@@ -291,9 +290,8 @@ public abstract class AbstractLearnerProcess<T extends AbstractLearnerConfigurat
         }
 
         long start, end;
-        long rounds = 0;
 
-        while (continueLearning(currentStep, rounds)) {
+        while (true) {
 
             // search for counterexamples
             learnerPhase = LearnerService.LearnerPhase.EQUIVALENCE_TESTING;
@@ -317,15 +315,9 @@ public abstract class AbstractLearnerProcess<T extends AbstractLearnerConfigurat
             } else {
                 break;
             }
-
-            rounds++;
         }
 
         webhookService.fireEvent(user, new LearnerEvent.Finished(result));
-    }
-
-    private boolean continueLearning(final LearnerResultStep step, final long rounds) {
-        return step.getStepsToLearn() == -1 || rounds < step.getStepsToLearn() - 1;
     }
 
     public void stopLearning() {

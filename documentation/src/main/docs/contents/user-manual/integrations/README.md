@@ -4,9 +4,9 @@ ALEX offers some ways for integration in third party applications.
 
 ## Webhooks
 
-[Webhooks][webhooks] are a way to let third party applications know about events that happen in your system.
-These application have to register a webhook by specifying a URL.
-When an event occurs, e.g. a learning process finished, ALEX sends a HTTP request to the registered URL.
+[Webhooks][webhooks] are a way to let third party applications know about events that happen in a system.
+These applications have to register a hook by specifying a URL.
+When an internal event occurs, e.g. a learning process is finished, ALEX sends an HTTP request to the registered URL.
 If a body is send along the HTTP request, it is formatted as JSON object.
 
 <div class="alert alert-info">
@@ -16,7 +16,7 @@ If a body is send along the HTTP request, it is formatted as JSON object.
 
 ![Webhooks](./assets/webhooks-1.jpg)
 
-You can manage webhooks under the **Integrations > Webhooks** item in the sidebar.
+Webhooks are managed under the **Integrations > Webhooks** item in the sidebar.
 On the page a list of registered webhooks is displayed.
 
 ![Webhooks](./assets/webhooks-2.jpg)

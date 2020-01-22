@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ import { environment as env } from '../../../environments/environment';
 import { webBrowser } from '../../constants';
 import { BaseApiService } from './base-api.service';
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpEventType, HttpResponse } from '@angular/common/http';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 /**
@@ -46,6 +46,38 @@ export class SettingsApiService extends BaseApiService {
    */
   update(settings: any): Observable<any> {
     return this.http.put(`${env.apiUrl}/settings`, settings, this.defaultHttpOptions);
+  }
+
+  uploadDriver(driver: string, file: File): Observable<any> {
+    const status = new BehaviorSubject<boolean>(false);
+
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+
+    this.http.post(`${env.apiUrl}/settings/drivers/${driver}`, formData, {
+      headers: this.defaultHttpHeaders,
+      observe: 'events',
+      reportProgress: true
+    }).subscribe(
+      e => {
+        if (e.type === HttpEventType.UploadProgress) {
+          status.next(false);
+        } else if (e instanceof HttpResponse) {
+          status.next(true);
+          status.complete();
+        }
+      },
+      () => {
+        status.error('failed to upload file.');
+        status.complete();
+      }
+    );
+
+    return status;
+  }
+
+  deleteDriver(driver: string): Observable<any> {
+    return this.http.delete(`${env.apiUrl}/settings/drivers/${driver}`, this.defaultHttpOptions);
   }
 
   /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,10 +28,12 @@ import { FormUtilsService } from '../../../services/form-utils.service';
 export class ImportProjectModalComponent {
 
   /** The error message. */
-  public errorMessage: string = null;
+  errorMessage: string = null;
 
   /** The data to import */
-  public importData: any = null;
+  importData: any = null;
+
+  loading: boolean = false;
 
   form = new FormGroup({
     name: new FormControl('', [Validators.required])
@@ -63,14 +65,17 @@ export class ImportProjectModalComponent {
    */
   importProject(): void {
     this.errorMessage = null;
+    this.loading = true;
 
     this.importData.project.name = this.form.controls.name.value;
     this.projectApi.import(this.importData).subscribe(
       importedProject => {
         this.toastService.success('The project has been imported');
         this.modal.close(importedProject);
+        this.loading = false;
       },
       res => {
+        this.loading = false;
         this.errorMessage = `The project could not be imported. ${res.error.message}`;
       }
     );

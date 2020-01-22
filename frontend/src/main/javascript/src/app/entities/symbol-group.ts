@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ export class SymbolGroup {
 
   walk(groupFn: (SymbolGroup) => void, symbolFn: (AlphabetSymbol) => void): void {
     groupFn(this);
-    this.groups.forEach(g => groupFn(g));
+    this.groups.forEach(g => g.walk(groupFn, symbolFn));
     this.symbols.forEach(s => symbolFn(s));
   }
 }

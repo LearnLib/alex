@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -174,7 +174,7 @@ public class LearnerService {
         }
 
         if (configuration.getEqOracle() instanceof SampleEQOracleProxy) {
-            validateCounterexample(user, configuration);
+            validateCounterexample(user, project, configuration);
         }
 
         final Symbol resetSymbol = symbolDAO.get(user, project.getId(), result.getResetSymbol().getSymbol().getId());
@@ -285,14 +285,14 @@ public class LearnerService {
      * @throws IllegalArgumentException
      *         If the new configuration is based on manual counterexamples and at least one of them is wrong.
      */
-    private void validateCounterexample(User user, LearnerResumeConfiguration configuration)
+    private void validateCounterexample(User user, Project project, LearnerResumeConfiguration configuration)
             throws IllegalArgumentException {
 
         final SampleEQOracleProxy oracle = (SampleEQOracleProxy) configuration.getEqOracle();
         final LearnerResult lastResult;
 
         try {
-            lastResult = learnerResultDAO.get(user, configuration.getProjectId(), configuration.getTestNo(), false);
+            lastResult = learnerResultDAO.get(user, project.getId(), configuration.getTestNo(), false);
         } catch (NotFoundException e) {
             throw new IllegalArgumentException(e);
         }
@@ -304,7 +304,7 @@ public class LearnerService {
             // search symbols in configuration where symbol.name == counterexample.input
             for (SampleEQOracleProxy.InputOutputPair io : counterexample) {
                 Optional<ParameterizedSymbol> symbol = lastResult.getSymbols().stream()
-                        .filter(s -> s.getComputedName().equals(io.getInput()))
+                        .filter(s -> s.getAliasOrComputedName().equals(io.getInput()))
                         .findFirst();
 
                 // collect all outputs in order to compare it with the result of learner.readOutputs()

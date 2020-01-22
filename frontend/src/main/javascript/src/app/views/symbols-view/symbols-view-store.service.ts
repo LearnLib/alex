@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@ export class SymbolsViewStoreService {
           this.groupsCollapsedMap.set(group.id, false);
           group.walk(g => {
             this.groupsMap.set(g.id, g);
-            this.symbolsSelectable.addItems(group.symbols);
+            this.symbolsSelectable.addItems(g.symbols);
           }, () => {
           })
         });
@@ -157,7 +157,7 @@ export class SymbolsViewStoreService {
         const groups: SymbolGroup[] = data.groups;
         groups.forEach(group => group.walk(g => {
           this.symbolsSelectable.addItems(g.symbols);
-          this._addGroup(group);
+          this._addGroup(g);
         }, () => {}));
       }
     }).catch(() => {});

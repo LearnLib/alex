@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package de.learnlib.alex.learning.rest;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.dao.SymbolDAO;
@@ -122,20 +121,11 @@ public class LearnerResource {
         LOGGER.traceEntry("start({}, {}) for user {}.", projectId, configuration, user);
 
         try {
-            if ((configuration.getUserId() != null && !user.getId().equals(configuration.getUserId()))
-                    || (configuration.getProjectId() != null && !configuration.getProjectId().equals(projectId))) {
-                throw new IllegalArgumentException("If an user or a project is provided in the configuration, "
-                        + "they must match the parameters in the path!");
-            }
-
-            configuration.setProjectId(projectId);
-
             if (configuration.getSymbols().contains(configuration.getResetSymbol())) {
                 throw new IllegalArgumentException("The reset may not be a part of the input alphabet");
             }
 
             final Project project = projectDAO.getByID(user, projectId);
-
             final LearnerResult learnerResult = learnerService.start(user, project, configuration);
 
             LOGGER.traceExit(learnerResult);
@@ -170,23 +160,13 @@ public class LearnerResource {
     public ResponseEntity resume(@PathVariable("projectId") Long projectId,
                                  @PathVariable("testNo") Long testNo,
                                  @RequestBody LearnerResumeConfiguration configuration) {
-        User user = authContext.getUser();
+        final User user = authContext.getUser();
         LOGGER.traceEntry("resume({}, {}, {}) for user {}.", projectId, testNo, configuration, user);
 
         try {
             configuration.setTestNo(testNo);
             configuration.checkConfiguration();
-            Project project = projectDAO.getByID(user, projectId); // check if project exists
             LearnerResult result = learnerResultDAO.get(user, projectId, testNo, true);
-
-            if (result == null) {
-                throw new NotFoundException("No last result to resume found!");
-            }
-
-            if (result.getProjectId() != projectId || result.getTestNo() != testNo) {
-                LOGGER.info(LoggerMarkers.LEARNER, "could not resume the learner of another project or with an wrong test run.");
-                throw new IllegalArgumentException("The given project id or test no does not match with the latest learn result!");
-            }
 
             if (configuration.getStepNo() > result.getSteps().size()) {
                 throw new IllegalArgumentException("The step number is not valid.");
@@ -206,7 +186,7 @@ public class LearnerResource {
                 LearnerResultStep latestStep = result.getSteps().get(result.getSteps().size() - 1);
                 Alphabet<String> alphabet = latestStep.getHypothesis().createAlphabet();
 
-                result.getSymbols().removeIf(s -> !alphabet.contains(s.getComputedName()));
+                result.getSymbols().removeIf(s -> !alphabet.contains(s.getAliasOrComputedName()));
 
                 // add the new alphabet symbols to the config.
                 if (configuration.getSymbolsToAdd().size() > 0) {
@@ -220,15 +200,9 @@ public class LearnerResource {
                 learnerResultRepository.saveAndFlush(result);
             }
 
-            configuration.setUserId(user.getId());
-
-            learnerService.resume(user, project, result, configuration);
+            learnerService.resume(user, result.getProject(), result, configuration);
             webhookService.fireEvent(user, new LearnerEvent.Resumed(result));
             return ResponseEntity.ok(result);
-        } catch (IllegalStateException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "tried to restart the learning while the learner is running.");
-            LOGGER.traceExit(e);
-            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.resume", HttpStatus.BAD_REQUEST, e);

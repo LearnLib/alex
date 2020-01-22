@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,8 +71,6 @@ export class LearnerResult {
   /** If membership queries should be cached. */
   public useMQCache: boolean;
 
-  public maxAmountOfStepsToLearn: number;
-
   public status: LearnerResultStatus;
 
   /**
@@ -95,7 +93,6 @@ export class LearnerResult {
     this.comment = obj.comment;
     this.environments = obj.environments || [];
     this.useMQCache = obj.useMQCache;
-    this.maxAmountOfStepsToLearn = obj.maxAmountOfStepsToLearn == null ? -1 : obj.maxAmountOfStepsToLearn;
     this.status = obj.status;
   }
 }

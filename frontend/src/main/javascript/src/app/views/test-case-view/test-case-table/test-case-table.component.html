@@ -5,7 +5,6 @@
   <div class="card-body p-0 bg-white">
     <test-case-table-pre-post-steps
       (stepsChange)="testCase.preSteps = $event"
-      [options]="options"
       [steps]="testCase.preSteps"
       [symbolMap]="symbolMap"
     >
@@ -30,7 +29,11 @@
       </thead>
       <tbody (dragulaModelChange)="testCase.steps = $event" [dragulaModel]="testCase.steps" dragula="STEPS">
       <ng-container *ngIf="testCase.steps.length > 0">
-        <tr *ngFor="let step of testCase.steps; let i = index" [class.table-danger]="result && result.failedStep === i">
+        <tr
+          class="test-case-step-row"
+          *ngFor="let step of testCase.steps; let i = index" [class.table-danger]="result && result.failedStep === i"
+          [class.disabled]="step.disabled"
+        >
           <td>
             <div class="pl-2">
               <i class="fas fa-grip-vertical handle text-muted cursor-grabbing"></i>
@@ -39,7 +42,6 @@
 
           <td>
             <test-case-table-symbol-column
-              [options]="options"
               [pSymbol]="step.pSymbol"
               [symbolMap]="symbolMap"
             >
@@ -64,7 +66,14 @@
             </div>
           </td>
           <td>
-            <div class="pr-2">
+            <div class="pr-2" style="white-space: nowrap">
+              <toggle-button
+                [enabled]="!step.disabled"
+                (toggle)="step.disabled = !$event"
+                class="d-inline-block px-3"
+              >
+              </toggle-button>
+
               <i (click)="testCase.steps.splice(i, 1)" class="fas fa-times cursor-pointer"></i>
             </div>
           </td>
@@ -91,7 +100,6 @@
   <div class="card-body p-0">
     <test-case-table-pre-post-steps
       (stepsChange)="testCase.postSteps = $event"
-      [options]="options"
       [steps]="testCase.postSteps"
       [symbolMap]="symbolMap"
     >

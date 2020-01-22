@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,10 +61,13 @@ public class TestCaseStep implements Serializable {
     @JsonIgnore
     private int number;
 
+    /** If disabled, the step is not executed. */
+    private boolean disabled;
+
     /** The symbol to execute. */
     @OneToOne(
             fetch = FetchType.EAGER,
-            cascade = CascadeType.REMOVE
+            cascade = CascadeType.ALL
     )
     private ParameterizedSymbol pSymbol;
 
@@ -83,6 +86,7 @@ public class TestCaseStep implements Serializable {
         this.expectedResult = "";
         this.expectedOutputSuccess = true;
         this.expectedOutputMessage = "";
+        this.disabled = false;
     }
 
     @Transient
@@ -160,8 +164,16 @@ public class TestCaseStep implements Serializable {
         this.expectedOutputMessage = expectedOutputMessage;
     }
 
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
+
     public boolean behavesLike(TestCaseStep step) {
         return getComputedOutput().equals(step.getComputedOutput())
-                && pSymbol.getComputedName().equals(step.getPSymbol().getComputedName());
+                && pSymbol.getAliasOrComputedName().equals(step.getPSymbol().getAliasOrComputedName());
     }
 }

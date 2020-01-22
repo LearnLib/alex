@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,6 +61,10 @@ public interface TestRepository extends JpaRepository<Test, Long> {
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
     List<Test> findAllByProject_Id(Long projectId);
+
+    @Transactional
+    @SuppressWarnings("checkstyle:methodname")
+    void deleteAllByProject_Id(Long projectId);
 
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")

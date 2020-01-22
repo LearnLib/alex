@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,6 +51,9 @@ public enum EventType {
 
     /** Fired when LTS formulas have been checked. */
     LTS_FORMULAS_CHECKED,
+
+    /** Fired when the application settings are updated. */
+    SETTINGS_UPDATED,
 
     /** Fired when a symbol is created. */
     SYMBOL_CREATED,

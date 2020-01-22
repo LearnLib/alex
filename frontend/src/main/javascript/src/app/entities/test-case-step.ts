@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,8 @@ export class TestCaseStep {
 
   expectedOutputMessage: string;
 
+  disabled: boolean;
+
   /**
    * Constructor.
    *
@@ -38,6 +40,7 @@ export class TestCaseStep {
     this.expectedOutputSuccess = obj.expectedOutputSuccess != null ? obj.expectedOutputSuccess : true;
     this.expectedOutputMessage = obj.expectedOutputMessage || '';
     this.pSymbol = obj.pSymbol == null ? null : new ParametrizedSymbol(obj.pSymbol);
+    this.disabled = obj.disabled == null ? false : obj.disabled;
   }
 
   /**

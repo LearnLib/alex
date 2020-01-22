@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,9 +31,6 @@ export class LearnerConfiguration {
   /** The URLs to use for learning. */
   public environments: ProjectEnvironment[];
 
-  /** The max amount of hypotheses to generate. */
-  public maxAmountOfStepsToLearn: number;
-
   /** The EQ oracle to user. */
   public eqOracle: any;
 
@@ -62,7 +59,6 @@ export class LearnerConfiguration {
   constructor(obj: any = {}) {
     this.symbols = obj.symbols || [];
     this.environments = obj.environments || [];
-    this.maxAmountOfStepsToLearn = obj.maxAmountOfStepsToLearn || -1;
     this.eqOracle = obj.eqOracle || new RandomEqOracle(1, 10, 20);
     this.algorithm = obj.algorithm || {name: 'TTT'};
     this.resetSymbol = obj.resetSymbol || null;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,12 +89,12 @@ public class ResumingLearnerProcess extends AbstractLearnerProcess<LearnerResume
 
                 // if the cache is not reinitialized with the new alphabet, we will get cache errors later
                 if (result.isUseMQCache() && cacheOracle != null) {
-                   cacheOracle.addAlphabetSymbol(symbol.getComputedName());
+                   cacheOracle.addAlphabetSymbol(symbol.getAliasOrComputedName());
                 }
 
                 // measure how much time and membership queries it takes to add the symbol
                 final long start = System.currentTimeMillis();
-                growingAlphabetLearner.addAlphabetSymbol(symbol.getComputedName());
+                growingAlphabetLearner.addAlphabetSymbol(symbol.getAliasOrComputedName());
                 final long end = System.currentTimeMillis();
 
                 final Statistics statistics = new Statistics();
