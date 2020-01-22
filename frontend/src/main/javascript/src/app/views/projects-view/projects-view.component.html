@@ -58,7 +58,7 @@
         You haven't created a project yet.
       </div>
 
-      <div *ngIf="(store.projects$ | async).length > 0" class="list-group">
+       <div *ngIf="(store.projects$ | async).length > 0" class="list-group">
         <div *ngFor="let project of store.orderedProjects$ | async" class="list-group-item d-flex flex-row">
           <ng-container *ngIf="project.owners.includes(appStore.user.id)">
             <div class="mr-3">

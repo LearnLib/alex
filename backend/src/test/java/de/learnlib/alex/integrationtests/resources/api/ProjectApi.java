@@ -67,6 +67,30 @@ public class ProjectApi extends AbstractApi {
                 .delete();
     }
 
+    public Response addOwners(int projectId, List<String> ownerIds, String jwt) {
+        return client.target(url() + "/" + projectId + "/owners").request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .post(Entity.json(ownerIds));
+    }
+
+    public Response addMembers(int projectId, List<String> memberIds, String jwt) {
+        return client.target(url() + "/" + projectId + "/members").request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .post(Entity.json(memberIds));
+    }
+
+    public Response removeMembers(int projectId, List<String> memberIds, String jwt) {
+        return client.target(url() + "/" + projectId + "/members/" + String.join(",", memberIds)).request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .delete();
+    }
+
+    public Response removeOwners(int projectId, List<String> ownerIds, String jwt) {
+        return client.target(url() + "/" + projectId + "/owners/" + String.join(",", ownerIds)).request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .delete();
+    }
+
     public String url() {
         return baseUrl() + "/projects";
     }

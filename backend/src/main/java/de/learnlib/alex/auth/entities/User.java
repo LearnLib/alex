@@ -77,9 +77,11 @@ public class User implements Serializable {
     /** The role of the user. */
     private UserRole role;
 
+    /** The set of projects in which the user is an owner. */
     @ManyToMany(mappedBy = "owners")
     private Set<Project> projectsOwner;
 
+    /** The set of projects in which the user is a member. */
     @ManyToMany(mappedBy = "members")
     private Set<Project> projectsMember;
 
@@ -116,6 +118,9 @@ public class User implements Serializable {
         return id;
     }
 
+    /**
+     * @param id The ID of the user.
+     */
     public void setId(Long id) {
         this.id = id;
     }
@@ -162,31 +167,49 @@ public class User implements Serializable {
         this.role = role;
     }
 
+    /**
+     * @return The set of projects in which the user is an owner.
+     */
     @JsonIgnore
     public Set<Project> getProjectsOwner() {
         return projectsOwner;
     }
 
+    /**
+     * @param projectsOwner The set of projects in which the user is an owner.
+     */
     @JsonIgnore
     public void setProjectsOwner(Set<Project> projectsOwner) {
         this.projectsOwner = projectsOwner;
     }
 
+    /**
+     * @return The set of projects in which the user is a member.
+     */
     @JsonIgnore
     public Set<Project> getProjectsMember() {
         return projectsMember;
     }
 
+    /**
+     * @param projectsMember The set of projects in which the user is a member.
+     */
     @JsonIgnore
     public void setProjectsMember(Set<Project> projectsMember) {
         this.projectsMember = projectsMember;
     }
 
+    /**
+     * @return The list of ids of projects in which the user is a member.
+     */
     @JsonProperty("projectsMember")
     public List<Long> getProjectsMemberIds() {
         return this.projectsMember.stream().map(Project::getId).collect(Collectors.toList());
     }
 
+    /**
+     * @return The list of ids of projects in which the user is an owner.
+     */
     @JsonProperty("projectsOwner")
     public List<Long> getProjectsOwnerIds() {
         return this.projectsOwner.stream().map(Project::getId).collect(Collectors.toList());

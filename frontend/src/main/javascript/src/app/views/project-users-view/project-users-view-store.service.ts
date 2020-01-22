@@ -28,6 +28,7 @@ import {ProjectApiService} from "../../services/api/project-api.service";
 import {Project} from "../../entities/project";
 import {CreateUserModalComponent} from "../admin-users-view/create-user-modal/create-user-modal.component";
 import {AddUserModalComponent} from "./add-user-modal/add-user-modal.component";
+import { Router } from '@angular/router';
 
 @Injectable()
 export class ProjectUsersViewStoreService {
@@ -44,7 +45,8 @@ export class ProjectUsersViewStoreService {
               private appStore: AppStoreService,
               private modalService: NgbModal,
               private toastService: ToastService,
-              private promptService: PromptService) {
+              private promptService: PromptService,
+              private router: Router) {
     this.owners = new BehaviorSubject<User[]>([]);
     this.members = new BehaviorSubject<User[]>([]);
     this.usersSelectable = new Selectable<User, number>(u => u.id);
@@ -140,10 +142,23 @@ export class ProjectUsersViewStoreService {
   }
 
   demoteOwners(users: User[]): void {
+    if (users.map(user => user.id).includes(this.currentUser.id)) {
+      this.promptService.confirm("Do you really want to remove yourself as an owner from the project?").then(() => {
+        this.executeDemoteOwners(users, true);
+      })
+    } else {
+      this.executeDemoteOwners(users, false);
+    }
+  }
+
+  private executeDemoteOwners(users: User[], redirect: boolean): void {
     this.projectApi.addMembers(this.appStore.project.id, users.map(user => user.id)).subscribe(() => {
       this.members.next([...this.members.value, ...users]);
       this.owners.next(this.owners.value.filter(owner => !users.includes(owner)));
       this.appStore.reloadProject();
+      if (redirect) {
+        this.router.navigate(['/app', 'projects', this.appStore.project.id])
+      }
     },
     res => {
       this.toastService.danger(`${res.error.message}`);

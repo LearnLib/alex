@@ -64,6 +64,9 @@ public class Project implements Serializable {
     @GeneratedValue
     private Long id;
 
+    /**
+     * The list of users who are owners of the project.
+     */
     @ManyToMany(
             cascade = {CascadeType.PERSIST, CascadeType.MERGE}
     )
@@ -74,6 +77,9 @@ public class Project implements Serializable {
     )
     private List<User> owners;
 
+    /**
+     * The list of users who are members of the project.
+     */
     @ManyToMany(
             cascade = {CascadeType.PERSIST, CascadeType.MERGE}
     )
@@ -208,21 +214,42 @@ public class Project implements Serializable {
         this.id = id;
     }
 
+    /**
+     * Get the owners of the project.
+     *
+     * @return The list of owners of the project.
+     */
     @JsonIgnore
     public List<User> getOwners() {
         return owners;
     }
 
+    /**
+     * Add an user as an owner to the project.
+     *
+     * @param owner The user who will be added as an owner.
+     */
     @JsonIgnore
     public void addOwner(User owner) {
         owners.add(owner);
     }
 
+    /**
+     * Set a list of users as the owners of the project.
+     *
+     * @param owners The new list of owners.
+     */
     @JsonIgnore
     public void setOwners(List<User> owners) {
         this.owners = owners;
     }
 
+    /**
+     * Remove an owner from the project.
+     *
+     * @param owner The user user who will be removed from the list of owners.
+     * @return True if the user was successfully removed
+     */
     @JsonIgnore
     public boolean removeOwner(User owner) {
         return owners.remove(owner);

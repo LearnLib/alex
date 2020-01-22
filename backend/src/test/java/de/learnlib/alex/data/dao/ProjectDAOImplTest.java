@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.data.dao;
 
+import de.learnlib.alex.auth.dao.UserDAO;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
@@ -36,6 +37,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import javax.persistence.EntityManager;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
@@ -95,6 +97,12 @@ public class ProjectDAOImplTest {
     @Mock
     private SymbolGroupDAO symbolGroupDAO;
 
+    @Mock
+    private UserDAO userDAO;
+
+    @Mock
+    private EntityManager entityManager;
+
     private ProjectDAO projectDAO;
 
     private User user;
@@ -103,7 +111,7 @@ public class ProjectDAOImplTest {
     public void setUp() {
         projectDAO = new ProjectDAOImpl(projectRepository, learnerResultRepository, testReportRepository, fileDAO,
                 parameterizedSymbolRepository, symbolStepRepository, symbolActionRepository, environmentDAO,
-                projectUrlRepository, testExecutionConfigRepository, testDAO, environmentRepository, symbolGroupDAO);
+                projectUrlRepository, testExecutionConfigRepository, testDAO, environmentRepository, symbolGroupDAO, userDAO, entityManager);
         user = new User();
         user.setId(USER_ID);
     }

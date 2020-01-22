@@ -119,11 +119,39 @@ public interface ProjectDAO {
      */
     void checkAccess(User user, Project project) throws NotFoundException, UnauthorizedException;
 
+    /**
+     * Add multiple users as owners to the project. Removes the specific users from the list of members of the project.
+     *
+     * @param user The user.
+     * @param projectId The ID of the project.
+     * @param ownerIds The IDs of the users to add as owners.
+     */
     Project addOwners(User user, Long projectId, List<Long> ownerIds);
 
+    /**
+     * Add multiple users as members to the project. Removes the specific users from the list of owners of the project.
+     *
+     * @param user The user.
+     * @param projectId The ID of the project.
+     * @param memberIds The IDs of the users to add as members.
+     */
     Project addMembers(User user, Long projectId, List<Long> memberIds);
 
+    /**
+     * Remove multiple owners from the project.
+     *
+     * @param user The user.
+     * @param projectId The ID of the project.
+     * @param ownerIds The IDs of the owners to remove from the project.
+     */
     Project removeOwners(User user, Long projectId, List<Long> ownerIds);
 
+    /**
+     * Remove multiple owners from the project.
+     *
+     * @param user The user.
+     * @param projectId The ID of the project.
+     * @param memberIds The IDs of the members to remove from the project.
+     */
     Project removeMembers(User user, Long projectId, List<Long> memberIds);
 }

@@ -32,14 +32,19 @@ import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.EntityManager;
 import javax.validation.ValidationException;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of a UserDAO using Hibernate.
  */
 @Service
+@PersistenceContext
 public class UserDAOImpl implements UserDAO {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -56,6 +61,8 @@ public class UserDAOImpl implements UserDAO {
     /** The repository for projects. */
     private final ProjectRepository projectRepository;
 
+    private final EntityManager entityManager;
+
     /**
      * Creates a new UserDAO.
      *
@@ -70,11 +77,12 @@ public class UserDAOImpl implements UserDAO {
      */
     @Inject
     public UserDAOImpl(UserRepository userRepository, FileDAO fileDAO, ProjectDAO projectDAO,
-                       ProjectRepository projectRepository) {
+                       ProjectRepository projectRepository, EntityManager entityManager) {
         this.userRepository = userRepository;
         this.fileDAO = fileDAO;
         this.projectDAO = projectDAO;
         this.projectRepository = projectRepository;
+        this.entityManager = entityManager;
     }
 
     @Override
@@ -171,14 +179,28 @@ public class UserDAOImpl implements UserDAO {
             }
         }
 
-        for (Project project : projectRepository.findAllByUser_Id(user.getId())) {
-            projectDAO.delete(user, project.getId());
-            try {
-                fileDAO.deleteProjectDirectory(user, project.getId());
-            } catch (IOException e) {
-                LOGGER.info("The project has been deleted, the user directory, however, not.");
+        //remove user from all projects in which he is a member
+        for (final Project project: user.getProjectsMember()) {
+            project.getMembers().removeIf(u -> u.getId().equals(user.getId()));
+            projectRepository.save(project);
+        }
+
+        //remove user from all projects in which he is an owner
+        for (final Project project: user.getProjectsOwner()) {
+            project.getOwners().removeIf(u -> u.getId().equals(user.getId()));
+            projectRepository.save(project);
+
+            //remove the project if there is none owner left
+            if (project.getOwners().isEmpty()) {
+                projectDAO.delete(user, project.getId());
+                try {
+                    fileDAO.deleteProjectDirectory(user, project.getId());
+                } catch (IOException e) {
+                    LOGGER.info("The project has been deleted, the user directory, however, not.");
+                }
             }
         }
+
         userRepository.delete(user);
 
         // delete the user directory

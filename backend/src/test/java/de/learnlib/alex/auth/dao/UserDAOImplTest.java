@@ -34,6 +34,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.TransactionSystemException;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.RollbackException;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
@@ -67,9 +69,12 @@ public class UserDAOImplTest {
 
     private UserDAO userDAO;
 
+    @Mock
+    private EntityManager entityManager;
+
     @Before
     public void setUp() throws NotFoundException {
-        userDAO = new UserDAOImpl(userRepository, fileDAO, projectDAO, projectRepository);
+        userDAO = new UserDAOImpl(userRepository, fileDAO, projectDAO, projectRepository, entityManager);
     }
 
     @Test

@@ -48,6 +48,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceUnit;
+import javax.persistence.Query;
 import javax.validation.ValidationException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -80,6 +83,8 @@ public class ProjectDAOImpl implements ProjectDAO {
     private TestDAO testDAO;
     private UserDAO userDAO;
 
+    private EntityManager entityManager;
+
     @Inject
     public ProjectDAOImpl(ProjectRepository projectRepository,
                           LearnerResultRepository learnerResultRepository,
@@ -94,7 +99,8 @@ public class ProjectDAOImpl implements ProjectDAO {
                           @Lazy TestDAO testDAO,
                           ProjectEnvironmentRepository environmentRepository,
                           @Lazy SymbolGroupDAO symbolGroupDAO,
-                          @Lazy UserDAO userDAO) {
+                          @Lazy UserDAO userDAO,
+                          EntityManager entityManager) {
         this.projectRepository = projectRepository;
         this.learnerResultRepository = learnerResultRepository;
         this.fileDAO = fileDAO;
@@ -109,6 +115,7 @@ public class ProjectDAOImpl implements ProjectDAO {
         this.symbolGroupDAO = symbolGroupDAO;
         this.testDAO = testDAO;
         this.userDAO = userDAO;
+        this.entityManager = entityManager;
     }
 
     @Override
@@ -181,6 +188,10 @@ public class ProjectDAOImpl implements ProjectDAO {
         final Project projectInDb = projectRepository.findById(projectId).orElse(null);
         checkAccess(user, projectInDb);
 
+        if (!projectInDb.getOwners().contains(user)) {
+            throw new UnauthorizedException("You are not allowed to update this project.");
+        }
+
         if (projectRepository.findByUser_IdAndNameAndIdNot(user.getId(), project.getName(), projectInDb.getId()) != null) {
             throw new ValidationException("The name of the project already exists.");
         }
@@ -201,12 +212,21 @@ public class ProjectDAOImpl implements ProjectDAO {
         final Project project = projectRepository.findById(projectId).orElse(null);
         checkAccess(user, project);
 
+        if (!project.getOwners().contains(user)) {
+            throw new UnauthorizedException("You are not allowed to delete this project.");
+        }
+
         symbolActionRepository.deleteAllBySymbol_Project_Id(projectId);
         symbolStepRepository.deleteAllBySymbol_Project_Id(projectId);
         parameterizedSymbolRepository.deleteAllBySymbol_Project_Id(projectId);
         testReportRepository.deleteAllByProject_Id(projectId);
         learnerResultRepository.deleteAllByProject_Id(projectId);
         testExecutionConfigRepository.deleteAllByProject_Id(projectId);
+
+        //clear relationships to members and owners first
+        project.getOwners().clear();
+        project.getMembers().clear();
+        projectRepository.save(project);
 
         // delete the project directory
         try {

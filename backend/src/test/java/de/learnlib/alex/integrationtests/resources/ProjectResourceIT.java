@@ -26,15 +26,19 @@ import de.learnlib.alex.integrationtests.resources.api.UserApi;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import javax.ws.rs.core.Response;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class ProjectResourceIT extends AbstractResourceIT {
 
@@ -203,6 +207,263 @@ public class ProjectResourceIT extends AbstractResourceIT {
 
         final Response res3 = projectApi.delete(projectId2, adminJwt);
         assertEquals(HttpStatus.UNAUTHORIZED.value(), res3.getStatus());
+    }
+
+    @Test
+    public void shouldAddMembers() throws Exception {
+        final Response res1 =
+                projectApi.create(createProjectJson("test", "http://localhost:8080"), adminJwt);
+        final int projectId = JsonPath.read(res1.readEntity(String.class), "id");
+
+        final Response res2 =
+                userApi.create("{\"email\":\"test2@test.de\",\"username\":\"test2\",\"password\":\"test2\"}");
+        final int userId1 = JsonPath.read(res2.readEntity(String.class), "id");
+
+        final Response res3 =
+                userApi.create("{\"email\":\"test3@test.de\",\"username\":\"test3\",\"password\":\"test3\"}");
+        final int userId2 = JsonPath.read(res3.readEntity(String.class), "id");
+
+        final Response res4 =
+                projectApi.addMembers(projectId, Arrays.asList(String.valueOf(userId1), String.valueOf(userId2)), adminJwt);
+        assertEquals(HttpStatus.OK.value(), res4.getStatus());
+
+        final JsonNode updatedProject = objectMapper.readTree(res4.readEntity(String.class));
+        final ArrayList members = objectMapper.convertValue(updatedProject.get("members"), ArrayList.class);
+        assertTrue(members.contains(userId1));
+        assertTrue(members.contains(userId2));
+        assertEquals(2, members.size());
+    }
+
+    @Test
+    public void shouldAddOwners() throws Exception {
+        final Response res1 =
+                projectApi.create(createProjectJson("test", "http://localhost:8080"), adminJwt);
+        final int projectId = JsonPath.read(res1.readEntity(String.class), "id");
+
+        final Response res2 =
+                userApi.create("{\"email\":\"test2@test.de\",\"username\":\"test2\",\"password\":\"test2\"}");
+        final int userId1 = JsonPath.read(res2.readEntity(String.class), "id");
+
+        final Response res3 =
+                userApi.create("{\"email\":\"test3@test.de\",\"username\":\"test3\",\"password\":\"test3\"}");
+        final int userId2 = JsonPath.read(res3.readEntity(String.class), "id");
+
+        final Response res4 =
+                projectApi.addOwners(projectId, Arrays.asList(String.valueOf(userId1), String.valueOf(userId2)), adminJwt);
+        assertEquals(HttpStatus.OK.value(), res4.getStatus());
+
+        final JsonNode updatedProject = objectMapper.readTree(res4.readEntity(String.class));
+        final ArrayList owners = objectMapper.convertValue(updatedProject.get("owners"), ArrayList.class);
+        assertTrue(owners.contains(userId1));
+        assertTrue(owners.contains(userId2));
+        assertEquals(3, owners.size());
+    }
+
+    @Test
+    public void shouldPromoteMembers() throws Exception {
+        final Response res1 =
+                projectApi.create(createProjectJson("test", "http://localhost:8080"), adminJwt);
+        final int projectId = JsonPath.read(res1.readEntity(String.class), "id");
+
+        final Response res2 =
+                userApi.create("{\"email\":\"test2@test.de\",\"username\":\"test2\",\"password\":\"test2\"}");
+        final int userId1 = JsonPath.read(res2.readEntity(String.class), "id");
+
+        final Response res3 =
+                userApi.create("{\"email\":\"test3@test.de\",\"username\":\"test3\",\"password\":\"test3\"}");
+        final int userId2 = JsonPath.read(res3.readEntity(String.class), "id");
+
+        final Response res4 =
+                projectApi.addMembers(projectId, Arrays.asList(String.valueOf(userId1), String.valueOf(userId2)), adminJwt);
+
+        final Response res5 =
+                projectApi.addOwners(projectId, Arrays.asList(String.valueOf(userId1), String.valueOf(userId2)), adminJwt);
+        assertEquals(HttpStatus.OK.value(), res5.getStatus());
+
+        final JsonNode updatedProject = objectMapper.readTree(res5.readEntity(String.class));
+        final ArrayList owners = objectMapper.convertValue(updatedProject.get("owners"), ArrayList.class);
+        final ArrayList members = objectMapper.convertValue(updatedProject.get("members"), ArrayList.class);
+
+        assertTrue(owners.contains(userId1));
+        assertTrue(owners.contains(userId2));
+        assertEquals(3, owners.size());
+
+        assertTrue(!members.contains(userId1));
+        assertTrue(!members.contains(userId2));
+        assertEquals(0, members.size());
+    }
+
+    @Test
+    public void shouldDemoteOwners() throws Exception {
+        final Response res1 =
+                projectApi.create(createProjectJson("test", "http://localhost:8080"), adminJwt);
+        final int projectId = JsonPath.read(res1.readEntity(String.class), "id");
+
+        final Response res2 =
+                userApi.create("{\"email\":\"test2@test.de\",\"username\":\"test2\",\"password\":\"test2\"}");
+        final int userId1 = JsonPath.read(res2.readEntity(String.class), "id");
+
+        final Response res3 =
+                userApi.create("{\"email\":\"test3@test.de\",\"username\":\"test3\",\"password\":\"test3\"}");
+        final int userId2 = JsonPath.read(res3.readEntity(String.class), "id");
+
+        final Response res4 =
+                projectApi.addOwners(projectId, Arrays.asList(String.valueOf(userId1), String.valueOf(userId2)), adminJwt);
+
+        final Response res5 =
+                projectApi.addMembers(projectId, Arrays.asList(String.valueOf(userId1), String.valueOf(userId2)), adminJwt);
+        assertEquals(HttpStatus.OK.value(), res5.getStatus());
+
+        final JsonNode updatedProject = objectMapper.readTree(res5.readEntity(String.class));
+        final ArrayList owners = objectMapper.convertValue(updatedProject.get("owners"), ArrayList.class);
+        final ArrayList members = objectMapper.convertValue(updatedProject.get("members"), ArrayList.class);
+
+        assertTrue(members.contains(userId1));
+        assertTrue(members.contains(userId2));
+        assertEquals(2, members.size());
+
+        assertTrue(!owners.contains(userId1));
+        assertTrue(!owners.contains(userId2));
+        assertEquals(1, owners.size());
+    }
+
+    @Test
+    public void shouldRemoveMembers() throws Exception {
+        final Response res1 =
+                projectApi.create(createProjectJson("test", "http://localhost:8080"), adminJwt);
+        final int projectId = JsonPath.read(res1.readEntity(String.class), "id");
+
+        final Response res2 =
+                userApi.create("{\"email\":\"test2@test.de\",\"username\":\"test2\",\"password\":\"test2\"}");
+        final int userId1 = JsonPath.read(res2.readEntity(String.class), "id");
+
+        final Response res3 =
+                userApi.create("{\"email\":\"test3@test.de\",\"username\":\"test3\",\"password\":\"test3\"}");
+        final int userId2 = JsonPath.read(res3.readEntity(String.class), "id");
+
+        final Response res4 =
+                projectApi.addMembers(projectId, Arrays.asList(String.valueOf(userId1), String.valueOf(userId2)), adminJwt);
+
+        final Response res5 =
+                projectApi.removeMembers(projectId, Arrays.asList(String.valueOf(userId1), String.valueOf(userId2)), adminJwt);
+        assertEquals(HttpStatus.OK.value(), res5.getStatus());
+
+        final JsonNode updatedProject = objectMapper.readTree(res5.readEntity(String.class));
+        final ArrayList members = objectMapper.convertValue(updatedProject.get("members"), ArrayList.class);
+
+        assertTrue(!members.contains(userId1));
+        assertTrue(!members.contains(userId2));
+        assertEquals(0, members.size());
+    }
+
+    @Test
+    public void shouldRemoveOwners() throws Exception {
+        final Response res1 =
+                projectApi.create(createProjectJson("test", "http://localhost:8080"), adminJwt);
+        final int projectId = JsonPath.read(res1.readEntity(String.class), "id");
+
+        final Response res2 =
+                userApi.create("{\"email\":\"test2@test.de\",\"username\":\"test2\",\"password\":\"test2\"}");
+        final int userId1 = JsonPath.read(res2.readEntity(String.class), "id");
+
+        final Response res3 =
+                userApi.create("{\"email\":\"test3@test.de\",\"username\":\"test3\",\"password\":\"test3\"}");
+        final int userId2 = JsonPath.read(res3.readEntity(String.class), "id");
+
+        final Response res4 =
+                projectApi.addOwners(projectId, Arrays.asList(String.valueOf(userId1), String.valueOf(userId2)), adminJwt);
+
+        final Response res5 =
+                projectApi.removeOwners(projectId, Arrays.asList(String.valueOf(userId1), String.valueOf(userId2)), adminJwt);
+        assertEquals(HttpStatus.OK.value(), res5.getStatus());
+
+        final JsonNode updatedProject = objectMapper.readTree(res5.readEntity(String.class));
+        final ArrayList owners = objectMapper.convertValue(updatedProject.get("owners"), ArrayList.class);
+
+        assertTrue(!owners.contains(userId1));
+        assertTrue(!owners.contains(userId2));
+        assertEquals(1, owners.size());
+    }
+
+    @Test
+    public void shouldNotAllowMembersToManipulateProject() throws Exception {
+        final Response res1 =
+                projectApi.create(createProjectJson("test", "http://localhost:8080"), adminJwt);
+        final int projectId = JsonPath.read(res1.readEntity(String.class), "id");
+        final JsonNode project = objectMapper.readTree(res1.readEntity(String.class));
+
+        final Response res2 =
+                userApi.create("{\"email\":\"test2@test.de\",\"username\":\"test2\",\"password\":\"test2\"}");
+        final int userId1 = JsonPath.read(res2.readEntity(String.class), "id");
+        final String userId1Jwt = userApi.login("test2@test.de", "test2");
+
+        final Response res3 =
+                userApi.create("{\"email\":\"test3@test.de\",\"username\":\"test3\",\"password\":\"test3\"}");
+        final int userId2 = JsonPath.read(res3.readEntity(String.class), "id");
+
+        final Response res4 =
+                projectApi.addMembers(projectId, Collections.singletonList(String.valueOf(userId1)), adminJwt);
+
+        final Response res5 =
+                projectApi.addMembers(projectId, Collections.singletonList(String.valueOf(userId2)), userId1Jwt);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res5.getStatus());
+
+        final Response res6 =
+                projectApi.addOwners(projectId, Collections.singletonList(String.valueOf(userId2)), userId1Jwt);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res6.getStatus());
+
+        final Response res7 =
+                projectApi.removeMembers(projectId, Collections.singletonList(String.valueOf(userId2)), userId1Jwt);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res7.getStatus());
+
+        final Response res8 =
+                projectApi.removeOwners(projectId, Collections.singletonList(String.valueOf(userId2)), userId1Jwt);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res8.getStatus());
+
+        ((ObjectNode) project).put("name", "updatedTest");
+
+        final Response res9 =
+                projectApi.update(projectId, project.toString(), userId1Jwt);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res9.getStatus());
+
+        final Response res10 =
+                projectApi.delete(projectId, userId1Jwt);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res10.getStatus());
+    }
+
+    @Test
+    public void shouldNotRemoveLastOwner() {
+        final Response res1 =
+                projectApi.create(createProjectJson("test", "http://localhost:8080"), adminJwt);
+        final int projectId = JsonPath.read(res1.readEntity(String.class), "id");
+
+        final Response res2 =
+                userApi.create("{\"email\":\"test2@test.de\",\"username\":\"test2\",\"password\":\"test2\"}");
+        final int userId1 = JsonPath.read(res2.readEntity(String.class), "id");
+
+        final Response res3 =
+                projectApi.addOwners(projectId, Collections.singletonList(String.valueOf(userId1)), adminJwt);
+
+        final Response res4 =
+                projectApi.removeOwners(projectId, Arrays.asList("1", String.valueOf(userId1)), adminJwt);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res4.getStatus());
+
+        final Response res5 =
+                projectApi.addMembers(projectId, Arrays.asList("1", String.valueOf(userId1)), adminJwt);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res5.getStatus());
+    }
+
+    @Test
+    public void shouldNotAllowMembersToManipulateProjectEnvironments() throws Exception {
+        final Response res1 =
+                projectApi.create(createProjectJson("test", "http://localhost:8080"), adminJwt);
+        final int projectId = JsonPath.read(res1.readEntity(String.class), "id");
+        final JsonNode project = objectMapper.readTree(res1.readEntity(String.class));
+
+        final Response res2 =
+                userApi.create("{\"email\":\"test2@test.de\",\"username\":\"test2\",\"password\":\"test2\"}");
+        final int userId1 = JsonPath.read(res2.readEntity(String.class), "id");
+        final String userId1Jwt = userApi.login("test2@test.de", "test2");
     }
 
     @Test

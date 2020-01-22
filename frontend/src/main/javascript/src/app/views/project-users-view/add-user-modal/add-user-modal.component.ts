@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import { UserApiService } from '../../../services/api/user-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup} from '@angular/forms';
 import { FormUtilsService } from '../../../services/form-utils.service';
 import {ProjectApiService} from "../../../services/api/project-api.service";
 import {Project} from "../../../entities/project";
 import {BehaviorSubject, Observable} from "rxjs";
 import {User} from "../../../entities/user";
-import {map} from "rxjs/operators";
-import {orderBy} from 'lodash';
 import {Selectable} from "../../../utils/selectable";
 
 @Component({
@@ -43,7 +41,7 @@ export class AddUserModalComponent {
   /** All selected users. */
   usersSelectable: Selectable<User, number>;
 
-  /** All registered users. */
+  /** All found users. */
   private users: BehaviorSubject<User[]>;
 
   searchForm = new FormGroup({
@@ -57,12 +55,6 @@ export class AddUserModalComponent {
               public formUtils: FormUtilsService) {
     this.users = new BehaviorSubject<User[]>([]);
     this.usersSelectable = new Selectable<User, number>(u => u.id);
-    this.userApi.getAll().subscribe(
-      users => {
-        this.users.next(users);
-        this.usersSelectable.addItems(users);
-      }
-    );
   }
 
   addUser(): void {
@@ -75,13 +67,15 @@ export class AddUserModalComponent {
     )
   }
 
-  get filteredUsers$(): Observable<User[]> {
-    return this.users.pipe(map(users =>
-      orderBy(users.filter(u => {
-        const value = this.searchForm.controls.value.value;
-        return (u.email.includes(value) || u.username.includes(value)) && !(u.projectsOwner.includes(this.project.id) || u.projectsMember.includes(this.project.id));
-      }), ['username', 'email'], ['asc', 'asc'])
-    ));
+  searchUser() {
+    this.userApi.getByUsernameOrEmail(this.searchForm.controls.value.value).subscribe(users => {
+      this.users.next(users);
+      this.usersSelectable.clear();
+      this.usersSelectable.addItems(users)
+    })
   }
 
+  get foundUsers$(): Observable<User[]> {
+    return this.users
+  }
 }

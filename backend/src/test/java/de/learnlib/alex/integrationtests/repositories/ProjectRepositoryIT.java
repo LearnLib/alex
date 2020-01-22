@@ -57,6 +57,7 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
         assertTrue(project.getId() > 0L);
     }
 
+    //todo chicken/egg problem
     @Test(expected = DataIntegrityViolationException.class)
     public void shouldFailToSaveAProjectWithoutAnUser() {
         Project project = new Project();
@@ -79,6 +80,7 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
         projectRepository.save(project2); // should fail
     }
 
+    //todo project name prob
     @Test
     public void shouldSaveAProjectsWithADuplicateNameForMultipleUsers() {
         User otherUser = createUser("foo@test.example");
@@ -105,11 +107,16 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
         Project project3 = createProject(otherUser, "Test Project 3");
         projectRepository.save(project3);
 
+        Project project4 = createProject(otherUser, "Test Project 4");
+        project4.addMember(user);
+        project4 = projectRepository.save(project4);
+
         List<Project> projects = projectRepository.findAllByUser_Id(user.getId());
 
-        assertThat(projects.size(), is(equalTo(2)));
+        assertThat(projects.size(), is(equalTo(3)));
         assertThat(projects, hasItem(equalTo(project1)));
         assertThat(projects, hasItem(equalTo(project2)));
+        assertThat(projects, hasItem(equalTo(project4)));
     }
 
     @Test

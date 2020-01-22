@@ -141,6 +141,14 @@ export class ProjectsViewStoreService {
     );
   }
 
+  isOwnerOfProject(project: Project): boolean {
+    if (project.owners.includes(this.appStore.user.id)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   leaveProject(project: Project): void {
     if (project.members.includes(this.appStore.user.id)) {
       this.projectApi.removeMembers(project.id, Array.of(this.appStore.user.id)).subscribe(() => {
