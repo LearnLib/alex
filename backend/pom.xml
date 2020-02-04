@@ -56,7 +56,7 @@
         <selenium.version>3.141.59</selenium.version>
         <htmlunitdriver.version>2.33.2</htmlunitdriver.version>
         <jose4j.version>0.6.4</jose4j.version>
-        <shiro.version>1.4.0</shiro.version>
+        <shiro.version>1.4.2</shiro.version>
         <xml-apis.version>2.0.2</xml-apis.version>
         <jsoup.version>1.11.3</jsoup.version>
         <json-path.version>2.4.0</json-path.version>
