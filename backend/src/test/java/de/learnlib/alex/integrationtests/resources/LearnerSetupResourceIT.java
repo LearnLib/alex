@@ -139,7 +139,8 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
         assertEquals(HttpStatus.OK.value(), res.getStatus());
 
         LearnerResult result = objectMapper.readValue(res.readEntity(String.class), LearnerResult.class);
-        assertEquals(LearnerResult.Status.IN_PROGRESS, result.getStatus());
+        assertTrue(result.getStatus().equals(LearnerResult.Status.IN_PROGRESS)
+                || result.getStatus().equals(LearnerResult.Status.PENDING));
 
         while (result.getStatus() != LearnerResult.Status.FINISHED
                 && result.getStatus() != LearnerResult.Status.ABORTED) {
