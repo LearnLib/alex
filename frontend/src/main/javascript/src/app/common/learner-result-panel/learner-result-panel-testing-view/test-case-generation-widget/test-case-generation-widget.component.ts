@@ -75,16 +75,18 @@ export class TestCaseGenerationWidgetComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.result.symbols.forEach(s => this.symbolMap[s.getAliasOrComputedName()] = s);
+    const setup = this.result.setup;
+
+    setup.symbols.forEach(s => this.symbolMap[s.getAliasOrComputedName()] = s);
     this.form.controls.name.setValue(this.testCase.name);
 
-    const preStep = TestCaseStep.fromSymbol(this.result.resetSymbol.symbol);
-    preStep.pSymbol.parameterValues = this.result.resetSymbol.parameterValues;
+    const preStep = TestCaseStep.fromSymbol(setup.preSymbol.symbol);
+    preStep.pSymbol.parameterValues = setup.preSymbol.parameterValues;
     this.testCase.preSteps = [preStep];
 
-    const postStep = this.result.postSymbol == null ? null : TestCaseStep.fromSymbol(this.result.postSymbol.symbol);
+    const postStep = setup.postSymbol == null ? null : TestCaseStep.fromSymbol(setup.postSymbol.symbol);
     if (postStep != null) {
-      postStep.pSymbol.parameterValues = this.result.postSymbol.parameterValues;
+      postStep.pSymbol.parameterValues = setup.postSymbol.parameterValues;
       this.testCase.postSteps = [postStep];
     }
   }

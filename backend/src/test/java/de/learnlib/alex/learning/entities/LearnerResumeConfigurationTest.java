@@ -16,8 +16,8 @@
 
 package de.learnlib.alex.learning.entities;
 
-import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
+import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,19 +32,18 @@ public class LearnerResumeConfigurationTest {
     public void setUp() {
         configuration = new LearnerResumeConfiguration();
         configuration.setStepNo(1);
-        configuration.getEnvironments().add(new ProjectEnvironment());
     }
 
     @Test
     public void shouldSayThatItIsAValidConfigurationIfItIsOne() {
-        configuration.checkConfiguration(); // nothing should happen
+        configuration.setEqOracle(new MealyRandomWordsEQOracleProxy());
+        configuration.checkConfiguration();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void ensureThatAnExceptionIsThrownIfNoEqOracleIsGiven() {
         configuration.setEqOracle(null);
-
-        configuration.checkConfiguration(); // should fail
+        configuration.checkConfiguration();
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -52,8 +51,7 @@ public class LearnerResumeConfigurationTest {
         AbstractEquivalenceOracleProxy eqOracle = mock(AbstractEquivalenceOracleProxy.class);
         willThrow(IllegalArgumentException.class).given(eqOracle).checkParameters();
         configuration.setEqOracle(eqOracle);
-
-        configuration.checkConfiguration(); // should fail
+        configuration.checkConfiguration();
     }
 
 }

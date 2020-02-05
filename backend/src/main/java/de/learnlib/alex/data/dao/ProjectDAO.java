@@ -35,6 +35,7 @@ import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolStepRepository;
 import de.learnlib.alex.data.repositories.UploadableFileRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
+import de.learnlib.alex.learning.repositories.LearnerSetupRepository;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestSuite;
@@ -85,6 +86,7 @@ public class ProjectDAO {
     private TestRepository testRepository;
     private SymbolParameterRepository symbolParameterRepository;
     private UploadableFileRepository uploadableFileRepository;
+    private LearnerSetupRepository learnerSetupRepository;
 
     @Autowired
     public ProjectDAO(ProjectRepository projectRepository,
@@ -102,7 +104,8 @@ public class ProjectDAO {
                       @Lazy SymbolGroupDAO symbolGroupDAO,
                       TestRepository testRepository,
                       SymbolParameterRepository symbolParameterRepository,
-                      UploadableFileRepository uploadableFileRepository) {
+                      UploadableFileRepository uploadableFileRepository,
+                      LearnerSetupRepository learnerSetupRepository) {
         this.projectRepository = projectRepository;
         this.learnerResultRepository = learnerResultRepository;
         this.fileDAO = fileDAO;
@@ -119,6 +122,7 @@ public class ProjectDAO {
         this.testRepository = testRepository;
         this.symbolParameterRepository = symbolParameterRepository;
         this.uploadableFileRepository = uploadableFileRepository;
+        this.learnerSetupRepository = learnerSetupRepository;
     }
 
     public Project create(final User user, final CreateProjectForm projectForm) throws ValidationException {
@@ -203,10 +207,11 @@ public class ProjectDAO {
 
         symbolActionRepository.deleteAllBySymbol_Project_Id(projectId);
         symbolStepRepository.deleteAllBySymbol_Project_Id(projectId);
-        parameterizedSymbolRepository.deleteAllBySymbol_Project_Id(projectId);
         testReportRepository.deleteAllByProject_Id(projectId);
         testRepository.deleteAllByProject_Id(projectId);
         learnerResultRepository.deleteAllByProject_Id(projectId);
+        learnerSetupRepository.deleteAllByProject_Id(projectId);
+        parameterizedSymbolRepository.deleteAllBySymbol_Project_Id(projectId);
         testExecutionConfigRepository.deleteAllByProject_Id(projectId);
         symbolParameterRepository.deleteAllBySymbol_Project_Id(projectId);
         uploadableFileRepository.deleteAllByProject_Id(projectId);

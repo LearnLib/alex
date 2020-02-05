@@ -20,11 +20,14 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
+import de.learnlib.alex.learning.dao.LearnerSetupDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
+import de.learnlib.alex.learning.entities.LearnerSetup;
 import de.learnlib.alex.learning.entities.Statistics;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
+import de.learnlib.alex.learning.events.LearnerEvent;
 import de.learnlib.alex.learning.services.connectors.PreparedContextHandler;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.webhooks.services.WebhookService;
@@ -32,91 +35,91 @@ import net.automatalib.SupportsGrowingAlphabet;
 import org.apache.logging.log4j.ThreadContext;
 
 /** The learner thread that is used for resuming an old experiment from a given step. */
-public class ResumingLearnerProcess extends AbstractLearnerProcess<LearnerResumeConfiguration> {
+public class ResumingLearnerProcess extends AbstractLearnerProcess {
 
-    /**
-     * Constructor.
-     *
-     * @param user
-     *         The user that runs the learning experiment.
-     * @param learnerResultDAO
-     *         {@link AbstractLearnerProcess#learnerResultDAO}.
-     * @param webhookService
-     *         {@link AbstractLearnerProcess#}.
-     * @param contextHandler
-     *         The context to use.
-     * @param result
-     *         {@link AbstractLearnerProcess#result}.
-     * @param configuration
-     *         The configuration to use.
-     * @param testDAO
-     *         The DAO for tests that is passed to the eq oracle.
-     */
-    public ResumingLearnerProcess(User user, LearnerResultDAO learnerResultDAO, WebhookService webhookService,
-                                  TestDAO testDAO, PreparedContextHandler contextHandler, LearnerResult result,
-                                  LearnerResumeConfiguration configuration) {
-        super(user, learnerResultDAO, webhookService, testDAO, contextHandler, result, configuration);
+    private LearnerResumeConfiguration resumeConfiguration;
+    private LearnerSetupDAO learnerSetupDAO;
+
+    public ResumingLearnerProcess(User user, LearnerResultDAO learnerResultDAO, LearnerSetupDAO learnerSetupDAO,
+                                  WebhookService webhookService, TestDAO testDAO, PreparedContextHandler contextHandler,
+                                  LearnerResult result, LearnerSetup setup, LearnerResumeConfiguration resumeConfiguration) {
+        super(user, learnerResultDAO, webhookService, testDAO, contextHandler, result, setup, resumeConfiguration.getEqOracle());
+        this.resumeConfiguration = resumeConfiguration;
+        this.learnerSetupDAO = learnerSetupDAO;
     }
 
     @Override
     public void run() {
         ThreadContext.put("userId", String.valueOf(user.getId()));
-        LOGGER.traceEntry();
-        LOGGER.info(LoggerMarkers.LEARNER, "Resuming a learner thread.");
+        logger.traceEntry();
+        logger.info(LoggerMarkers.LEARNER, "Resuming a learner thread.");
 
         try {
             resumeLearning();
         } catch (Exception e) {
-            LOGGER.error(LoggerMarkers.LEARNER, "Something in the LearnerThread while resuming went wrong:", e);
+            logger.error(LoggerMarkers.LEARNER, "Something in the LearnerThread while resuming went wrong:", e);
             e.printStackTrace();
-            updateOnError(e);
         } finally {
             shutdown();
-            LOGGER.info(LoggerMarkers.LEARNER, "The learner finished resuming the experiment.");
-            LOGGER.traceExit();
+            logger.info(LoggerMarkers.LEARNER, "The learner finished resuming the experiment.");
+            logger.traceExit();
             ThreadContext.remove("userId");
         }
     }
 
     private void resumeLearning() throws Exception {
-        LOGGER.traceEntry();
-        result.getAlgorithm().resume(learner, result.getSteps().get(configuration.getStepNo() - 1).getState());
+        logger.traceEntry();
 
-        if (configuration.getSymbolsToAdd().size() > 0 && learner instanceof SupportsGrowingAlphabet) {
+        // initialize learner from old state
+        final byte[] learnerState = result.getSteps().get(result.getSteps().size() - 1).getState();
+        result.getSetup().getAlgorithm().resume(learner, learnerState);
+
+        if (resumeConfiguration.getSymbolsToAdd().size() > 0 && learner instanceof SupportsGrowingAlphabet) {
             final SupportsGrowingAlphabet<String> growingAlphabetLearner = (SupportsGrowingAlphabet) learner;
-            for (final ParameterizedSymbol symbol : configuration.getSymbolsToAdd()) {
+            for (final ParameterizedSymbol symbol : resumeConfiguration.getSymbolsToAdd()) {
+
+                // update setup with new symbol
+                setup.getSymbols().add(symbol);
+                setup = learnerSetupDAO.update(user, setup.getProject().getId(), setup.getId(), setup);
+                result.setSetup(setup);
+
+                // make symbol available to symbol mapper
                 symbolMapper.addSymbol(symbol);
 
+                // extend instance of the alphabet
+                abstractAlphabet.add(symbol.getAliasOrComputedName());
+
                 // if the cache is not reinitialized with the new alphabet, we will get cache errors later
-                if (result.isUseMQCache() && cacheOracle != null) {
+                if (result.getSetup().isEnableCache() && cacheOracle != null) {
                    cacheOracle.addAlphabetSymbol(symbol.getAliasOrComputedName());
                 }
 
                 // measure how much time and membership queries it takes to add the symbol
-                final long start = System.currentTimeMillis();
+                final long addSymbolStartTime = System.currentTimeMillis();
                 growingAlphabetLearner.addAlphabetSymbol(symbol.getAliasOrComputedName());
-                final long end = System.currentTimeMillis();
+                final long addSymbolEndTime = System.currentTimeMillis();
 
                 final Statistics statistics = new Statistics();
-                statistics.getDuration().setLearner(end - start);
+                statistics.getDuration().setLearner(addSymbolEndTime - addSymbolStartTime);
                 statistics.getMqsUsed().setLearner(counterOracle.getQueryCount());
                 statistics.getSymbolsUsed().setLearner(counterOracle.getSymbolCount());
                 counterOracle.reset();
 
-                final LearnerResultStep step = learnerResultDAO.createStep(result);
+                final LearnerResultStep step = new LearnerResultStep();
                 step.setHypothesis(CompactMealyMachineProxy.createFrom(learner.getHypothesisModel(), abstractAlphabet));
-                step.setState(result.getAlgorithm().suspend(learner));
-                step.setAlgorithmInformation(result.getAlgorithm().getInternalData(learner));
+                step.setState(result.getSetup().getAlgorithm().suspend(learner));
+                step.setAlgorithmInformation(result.getSetup().getAlgorithm().getInternalData(learner));
+                step.setEqOracle(equivalenceOracleProxy);
                 step.setStatistics(statistics);
+                learnerResultDAO.createStep(result, step);
 
-                learnerResultDAO.saveStep(result, step);
+                startLearningLoop();
             }
+        } else {
+            startLearningLoop();
         }
 
-        final LearnerResultStep currentStep = result.getSteps().get(result.getSteps().size() - 1);
-        doLearn(currentStep);
-
-        LOGGER.traceExit();
+        webhookService.fireEvent(user, new LearnerEvent.Finished(result));
+        logger.traceExit();
     }
-
 }

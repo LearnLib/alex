@@ -16,13 +16,13 @@
 
 import { environment as env } from '../../../environments/environment';
 import { LearnerResult } from '../../entities/learner-result';
-import { LearnerConfiguration } from '../../entities/learner-configuration';
 import { BaseApiService } from './base-api.service';
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { LearnerStatus } from '../../entities/learner-status';
+import { LearnerSetup } from '../../entities/learner-setup';
 
 /**
  * The service for interacting with the learner.
@@ -38,10 +38,10 @@ export class LearnerApiService extends BaseApiService {
    * Start the server side learning process of a project.
    *
    * @param projectId The id of the project of the test.
-   * @param learnConfiguration The configuration to learn with.
+   * @param configuration The configuration to learn with.
    */
-  start(projectId: number, learnConfiguration: LearnerConfiguration): Observable<LearnerResult> {
-    return this.http.post(`${env.apiUrl}/projects/${projectId}/learner/start`, learnConfiguration, this.defaultHttpOptions)
+  start(projectId: number, configuration: {setup: LearnerSetup, options?: any}): Observable<LearnerResult> {
+    return this.http.post(`${env.apiUrl}/projects/${projectId}/learner/start`, configuration, this.defaultHttpOptions)
       .pipe(
         map(data => new LearnerResult(data))
       );
@@ -66,7 +66,7 @@ export class LearnerApiService extends BaseApiService {
    * @param testNo The test number of the test to resume.
    * @param learnConfiguration The configuration to resume with.
    */
-  resume(projectId: number, testNo: number, learnConfiguration: LearnerConfiguration): Observable<any> {
+  resume(projectId: number, testNo: number, learnConfiguration: any): Observable<any> {
     return this.http.post(`${env.apiUrl}/projects/${projectId}/learner/${testNo}/resume`, learnConfiguration, this.defaultHttpOptions)
       .pipe(
         map(data => new LearnerResult(data))

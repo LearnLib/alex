@@ -19,14 +19,13 @@ package de.learnlib.alex.learning.services;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
-import de.learnlib.alex.learning.entities.AbstractLearnerConfiguration;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
-import de.learnlib.alex.learning.entities.Statistics;
+import de.learnlib.alex.learning.entities.LearnerSetup;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.DefaultQueryProxy;
+import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.TestSuiteEQOracleProxy;
-import de.learnlib.alex.learning.events.LearnerEvent;
 import de.learnlib.alex.learning.services.connectors.PreparedContextHandler;
 import de.learnlib.alex.learning.services.oracles.ContextAwareSulOracle;
 import de.learnlib.alex.learning.services.oracles.DelegationOracle;
@@ -48,7 +47,6 @@ import net.automatalib.words.impl.SimpleAlphabet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -57,16 +55,13 @@ import java.util.stream.Collectors;
 /**
  * Thread to run a learning process. It needs to be a Thread so that the server can still deal with other requests. This
  * class contains the actual learning loop.
- *
- * @param <T>
- *         The type of the configuration.
  */
-public abstract class AbstractLearnerProcess<T extends AbstractLearnerConfiguration> {
+public abstract class AbstractLearnerProcess {
 
-    protected static final Logger LOGGER = LogManager.getLogger();
+    protected static final Logger logger = LogManager.getLogger();
 
     /** The webhook service to user. */
-    private final WebhookService webhookService;
+    protected final WebhookService webhookService;
 
     /** The queries that are executed at the moment. */
     private List<DefaultQueryProxy> currentQueries;
@@ -88,9 +83,6 @@ public abstract class AbstractLearnerProcess<T extends AbstractLearnerConfigurat
 
     /** The abstract alphabet that is used during the learning process. */
     protected Alphabet<String> abstractAlphabet;
-
-    /** The configuration that is used. */
-    protected T configuration;
 
     /** The membership oracle on the upmost level that all queries are posed to. */
     protected final DelegationOracle<String, String> mqOracle;
@@ -115,35 +107,25 @@ public abstract class AbstractLearnerProcess<T extends AbstractLearnerConfigurat
 
     protected MealyCacheOracle<String, String> cacheOracle = null;
 
-    /**
-     * Constructor.
-     *
-     * @param user
-     *         The current user.
-     * @param learnerResultDAO
-     *         {@link #learnerResultDAO}.
-     * @param webhookService
-     *         {@link #webhookService}.
-     * @param context
-     *         The context to use.
-     * @param testDAO
-     *         The test DAO to use.
-     * @param result
-     *         {@link #result}.
-     * @param configuration
-     *         {@link #configuration}.
-     */
+    protected LearnerSetup setup;
+
+    protected AbstractEquivalenceOracleProxy equivalenceOracleProxy;
+
+    protected EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> equivalenceOracle;
+
     public AbstractLearnerProcess(User user, LearnerResultDAO learnerResultDAO, WebhookService webhookService,
-                                  TestDAO testDAO, PreparedContextHandler context, LearnerResult result, T configuration) {
+                                  TestDAO testDAO, PreparedContextHandler context, LearnerResult result,
+                                  LearnerSetup setup, AbstractEquivalenceOracleProxy equivalenceOracleProxy) {
         this.user = user;
         this.learnerResultDAO = learnerResultDAO;
         this.webhookService = webhookService;
         this.result = result;
-        this.configuration = configuration;
+        this.setup = setup;
         this.testDAO = testDAO;
+        this.equivalenceOracleProxy = equivalenceOracleProxy;
 
         this.abstractAlphabet = new SimpleAlphabet<>(new HashSet<>(// remove duplicate names with set
-                result.getSymbols().stream()
+                setup.getSymbols().stream()
                         .map(ParameterizedSymbol::getAliasOrComputedName)
                         .sorted(String::compareTo)
                         .collect(Collectors.toList())
@@ -151,26 +133,20 @@ public abstract class AbstractLearnerProcess<T extends AbstractLearnerConfigurat
 
         this.preparedContextHandler = context;
         this.currentQueries = new ArrayList<>();
-        this.symbolMapper = new SymbolMapper(result.getSymbols());
+        this.symbolMapper = new SymbolMapper(setup.getSymbols());
 
         // create a sul oracle for each url
-        this.sulOracles = configuration.getEnvironments().stream()
+        this.sulOracles = setup.getEnvironments().stream()
                 .map(env -> new ContextAwareSulOracle(symbolMapper, preparedContextHandler.create(env)))
                 .collect(Collectors.toList());
 
-        final int numUrls = configuration.getEnvironments().size();
-        if (numUrls > 1) {
-            final DynamicParallelOracle<String, Word<String>> parallelOracle =
+        final DynamicParallelOracle<String, Word<String>> parallelOracle =
                     new DynamicParallelOracleBuilder<>(sulOracles)
                             .withBatchSize(1)
-                            .withPoolSize(numUrls)
+                            .withPoolSize(setup.getEnvironments().size())
                             .create();
 
-            monitorOracle = new QueryMonitorOracle<>(parallelOracle);
-        } else {
-            monitorOracle = new QueryMonitorOracle<>(sulOracles.get(0));
-        }
-
+        monitorOracle = new QueryMonitorOracle<>(parallelOracle);
         monitorOracle.addPostProcessingListener(queries -> {
             this.currentQueries = queries.stream()
                     .map(q -> DefaultQueryProxy.createFrom(new DefaultQuery<>(q)))
@@ -182,7 +158,7 @@ public abstract class AbstractLearnerProcess<T extends AbstractLearnerConfigurat
 
         // create the concrete membership oracle.
         this.mqOracle = new DelegationOracle<>();
-        if (result.isUseMQCache()) {
+        if (result.getSetup().isEnableCache()) {
             this.cacheOracle = MealyCacheOracle.createDAGCacheOracle(this.abstractAlphabet, counterOracle);
             this.mqOracle.setDelegate(cacheOracle);
         } else {
@@ -190,135 +166,59 @@ public abstract class AbstractLearnerProcess<T extends AbstractLearnerConfigurat
         }
 
         // create the learner.
-        this.learner = result.getAlgorithm().createLearner(abstractAlphabet, mqOracle);
-    }
+        this.learner = result.getSetup().getAlgorithm().createLearner(abstractAlphabet, mqOracle);
 
-    abstract void run();
-
-    /**
-     * Creates and persists a learner step.
-     *
-     * @param start
-     *         The start time of the step in ns.
-     * @param end
-     *         The end time of the step in ns.
-     * @param eqs
-     *         The number of equivalence queries posed in the step.
-     * @param counterexample
-     *         The counterexample used in the step.
-     * @return The persisted step.
-     */
-    protected LearnerResultStep createStep(long start, long end, long eqs,
-                                           DefaultQuery<String, Word<String>> counterexample) {
-        final Statistics statistics = new Statistics();
-        statistics.getDuration().setLearner(end - start);
-        statistics.getMqsUsed().setLearner(counterOracle.getQueryCount());
-        statistics.getSymbolsUsed().setLearner(counterOracle.getSymbolCount());
-        statistics.setEqsUsed(eqs);
-
-        final LearnerResultStep step = learnerResultDAO.createStep(result, configuration);
-        step.setStatistics(statistics);
-
-        try {
-            step.setState(result.getAlgorithm().suspend(learner));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            step.setAlgorithmInformation(result.getAlgorithm().getInternalData(learner));
-            step.setCounterExample(DefaultQueryProxy.createFrom(counterexample));
-            result.getSteps().add(step);
-            step.setHypothesis(CompactMealyMachineProxy.createFrom(learner.getHypothesisModel(), abstractAlphabet));
-        } catch (Exception e) {
-            e.printStackTrace();
-            step.setErrorText("Failed to save step: " + e.getMessage());
-        }
-
-        learnerResultDAO.saveStep(result, step);
-        counterOracle.reset();
-        return step;
-    }
-
-    /**
-     * Creates a new steps that only contains an error message for the current step.
-     *
-     * @param e
-     *         The exception that led to the error.
-     */
-    protected void updateOnError(Exception e) {
-        final String errorMessage = e.getMessage() == null ? e.getClass().getName() : e.getMessage();
-
-        if (!result.getSteps().isEmpty()) {
-            final LearnerResultStep errorStep = createStep(0L, 0L, 0, null);
-            errorStep.setErrorText(errorMessage);
-
-            try {
-                learnerResultDAO.saveStep(result, errorStep);
-            } catch (de.learnlib.alex.common.exceptions.NotFoundException e1) {
-                e1.printStackTrace();
-            }
+        if (equivalenceOracleProxy instanceof TestSuiteEQOracleProxy) {
+            equivalenceOracle = ((TestSuiteEQOracleProxy) equivalenceOracleProxy).createEqOracle(mqOracle, testDAO, user, result);
         } else {
-            createStep(0, 0, 0, null);
+            equivalenceOracle = equivalenceOracleProxy.createEqOracle(mqOracle);
         }
     }
 
-    private void updateStatisticsWithEqOracle(long start, long end, LearnerResultStep step) {
-        step.getStatistics().getDuration().setEqOracle(end - start);
-        step.getStatistics().getMqsUsed().setEqOracle(counterOracle.getQueryCount());
-        step.getStatistics().getSymbolsUsed().setEqOracle(counterOracle.getSymbolCount());
-        try {
-            learnerResultDAO.saveStep(result, step);
-        } catch (de.learnlib.alex.common.exceptions.NotFoundException e) {
-            e.printStackTrace();
-        }
-        counterOracle.reset();
-    }
-
-    /**
-     * Execute the learning loop.
-     *
-     * @param currentStep
-     *         The current step.
-     */
-    protected void doLearn(LearnerResultStep currentStep) {
-        final EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> eqOracle;
-        if (configuration.getEqOracle() instanceof TestSuiteEQOracleProxy) {
-            eqOracle = ((TestSuiteEQOracleProxy) configuration.getEqOracle()).createEqOracle(mqOracle, testDAO, user, result);
-        } else {
-            eqOracle = configuration.getEqOracle().createEqOracle(mqOracle);
-        }
-
-        long start, end;
-
+    protected void startLearningLoop() throws Exception {
         while (true) {
-
-            // search for counterexamples
             learnerPhase = LearnerService.LearnerPhase.EQUIVALENCE_TESTING;
-            start = System.currentTimeMillis();
-            DefaultQuery<String, Word<String>> counterexample = eqOracle.findCounterExample(
-                    learner.getHypothesisModel(), abstractAlphabet);
-            end = System.currentTimeMillis();
 
-            // after having searched for counterexamples, update the statistics of the current step
-            // with the numbers of the equivalence oracle
-            updateStatisticsWithEqOracle(start, end, currentStep);
+            final long eqOracleStartTime = System.currentTimeMillis();
+            final DefaultQuery<String, Word<String>> ce = equivalenceOracle.findCounterExample(learner.getHypothesisModel(), abstractAlphabet);
+            final long eqOracleEndTime = System.currentTimeMillis();
 
-            if (counterexample != null) {
-                // refine the hypothesis
+            final LearnerResultStep currentStep = result.getSteps().get(result.getSteps().size() -1 );
+            currentStep.getStatistics().getSymbolsUsed().setEqOracle(counterOracle.getSymbolCount());
+            currentStep.getStatistics().getMqsUsed().setEqOracle(counterOracle.getQueryCount());
+            currentStep.getStatistics().getDuration().setEqOracle(eqOracleEndTime - eqOracleStartTime);
+            currentStep.setCounterExample(ce != null ? DefaultQueryProxy.createFrom(ce) : null);
+            learnerResultDAO.updateStep(currentStep);
+            counterOracle.reset();
+
+            if (ce != null) {
                 learnerPhase = LearnerService.LearnerPhase.LEARNING;
-                start = System.currentTimeMillis();
-                learner.refineHypothesis(counterexample);
-                end = System.currentTimeMillis();
 
-                currentStep = createStep(start, end, 1, counterexample);
+                final long learnerRefineStartTime = System.currentTimeMillis();
+                learner.refineHypothesis(ce);
+                final long learnerRefineEndTime = System.currentTimeMillis();
+
+                createStep(learnerRefineEndTime, learnerRefineStartTime);
             } else {
                 break;
             }
         }
-
-        webhookService.fireEvent(user, new LearnerEvent.Finished(result));
     }
+
+    protected void createStep(Long endTime, Long startTime) throws Exception {
+        final LearnerResultStep step = new LearnerResultStep();
+        step.getStatistics().getSymbolsUsed().setLearner(counterOracle.getSymbolCount());
+        step.getStatistics().getMqsUsed().setLearner(counterOracle.getQueryCount());
+        step.getStatistics().getDuration().setLearner(endTime - startTime);
+        step.setEqOracle(equivalenceOracleProxy);
+        step.setHypothesis(CompactMealyMachineProxy.createFrom(learner.getHypothesisModel(), abstractAlphabet));
+        step.setState(setup.getAlgorithm().suspend(learner));
+        step.setAlgorithmInformation(result.getSetup().getAlgorithm().getInternalData(learner));
+        learnerResultDAO.createStep(result, step);
+        counterOracle.reset();
+    }
+
+    abstract void run();
 
     public void stopLearning() {
         this.interruptOracle.interrupt();

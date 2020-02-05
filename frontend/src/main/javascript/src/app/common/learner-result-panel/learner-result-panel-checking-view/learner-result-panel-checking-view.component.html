@@ -27,7 +27,7 @@
           </div>
         </form>
       </div>
-      <div *ngFor="let formula of formulas" [ngClass]="getItemClass(formula.id)" class="list-group-item">
+      <div *ngFor="let formula of formulas; let i = index" [ngClass]="getItemClass(formula.id)" class="list-group-item">
         <div class="d-flex">
           <div>
             <selectable-checkbox [item]="formula" [selectable]="selectedFormulas"></selectable-checkbox>
@@ -38,9 +38,12 @@
                 <strong *ngIf="formula.name != null" class="d-block">{{formula.name}}</strong>
                 <span>{{formula.formula}}</span>
               </div>
-              <div *ngIf="results[formula.id] != null">
+              <div class="ml-2" *ngIf="results[formula.id] != null">
                 <span *ngIf="results[formula.id].passed" class="badge badge-success">passed</span>
                 <span *ngIf="!results[formula.id].passed" class="badge badge-danger">failed</span>
+              </div>
+              <div class="ml-2">
+                <i class="fas fa-fw fa-times cursor-pointer" (click)="removeFormula(i)"></i>
               </div>
             </div>
             <div *ngIf="hasCounterexample(formula.id)"
@@ -64,6 +67,11 @@
         </div>
       </div>
     </div>
+
+    <div class="alert alert-info mt-3" *ngIf="formulas.length === 0">
+      There are not formulas yet.
+    </div>
+
     <hr>
     <div class="form-group">
       <label class="control-label">Minimum unfolds</label>

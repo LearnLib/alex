@@ -94,7 +94,7 @@ export class LearnerViewComponent implements OnInit, OnDestroy {
             switch (result.status) {
               case LearnerResultStatus.PENDING:
                 this.toastService.info(`The learning process <strong>Test ${result.testNo}</strong> has been queued.`);
-                this.router.navigate(['/app', 'projects', this.project.id, 'learner', 'setup']);
+                this.router.navigate(['/app', 'projects', this.project.id, 'learner', 'setups']);
                 break;
               case LearnerResultStatus.FINISHED:
                 this.updateResumeConfig();
@@ -105,7 +105,7 @@ export class LearnerViewComponent implements OnInit, OnDestroy {
           }
         );
       } else {
-        this.router.navigate(['/app', 'projects', this.project.id, 'learner', 'setup']);
+        this.router.navigate(['/app', 'projects', this.project.id, 'learner', 'setups']);
       }
     });
   }
@@ -122,8 +122,6 @@ export class LearnerViewComponent implements OnInit, OnDestroy {
       eqOracle: lastStep.eqOracle,
       stepNo: lastStep.stepNo,
       symbolsToAdd: [],
-      project: this.project.id,
-      environments: this.currentResult.environments
     };
   }
 
@@ -161,7 +159,6 @@ export class LearnerViewComponent implements OnInit, OnDestroy {
    */
   resumeLearning(): void {
     const config = JSON.parse(JSON.stringify(this.resumeConfig));
-    config.environments = config.environments.map(e => e.id);
     config.symbolsToAdd.forEach(ps => ps.symbol = {id: ps.symbol.id});
 
     this.learnerApi.resume(this.project.id, this.currentResult.testNo, config).subscribe(

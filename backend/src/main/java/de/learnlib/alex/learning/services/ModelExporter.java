@@ -36,11 +36,15 @@ import java.io.StringWriter;
 @Transactional
 public class ModelExporter {
 
-    @Autowired
     private LearnerResultDAO learnerResultDAO;
 
+    @Autowired
+    public ModelExporter(LearnerResultDAO learnerResultDAO) {
+        this.learnerResultDAO = learnerResultDAO;
+    }
+
     public String exportDot(User user, Long projectId, Long testNo, Long stepNo) {
-        final LearnerResult learnerResult = learnerResultDAO.get(user, projectId, testNo, true);
+        final LearnerResult learnerResult = learnerResultDAO.get(user, projectId, testNo);
 
         final LearnerResultStep step = learnerResult.getSteps().stream()
                 .filter(s -> s.getStepNo().equals(stepNo))

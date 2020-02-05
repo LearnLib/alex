@@ -48,33 +48,28 @@
   </div>
 </div>
 
-<div class="row">
-  <div class="col-6">
-    <div class="form-group">
-      <label class="control-label">Width</label>
-      <input
-        class="form-control"
-        placeholder="Browser width in px"
-        required
-        type="number"
-        name="browser_width"
-        [(ngModel)]="config.width"
-      >
-    </div>
-  </div>
-  <div class="col-6">
-    <div class="form-group">
-      <label class="control-label">Height</label>
-      <input
-        class="form-control"
-        placeholder="Browser height in px"
-        required
-        type="number"
-        name="browser_height"
-        [(ngModel)]="config.height"
-      >
-    </div>
-  </div>
+<div class="form-group">
+  <label class="control-label">Width</label>
+  <input
+    class="form-control"
+    placeholder="Browser width in px"
+    required
+    type="number"
+    name="browser_width"
+    [(ngModel)]="config.width"
+  >
+</div>
+
+<div class="form-group">
+  <label class="control-label">Height</label>
+  <input
+    class="form-control"
+    placeholder="Browser height in px"
+    required
+    type="number"
+    name="browser_height"
+    [(ngModel)]="config.height"
+  >
 </div>
 
 <hr>
