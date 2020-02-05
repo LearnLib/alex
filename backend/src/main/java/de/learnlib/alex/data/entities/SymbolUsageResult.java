@@ -16,7 +16,7 @@
 
 package de.learnlib.alex.data.entities;
 
-import de.learnlib.alex.learning.entities.LearnerResult;
+import de.learnlib.alex.learning.entities.LearnerSetup;
 import de.learnlib.alex.testing.entities.TestCase;
 
 import java.util.HashSet;
@@ -26,12 +26,12 @@ public class SymbolUsageResult {
 
     private Set<Symbol> symbols;
     private Set<TestCase> testCases;
-    private Set<LearnerResult> learnerResults;
+    private Set<LearnerSetup> learnerSetups;
 
     public SymbolUsageResult() {
         this.symbols = new HashSet<>();
         this.testCases = new HashSet<>();
-        this.learnerResults = new HashSet<>();
+        this.learnerSetups = new HashSet<>();
     }
 
     public Set<Symbol> getSymbols() {
@@ -50,15 +50,15 @@ public class SymbolUsageResult {
         this.testCases = testCases;
     }
 
-    public Set<LearnerResult> getLearnerResults() {
-        return learnerResults;
+    public Set<LearnerSetup> getLearnerSetups() {
+        return learnerSetups;
     }
 
-    public void setLearnerResults(Set<LearnerResult> learnerResults) {
-        this.learnerResults = learnerResults;
+    public void setLearnerSetups(Set<LearnerSetup> learnerSetups) {
+        this.learnerSetups = learnerSetups;
     }
 
     public boolean isInUse() {
-        return symbols.size() + testCases.size() + learnerResults.size() > 0;
+        return symbols.size() + testCases.size() + learnerSetups.size() > 0;
     }
 }

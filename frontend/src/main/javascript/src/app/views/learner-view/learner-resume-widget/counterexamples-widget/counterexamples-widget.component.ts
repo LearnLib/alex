@@ -21,6 +21,7 @@ import { LearnerResult } from '../../../../entities/learner-result';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { DragulaService } from 'ng2-dragula';
 import { LearnerViewStoreService } from '../../learner-view-store.service';
+import set = Reflect.set;
 
 interface IOPair {
   input: string;
@@ -132,10 +133,11 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
    */
   testCounterExample(): Promise<any> {
     return new Promise((resolve, reject) => {
+      const setup = this.result.setup;
       // helper function to test the counterexample
       const testSymbols = [];
 
-      const pSymbols = this.result.symbols;
+      const pSymbols = setup.symbols;
       const pSymbolNames = pSymbols.map(ps => ps.getAliasOrComputedName());
 
       for (let i = 0; i < this.counterexample.length; i++) {
@@ -143,20 +145,23 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
         testSymbols.push(pSymbols[j]);
       }
 
-      const resetSymbol = JSON.parse(JSON.stringify(this.result.resetSymbol));
+      const resetSymbol = JSON.parse(JSON.stringify(setup.preSymbol));
       resetSymbol.symbol = {id: resetSymbol.symbol.id};
 
       const symbols = JSON.parse(JSON.stringify(testSymbols));
       symbols.forEach(s => s.symbol = {id: s.symbol.id});
 
-      const postSymbol = JSON.parse(JSON.stringify(this.result.postSymbol));
-      if (postSymbol != null) {
-        postSymbol.symbol = {id: postSymbol.symbol.id};
+      let postSymbol;
+      if (setup.postSymbol != null) {
+        postSymbol = JSON.parse(JSON.stringify(setup.postSymbol));
+        if (postSymbol != null) {
+          postSymbol.symbol = {id: postSymbol.symbol.id};
+        }
       }
 
       this.learnerApi.readOutputs(this.result.project, {
         symbols: {resetSymbol, symbols, postSymbol},
-        driverConfig: this.result.driverConfig
+        driverConfig: setup.webDriver
       }).subscribe(
         ce => {
           let ceFound = false;

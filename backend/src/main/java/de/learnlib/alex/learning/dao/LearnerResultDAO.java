@@ -18,35 +18,26 @@ package de.learnlib.alex.learning.dao;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.data.dao.ParameterizedSymbolDAO;
 import de.learnlib.alex.data.dao.ProjectDAO;
-import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
-import de.learnlib.alex.data.entities.ProjectEnvironment;
-import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
-import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
-import de.learnlib.alex.data.repositories.SymbolParameterValueRepository;
-import de.learnlib.alex.learning.entities.AbstractLearnerConfiguration;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
-import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;
-import de.learnlib.alex.learning.services.LearnerService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.validation.ValidationException;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Implementation of a LearnerResultDAO using Spring Data.
@@ -66,13 +57,7 @@ public class LearnerResultDAO {
     /** The LearnerResultStepRepository to use. Will be injected. */
     private LearnerResultStepRepository learnerResultStepRepository;
 
-    /** The repository for parameterized symbols. */
-    private ParameterizedSymbolRepository parameterizedSymbolRepository;
-
-    /** The repository for symbol parameter values. */
-    private SymbolParameterValueRepository symbolParameterValueRepository;
-
-    private ProjectEnvironmentRepository projectEnvironmentRepository;
+    private LearnerSetupDAO learnerSetupDAO;
 
     /** The entity manager. */
     private EntityManager entityManager;
@@ -88,36 +73,21 @@ public class LearnerResultDAO {
      *         The {@link LearnerResultStepRepository} to use.
      * @param entityManager
      *         The entity manager.
-     * @param parameterizedSymbolRepository
-     *         The repository for parameterized symbols.
-     * @param symbolParameterValueRepository
-     *         The repository for symbol parameter values.
      */
     @Autowired
     public LearnerResultDAO(ProjectDAO projectDAO, LearnerResultRepository learnerResultRepository,
                             LearnerResultStepRepository learnerResultStepRepository, EntityManager entityManager,
-                            ParameterizedSymbolRepository parameterizedSymbolRepository,
-                            SymbolParameterValueRepository symbolParameterValueRepository,
-                            ProjectEnvironmentRepository projectEnvironmentRepository) {
+                            LearnerSetupDAO learnerSetupDAO) {
         this.projectDAO = projectDAO;
         this.learnerResultRepository = learnerResultRepository;
         this.learnerResultStepRepository = learnerResultStepRepository;
         this.entityManager = entityManager;
-        this.parameterizedSymbolRepository = parameterizedSymbolRepository;
-        this.symbolParameterValueRepository = symbolParameterValueRepository;
-        this.projectEnvironmentRepository = projectEnvironmentRepository;
+        this.learnerSetupDAO = learnerSetupDAO;
     }
 
-    public LearnerResult create(User user, LearnerResult learnerResult) throws NotFoundException, ValidationException {
-        // pre validation
-        if (user == null || learnerResult.getProject() == null) {
-            throw new ValidationException("To create a LearnResult it must have a User and Project.");
-        }
-        projectDAO.getByID(user, learnerResult.getProjectId()); // access check
-
-        if (learnerResult.getTestNo() != null) {
-            throw new ValidationException("To create a LearnResult it must not have a test no.");
-        }
+    public LearnerResult create(User user, Project project, LearnerResult learnerResult) throws NotFoundException, ValidationException {
+        projectDAO.checkAccess(user, project);
+        learnerResult.setProject(project);
 
         // get the current highest test no in the project and add 1 for the next id
         Long maxTestNo = learnerResultRepository.findHighestTestNo(learnerResult.getProjectId());
@@ -128,18 +98,9 @@ public class LearnerResultDAO {
         long nextTestNo = maxTestNo + 1;
         learnerResult.setTestNo(nextTestNo);
 
-        symbolParameterValueRepository.saveAll(learnerResult.getResetSymbol().getParameterValues());
-        learnerResult.getSymbols().forEach(s -> symbolParameterValueRepository.saveAll(s.getParameterValues()));
-        parameterizedSymbolRepository.save(learnerResult.getResetSymbol());
-        parameterizedSymbolRepository.saveAll(learnerResult.getSymbols());
-        if (learnerResult.getPostSymbol() != null) {
-            symbolParameterValueRepository.saveAll(learnerResult.getPostSymbol().getParameterValues());
-            parameterizedSymbolRepository.save(learnerResult.getPostSymbol());
-        }
-
         try {
-            LearnerResult createdLearnerResult = learnerResultRepository.saveAndFlush(learnerResult);
-            initializeLazyRelations(Collections.singletonList(learnerResult), true);
+            final LearnerResult createdLearnerResult = learnerResultRepository.saveAndFlush(learnerResult);
+            initializeLazyRelations(learnerResult);
             return createdLearnerResult;
         } catch (DataIntegrityViolationException e) {
             LOGGER.info("LearnerResult creation failed:", e);
@@ -147,30 +108,32 @@ public class LearnerResultDAO {
         }
     }
 
-    public List<LearnerResult> getAll(User user, Long projectId, boolean includeSteps) throws NotFoundException {
+    public List<LearnerResult> getAll(User user, Long projectId)
+            throws NotFoundException {
         projectDAO.getByID(user, projectId); // access check
 
-        List<LearnerResult> results = learnerResultRepository.findByProject_IdOrderByTestNoAsc(projectId);
-
-        if (!results.isEmpty()) {
-            initializeLazyRelations(results, includeSteps);
-        }
+        final List<LearnerResult> results = learnerResultRepository.findByProject_Id(projectId);
+        results.forEach(this::initializeLazyRelations);
 
         return results;
     }
 
-    public List<LearnerResult> getAll(User user, Long projectId, List<Long> testNos, boolean includeSteps)
+    public List<LearnerResult> getAll(User user, Long projectId, List<Long> testNos)
             throws NotFoundException {
         projectDAO.getByID(user, projectId); // access check
 
-        List<LearnerResult> results = learnerResultRepository.findByProject_IdAndTestNoIn(projectId, testNos);
-        if (results.size() != testNos.size()) {
-            throw new NotFoundException("Not all Results with the test nos. " + testNos
-                    + " in the Project " + projectId + " for the user " + user
-                    + " were found.");
-        }
+        final List<LearnerResult> results = learnerResultRepository.findByProject_IdAndTestNoIn(projectId, testNos);
+        results.forEach(this::initializeLazyRelations);
 
-        initializeLazyRelations(results, includeSteps);
+        return results;
+    }
+
+    public Page<LearnerResult> getAll(User user, Long projectId, PageRequest pr)
+            throws NotFoundException {
+        projectDAO.getByID(user, projectId); // access check
+
+        final Page<LearnerResult> results = learnerResultRepository.findByProject_Id(projectId, pr);
+        results.forEach(this::initializeLazyRelations);
 
         return results;
     }
@@ -180,19 +143,19 @@ public class LearnerResultDAO {
 
         final LearnerResult result = learnerResultRepository.findFirstByProject_IdOrderByTestNoDesc(projectId);
         if (result != null) {
-            initializeLazyRelations(Collections.singletonList(result), true);
+            initializeLazyRelations(result);
             return result;
         } else {
             return null;
         }
     }
 
-    public LearnerResult get(User user, Long projectId, Long testNo, boolean includeSteps) throws NotFoundException {
+    public LearnerResult get(User user, Long projectId, Long testNo) throws NotFoundException {
         final Project project = projectDAO.getByID(user, projectId); // access check
         final LearnerResult result = learnerResultRepository.findOneByProject_IdAndTestNo(projectId, testNo);
         checkAccess(user, project, result);
 
-        initializeLazyRelations(Collections.singletonList(result), includeSteps);
+        initializeLazyRelations(result);
 
         return result;
     }
@@ -211,44 +174,16 @@ public class LearnerResultDAO {
         return step;
     }
 
-    public LearnerResult clone(User user, Long projectId, Long testNo) throws NotFoundException, UnauthorizedException {
+    public LearnerResult copy(User user, Long projectId, Long testNo) throws NotFoundException, UnauthorizedException {
         final Project project = projectDAO.getByID(user, projectId);
         final LearnerResult result = learnerResultRepository.findOneByProject_IdAndTestNo(projectId, testNo);
-        initializeLazyRelations(Collections.singletonList(result), true);
         checkAccess(user, project, result);
 
         final LearnerResult resultToClone = new LearnerResult();
         resultToClone.setTestNo(learnerResultRepository.findHighestTestNo(projectId) + 1);
-        resultToClone.setUseMQCache(result.isUseMQCache());
-        resultToClone.setAlgorithm(result.getAlgorithm());
         resultToClone.setComment(result.getComment());
         resultToClone.setProject(project);
-        resultToClone.setEnvironments(projectEnvironmentRepository.findAllByIdIn(result.getEnvironments().stream()
-                .map(ProjectEnvironment::getId)
-                .collect(Collectors.toList())));
-
-        final AbstractWebDriverConfig driverConfig = result.getDriverConfig();
-        entityManager.detach(driverConfig);
-        driverConfig.setId(null);
-        resultToClone.setDriverConfig(driverConfig);
-
-        resultToClone.setResetSymbol(result.getResetSymbol().copy());
-        resultToClone.setSymbols(result.getSymbols().stream()
-                .map(ParameterizedSymbol::copy)
-                .collect(Collectors.toList()));
-        if (result.getPostSymbol() != null) {
-            resultToClone.setPostSymbol(result.getPostSymbol().copy());
-        }
-
-        resultToClone.getSymbols().forEach(s -> symbolParameterValueRepository.saveAll(s.getParameterValues()));
-        parameterizedSymbolRepository.save(resultToClone.getResetSymbol());
-        parameterizedSymbolRepository.saveAll(resultToClone.getSymbols());
-        resultToClone.getSymbols().forEach(ps -> symbolParameterValueRepository.saveAll(ps.getParameterValues()));
-        if (resultToClone.getPostSymbol() != null) {
-            symbolParameterValueRepository.saveAll(resultToClone.getPostSymbol().getParameterValues());
-            parameterizedSymbolRepository.save(resultToClone.getPostSymbol());
-        }
-
+        resultToClone.setSetup(learnerSetupDAO.copy(user, projectId, result.getSetup().getId(), false));
         learnerResultRepository.save(resultToClone);
 
         result.getSteps().forEach(step -> {
@@ -261,64 +196,36 @@ public class LearnerResultDAO {
         learnerResultStepRepository.saveAll(resultToClone.getSteps());
         learnerResultRepository.save(resultToClone);
 
-        initializeLazyRelations(Collections.singletonList(resultToClone), true);
+        initializeLazyRelations(resultToClone);
 
         return resultToClone;
     }
 
-    public LearnerResultStep createStep(LearnerResult result, AbstractLearnerConfiguration configuration)
-            throws ValidationException {
-        final LearnerResultStep step = new LearnerResultStep();
+    public LearnerResultStep createStep(LearnerResult result, LearnerResultStep step) {
         step.setResult(result);
-        step.setStepNo((long) result.getSteps().size() + 1);
-        step.setEqOracle(configuration.getEqOracle());
-        return step;
+        step.setStepNo(result.getSteps().size() + 1L);
+        result.getSteps().add(step);
+        return learnerResultStepRepository.save(step);
     }
 
-    public void saveStep(LearnerResult result, LearnerResultStep step)
-            throws NotFoundException, ValidationException {
-        learnerResultStepRepository.save(step);
-        learnerResultRepository.save(result);
+    public LearnerResultStep updateStep(LearnerResultStep step) {
+        return learnerResultStepRepository.save(step);
     }
 
-    public void delete(LearnerService learnerService, Long projectId, List<Long> testNos)
+    public void deleteAll(User user, Long projectId, List<Long> testNos)
             throws NotFoundException, ValidationException {
+        final Project project = projectDAO.getByID(user, projectId);
         final List<LearnerResult> results = learnerResultRepository.findByProject_IdAndTestNoIn(projectId, testNos);
-        checkIfResultsCanBeDeleted(results);
-        results.forEach(result -> {
-            parameterizedSymbolRepository.delete(result.getResetSymbol());
-            parameterizedSymbolRepository.deleteAll(result.getSymbols());
-            if (result.getPostSymbol() != null) {
-                parameterizedSymbolRepository.delete(result.getPostSymbol());
-            }
-        });
-
-        Long amountOfDeletedResults = learnerResultRepository.deleteByProject_IdAndTestNoIn(projectId, testNos);
-        if (amountOfDeletedResults != testNos.size()) {
-            throw new NotFoundException("Could not delete all results!");
+        for (LearnerResult result: results) {
+            checkAccess(user, project, result);
         }
+        checkIfResultsCanBeDeleted(results);
+        learnerResultRepository.deleteByProject_IdAndTestNoIn(projectId, testNos);
     }
 
-    private void initializeLazyRelations(List<LearnerResult> results, boolean includeSteps) {
-        results.forEach(r -> {
-            Hibernate.initialize(r.getResetSymbol());
-            ParameterizedSymbolDAO.loadLazyRelations(r.getResetSymbol());
-
-            if (r.getPostSymbol() != null) {
-                Hibernate.initialize(r.getPostSymbol());
-                ParameterizedSymbolDAO.loadLazyRelations(r.getPostSymbol());
-            }
-
-            Hibernate.initialize(r.getSymbols());
-            r.getSymbols().forEach(ParameterizedSymbolDAO::loadLazyRelations);
-
-            Hibernate.initialize(r.getEnvironments());
-            Hibernate.initialize(r.getDriverConfig());
-
-            if (includeSteps) {
-                Hibernate.initialize(r.getSteps());
-            }
-        });
+    public void initializeLazyRelations(LearnerResult result) {
+        learnerSetupDAO.initializeLazyRelations(result.getSetup());
+        Hibernate.initialize(result.getSteps());
     }
 
     private void checkIfResultsCanBeDeleted(List<LearnerResult> results)

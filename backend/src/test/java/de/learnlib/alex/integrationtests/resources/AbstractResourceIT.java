@@ -61,7 +61,7 @@ public abstract class AbstractResourceIT {
     }
 
     @Before
-    public void pre() {
+    public void pre() throws Exception {
     }
 
     @After

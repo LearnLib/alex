@@ -26,6 +26,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LearnerResultDetailsModalComponent } from '../../common/modals/learner-result-details-modal/learner-result-details-modal.component';
 import { Router } from '@angular/router';
+import { Page } from '../../entities/interfaces';
 
 /**
  * The controller for listing all final test results.
@@ -42,6 +43,8 @@ export class LearnerResultsViewComponent implements OnInit {
   /** The test results the user selected. */
   selectedResults: Selectable<LearnerResult, number>;
 
+  page: Page<LearnerResult>;
+
   constructor(private appStore: AppStoreService,
               private learnerResultApi: LearnerResultApiService,
               private toastService: ToastService,
@@ -50,17 +53,28 @@ export class LearnerResultsViewComponent implements OnInit {
               private router: Router) {
 
     this.results = [];
+    this.page = {};
     this.selectedResults = new Selectable<LearnerResult, number>(r => r.testNo);
   }
 
   ngOnInit(): void {
-    this.learnerResultApi.getAll(this.project.id).subscribe(
-      results => {
-        this.results = results.filter(r => r.status !== LearnerResultStatus.PENDING);
-        this.selectedResults.addItems(this.results);
+    this.loadLearnerResults();
+  }
+
+  loadLearnerResults(p: number = 0): void {
+    this.learnerResultApi.getAllByPage(this.project.id, p, 25).subscribe(
+      page => {
+        this.page = page;
+        const newResults = this.page.content;
+        newResults.forEach(r => this.results.push(r));
+        this.selectedResults.addItems(newResults);
       },
-      console.error
+      res => this.toastService.danger(`Failed to load reports. ${res.error.message}`)
     );
+  }
+
+  loadMoreLearnerResults(): void {
+    this.loadLearnerResults(Math.min(this.page.totalPages, this.page.number + 1));
   }
 
   /**
@@ -150,7 +164,7 @@ export class LearnerResultsViewComponent implements OnInit {
   }
 
   cloneResult(result: LearnerResult): void {
-    this.learnerResultApi.clone(result).subscribe(
+    this.learnerResultApi.copy(result).subscribe(
       clonedResult => {
         this.toastService.success('The result has been cloned.');
         this.results.push(clonedResult);

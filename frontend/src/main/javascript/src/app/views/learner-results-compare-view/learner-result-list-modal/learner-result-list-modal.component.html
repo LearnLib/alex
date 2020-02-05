@@ -25,9 +25,9 @@
                class="list-group-item cursor-pointer">
               <span *ngIf="result.error" class="badge badge-danger float-right">Failed</span>
               <strong>Test No <span>{{result.testNo}}</span></strong>,
-              [<span>{{result.algorithm.name|formatLearningAlgorithm}}</span>]
+              [<span>{{result.setup.algorithm.name | formatLearningAlgorithm}}</span>]
               <br>
-              <p class="text-muted" style="margin-bottom: 0">
+              <p class="text-muted mb-0">
                 Started: <span>{{result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}</span>
               </p>
             </a>

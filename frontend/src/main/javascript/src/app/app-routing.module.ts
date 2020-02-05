@@ -17,7 +17,7 @@ import { AuthGuard } from './guards/AuthGuard';
 import { ProjectGuard } from './guards/ProjectGuard';
 import { LtsFormulasViewComponent } from './views/lts-formulas-view/lts-formulas-view.component';
 import { LearnerResultsViewComponent } from './views/learner-results-view/learner-results-view.component';
-import { LearnerSetupViewComponent } from './views/learner-setup-view/learner-setup-view.component';
+import { LearnerSetupsViewComponent } from './views/learner-setups-view/learner-setups-view.component';
 import { SymbolViewComponent } from './views/symbol-view/symbol-view.component';
 import { TestsViewComponent } from './views/tests-view/tests-view.component';
 import { TestReportsViewComponent } from './views/test-reports-view/test-reports-view.component';
@@ -28,6 +28,8 @@ import { TestCaseResultsViewComponent } from './views/test-case-results-view/tes
 import { LearnerViewComponent } from './views/learner-view/learner-view.component';
 import { ErrorViewComponent } from './views/error-view/error-view.component';
 import { StatisticsCompareViewComponent } from './views/statistics-compare-view/statistics-compare-view.component';
+import { LearnerSetupsCreateViewComponent } from './views/learner-setups-create-view/learner-setups-create-view.component';
+import { LearnerSetupsEditViewComponent } from './views/learner-setups-edit-view/learner-setups-edit-view.component';
 
 const routes: Routes = [
   {
@@ -126,8 +128,22 @@ const routes: Routes = [
                     pathMatch: 'full'
                   },
                   {
-                    path: 'setup',
-                    component: LearnerSetupViewComponent
+                    path: 'setups',
+                    children: [
+                      {
+                        path: '',
+                        component: LearnerSetupsViewComponent,
+                        pathMatch: 'full'
+                      },
+                      {
+                        path: 'new',
+                        component: LearnerSetupsCreateViewComponent
+                      },
+                      {
+                        path: ':setupId',
+                        component: LearnerSetupsEditViewComponent
+                      }
+                    ]
                   },
                   {
                     path: 'results',

@@ -12,14 +12,6 @@
           <td>{{(result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm')}}</td>
         </tr>
         <tr>
-          <td><strong>Algorithm</strong></td>
-          <td>{{result.algorithm.name | formatLearningAlgorithm}}</td>
-        </tr>
-        <tr>
-          <td><strong>Browser</strong></td>
-          <td>{{result.driverConfig.name | formatWebBrowser}}</td>
-        </tr>
-        <tr>
           <td><strong>Status</strong></td>
           <td>
             <div *ngIf="result.error">

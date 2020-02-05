@@ -28,6 +28,7 @@ import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolStepRepository;
 import de.learnlib.alex.data.repositories.UploadableFileRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
+import de.learnlib.alex.learning.repositories.LearnerSetupRepository;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.repositories.TestExecutionConfigRepository;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
@@ -107,6 +108,9 @@ public class ProjectDAOTest {
     @Mock
     private UploadableFileRepository uploadableFileRepository;
 
+    @Mock
+    private LearnerSetupRepository learnerSetupRepository;
+
     private ProjectDAO projectDAO;
 
     private User user;
@@ -116,7 +120,7 @@ public class ProjectDAOTest {
         projectDAO = new ProjectDAO(projectRepository, learnerResultRepository, testReportRepository, fileDAO,
                 parameterizedSymbolRepository, symbolStepRepository, symbolActionRepository, environmentDAO,
                 projectUrlRepository, testExecutionConfigRepository, testDAO, environmentRepository, symbolGroupDAO,
-                testRepository, symbolParameterRepository, uploadableFileRepository);
+                testRepository, symbolParameterRepository, uploadableFileRepository, learnerSetupRepository);
         user = new User();
         user.setId(USER_ID);
     }

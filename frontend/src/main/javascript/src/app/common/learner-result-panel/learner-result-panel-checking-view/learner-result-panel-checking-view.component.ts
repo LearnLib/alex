@@ -86,6 +86,12 @@ export class LearnerResultPanelCheckingViewComponent implements OnInit {
     }
   }
 
+  removeFormula(i: number) {
+    const f = this.formulas[i];
+    this.formulas.splice(i, 1);
+    this.selectedFormulas.remove(f);
+  }
+
   check(): void {
     this.results = {};
 

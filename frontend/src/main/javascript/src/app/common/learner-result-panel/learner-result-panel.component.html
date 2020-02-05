@@ -2,7 +2,7 @@
   <div class="learn-result-panel-header d-flex flex-shrink-0">
 
     <ng-container *ngIf="result.steps.length > 0">
-      <ng-container *ngIf="result.algorithm.name !== ''">
+      <ng-container *ngIf="result.setup.algorithm.name !== ''">
         <div class="w-100 mr-1">
           <button class="btn btn-sm btn-default" (click)="openResultDetailsModal()">
             <i class="fas fa-fw fa-info"></i> Details
@@ -34,10 +34,10 @@
       <div class="btn-group btn-group-sm mb-0 ml-auto">
         <select [(ngModel)]="view" class="form-control btn-sm" style="width: 90px; height: 23px">
           <option [value]="'DEFAULT'">Default</option>
-          <ng-container *ngIf="result.algorithm.name !== ''">
+          <ng-container *ngIf="result.setup.algorithm.name !== ''">
             <option [value]="'TEST'">Tests</option>
             <option [value]="'MODEL_CHECKING'">Checking</option>
-            <option [value]="'DATA_STRUCTURE'" *ngIf="['LSTAR', 'DT', 'TTT'].indexOf(result.algorithm.name) > -1">Data
+            <option [value]="'DATA_STRUCTURE'" *ngIf="['LSTAR', 'DT', 'TTT'].indexOf(result.setup.algorithm.name) > -1">Data
               Structure
             </option>
           </ng-container>
@@ -67,12 +67,12 @@
 
         <ng-container *ngIf="view === 'DATA_STRUCTURE'">
           <discrimination-tree
-            *ngIf="['DT', 'TTT'].indexOf(result.algorithm.name) > -1"
+            *ngIf="['DT', 'TTT'].indexOf(result.setup.algorithm.name) > -1"
             [data]="result.steps[pointer].algorithmInformation"
           >
           </discrimination-tree>
           <observation-table
-            *ngIf="['LSTAR'].indexOf(result.algorithm.name) > -1"
+            *ngIf="['LSTAR'].indexOf(result.setup.algorithm.name) > -1"
             [data]="result.steps[pointer].algorithmInformation"
           >
           </observation-table>
@@ -96,14 +96,14 @@
             <button
               class="btn btn-default btn-block"
               (click)="exportObservationTable()"
-              *ngIf="['LSTAR'].indexOf(result.algorithm.name) > -1"
+              *ngIf="['LSTAR'].indexOf(result.setup.algorithm.name) > -1"
             >
               <i class="fas fa-fw fa-download"></i> CSV
             </button>
             <button
               class="btn btn-default btn-block"
               (click)="exportHypothesisAsSvg()"
-              *ngIf="['DT', 'TTT'].indexOf(result.algorithm.name) > -1"
+              *ngIf="['DT', 'TTT'].indexOf(result.setup.algorithm.name) > -1"
             >
               <i class="fas fa-fw fa-download"></i> SVG
             </button>

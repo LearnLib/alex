@@ -20,9 +20,7 @@ import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 import { Project } from '../../../entities/project';
 import { LearnerResult } from '../../../entities/learner-result';
 import { EqOracle } from '../../../entities/eq-oracles/eq-oracle';
-import { ProjectEnvironment } from '../../../entities/project-environment';
-import { Selectable } from '../../../utils/selectable';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 /**
@@ -34,7 +32,7 @@ import { FormGroup } from '@angular/forms';
   templateUrl: './learner-resume-settings-widget.component.html',
   styleUrls: ['./learner-resume-settings-widget.component.scss']
 })
-export class LearnerResumeSettingsWidgetComponent implements OnInit {
+export class LearnerResumeSettingsWidgetComponent {
 
   eqOracleTypes: any = eqOracleType;
 
@@ -53,14 +51,7 @@ export class LearnerResumeSettingsWidgetComponent implements OnInit {
   /** The selected symbol to add. */
   selectedSymbol: string = null;
 
-  selectedEnvironments: Selectable<ProjectEnvironment, number>;
-
   form = new FormGroup({});
-
-  ngOnInit(): void {
-    this.selectedEnvironments = new Selectable<ProjectEnvironment, number>(env => env.id);
-    this.selectedEnvironments.addItems(this.configuration.environments);
-  }
 
   addSelectedSymbol(): void {
     const id = parseInt(this.selectedSymbol);
@@ -74,9 +65,5 @@ export class LearnerResumeSettingsWidgetComponent implements OnInit {
    */
   setEqOracle(eqOracle: EqOracle): void {
     this.configuration.eqOracle = eqOracle;
-  }
-
-  updateEnvironments(): void {
-    this.configuration.environments = this.selectedEnvironments.getSelected();
   }
 }

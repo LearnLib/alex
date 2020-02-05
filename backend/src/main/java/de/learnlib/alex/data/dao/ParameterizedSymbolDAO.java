@@ -72,6 +72,10 @@ public class ParameterizedSymbolDAO {
         return parameterizedSymbolRepository.save(pSymbol);
     }
 
+    public void delete(ParameterizedSymbol pSymbol) {
+        parameterizedSymbolRepository.delete(pSymbol);
+    }
+
     public static void loadLazyRelations(ParameterizedSymbol pSymbol) {
         Hibernate.initialize(pSymbol.getParameterValues());
         Hibernate.initialize(pSymbol.getOutputMappings());

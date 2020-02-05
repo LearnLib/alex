@@ -16,9 +16,9 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
-import de.learnlib.alex.settings.entities.Settings;
 import de.learnlib.alex.integrationtests.resources.api.SettingsApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
+import de.learnlib.alex.settings.entities.Settings;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

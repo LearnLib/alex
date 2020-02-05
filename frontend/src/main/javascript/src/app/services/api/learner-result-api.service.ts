@@ -21,6 +21,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Page } from '../../entities/interfaces';
 
 /**
  * The resource that handles http request to the API to do CRUD operations on learn results.
@@ -38,9 +39,21 @@ export class LearnerResultApiService extends BaseApiService {
    * @param projectId The id of the project whose final learn results should be fetched.
    */
   getAll(projectId: number): Observable<LearnerResult[]> {
-    return this.http.get(`${env.apiUrl}/projects/${projectId}/results?embed=steps`, this.defaultHttpOptions)
+    return this.http.get(`${env.apiUrl}/projects/${projectId}/results`, this.defaultHttpOptions)
       .pipe(
         map((body: any) => body.map(lr => new LearnerResult(lr)))
+      );
+  }
+
+  getAllByPage(projectId: number, page: number, size: number): Observable<Page<LearnerResult>> {
+    const options = this.defaultHttpOptions;
+    options.params = {page, size};
+    return this.http.get(`${env.apiUrl}/projects/${projectId}/results`, options)
+      .pipe(
+        map((page: any) => {
+          page.content = page.content.map(lr => new LearnerResult(lr));
+          return page;
+        })
       );
   }
 
@@ -51,7 +64,7 @@ export class LearnerResultApiService extends BaseApiService {
    * @param testNo The number of the test run.
    */
   get(projectId: number, testNo: number): Observable<LearnerResult> {
-    return this.http.get(`${env.apiUrl}/projects/${projectId}/results/${testNo}?embed=steps`, this.defaultHttpOptions)
+    return this.http.get(`${env.apiUrl}/projects/${projectId}/results/${testNo}`, this.defaultHttpOptions)
       .pipe(
         map((body: any) => new LearnerResult(body))
       );
@@ -104,8 +117,8 @@ export class LearnerResultApiService extends BaseApiService {
    *
    * @param result The result to clone.
    */
-  clone(result: LearnerResult): Observable<LearnerResult> {
-    return this.http.post(`${env.apiUrl}/projects/${result.project}/results/${result.testNo}/clone`, {}, this.defaultHttpOptions)
+  copy(result: LearnerResult): Observable<LearnerResult> {
+    return this.http.post(`${env.apiUrl}/projects/${result.project}/results/${result.testNo}/copy`, {}, this.defaultHttpOptions)
       .pipe(
         map((body: any) => new LearnerResult(body))
       );

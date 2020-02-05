@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { ParametrizedSymbol } from './parametrized-symbol';
-import { ProjectEnvironment } from './project-environment';
+import { LearnerSetup } from './learner-setup';
 
 export enum LearnerResultStatus {
   PENDING = 'PENDING',
@@ -30,48 +29,29 @@ export enum LearnerResultStatus {
 export class LearnerResult {
 
   /** The ID of the learner result. */
-  public id: number;
-
-  /** The algorithm that is used. */
-  public algorithm: any;
-
-  /** The browser that is used. */
-  public driverConfig: any;
+  id: number;
 
   /** The project id of the learn result. */
-  public project: number;
-
-  /** The id of the reset symbol. */
-  public resetSymbol: ParametrizedSymbol;
-
-  /** The id of the post symbol. */
-  public postSymbol?: ParametrizedSymbol;
+  project: number;
 
   /** The cumulated statistics. */
-  public statistics: any;
+  statistics: any;
 
   /** The steps of the learn process. */
-  public steps: any[];
-
-  /** The input alphabet. */
-  public symbols: ParametrizedSymbol[];
+  steps: any[];
 
   /** The test number. */
-  public testNo: number;
+  testNo: number;
 
   /** If the learner encountered an error. */
-  public error: boolean;
+  error: boolean;
 
   /** The comment of the learn result. */
-  public comment: string;
+  comment: string;
 
-  /** The list of URLs. */
-  public environments: ProjectEnvironment[];
+  status: LearnerResultStatus;
 
-  /** If membership queries should be cached. */
-  public useMQCache: boolean;
-
-  public status: LearnerResultStatus;
+  setup: LearnerSetup;
 
   /**
    * Constructor.
@@ -80,19 +60,13 @@ export class LearnerResult {
    */
   constructor(obj: any = {}) {
     this.id = obj.id;
-    this.algorithm = obj.algorithm;
-    this.driverConfig = obj.driverConfig;
     this.project = obj.project;
-    this.resetSymbol = new ParametrizedSymbol(obj.resetSymbol);
-    this.postSymbol = obj.postSymbol != null ? new ParametrizedSymbol(obj.postSymbol) : null;
     this.statistics = obj.statistics;
     this.steps = obj.steps;
-    this.symbols = obj.symbols.map(s => new ParametrizedSymbol(s));
     this.testNo = obj.testNo;
     this.error = obj.error;
     this.comment = obj.comment;
-    this.environments = obj.environments || [];
-    this.useMQCache = obj.useMQCache;
     this.status = obj.status;
+    this.setup = LearnerSetup.fromData(obj.setup);
   }
 }

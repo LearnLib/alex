@@ -90,7 +90,7 @@ public class TestSuiteEQOracleProxy extends AbstractEquivalenceOracleProxy
 
         try {
             Map<String, String> symbolNameMapping = new HashMap<>();
-            result.getSymbols().forEach(s -> symbolNameMapping.put(s.getComputedName(), s.getAliasOrComputedName()));
+            result.getSetup().getSymbols().forEach(s -> symbolNameMapping.put(s.getComputedName(), s.getAliasOrComputedName()));
 
             testDAO.getTestCases(user, result.getProjectId(), testSuiteId, includeChildTestSuites).forEach(tc -> {
                 final Word<String> input = Word.fromList(
