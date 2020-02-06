@@ -1,8 +1,12 @@
 package db.migration;
 
+import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
 import org.flywaydb.core.api.migration.BaseJavaMigration;
 import org.flywaydb.core.api.migration.Context;
 
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -70,7 +74,8 @@ public class V1_16__LearnerSetups extends BaseJavaMigration {
             final Long resultId = learnerResult.getLong("ID");
 
             final ResultSet firstResultStep = connection.createStatement().executeQuery("SELECT EQ_ORACLE FROM LEARNER_RESULT_STEP WHERE RESULT_ID = " + resultId + " ORDER BY STEP_NO LIMIT 1");
-            firstResultStep.next();
+
+            final boolean hasSteps = firstResultStep.next();
 
             final PreparedStatement stmt = connection.prepareStatement(""
                     + "INSERT INTO LEARNER_SETUP ("
@@ -85,7 +90,7 @@ public class V1_16__LearnerSetups extends BaseJavaMigration {
                     + "SAVED"
                     + ") VALUES ("
                     + learnerResult.getLong("PROJECT_ID") +", "
-                    + learnerResult.getString("COMMENT") + ", "
+                    + "'" + learnerResult.getString("COMMENT") + "', "
                     + learnerResult.getBoolean("USEMQCACHE") + ", "
                     + learnerResult.getLong("RESET_SYMBOL_ID") + ", "
                     + learnerResult.getString("POST_SYMBOL_ID") + ", "
@@ -95,7 +100,20 @@ public class V1_16__LearnerSetups extends BaseJavaMigration {
                     + false + ")");
 
             stmt.setBlob(1, learnerResult.getBlob("ALGORITHM"));
-            stmt.setBlob(2, firstResultStep.getBlob("EQ_ORACLE"));
+
+            if (hasSteps) {
+                stmt.setBlob(2, firstResultStep.getBlob("EQ_ORACLE"));
+            } else {
+                final Blob blob = connection.createBlob();
+                final MealyRandomWordsEQOracleProxy eqOracleProxy = new MealyRandomWordsEQOracleProxy();
+                try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                     ObjectOutput out = new ObjectOutputStream(bos)) {
+                    out.writeObject(eqOracleProxy);
+                    blob.setBytes(1, bos.toByteArray());
+                }
+                stmt.setBlob(2, blob);
+            }
+
             stmt.execute();
 
             final ResultSet createdSetup = connection.createStatement().executeQuery("SELECT ID FROM LEARNER_SETUP ORDER BY ID DESC LIMIT 1");
