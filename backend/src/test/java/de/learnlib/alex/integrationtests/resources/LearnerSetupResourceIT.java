@@ -269,14 +269,18 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    private static abstract class IgnoreLearnerResultFieldsMixin {
+    public static abstract class IgnoreLearnerResultFieldsMixin {
         @JsonIgnore abstract void setStatistics(Statistics statistics);
         @JsonIgnore @JsonProperty("error") abstract void setError(Boolean error);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    private static abstract class IgnoreLearnerResultStepFieldsMixin {
+    public static abstract class IgnoreLearnerResultStepFieldsMixin {
         @JsonIgnore abstract void setStatistics(Statistics statistics);
         @JsonIgnore @JsonProperty("error") abstract void setError(boolean error);
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static abstract class IgnoreLearnerStatusFieldsMixin {
     }
 }

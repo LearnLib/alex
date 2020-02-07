@@ -16,11 +16,46 @@
 
 package de.learnlib.alex.integrationtests.resources.api;
 
+import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
+import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
+import de.learnlib.alex.learning.entities.ReadOutputConfig;
+
 import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Response;
 
 public class LearnerApi extends AbstractApi {
 
     public LearnerApi(Client client, int port) {
         super(client, port);
+    }
+
+    public Response start(Long projectId, LearnerStartConfiguration configuration, String jwt) {
+        return client.target(url(projectId) + "/start").request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .post(Entity.json(configuration));
+    }
+
+    public Response resume(Long projectId, Long testNo, LearnerResumeConfiguration configuration, String jwt) {
+        return client.target(url(projectId) + "/" + testNo + "/resume").request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .post(Entity.json(configuration));
+    }
+
+    public Response getStatus(Long projectId, String jwt) {
+        return client.target(url(projectId) + "/status").request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .get();
+    }
+
+    public Response readOutput(Long projectId, ReadOutputConfig config, String jwt) {
+        return client.target(url(projectId) + "/outputs").request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .post(Entity.json(config));
+    }
+
+    private String url(Long projectId) {
+        return baseUrl() + "/projects/" + projectId + "/learner";
     }
 }

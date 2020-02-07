@@ -123,8 +123,7 @@ public class LearnerService {
      * @throws NotFoundException
      *         If the symbols specified in the configuration could not be found.
      */
-    public LearnerResult start(User user, Project project, LearnerStartConfiguration startConfiguration)
-            throws IllegalArgumentException, IllegalStateException, NotFoundException {
+    public LearnerResult start(User user, Project project, LearnerStartConfiguration startConfiguration) {
 
         final LearnerSetup setup = startConfiguration.getSetup();
         final LearnerSetup createdSetup = setup.getId() != null ? setup : learnerSetupDAO.create(user, project.getId(), setup);
