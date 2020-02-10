@@ -18,6 +18,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { FormUtilsService } from '../../../services/form-utils.service';
+import { PromptOptions } from '../../../services/prompt.service';
 
 @Component({
   selector: 'prompt-modal',
@@ -31,7 +32,7 @@ export class PromptModalComponent implements OnInit {
 
   /** The value to display when the dialog is opened. */
   @Input()
-  defaultValue: string;
+  options: PromptOptions;
 
   @Input()
   validators: ValidatorFn[];
@@ -43,16 +44,28 @@ export class PromptModalComponent implements OnInit {
   constructor(public modal: NgbActiveModal,
               public formUtils: FormUtilsService) {
     this.validators = [];
+    this.options = {
+      required: true,
+      defaultValue: ''
+    };
   }
 
   ngOnInit(): void {
-    const validators = [...this.validators, Validators.required];
-
-    this.form.controls.input.setValue(this.defaultValue != null ? this.defaultValue : '');
+    const validators = [...this.validators];
+    if (this.options.required) validators.push(Validators.required);
+    this.form.controls.input.setValue(this.options.defaultValue);
     this.form.controls.input.setValidators(validators);
   }
 
   accept(): void {
     this.modal.close(this.form.controls.input.value.trim());
+  }
+
+  get okBtnText(): string {
+    return this.options.okBtnText != null ? this.options.okBtnText : 'Ok';
+  }
+
+  get cancelBtnText(): string {
+    return this.options.cancelBtnText != null ? this.options.cancelBtnText : 'Cancel';
   }
 }

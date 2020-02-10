@@ -66,7 +66,7 @@ export class LearnerResultDownloadService {
     });
 
     const name = `statistics-${results.map(r => r.testNo).join(',')}`;
-    return this.promptService.prompt('Enter a name for the csv file', name)
+    return this.promptService.prompt('Enter a name for the csv file', {defaultValue: name})
       .then(filename => this.downloadService.downloadCsv(csv, filename));
   }
 }

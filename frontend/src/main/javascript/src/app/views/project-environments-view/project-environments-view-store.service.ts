@@ -74,7 +74,7 @@ export class ProjectEnvironmentsViewStoreService {
   }
 
   editEnvironment(env: ProjectEnvironment): void {
-    this.promptService.prompt('Change the name of the environment', env.name).then(
+    this.promptService.prompt('Change the name of the environment', {defaultValue: env.name}).then(
       name => {
         const copy = env.copy();
         copy.name = name;

@@ -20,8 +20,12 @@
   </div>
 
   <div class="modal-footer">
-    <button class="btn btn-primary btn-sm" type="submit" [disabled]="form.invalid">Ok</button>
-    <button (click)="modal.dismiss(); $event.preventDefault()" class="btn btn-default btn-sm">Cancel</button>
+    <button class="btn btn-primary btn-sm" type="submit" [disabled]="form.invalid">
+      {{okBtnText}}
+    </button>
+    <button (click)="modal.dismiss(); $event.preventDefault()" class="btn btn-default btn-sm">
+      {{cancelBtnText}}
+    </button>
   </div>
 
 </form>

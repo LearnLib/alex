@@ -22,6 +22,7 @@ import { LearnerSetup } from '../../entities/learner-setup';
 import { ToastService } from '../../services/toast.service';
 import { LearnerApiService } from '../../services/api/learner-api.service';
 import { Router } from '@angular/router';
+import { PromptService } from '../../services/prompt.service';
 
 @Component({
   selector: 'learner-setups-create-view',
@@ -35,6 +36,7 @@ export class LearnerSetupsCreateViewComponent implements OnInit {
               private learnerSetupApi: LearnerSetupApiService,
               private toastService: ToastService,
               private learnerApi: LearnerApiService,
+              private promptService: PromptService,
               private router: Router) {
   }
 
@@ -56,21 +58,34 @@ export class LearnerSetupsCreateViewComponent implements OnInit {
 
   startLearning(): void {
     if (!this.canStartOrSaveLearningSetup) {
-      this.toastService.danger('You <strong>must</strong> selected a reset symbol in order to start learning!');
+      this.toastService.danger('You <strong>must</strong> select a reset symbol in order to start learning!');
       return;
     }
 
-    this.learnerApi.start(this.project.id, {setup: this.createLearnerSetup()}).subscribe(
-      result => {
-        this.toastService.success('Learner process started successfully.');
-        this.router.navigate(['/app', 'projects', this.project.id, 'learner'], {
-          queryParams: {
-            testNo: result.testNo
+    this.promptService.prompt('Enter a comment for the learning process', {
+      required: false,
+      okBtnText: 'Run',
+    })
+      .then(comment => {
+        const config = {
+          setup: this.createLearnerSetup(),
+          options: {
+            comment
           }
-        });
-      },
-      res => this.toastService.danger(`The process could not be started. ${res.error.message}`)
-    );
+        };
+
+        this.learnerApi.start(this.project.id, config).subscribe(
+          result => {
+            this.toastService.success('Learner process started successfully.');
+            this.router.navigate(['/app', 'projects', this.project.id, 'learner'], {
+              queryParams: {
+                testNo: result.testNo
+              }
+            });
+          },
+          res => this.toastService.danger(`The process could not be started. ${res.error.message}`)
+        );
+      });
   }
 
   get canStartOrSaveLearningSetup(): boolean {

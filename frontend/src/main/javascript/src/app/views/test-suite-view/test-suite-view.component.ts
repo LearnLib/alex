@@ -165,7 +165,7 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
   }
 
   editTest(test: any): void {
-    this.promptService.prompt(`Update the name for the test.`, test.name)
+    this.promptService.prompt(`Update the name for the test.`, {defaultValue: test.name})
       .then((name) => {
         if (name === test.name) {
           return;
@@ -317,7 +317,7 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
       this.toastService.info('You have to select at least one test.');
     } else {
       const name = `tests-${this.testSuite.name}-${DateUtils.YYYYMMDD()}`;
-      this.promptService.prompt('Enter a name for the file', name).then(name => {
+      this.promptService.prompt('Enter a name for the file', {defaultValue: name}).then(name => {
         this.testApi.export(this.project.id, {testIds: tests.map(t => t.id)}).subscribe(data => {
           this.downloadService.downloadObject(data, name);
           this.toastService.success('The tests have been exported.');

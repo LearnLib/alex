@@ -24,6 +24,7 @@ import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.dao.LearnerSetupDAO;
+import de.learnlib.alex.learning.entities.LearnerOptions;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.learning.entities.LearnerSetup;
@@ -124,9 +125,13 @@ public class LearnerService {
      *         If the symbols specified in the configuration could not be found.
      */
     public LearnerResult start(User user, Project project, LearnerStartConfiguration startConfiguration) {
-
         final LearnerSetup setup = startConfiguration.getSetup();
         final LearnerSetup createdSetup = setup.getId() != null ? setup : learnerSetupDAO.create(user, project.getId(), setup);
+
+        final LearnerOptions options = startConfiguration.getOptions();
+        if (options.getComment() == null || options.getComment().trim().equals("")) {
+            options.setComment(createdSetup.getName());
+        }
 
         LearnerResult result = new LearnerResult();
         result.setSetup(createdSetup);

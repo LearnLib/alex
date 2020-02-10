@@ -3,7 +3,7 @@
   <em>{{selectedTestSuite?.name}}</em>
 
   <div class="card">
-    <div class="card-body px-0 py-3" style="overflow: auto; max-height: 320px">
+    <div class="card-body px-3 py-3" style="overflow: auto; max-height: 320px">
       <test-suite-tree
         (selected)="onSelected($event)"
         *ngIf="root != null"

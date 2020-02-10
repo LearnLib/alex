@@ -30,6 +30,7 @@ import de.learnlib.alex.data.entities.actions.misc.SetVariableAction;
 import de.learnlib.alex.data.entities.actions.misc.SetVariableByJSONAttributeAction;
 import de.learnlib.alex.data.entities.actions.rest.CallAction;
 import de.learnlib.alex.data.entities.actions.rest.CheckStatusAction;
+import de.learnlib.alex.integrationtests.SpringRestError;
 import de.learnlib.alex.integrationtests.resources.api.LearnerApi;
 import de.learnlib.alex.integrationtests.resources.api.LearnerResultApi;
 import de.learnlib.alex.integrationtests.resources.api.ProjectApi;
@@ -158,6 +159,28 @@ public class LearnerResourceIT extends AbstractResourceIT {
 
         result = learn(result.getTestNo());
         assertLearnerResult(result, LearnerResult.Status.FINISHED, 2, 2);
+    }
+
+    @Test
+    public void failToResumeWithInvalidStepToContinueFrom() throws Exception {
+        startConfiguration.getSetup().setEquivalenceOracle(new SampleEQOracleProxy());
+
+        final Response res1 = learnerApi.start(project.getId(), startConfiguration, jwt);
+        assertEquals(HttpStatus.OK.value(), res1.getStatus());
+
+        final LearnerResult result = objectMapper.readValue(res1.readEntity(String.class), LearnerResult.class);
+
+        final LearnerResumeConfiguration resumeConfiguration = new LearnerResumeConfiguration();
+        resumeConfiguration.setStepNo(5); // does not exist
+        resumeConfiguration.setEqOracle(new SampleEQOracleProxy());
+
+        final Response res2 = learnerApi.resume(project.getId(), result.getTestNo(), resumeConfiguration, jwt);
+        assertEquals(HttpStatus.BAD_REQUEST.value(), res2.getStatus());
+        res2.readEntity(SpringRestError.class);
+
+        final Response res3 = learnerApi.getStatus(project.getId(), jwt);
+        final LearnerStatus status = objectMapper.readValue(res3.readEntity(String.class), LearnerStatus.class);
+        assertEquals(0, status.getQueue().size());
     }
 
     @Test
