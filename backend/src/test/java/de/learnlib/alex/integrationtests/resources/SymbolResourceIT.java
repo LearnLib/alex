@@ -98,15 +98,6 @@ public class SymbolResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void shouldNotCreateSymbolIfProjectIdsDoNotMatch() throws Exception {
-        final String symbol = createSymbolWithProjectJson(projectId1, "s1");
-        final Response res = symbolApi.create(projectId2, symbol, jwtUser1);
-
-        assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
-        assertEquals(0, getNumberOfSymbols(projectId1, jwtUser1));
-    }
-
-    @Test
     public void shouldCreateADefaultSymbol() throws Exception {
         final String symbol = createSymbolWithProjectJson(projectId1, "s1");
         final Response res = symbolApi.create(projectId1, symbol, jwtUser1);

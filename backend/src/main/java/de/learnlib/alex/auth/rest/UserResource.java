@@ -142,7 +142,6 @@ public class UserResource {
         }
     }
 
-    //todo: new policy?
     /**
      * Get the account information about one user. This only works for your own account or if you are an administrator.
      *
@@ -183,7 +182,7 @@ public class UserResource {
         LOGGER.traceEntry("get({}) for user {}.", userIds, user);
 
         final List<User> users = new ArrayList<>();
-        userIds.stream().forEach(userId -> {
+        userIds.forEach(userId -> {
             users.add(userDAO.getById(userId));
         });
         LOGGER.traceExit(users);
@@ -263,7 +262,7 @@ public class UserResource {
             LOGGER.traceExit(realUser);
 
             webhookService.fireEvent(user, new UserEvent.CredentialsUpdated(userId));
-            return ResponseEntity.ok(user);
+            return ResponseEntity.ok(realUser);
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.changePassword", HttpStatus.FORBIDDEN, e);
@@ -444,7 +443,7 @@ public class UserResource {
         // the event is not fired if we do it after the user is deleted in the next line
         // since all webhooks registered to the user are deleted as well.
         webhookService.fireEvent(new User(userId), new UserEvent.Deleted(userId));
-        userDAO.delete(userId);
+        userDAO.delete(user, userId);
 
         LOGGER.traceExit("User {} deleted.", userId);
         return ResponseEntity.noContent().build();
@@ -471,7 +470,7 @@ public class UserResource {
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", HttpStatus.BAD_REQUEST, e);
         }
 
-        userDAO.delete(ids);
+        userDAO.delete(user, ids);
         LOGGER.traceExit("User(s) {} deleted.", ids);
 
         ids.forEach(id -> webhookService.fireEvent(new User(id), new UserEvent.Deleted(id)));

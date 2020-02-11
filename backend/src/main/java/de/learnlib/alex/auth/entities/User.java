@@ -79,10 +79,12 @@ public class User implements Serializable {
 
     /** The set of projects in which the user is an owner. */
     @ManyToMany(mappedBy = "owners")
+    @JsonIgnore
     private Set<Project> projectsOwner;
 
     /** The set of projects in which the user is a member. */
     @ManyToMany(mappedBy = "members")
+    @JsonIgnore
     private Set<Project> projectsMember;
 
     /** The list of webhooks. */
@@ -202,7 +204,7 @@ public class User implements Serializable {
     /**
      * @return The list of ids of projects in which the user is a member.
      */
-    @JsonProperty("projectsMember")
+    @JsonIgnore
     public List<Long> getProjectsMemberIds() {
         return this.projectsMember.stream().map(Project::getId).collect(Collectors.toList());
     }
@@ -210,7 +212,7 @@ public class User implements Serializable {
     /**
      * @return The list of ids of projects in which the user is an owner.
      */
-    @JsonProperty("projectsOwner")
+    @JsonIgnore
     public List<Long> getProjectsOwnerIds() {
         return this.projectsOwner.stream().map(Project::getId).collect(Collectors.toList());
     }

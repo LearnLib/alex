@@ -57,7 +57,7 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
         assertTrue(project.getId() > 0L);
     }
 
-    //todo chicken/egg problem
+    //TODO: this shouldn't be a contraint in db ...
     @Test(expected = DataIntegrityViolationException.class)
     public void shouldFailToSaveAProjectWithoutAnUser() {
         Project project = new Project();
@@ -72,6 +72,7 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
         projectRepository.save(project); // should fail
     }
 
+    //TODO: new policy: duplicate names allowed
     @Test(expected = DataIntegrityViolationException.class)
     public void shouldFailToSaveAProjectsWithADuplicateNamesForOneUser() {
         Project project1 = createProject(user, "Test Project");
@@ -80,7 +81,6 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
         projectRepository.save(project2); // should fail
     }
 
-    //todo project name prob
     @Test
     public void shouldSaveAProjectsWithADuplicateNameForMultipleUsers() {
         User otherUser = createUser("foo@test.example");

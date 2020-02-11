@@ -6,7 +6,7 @@ import org.flywaydb.core.api.migration.Context;
 import java.sql.Connection;
 import java.sql.ResultSet;
 
-public class V1_11__SharedProjects extends BaseJavaMigration {
+public class V1_16__SharedProjects extends BaseJavaMigration {
     public void migrate(Context context) throws Exception {
         final Connection connection = context.getConnection();
 

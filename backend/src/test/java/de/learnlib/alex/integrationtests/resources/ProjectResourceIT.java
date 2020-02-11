@@ -152,10 +152,10 @@ public class ProjectResourceIT extends AbstractResourceIT {
     @Test
     public void shouldNotGetProjectOfAnotherUser() {
         final Response res1 =
-                projectApi.create(createProjectJson("test", "http://localhost:8080"), userJwt);
+                projectApi.create(createProjectJson("test", "http://localhost:8080"), adminJwt);
         final int projectId = JsonPath.read(res1.readEntity(String.class), "id");
 
-        final Response res2 = projectApi.get(projectId, adminJwt);
+        final Response res2 = projectApi.get(projectId, userJwt);
         assertEquals(HttpStatus.UNAUTHORIZED.value(), res2.getStatus());
     }
 
@@ -210,21 +210,20 @@ public class ProjectResourceIT extends AbstractResourceIT {
 
     @Test
     public void shouldNotDeleteTheProjectOfAnotherUser() {
-        projectApi.create(createProjectJson("test1", "http://localhost:8080"), adminJwt);
+        final Response res1 = projectApi.create(createProjectJson("test1", "http://localhost:8080"), adminJwt);
+        final int projectId = JsonPath.read(res1.readEntity(String.class), "id");
 
-        final Response res2 =
-                projectApi.create(createProjectJson("test2", "http://localhost:8080"), userJwt);
-        final int projectId2 = JsonPath.read(res2.readEntity(String.class), "id");
-
-        final Response res3 = projectApi.delete(projectId2, adminJwt);
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), res3.getStatus());
+        final Response res2 = projectApi.delete(projectId, userJwt);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res2.getStatus());
     }
 
     @Test
     public void shouldAddMembers() throws Exception {
         final Response res1 =
                 projectApi.create(createProjectJson("test", "http://localhost:8080"), adminJwt);
-        final int projectId = JsonPath.read(res1.readEntity(String.class), "id");
+
+        final JsonNode project = objectMapper.readTree(res1.readEntity(String.class));
+        final int projectId = project.get("id").asInt();
 
         final Response res2 =
                 userApi.create("{\"email\":\"test2@test.de\",\"username\":\"test2\",\"password\":\"test2\"}");
@@ -400,8 +399,8 @@ public class ProjectResourceIT extends AbstractResourceIT {
     public void shouldNotAllowMembersToManipulateProject() throws Exception {
         final Response res1 =
                 projectApi.create(createProjectJson("test", "http://localhost:8080"), adminJwt);
-        final int projectId = JsonPath.read(res1.readEntity(String.class), "id");
         final JsonNode project = objectMapper.readTree(res1.readEntity(String.class));
+        final int projectId = project.get("id").asInt();
 
         final Response res2 =
                 userApi.create("{\"email\":\"test2@test.de\",\"username\":\"test2\",\"password\":\"test2\"}");
@@ -457,24 +456,7 @@ public class ProjectResourceIT extends AbstractResourceIT {
 
         final Response res4 =
                 projectApi.removeOwners(projectId, Arrays.asList("1", String.valueOf(userId1)), adminJwt);
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), res4.getStatus());
-
-        final Response res5 =
-                projectApi.addMembers(projectId, Arrays.asList("1", String.valueOf(userId1)), adminJwt);
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), res5.getStatus());
-    }
-
-    @Test
-    public void shouldNotAllowMembersToManipulateProjectEnvironments() throws Exception {
-        final Response res1 =
-                projectApi.create(createProjectJson("test", "http://localhost:8080"), adminJwt);
-        final int projectId = JsonPath.read(res1.readEntity(String.class), "id");
-        final JsonNode project = objectMapper.readTree(res1.readEntity(String.class));
-
-        final Response res2 =
-                userApi.create("{\"email\":\"test2@test.de\",\"username\":\"test2\",\"password\":\"test2\"}");
-        final int userId1 = JsonPath.read(res2.readEntity(String.class), "id");
-        final String userId1Jwt = userApi.login("test2@test.de", "test2");
+        assertEquals(HttpStatus.BAD_REQUEST.value(), res4.getStatus());
     }
 
     @Test

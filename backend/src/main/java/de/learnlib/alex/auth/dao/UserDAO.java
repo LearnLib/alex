@@ -24,8 +24,12 @@ import de.learnlib.alex.data.dao.FileDAO;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.repositories.ProjectRepository;
+import de.learnlib.alex.settings.dao.SettingsDAO;
+import de.learnlib.alex.settings.entities.Settings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -44,6 +48,8 @@ import java.util.List;
 public class UserDAO {
 
     private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final int MAX_USERNAME_LENGTH = 32;
 
     /** The UserRepository to use. Will be injected. */
     private final UserRepository userRepository;
@@ -78,16 +84,25 @@ public class UserDAO {
         this.projectRepository = projectRepository;
     }
 
-    public void create(User user) throws ValidationException {
-        if (userRepository.findOneByEmail(user.getEmail()) != null) {
+    public void create(User newUser) throws ValidationException, UnauthorizedException {
+
+        if (userRepository.findOneByEmail(newUser.getEmail()) != null) {
             throw new ValidationException("A user with the email already exists");
         }
 
-        if (userRepository.findOneByUsername(user.getUsername()) != null) {
+        if (userRepository.findOneByUsername(newUser.getUsername()) != null) {
             throw new ValidationException("A user with this username already exists");
         }
 
-        saveUser(user);
+        if (!new EmailValidator().isValid(newUser.getEmail(), null)) {
+            throw new ValidationException("The email is not valid");
+        }
+
+        if (newUser.getUsername().length() > MAX_USERNAME_LENGTH || !newUser.getUsername().matches("^[a-zA-Z][a-zA-Z0-9]*$")) {
+            throw new ValidationException("The username is not valid!");
+        }
+
+        saveUser(newUser);
     }
 
     public List<User> getAll() {
@@ -129,22 +144,23 @@ public class UserDAO {
         saveUser(user);
     }
 
-    public void delete(Long id) throws NotFoundException {
-        delete(getById(id));
+    public void delete(User authUser, Long id) throws NotFoundException {
+        delete(authUser, getById(id));
     }
 
-    public void delete(List<Long> userIds) throws NotFoundException {
+    public void delete(User authUser, List<Long> userIds) throws NotFoundException {
+
         final List<User> users = userRepository.findAllByIdIn(userIds);
         if (users.size() != userIds.size()) {
             throw new NotFoundException("At least one user could not be found.");
         }
 
         for (User user : users) {
-            delete(user);
+            delete(authUser, user);
         }
     }
 
-    private void delete(User user) throws NotFoundException {
+    private void delete(User authUser, User user) throws NotFoundException {
         // make sure there is at least one registered admin
         if (user.getRole().equals(UserRole.ADMIN)) {
             List<User> admins = userRepository.findByRole(UserRole.ADMIN);
@@ -167,7 +183,7 @@ public class UserDAO {
 
             //remove the project if there is none owner left
             if (project.getOwners().isEmpty()) {
-                projectDAO.delete(user, project.getId());
+                projectDAO.delete(authUser, project.getId());
                 try {
                     fileDAO.deleteProjectDirectory(user, project.getId());
                 } catch (IOException e) {
@@ -194,5 +210,5 @@ public class UserDAO {
             throw new ValidationException("The User was not created because it did not pass the validation!", e);
         }
     }
-
 }
+

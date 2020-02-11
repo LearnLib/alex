@@ -49,7 +49,7 @@ public abstract class AbstractRepositoryIT {
 
     @After
     public void tearDown() throws Exception {
-        userDAO.delete(
+        userDAO.delete(userDAO.getById(Long.valueOf("1")),
                 userRepository.findAll().stream()
                         .map(User::getId)
                         .filter(id -> id > 1)// delete all but the admin

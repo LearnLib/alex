@@ -241,7 +241,10 @@ public class Project implements Serializable {
      */
     @JsonIgnore
     public void setOwners(List<User> owners) {
-        this.owners = owners;
+
+        if ( owners != null) {
+            this.owners = owners;
+        }
     }
 
     /**
@@ -267,7 +270,9 @@ public class Project implements Serializable {
 
     @JsonIgnore
     public void setMembers(List<User> members) {
-        this.members = members;
+        if (members != null) {
+            this.members = members;
+        }
     }
 
     @JsonIgnore

@@ -19,6 +19,7 @@ package de.learnlib.alex.data.dao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.auth.dao.UserDAO;
 import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.auth.entities.UserRole;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.CreateProjectForm;
 import de.learnlib.alex.data.entities.Project;
@@ -122,6 +123,7 @@ public class ProjectDAO {
         this.testRepository = testRepository;
         this.symbolParameterRepository = symbolParameterRepository;
         this.uploadableFileRepository = uploadableFileRepository;
+        this.userDAO = userDAO;
     }
 
     public Project create(final User user, final CreateProjectForm projectForm) throws ValidationException {
@@ -186,7 +188,7 @@ public class ProjectDAO {
         final Project projectInDb = projectRepository.findById(projectId).orElse(null);
         checkAccess(user, projectInDb);
 
-        if (!projectInDb.getOwners().contains(user)) {
+        if (!projectInDb.getOwners().contains(user) && user.getRole() != UserRole.ADMIN) {
             throw new UnauthorizedException("You are not allowed to update this project.");
         }
 
@@ -208,7 +210,7 @@ public class ProjectDAO {
         final Project project = projectRepository.findById(projectId).orElse(null);
         checkAccess(user, project);
 
-        if (!project.getOwners().contains(user)) {
+        if (!project.getOwners().contains(user) && user.getRole() != UserRole.ADMIN) {
             throw new UnauthorizedException("You are not allowed to delete this project.");
         }
 
@@ -364,7 +366,9 @@ public class ProjectDAO {
             throw new NotFoundException("The project does not exist.");
         }
 
-        if (!project.getOwners().contains(user) && !project.getMembers().contains(user)) {
+        if (project.getOwners().stream().noneMatch(u -> u.getId().equals(user.getId()))
+                && project.getMembers().stream().noneMatch(u -> u.getId().equals(user.getId()))
+                && user.getRole() != UserRole.ADMIN) {
             throw new UnauthorizedException("You are not allowed to access the project.");
         }
     }
@@ -373,7 +377,7 @@ public class ProjectDAO {
         final Project projectInDb = projectRepository.findById(projectId).orElse(null);
         checkAccess(user, projectInDb);
 
-        if (!projectInDb.getOwners().contains(user)) {
+        if (!projectInDb.getOwners().contains(user) && user.getRole() != UserRole.ADMIN) {
             throw new UnauthorizedException("You are not allowed to add users as owners to the project.");
         }
 
@@ -394,7 +398,7 @@ public class ProjectDAO {
         final Project projectInDb = projectRepository.findById(projectId).orElse(null);
         checkAccess(user, projectInDb);
 
-        if (!projectInDb.getOwners().contains(user)) {
+        if (!projectInDb.getOwners().contains(user) && user.getRole() != UserRole.ADMIN) {
             throw new UnauthorizedException("You are not allowed to add users as members to the project.");
         }
 
@@ -415,7 +419,7 @@ public class ProjectDAO {
         final Project projectInDb = projectRepository.findById(projectId).orElse(null);
         checkAccess(user, projectInDb);
 
-        if (!projectInDb.getOwners().contains(user)) {
+        if (!projectInDb.getOwners().contains(user) && user.getRole() != UserRole.ADMIN) {
             throw new UnauthorizedException("You are not allowed to remove owners from the the project.");
         }
 
@@ -435,7 +439,9 @@ public class ProjectDAO {
         final Project projectInDb = projectRepository.findById(projectId).orElse(null);
         checkAccess(user, projectInDb);
 
-        if (!(projectInDb.getOwners().contains(user) || (memberIds.size() == 1 && memberIds.contains(user.getId())))) {
+        if (!projectInDb.getOwners().contains(user)
+                && !(memberIds.size() == 1 && memberIds.contains(user.getId()))
+                && user.getRole() != UserRole.ADMIN) {
             throw new UnauthorizedException("You are not allowed to remove members from the project.");
         }
 
