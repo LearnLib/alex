@@ -46,6 +46,13 @@ body {
   visibility: hidden;
 }
 
+.visually-hidden {
+  visibility: hidden;
+  overflow: hidden;
+  width: 0;
+  height: 0;
+}
+
 .text-wrap {
   word-wrap: break-word;
 }

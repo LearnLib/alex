@@ -24,7 +24,8 @@
       </div>
 
       <div *ngIf="reports.length > 0">
-        <table class="table table-striped">
+        <div class="table-responsive">
+          <table class="table table-striped">
           <thead>
           <tr>
             <th>&nbsp;</th>
@@ -92,6 +93,7 @@
           </tr>
           </tbody>
         </table>
+        </div>
         <hr>
 
         <pagination (next)="nextPage()" (previous)="previousPage()" [page]="page"></pagination>

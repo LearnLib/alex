@@ -87,7 +87,7 @@
                     <td>
                       <span class="badge badge-secondary mr-3">{{url.name}}</span>
                     </td>
-                    <td>
+                    <td class="text-break">
                       {{url.url}}
                     </td>
                     <td>
@@ -137,7 +137,7 @@
                     <td>
                       <strong style="white-space: nowrap">{{v.name}}</strong>
                     </td>
-                    <td>{{v.value}}</td>
+                    <td class="text-break">{{v.value}}</td>
                     <td>
                       <div class="btn-group btn-group-sm actions">
                         <button (click)="store.editVariable(env, v)" class="btn btn-outline-secondary" ngbTooltip="Edit"

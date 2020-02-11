@@ -26,13 +26,23 @@
       </table>
 
       <div style="line-height: 2.4rem">
-        <a [routerLink]="['learner']" [queryParams]="{testNo: result.testNo}" class="btn btn-sm btn-default mr-2">
+        <a
+          [routerLink]="['learner']"
+          [queryParams]="{testNo: result.testNo}"
+          class="btn btn-default mr-md-2 btn-block btn-md-sm"
+        >
           <i class="fas fa-fw fa-play"></i> Continue learning
         </a>
-        <a [routerLink]="['learner', 'results', result.id]" class="btn btn-sm btn-default mr-2">
+        <a
+          [routerLink]="['learner', 'results', result.id]"
+          class="btn btn-default mr-md-2 btn-block btn-md-sm"
+        >
           <i class="fas fa-fw fa-eye"></i> Show result
         </a>
-        <a [routerLink]="['learner', 'statistics', result.testNo]" class="btn btn-sm btn-default">
+        <a
+          [routerLink]="['learner', 'statistics', result.testNo]"
+          class="btn btn-default mr-md-2 btn-block btn-md-sm"
+        >
           <i class="fas fa-fw fa-chart-bar"></i> Show statistics
         </a>
       </div>

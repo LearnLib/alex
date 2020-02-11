@@ -36,13 +36,14 @@
         </div>
       </form>
 
-      <table class="table">
+      <div class="table-responsive">
+        <table class="table">
         <thead>
         <tr>
           <th width="1">&nbsp;</th>
-          <th width="1">ID</th>
+          <th width="1" class="d-none d-md-table-cell">ID</th>
           <th width="1">Username</th>
-          <th width="1">Email</th>
+          <th>Email</th>
           <th>Role</th>
           <th></th>
         </tr>
@@ -56,9 +57,9 @@
             >
             </selectable-checkbox>
           </td>
-          <td>{{user.id}}</td>
+          <td class="d-none d-md-table-cell">{{user.id}}</td>
           <td>{{user.username}}</td>
-          <td>{{user.email}}</td>
+          <td class="text-break">{{user.email}}</td>
           <td>
             <span
               [ngClass]="{
@@ -81,6 +82,7 @@
         </tr>
         </tbody>
       </table>
+      </div>
 
       <div class="alert alert-info" *ngIf="(filteredUsers$ | async).length === 0">
         No user matches "<em>{{searchForm.controls.value.value}}</em>".

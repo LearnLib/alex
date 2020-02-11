@@ -19,8 +19,7 @@ import { Project } from '../../../entities/project';
 
 @Component({
   selector: 'project-details-widget',
-  templateUrl: './project-details-widget.component.html',
-  styleUrls: ['./project-details-widget.component.scss']
+  templateUrl: './project-details-widget.component.html'
 })
 export class ProjectDetailsWidgetComponent {
 

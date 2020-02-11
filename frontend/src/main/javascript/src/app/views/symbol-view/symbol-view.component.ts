@@ -145,14 +145,16 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
    * @param action The action to add.
    */
   addAction(action: Action): void {
-    this.symbol.steps.push({
+    const step = {
       _id: uniqueId(),
       type: 'action',
       errorOutput: null,
       negated: false,
       ignoreFailure: false,
       action: this.actionService.create(JSON.parse(JSON.stringify(action)))
-    });
+    };
+    this.symbol.steps.push(step);
+    this.selectedSteps.addItem(step);
   }
 
   /**
@@ -166,14 +168,16 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
         return;
       }
 
-      this.symbol.steps.push({
+      const step = {
         _id: uniqueId(),
         type: 'symbol',
         errorOutput: null,
         negated: false,
         ignoreFailure: false,
         pSymbol: ParametrizedSymbol.fromSymbol(symbol)
-      });
+      };
+      this.symbol.steps.push(step);
+      this.selectedSteps.addItem(step);
     }).catch(() => {});
   }
 
@@ -183,7 +187,9 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
    * @param $index The index of the step to delete.
    */
   deleteStep($index: number): void {
+    const step = this.symbol.steps[$index];
     this.symbol.steps.splice($index, 1);
+    this.selectedSteps.remove(step);
   }
 
   /**
