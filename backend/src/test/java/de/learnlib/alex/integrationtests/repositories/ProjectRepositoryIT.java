@@ -57,14 +57,6 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
         assertTrue(project.getId() > 0L);
     }
 
-    //TODO: this shouldn't be a contraint in db ...
-    @Test(expected = DataIntegrityViolationException.class)
-    public void shouldFailToSaveAProjectWithoutAnUser() {
-        Project project = new Project();
-        project.setName("Test Project");
-        projectRepository.save(project); // should fail
-    }
-
     @Test(expected = TransactionSystemException.class)
     public void shouldFailToSaveAProjectWithoutAName() {
         Project project = new Project();
