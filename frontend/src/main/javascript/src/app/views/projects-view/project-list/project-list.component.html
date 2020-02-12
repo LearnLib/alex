@@ -1,0 +1,50 @@
+<div class="list-group">
+  <div class="list-group-item d-flex flex-row" *ngFor="let project of projects">
+    <selectable-checkbox [item]="project" [selectable]="selectable"></selectable-checkbox>
+    <div class="px-3 w-100">
+      <a [routerLink]="[project.id]">
+        <h5 class="list-group-item-heading mb-0">
+          <strong>{{project.name}}</strong>
+        </h5>
+      </a>
+      <p class="text-muted mb-0 text-break">
+        {{project.getDefaultEnvironment().urls[0].url}}
+      </p>
+      <ng-container *ngIf="project.description != null">
+        <hr class="my-1">
+        <p class="text-muted mb-0">
+          <em>{{project.description}}</em>
+        </p>
+      </ng-container>
+    </div>
+    <div *ngIf="isProjectOwner(project)">
+      <span class="badge badge-danger mx-2">Owner</span>
+    </div>
+    <div class="d-inline-block" ngbDropdown placement="bottom-right">
+      <button class="btn btn-sm btn-icon no-caret" ngbDropdownToggle>
+        <i class="fas fa-fw fa-bars"></i>
+      </button>
+      <div ngbDropdownMenu>
+        <a [routerLink]="[project.id]" ngbDropdownItem>
+          <i class="fas fa-fw fa-external-link-alt"></i> Open
+        </a>
+        <div class="dropdown-divider"></div>
+        <ng-container *ngIf="isProjectOwner(project)">
+          <button (click)="store.editProject(project)" ngbDropdownItem>
+            <i class="fas fa-edit fa-fw"></i> Edit
+          </button>
+          <button (click)="store.exportProject(project)" ngbDropdownItem>
+            <i class="fas fa-download fa-fw"></i> Export
+          </button>
+          <button (click)="store.deleteProject(project)" ngbDropdownItem>
+            <i class="fas fa-trash fa-fw"></i> Delete
+          </button>
+          <div class="dropdown-divider"></div>
+        </ng-container>
+        <button (click)="store.leaveProject(project)" ngbDropdownItem>
+          <i class="fas fa-sign-out-alt fa-fw"></i> Leave
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

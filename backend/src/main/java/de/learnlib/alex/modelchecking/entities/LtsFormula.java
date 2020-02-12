@@ -95,15 +95,6 @@ public class LtsFormula implements Serializable {
     }
 
     public void setFormula(String formula) {
-        this.formula = formula;
+        this.formula = formula == null ? "" : formula;
     }
-
-    @Override
-    public String toString() {
-        return "LtsFormula{"
-                + "name='" + name + '\''
-                + ", formula='" + formula + '\''
-                + '}';
-    }
-
 }

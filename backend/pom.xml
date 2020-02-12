@@ -50,8 +50,8 @@
 
         <!-- dependencies versions -->
         <jersey.version>2.27</jersey.version>
-        <learnlib.version>0.14.0</learnlib.version>
-        <automatalib.version>0.8.0</automatalib.version>
+        <learnlib.version>0.15.0</learnlib.version>
+        <automatalib.version>0.9.0</automatalib.version>
         <selenium.version>3.141.59</selenium.version>
         <htmlunitdriver.version>2.33.2</htmlunitdriver.version>
         <jose4j.version>0.6.4</jose4j.version>

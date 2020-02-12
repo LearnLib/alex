@@ -25,6 +25,7 @@ import de.learnlib.alex.modelchecking.entities.LtsCheckingConfig;
 import de.learnlib.alex.modelchecking.entities.LtsCheckingResult;
 import de.learnlib.alex.modelchecking.entities.LtsFormula;
 import net.automatalib.automata.transducers.impl.compact.CompactMealy;
+import net.automatalib.modelcheckers.ltsmin.LTSminLTLParser;
 import net.automatalib.modelcheckers.ltsmin.ltl.LTSminLTLIO;
 import net.automatalib.modelcheckers.ltsmin.ltl.LTSminLTLIOBuilder;
 import net.automatalib.modelchecking.Lasso;
@@ -68,6 +69,12 @@ public class LtsCheckingService {
      *         If the project or a lts formula could not be found.
      */
     public List<LtsCheckingResult> check(User user, Long projectId, LtsCheckingConfig config) throws NotFoundException {
+        for (LtsFormula formula: config.getFormulas()) {
+            if (!LTSminLTLParser.isValidIOFormula(formula.getFormula())) {
+                throw new IllegalArgumentException("Formula '" + formula.getFormula() + "' is not formatted correctly");
+            }
+        }
+
         final LearnerResult learnerResult = learnerResultDAO.get(user, projectId, config.getLearnerResultId());
         final LearnerResultStep step = learnerResult.getSteps().get(config.getStepNo() - 1);
 

@@ -24,7 +24,8 @@ import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachinePro
 import de.learnlib.alex.learning.entities.learnlibproxies.DefaultQueryProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
 import net.automatalib.automata.transducers.MealyMachine;
-import net.automatalib.words.impl.SimpleAlphabet;
+import net.automatalib.words.Alphabet;
+import net.automatalib.words.impl.GrowingMapAlphabet;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -181,18 +182,6 @@ public class LearnerResultStep implements Serializable {
     @JsonProperty("hypothesis")
     public void setHypothesis(CompactMealyMachineProxy hypothesis) {
         this.hypothesis = hypothesis;
-    }
-
-    /**
-     * Set a new hypothesis (as proxy) for the result based on a MealyMachine from the LearnLib.
-     *
-     * @param mealyMachine
-     *         The new hypothesis as MealyMachine from the LearnLib.
-     */
-    @Transient
-    @JsonIgnore
-    public void createHypothesisFrom(MealyMachine<?, String, ?, String> mealyMachine) {
-        this.hypothesis = CompactMealyMachineProxy.createFrom(mealyMachine, new SimpleAlphabet<>(result.getSetup().getSigma()));
     }
 
     /**

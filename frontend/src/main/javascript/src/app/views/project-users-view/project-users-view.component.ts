@@ -15,14 +15,8 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-//import { AdminUsersViewStoreService } from './admin-users-view-store.service';
 import { AppStoreService } from '../../services/app-store.service';
-import { User } from '../../entities/user';
-import { FormControl, FormGroup } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { orderBy } from 'lodash';
-import {ProjectUsersViewStoreService} from "./project-users-view-store.service";
+import { ProjectUsersViewStoreService } from './project-users-view-store.service';
 
 @Component({
   selector: 'project-users-view',
@@ -31,7 +25,6 @@ import {ProjectUsersViewStoreService} from "./project-users-view-store.service";
 })
 export class ProjectUsersViewComponent implements OnInit {
 
-
   constructor(public store: ProjectUsersViewStoreService,
               public appStore: AppStoreService) {
   }
@@ -39,7 +32,5 @@ export class ProjectUsersViewComponent implements OnInit {
   ngOnInit() {
     this.store.load();
   }
-
-
 
 }

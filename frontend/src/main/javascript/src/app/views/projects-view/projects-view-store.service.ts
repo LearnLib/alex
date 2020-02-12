@@ -29,7 +29,7 @@ import { removeItems, replaceItem } from '../../utils/list-utils';
 import { EditProjectModalComponent } from './edit-project-modal/edit-project-modal.component';
 import { map } from 'rxjs/operators';
 import { orderBy } from 'lodash';
-import {AppStoreService} from "../../services/app-store.service";
+import { AppStoreService } from '../../services/app-store.service';
 
 @Injectable()
 export class ProjectsViewStoreService {
@@ -66,7 +66,8 @@ export class ProjectsViewStoreService {
     modalRef.result.then(createdProject => {
       this.projects.next([...this.projects.value, createdProject]);
       this.projectsSelectable.addItem(createdProject);
-    }).catch(() => {});
+    }).catch(() => {
+    });
   }
 
   /**
@@ -116,7 +117,8 @@ export class ProjectsViewStoreService {
     modalRef.result.then(updatedProject => {
       this.projects.next(replaceItem(this.projects.value, p => p.id === updatedProject.id, updatedProject));
       this.projectsSelectable.update(updatedProject);
-    }).catch(() => {});
+    }).catch(() => {
+    });
   }
 
   exportProject(project: Project): void {
@@ -132,36 +134,39 @@ export class ProjectsViewStoreService {
     modalRef.result.then(importedProject => {
       this.projects.next([...this.projects.value, importedProject]);
       this.projectsSelectable.addItem(importedProject);
-    }).catch(() => {});
+    }).catch(() => {
+    });
   }
 
   get orderedProjects$(): Observable<Project[]> {
     return this.projects$.pipe(
-      map(projects => orderBy(projects, ['name']))
+      map(projects => {
+        const asOwner = projects.filter(p => p.owners.includes(this.appStore.user.id));
+        orderBy(asOwner, ['name']);
+        const asMember = projects.filter(p => p.members.includes(this.appStore.user.id));
+        orderBy(asMember, ['name']);
+        return asOwner.concat(asMember);
+      })
     );
-  }
-
-  isOwnerOfProject(project: Project): boolean {
-    if (project.owners.includes(this.appStore.user.id)) {
-      return true;
-    } else {
-      return false;
-    }
   }
 
   leaveProject(project: Project): void {
     if (project.members.includes(this.appStore.user.id)) {
-      this.projectApi.removeMembers(project.id, Array.of(this.appStore.user.id)).subscribe(() => {
-        this.projects.next(this.projects.value.filter(projectInt => projectInt.id != project.id));
-        this.projectsSelectable.remove(project);
-      },
-      res => this.toastService.danger(`${res.error.message}`))
+      this.projectApi.removeMembers(project.id, Array.of(this.appStore.user.id)).subscribe(
+        () => {
+          this.toastService.success('You have left the project.');
+          this.projects.next(this.projects.value.filter(projectInt => projectInt.id != project.id));
+          this.projectsSelectable.remove(project);
+        },
+        res => this.toastService.danger(`${res.error.message}`))
     }
     if (project.owners.includes(this.appStore.user.id)) {
-      this.projectApi.removeOwners(project.id, Array.of(this.appStore.user.id)).subscribe(() => {
-        this.projects.next(this.projects.value.filter(projectInt => projectInt.id != project.id));
-        this.projectsSelectable.remove(project);
-      },
+      this.projectApi.removeOwners(project.id, Array.of(this.appStore.user.id)).subscribe(
+        () => {
+          this.toastService.success('You have left the project.');
+          this.projects.next(this.projects.value.filter(projectInt => projectInt.id != project.id));
+          this.projectsSelectable.remove(project);
+        },
         res => this.toastService.danger(`${res.error.message}`))
     }
   }

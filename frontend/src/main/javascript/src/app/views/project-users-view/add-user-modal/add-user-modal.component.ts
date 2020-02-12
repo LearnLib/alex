@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-import {Component, Input} from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { UserApiService } from '../../../services/api/user-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { FormControl, FormGroup} from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { FormUtilsService } from '../../../services/form-utils.service';
-import {ProjectApiService} from "../../../services/api/project-api.service";
-import {Project} from "../../../entities/project";
-import {BehaviorSubject, Observable} from "rxjs";
-import {User} from "../../../entities/user";
-import {Selectable} from "../../../utils/selectable";
+import { ProjectApiService } from '../../../services/api/project-api.service';
+import { Project } from '../../../entities/project';
+import { User } from '../../../entities/user';
+import { Selectable } from '../../../utils/selectable';
 
 @Component({
   selector: 'add-user-modal',
@@ -42,10 +41,12 @@ export class AddUserModalComponent {
   usersSelectable: Selectable<User, number>;
 
   /** All found users. */
-  private users: BehaviorSubject<User[]>;
+  foundUsers: User[] = [];
+
+  submitted = false;
 
   searchForm = new FormGroup({
-    value: new FormControl('')
+    value: new FormControl('', [Validators.required])
   });
 
   constructor(private userApi: UserApiService,
@@ -53,7 +54,6 @@ export class AddUserModalComponent {
               private projectApi: ProjectApiService,
               public modal: NgbActiveModal,
               public formUtils: FormUtilsService) {
-    this.users = new BehaviorSubject<User[]>([]);
     this.usersSelectable = new Selectable<User, number>(u => u.id);
   }
 
@@ -68,14 +68,11 @@ export class AddUserModalComponent {
   }
 
   searchUser() {
+    this.submitted = true;
     this.userApi.getByUsernameOrEmail(this.searchForm.controls.value.value).subscribe(users => {
-      this.users.next(users);
+      this.foundUsers = users;
       this.usersSelectable.clear();
       this.usersSelectable.addItems(users)
     })
-  }
-
-  get foundUsers$(): Observable<User[]> {
-    return this.users
   }
 }

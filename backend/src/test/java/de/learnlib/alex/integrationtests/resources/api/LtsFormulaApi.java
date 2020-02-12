@@ -16,6 +16,8 @@
 
 package de.learnlib.alex.integrationtests.resources.api;
 
+import de.learnlib.alex.modelchecking.entities.LtsFormula;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.HttpHeaders;
@@ -30,50 +32,50 @@ public class LtsFormulaApi extends AbstractApi {
         super(client, port);
     }
 
-    public Response getAll(int projectId, String jwt) {
+    public Response getAll(Long projectId, String jwt) {
         return client.target(url(projectId)).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
                 .get();
     }
 
-    public Response create(int projectId, String formula, String jwt) {
+    public Response create(Long projectId, LtsFormula formula, String jwt) {
         return client.target(url(projectId)).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
                 .post(Entity.json(formula));
     }
 
-    public Response update(int projectId, int formulaId, String formula, String jwt) {
+    public Response update(Long projectId, Long formulaId, LtsFormula formula, String jwt) {
         return client.target(url(projectId, formulaId)).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
                 .put(Entity.json(formula));
     }
 
-    public Response delete(int projectId, int formulaId, String jwt) {
+    public Response delete(Long projectId, Long formulaId, String jwt) {
         return client.target(url(projectId, formulaId)).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
                 .delete();
     }
 
-    public Response delete(int projectId, List<Integer> formulaIds, String jwt) {
+    public Response delete(Long projectId, List<Long> formulaIds, String jwt) {
         return client.target(url(projectId, formulaIds)).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
                 .delete();
     }
 
-    private String url(int projectId) {
+    private String url(Long projectId) {
         return baseUrl() + "/projects/" + projectId + "/ltsFormulas";
     }
 
-    private String url(int projectId, int formulaId) {
+    private String url(Long projectId, Long formulaId) {
         return url(projectId) + "/" + formulaId;
     }
 
-    private String url(int projectId, List<Integer> formulaIds) {
+    private String url(Long projectId, List<Long> formulaIds) {
         final List<String> ids = formulaIds.stream().map(String::valueOf).collect(Collectors.toList());
         return url(projectId) + "/batch/" + String.join(",", ids);
     }

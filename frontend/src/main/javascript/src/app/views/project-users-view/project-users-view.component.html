@@ -53,9 +53,9 @@
         <thead>
         <tr>
           <th width="1">&nbsp;</th>
-          <th width="1">Username</th>
-          <th width="1">Email</th>
-          <th width="1">Role</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Role</th>
         </tr>
         </thead>
 
@@ -68,8 +68,8 @@
               >
               </selectable-checkbox>
             </td>
-            <td>{{user.username}}</td>
-            <td>{{user.email}}</td>
+            <td class="text-break">{{user.username}}</td>
+            <td class="text-break">{{user.email}}</td>
             <td>
               <span [ngClass]="'badge-danger'" class="badge">
                 Owner

@@ -232,8 +232,8 @@ import { CreateLabelActionFormComponent } from './common/actions/misc/create-lab
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { TestStatusComponent } from './common/test-status/test-status.component';
 import { TestReportProgressComponent } from './common/test-report-progress/test-report-progress.component';
-import {ProjectUsersViewComponent} from "./views/project-users-view/project-users-view.component";
-import {AddUserModalComponent} from "./views/project-users-view/add-user-modal/add-user-modal.component";
+import { ProjectUsersViewComponent } from './views/project-users-view/project-users-view.component';
+import { AddUserModalComponent } from './views/project-users-view/add-user-modal/add-user-modal.component';
 import { SymbolsDataContextComponent } from './common/symbols-data-context/symbols-data-context.component';
 import { ClipboardModule } from 'ngx-clipboard';
 import { WebdriverSettingsFormComponent } from './views/admin-settings-view/webdriver-settings-form/webdriver-settings-form.component';
@@ -243,6 +243,7 @@ import { LearnerSetupTableComponent } from './common/learner-setup-table/learner
 import { LearnerSetupsCreateViewComponent } from './views/learner-setups-create-view/learner-setups-create-view.component';
 import { LearnerSetupsEditViewComponent } from './views/learner-setups-edit-view/learner-setups-edit-view.component';
 import { LearnerSetupFormComponent } from './common/learner-setup-form/learner-setup-form.component';
+import { ProjectListComponent } from './views/projects-view/project-list/project-list.component';
 
 
 @NgModule({
@@ -445,7 +446,8 @@ import { LearnerSetupFormComponent } from './common/learner-setup-form/learner-s
     LearnerSetupTableComponent,
     LearnerSetupsCreateViewComponent,
     LearnerSetupsEditViewComponent,
-    LearnerSetupFormComponent
+    LearnerSetupFormComponent,
+    ProjectListComponent
   ],
   imports: [
     BrowserModule,
