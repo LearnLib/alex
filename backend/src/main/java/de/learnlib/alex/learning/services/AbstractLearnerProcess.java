@@ -43,7 +43,7 @@ import de.learnlib.oracle.parallelism.DynamicParallelOracleBuilder;
 import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
-import net.automatalib.words.impl.SimpleAlphabet;
+import net.automatalib.words.impl.GrowingMapAlphabet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -124,7 +124,7 @@ public abstract class AbstractLearnerProcess {
         this.testDAO = testDAO;
         this.equivalenceOracleProxy = equivalenceOracleProxy;
 
-        this.abstractAlphabet = new SimpleAlphabet<>(new HashSet<>(// remove duplicate names with set
+        this.abstractAlphabet = new GrowingMapAlphabet<>(new HashSet<>(// remove duplicate names with set
                 setup.getSymbols().stream()
                         .map(ParameterizedSymbol::getAliasOrComputedName)
                         .sorted(String::compareTo)
