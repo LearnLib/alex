@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
+import com.jayway.jsonpath.JsonPath;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.ProjectEnvironmentVariable;
@@ -31,6 +32,8 @@ import org.springframework.http.HttpStatus;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -46,6 +49,10 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
 
     private String adminJwt;
 
+    private String memberJwt;
+
+    private int memberId;
+
     private Project project;
 
     @Before
@@ -56,8 +63,16 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
 
         adminJwt = userApi.login("admin@alex.example", "admin");
 
-        final Response res = projectApi.create("{\"name\":\"test\",\"url\":\"http://localhost:8080\"}", adminJwt);
-        project = res.readEntity(Project.class);
+        final Response res =
+                userApi.create("{\"email\":\"test@test.de\",\"username\":\"test\",\"password\":\"test\"}");
+        memberId = JsonPath.read(res.readEntity(String.class), "id");
+
+        memberJwt = userApi.login("test@test.de", "test");
+
+        final Response res2 = projectApi.create("{\"name\":\"test\",\"url\":\"http://localhost:8080\"}", adminJwt);
+        project = res2.readEntity(Project.class);
+
+        projectApi.addMembers(Math.toIntExact(project.getId()), Collections.singletonList(String.valueOf(memberId)), adminJwt);
     }
 
     @Test
@@ -353,6 +368,145 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
         assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
         assertEquals(1,  project.getDefaultEnvironment().getVariables().stream().filter(v -> v.getName().equals("var1")).count());
         assertEquals(1,  project.getDefaultEnvironment().getVariables().stream().filter(v -> v.getName().equals("var2")).count());
+    }
+
+    @Test
+    public void memberShouldNotCreateNewEnvironment() {
+        final ProjectEnvironment env = new ProjectEnvironment();
+        env.setName("test");
+
+        final Response res = envApi.create(project.getId(), env, memberJwt);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());
+    }
+
+    @Test
+    public void memberShouldNotUpdateEnvironment() {
+        final ProjectEnvironment env = new ProjectEnvironment();
+        env.setName("test");
+
+        final Response res1 = envApi.create(project.getId(), env, adminJwt);
+        final ProjectEnvironment createdEnvironment = res1.readEntity(ProjectEnvironment.class);
+
+        createdEnvironment.setName("test1");
+
+        final Response res2 = envApi.update(project.getId(), createdEnvironment.getId(), createdEnvironment, memberJwt);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res2.getStatus());
+    }
+
+    @Test
+    public void memberShouldNotDeleteEnvironment() {
+        final ProjectEnvironment env = new ProjectEnvironment();
+        env.setName("test");
+
+        final Response res1 = envApi.create(project.getId(), env, adminJwt);
+        final ProjectEnvironment createdEnvironment = res1.readEntity(ProjectEnvironment.class);
+
+        final Response res2 = envApi.delete(project.getId(), createdEnvironment.getId(), memberJwt);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res2.getStatus());
+    }
+
+    @Test
+    public void memberShouldNotCreateUrl() {
+        final ProjectEnvironment env = new ProjectEnvironment();
+        env.setName("test");
+
+        final Response res1 = envApi.create(project.getId(), env, adminJwt);
+        final ProjectEnvironment createdEnvironment = res1.readEntity(ProjectEnvironment.class);
+
+        final ProjectUrl newUrl = new ProjectUrl();
+        newUrl.setName("url2");
+        newUrl.setUrl("http://url2");
+
+        final Response res2 = envApi.createUrl(project.getId(), createdEnvironment.getId(), newUrl, memberJwt);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res2.getStatus());
+    }
+
+    @Test
+    public void memberShouldNotUpdateUrl() {
+        final ProjectEnvironment env = new ProjectEnvironment();
+        env.setName("test");
+
+        final Response res1 = envApi.create(project.getId(), env, adminJwt);
+        final ProjectEnvironment createdEnvironment = res1.readEntity(ProjectEnvironment.class);
+
+        final ProjectUrl urlToUpdate = createdEnvironment.getUrls().get(0);
+        urlToUpdate.setName("testttttt");
+
+        final Response res2 = envApi.updateUrl(project.getId(), createdEnvironment.getId(), urlToUpdate.getId(), urlToUpdate, memberJwt);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res2.getStatus());
+    }
+
+    @Test
+    public void memberShouldNotDeleteUrl() {
+        final ProjectEnvironment env = new ProjectEnvironment();
+        env.setName("test");
+
+        final Response res1 = envApi.create(project.getId(), env, adminJwt);
+        final ProjectEnvironment createdEnvironment = res1.readEntity(ProjectEnvironment.class);
+
+        final ProjectUrl urlToDelete = createdEnvironment.getUrls().get(0);
+
+        final Response res2 = envApi.deleteUrl(project.getId(), createdEnvironment.getId(),urlToDelete.getId(), memberJwt);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res2.getStatus());
+    }
+
+    @Test
+    public void memberShouldNotCreateVariable() {
+        final ProjectEnvironment env = new ProjectEnvironment();
+        env.setName("test");
+
+        final Response res1 = envApi.create(project.getId(), env, adminJwt);
+        final ProjectEnvironment createdEnvironment = res1.readEntity(ProjectEnvironment.class);
+
+        final ProjectEnvironmentVariable var1 = new ProjectEnvironmentVariable();
+        var1.setName("var1");
+        var1.setValue("test");
+
+        final Response res2 = envApi.createVariable(project.getId(), createdEnvironment.getId(), var1, memberJwt);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res2.getStatus());
+    }
+
+    @Test
+    public void memberShouldNotUpdateVariable() {
+        final ProjectEnvironment env = new ProjectEnvironment();
+        env.setName("test");
+
+        final Response res1 = envApi.create(project.getId(), env, adminJwt);
+        final ProjectEnvironment createdEnvironment = res1.readEntity(ProjectEnvironment.class);
+
+        final ProjectEnvironmentVariable var1 = new ProjectEnvironmentVariable();
+        var1.setName("var1");
+        var1.setValue("test");
+
+        final Response res2 = envApi.createVariable(project.getId(), createdEnvironment.getId(), var1, adminJwt);
+        assertEquals(HttpStatus.CREATED.value(), res2.getStatus());
+
+        final ProjectEnvironmentVariable createdVariable = res2.readEntity(ProjectEnvironmentVariable.class);
+        createdVariable.setName("tessst");
+
+        final Response res3 = envApi.updateVariable(project.getId(), createdEnvironment.getId(), createdVariable.getId(), createdVariable, memberJwt);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res3.getStatus());
+    }
+
+    @Test
+    public void memberShouldNotDeleteVariable() {
+        final ProjectEnvironment env = new ProjectEnvironment();
+        env.setName("test");
+
+        final Response res1 = envApi.create(project.getId(), env, adminJwt);
+        final ProjectEnvironment createdEnvironment = res1.readEntity(ProjectEnvironment.class);
+
+        final ProjectEnvironmentVariable var1 = new ProjectEnvironmentVariable();
+        var1.setName("var1");
+        var1.setValue("test");
+
+        final Response res2 = envApi.createVariable(project.getId(), createdEnvironment.getId(), var1, adminJwt);
+        assertEquals(HttpStatus.CREATED.value(), res2.getStatus());
+
+        final ProjectEnvironmentVariable createdVariable = res2.readEntity(ProjectEnvironmentVariable.class);
+
+        final Response res3 = envApi.deleteVariable(project.getId(), createdEnvironment.getId(), createdVariable.getId(), memberJwt);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res3.getStatus());
     }
 
     private void assertVariablesAreTheSame(ProjectEnvironment env1, ProjectEnvironment env2) {
