@@ -40,6 +40,7 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,6 +56,10 @@ public class SymbolResourceIT extends AbstractResourceIT {
 
     private String jwtUser2;
 
+    private int userId1;
+
+    private int userId2;
+
     private int projectId1;
 
     private int projectId2;
@@ -67,34 +72,39 @@ public class SymbolResourceIT extends AbstractResourceIT {
 
     private SymbolGroupApi symbolGroupApi;
 
+    private ProjectApi projectApi;
+
     @Before
     public void pre() {
         symbolGroupApi = new SymbolGroupApi(client, port);
         symbolApi = new SymbolApi(client, port);
         final UserApi userApi = new UserApi(client, port);
-        final ProjectApi projectApi = new ProjectApi(client, port);
+        projectApi = new ProjectApi(client, port);
 
-        userApi.create("{\"email\":\"test1@test.de\",\"username\":\"test1\",\"password\":\"test\"}");
-        userApi.create("{\"email\":\"test2@test.de\",\"username\":\"test2\",\"password\":\"test\"}");
+        final Response res1 = userApi.create("{\"email\":\"test1@test.de\",\"username\":\"test1\",\"password\":\"test\"}");
+        final Response res2 = userApi.create("{\"email\":\"test2@test.de\",\"username\":\"test2\",\"password\":\"test\"}");
+
+        userId1 = JsonPath.read(res1.readEntity(String.class), "id");
+        userId2 = JsonPath.read(res2.readEntity(String.class), "id");
 
         jwtUser1 = userApi.login("test1@test.de", "test");
         jwtUser2 = userApi.login("test2@test.de", "test");
 
-        final Response res1 =
+        final Response res3 =
                 projectApi.create("{\"name\":\"test\",\"url\":\"http://localhost:8080\"}", jwtUser1);
-        final Response res2 =
+        final Response res4 =
                 projectApi.create("{\"name\":\"test\",\"url\":\"http://localhost:8080\"}", jwtUser2);
 
-        projectId1 = JsonPath.read(res1.readEntity(String.class), "id");
-        projectId2 = JsonPath.read(res2.readEntity(String.class), "id");
+        projectId1 = JsonPath.read(res3.readEntity(String.class), "id");
+        projectId2 = JsonPath.read(res4.readEntity(String.class), "id");
 
-        final Response res3 =
+        final Response res5 =
                 symbolGroupApi.create(projectId1, "{\"name\":\"group1\", \"project\": " + projectId1 + "}", jwtUser1);
-        final Response res4 =
+        final Response res6 =
                 symbolGroupApi.create(projectId2, "{\"name\":\"group2\", \"project\": " + projectId2 + "}", jwtUser2);
 
-        symbolGroupId1 = JsonPath.read(res3.readEntity(String.class), "id");
-        symbolGroupId2 = JsonPath.read(res4.readEntity(String.class), "id");
+        symbolGroupId1 = JsonPath.read(res5.readEntity(String.class), "id");
+        symbolGroupId2 = JsonPath.read(res6.readEntity(String.class), "id");
     }
 
     @Test
@@ -116,6 +126,7 @@ public class SymbolResourceIT extends AbstractResourceIT {
         final JsonNode symbolNode = objectMapper.readTree(symbolJson);
         ((ObjectNode) symbolNode).put("id", objectMapper.readTree(symbolRes).get("id").intValue());
         ((ObjectNode) symbolNode).put("updatedOn", objectMapper.readTree(symbolRes).get("updatedOn").asText());
+        ((ObjectNode) symbolNode).set("lastUpdatedBy", objectMapper.readTree(symbolRes).get("lastUpdatedBy"));
         JSONAssert.assertEquals(symbolNode.toString(), symbolRes, true);
 
         final Response res2 = symbolApi.getAll(projectId1, jwtUser1);
@@ -353,6 +364,20 @@ public class SymbolResourceIT extends AbstractResourceIT {
 
         assertEquals(HttpStatus.OK.value(), res.getStatus());
         assertTrue(updatedSymbol.getUpdatedOn().isAfter(s1.getUpdatedOn()));
+    }
+
+    @Test
+    public void shouldUpdateModifiedByOnUpdate() throws Exception {
+        projectApi.addOwners((long)projectId1, Collections.singletonList((long)userId2), jwtUser1);
+
+        final Symbol s1 = createSymbol("s1", (long) projectId1, jwtUser1);
+        s1.setName("updatedName");
+
+        final Response res = symbolApi.update(projectId1, s1.getId(), objectMapper.writeValueAsString(s1), jwtUser2);
+        final Symbol updatedSymbol = res.readEntity(Symbol.class);
+
+        assertEquals(HttpStatus.OK.value(), res.getStatus());
+        assertEquals((long) updatedSymbol.getlastUpdatedBy().getId(), userId2);
     }
 
     @Test

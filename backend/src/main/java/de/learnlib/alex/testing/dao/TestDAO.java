@@ -137,6 +137,8 @@ public class TestDAO {
             saveTestCaseSteps(testCase.getPreSteps());
             saveTestCaseSteps(testCase.getSteps());
             saveTestCaseSteps(testCase.getPostSteps());
+
+            testCase.setLastUpdatedBy(user);
         }
 
         return testRepository.save(test);
@@ -303,6 +305,7 @@ public class TestDAO {
 
         testCase.setGenerated(false);
         testCase.setUpdatedOn(ZonedDateTime.now());
+        testCase.setLastUpdatedBy(user);
 
         final List<Long> allStepIds = new ArrayList<>(); // all ids that still exist in the db
         allStepIds.addAll(getStepsWithIds(testCase.getPreSteps()));
@@ -524,6 +527,7 @@ public class TestDAO {
             testCase.getPreSteps().forEach(step -> ParameterizedSymbolDAO.loadLazyRelations((step.getPSymbol())));
             Hibernate.initialize(testCase.getPostSteps());
             testCase.getPostSteps().forEach(step -> ParameterizedSymbolDAO.loadLazyRelations((step.getPSymbol())));
+            Hibernate.initialize(testCase.getLastUpdatedBy());
         }
     }
 

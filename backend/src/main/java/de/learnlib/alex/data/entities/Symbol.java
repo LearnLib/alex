@@ -19,6 +19,7 @@ package de.learnlib.alex.data.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.Constants;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.common.utils.SearchHelper;
@@ -108,6 +109,9 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     @JsonIgnore
     private ZonedDateTime updatedOn;
 
+    /** The last user who modified the symbol. */
+    private User lastUpdatedBy;
+
     /** Constructor. */
     public Symbol() {
         this.inputs = new ArrayList<>();
@@ -117,6 +121,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         this.description = "";
         this.hidden = false;
         this.updatedOn = ZonedDateTime.now();
+        this.lastUpdatedBy = null;
     }
 
     /**
@@ -497,6 +502,19 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
                 .filter(i -> i.name.equals(name) && i.parameterType.equals(type))
                 .findFirst()
                 .orElse(null);
+    }
+
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "lastUpdatedById")
+    @JsonProperty("lastUpdatedBy")
+    public User getlastUpdatedBy() {
+        return this.lastUpdatedBy;
+    }
+
+    @JsonIgnore
+    public void setlastUpdatedBy(User user) {
+        this.lastUpdatedBy = user;
     }
 
     @Override

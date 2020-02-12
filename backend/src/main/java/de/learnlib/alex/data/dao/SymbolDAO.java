@@ -305,6 +305,7 @@ public class SymbolDAO {
         symbolToCreate.setExpectedResult(symbol.getExpectedResult());
         symbolToCreate.setHidden(symbol.isHidden());
         symbolToCreate.setSuccessOutput(symbol.getSuccessOutput());
+        symbolToCreate.setlastUpdatedBy(user);
         group.getSymbols().add(symbolToCreate);
         project.getSymbols().add(symbolToCreate);
 
@@ -514,6 +515,7 @@ public class SymbolDAO {
         symbolInDb.setDescription(symbol.getDescription());
         symbolInDb.setExpectedResult(symbol.getExpectedResult());
         symbolInDb.setUpdatedOn(ZonedDateTime.now());
+        symbolInDb.setlastUpdatedBy(user);
         symbolInDb.setSuccessOutput(symbol.getSuccessOutput());
 
         // update steps

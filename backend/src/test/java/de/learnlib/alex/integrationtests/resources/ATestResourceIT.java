@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.JsonPath;
 import de.learnlib.alex.integrationtests.SpringRestError;
@@ -31,6 +32,7 @@ import org.springframework.http.HttpStatus;
 
 import javax.ws.rs.core.Response;
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -43,30 +45,40 @@ public class ATestResourceIT extends AbstractResourceIT {
 
     private String jwtUser2;
 
+    private int userId1;
+
+    private int userId2;
+
     private int projectId;
 
     private int rootTestSuiteId;
+
+    private ProjectApi projectApi;
 
     @Before
     public void pre() {
         this.testApi = new TestApi(client, port);
 
         final UserApi userApi = new UserApi(client, port);
-        userApi.create("{\"email\":\"test1@test.de\", \"username\":\"test1\", \"password\":\"test\"}");
-        userApi.create("{\"email\":\"test2@test.de\", \"username\":\"test2\", \"password\":\"test\"}");
+        final Response res1 = userApi.create("{\"email\":\"test1@test.de\", \"username\":\"test1\", \"password\":\"test\"}");
+        final Response res2 = userApi.create("{\"email\":\"test2@test.de\", \"username\":\"test2\", \"password\":\"test\"}");
+
+        userId1 = JsonPath.read(res1.readEntity(String.class), "id");
+        userId2 = JsonPath.read(res2.readEntity(String.class), "id");
+
         jwtUser1 = userApi.login("test1@test.de", "test");
         jwtUser2 = userApi.login("test2@test.de", "test");
 
-        final ProjectApi projectApi = new ProjectApi(client, port);
-        final Response res1 = projectApi.create("{\"name\":\"test\",\"url\":\"http://localhost:8080\"}", jwtUser1);
-        projectId = JsonPath.read(res1.readEntity(String.class), "$.id");
+        projectApi = new ProjectApi(client, port);
+        final Response res3 = projectApi.create("{\"name\":\"test\",\"url\":\"http://localhost:8080\"}", jwtUser1);
+        projectId = JsonPath.read(res3.readEntity(String.class), "$.id");
 
         final SymbolApi symbolApi = new SymbolApi(client, port);
         symbolApi.create(projectId, "{\"name\":\"s1\"}", jwtUser1);
         symbolApi.create(projectId, "{\"name\":\"s2\"}", jwtUser1);
 
-        final Response res = testApi.getRoot(projectId, jwtUser1);
-        this.rootTestSuiteId = JsonPath.read(res.readEntity(String.class), "$.id");
+        final Response res4 = testApi.getRoot(projectId, jwtUser1);
+        this.rootTestSuiteId = JsonPath.read(res4.readEntity(String.class), "$.id");
     }
 
     @Test
@@ -221,6 +233,22 @@ public class ATestResourceIT extends AbstractResourceIT {
         final TestCase testCaseIdDb = testApi.get(projectId, testCase.getId().intValue(), jwtUser1)
                 .readEntity(TestCase.class);
         assertEquals(testCase.getName(), testCaseIdDb.getName());
+    }
+
+    @Test
+    public void shouldUpdateLastUpdatedByOnUpdate() throws JsonProcessingException {
+        projectApi.addOwners((long)projectId, Collections.singletonList((long)userId2), jwtUser1);
+
+        final String tc = "{\"name\": \"tc\", \"type\": \"case\"}";
+        final Response res1 = testApi.create(projectId, tc, jwtUser1);
+
+        final TestCase testCase = res1.readEntity(TestCase.class);
+
+        final Response res2 = testApi.update(testCase.getProjectId(), testCase.getId(), objectMapper.writeValueAsString(testCase), jwtUser2);
+        assertEquals(Response.Status.OK.getStatusCode(), res2.getStatus());
+
+        final TestCase updatedTestCase = res2.readEntity(TestCase.class);
+        assertEquals((long) updatedTestCase.getLastUpdatedBy().getId(), userId2);
     }
 
     @Test
