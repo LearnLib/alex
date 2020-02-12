@@ -54,104 +54,18 @@
   <div class="view-body">
     <div class="container-fluid">
 
-      <div *ngIf="(store.projects$ | async).length == 0" class="alert alert-info">
+      <div *ngIf="(store.orderedProjects$ | async).length == 0" class="alert alert-info">
         You haven't created a project yet.
       </div>
 
-       <div *ngIf="(store.projects$ | async).length > 0" class="list-group">
-        <div *ngFor="let project of store.orderedProjects$ | async" class="list-group-item d-flex flex-row">
-          <ng-container *ngIf="project.owners.includes(appStore.user.id)">
-            <div class="mr-3">
-              <selectable-checkbox [item]="project" [selectable]="store.projectsSelectable"></selectable-checkbox>
-            </div>
-            <div class="w-100">
-              <a [routerLink]="[project.id]">
-                <h5 class="list-group-item-heading mb-0">
-                  <strong>{{project.name}}</strong>
-                </h5>
-              </a>
-              <p class="text-muted mb-0">
-                {{project.getDefaultEnvironment().urls[0].url}}
-              </p>
-              <span
-                [ngClass]="'badge-danger'" class="badge"
-              >
-                Owner
-              </span>
-            </div>
-            <div>
-              <div class="d-inline-block" ngbDropdown placement="bottom-right">
-                <button class="btn btn-sm btn-icon no-caret" ngbDropdownToggle>
-                  <i class="fas fa-fw fa-bars"></i>
-                </button>
-                <div ngbDropdownMenu>
-                  <a [routerLink]="[project.id]" ngbDropdownItem>
-                    <i class="fas fa-fw fa-external-link-alt"></i> Open
-                  </a>
-                  <div class="dropdown-divider"></div>
-                  <button (click)="store.editProject(project)" ngbDropdownItem>
-                    <i class="fas fa-edit fa-fw"></i> Edit
-                  </button>
-                  <button (click)="store.exportProject(project)" ngbDropdownItem>
-                    <i class="fas fa-download fa-fw"></i> Export
-                  </button>
-                  <button (click)="store.deleteProject(project)" ngbDropdownItem>
-                    <i class="fas fa-trash fa-fw"></i> Delete
-                  </button>
-                  <button (click)="store.leaveProject(project)" ngbDropdownItem>
-                    <i class="fas fa-sign-out-alt fa-fw"></i> Leave
-                  </button>
-                </div>
-              </div>
-            </div>
-          </ng-container>
-          <ng-container *ngIf="project.members.includes(appStore.user.id)">
-            <div class="mr-3">
-              <selectable-checkbox [item]="project" [selectable]="store.projectsSelectable"></selectable-checkbox>
-            </div>
-            <div class="w-100">
-              <a [routerLink]="[project.id]">
-                <h5 class="list-group-item-heading mb-0">
-                  <strong>{{project.name}}</strong>
-                </h5>
-              </a>
-              <p class="text-muted mb-0">
-                {{project.getDefaultEnvironment().urls[0].url}}
-              </p>
-              <span
-                [ngClass]="'badge-primary'" class="badge"
-              >
-                Member
-              </span>
-            </div>
-            <div>
-              <div class="d-inline-block" ngbDropdown placement="bottom-right">
-                <button class="btn btn-sm btn-icon no-caret" ngbDropdownToggle>
-                  <i class="fas fa-fw fa-bars"></i>
-                </button>
-                <div ngbDropdownMenu>
-                  <a [routerLink]="[project.id]" ngbDropdownItem>
-                    <i class="fas fa-fw fa-external-link-alt"></i> Open
-                  </a>
-                  <div class="dropdown-divider"></div>
-                  <button (click)="store.editProject(project)" ngbDropdownItem>
-                    <i class="fas fa-edit fa-fw"></i> Edit
-                  </button>
-                  <button (click)="store.exportProject(project)" ngbDropdownItem>
-                    <i class="fas fa-download fa-fw"></i> Export
-                  </button>
-                  <button (click)="store.deleteProject(project)" ngbDropdownItem>
-                    <i class="fas fa-trash fa-fw"></i> Delete
-                  </button>
-                  <button (click)="store.leaveProject(project)" ngbDropdownItem>
-                    <i class="fas fa-sign-out-alt fa-fw"></i> Leave
-                  </button>
-                </div>
-              </div>
-            </div>
-          </ng-container>
-        </div>
-      </div>
+      <project-list
+        class="d-block mb-4"
+        *ngIf="(store.orderedProjects$ | async).length > 0"
+        [projects]="store.orderedProjects$ | async"
+        [selectable]="store.projectsSelectable"
+      >
+      </project-list>
+
     </div>
   </div>
 </div>

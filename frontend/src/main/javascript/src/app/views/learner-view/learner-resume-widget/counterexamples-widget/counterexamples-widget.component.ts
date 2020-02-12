@@ -21,7 +21,6 @@ import { LearnerResult } from '../../../../entities/learner-result';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { DragulaService } from 'ng2-dragula';
 import { LearnerViewStoreService } from '../../learner-view-store.service';
-import set = Reflect.set;
 
 interface IOPair {
   input: string;

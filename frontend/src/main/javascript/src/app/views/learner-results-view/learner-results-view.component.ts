@@ -19,7 +19,7 @@ import { Selectable } from '../../utils/selectable';
 import { LearnerResultApiService } from '../../services/api/learner-result-api.service';
 import { ToastService } from '../../services/toast.service';
 import { LearnerResultDownloadService } from '../../services/learner-result-download.service';
-import { LearnerResult, LearnerResultStatus } from '../../entities/learner-result';
+import { LearnerResult } from '../../entities/learner-result';
 import { Project } from '../../entities/project';
 import { AppStoreService } from '../../services/app-store.service';
 import { Component, OnInit } from '@angular/core';

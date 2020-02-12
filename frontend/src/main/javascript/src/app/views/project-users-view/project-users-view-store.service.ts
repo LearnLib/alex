@@ -15,19 +15,16 @@
  */
 
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, forkJoin, merge} from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { User } from '../../entities/user';
 import { Selectable } from '../../utils/selectable';
 import { UserApiService } from '../../services/api/user-api.service';
 import { AppStoreService } from '../../services/app-store.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastService } from '../../services/toast.service';
-import { removeItems, replaceItem } from '../../utils/list-utils';
 import { PromptService } from '../../services/prompt.service';
-import {ProjectApiService} from "../../services/api/project-api.service";
-import {Project} from "../../entities/project";
-import {CreateUserModalComponent} from "../admin-users-view/create-user-modal/create-user-modal.component";
-import {AddUserModalComponent} from "./add-user-modal/add-user-modal.component";
+import { ProjectApiService } from '../../services/api/project-api.service';
+import { AddUserModalComponent } from './add-user-modal/add-user-modal.component';
 import { Router } from '@angular/router';
 
 @Injectable()

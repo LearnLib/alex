@@ -13,37 +13,48 @@
 
   <form [formGroup]="searchForm" class="search-form">
     <div class="form-group d-flex">
-      <input [formControl]="searchForm.controls.value" type="text" class="form-control mr-1" placeholder="Search for an user">
-      <button class="btn btn-primary btn-sm" (click)="searchUser()"><i class="fas fa-search" style="display: inline"></i>&nbsp;Search</button>
+      <input
+        [formControl]="searchForm.controls.value"
+        type="text"
+        class="form-control mr-1"
+        placeholder="Search for an user"
+      >
+      <button [disabled]="searchForm.invalid" class="btn btn-primary btn-sm flex-shrink-0" (click)="searchUser()">
+        <i class="fas fa-fw fa-search"></i>&nbsp;Search
+      </button>
     </div>
   </form>
 
-  <table class="table">
-    <thead>
-    <tr>
-      <th width="1">&nbsp;</th>
-      <th width="1">Username</th>
-      <th width="1">Email</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let user of foundUsers$ | async">
-      <td>
-        <selectable-checkbox
-          [item]="user"
-          [selectable]="usersSelectable"
-        >
-        </selectable-checkbox>
-      </td>
-      <td>{{user.username}}</td>
-      <td>{{user.email}}</td>
-    </tr>
-    </tbody>
-  </table>
+  <ng-container *ngIf="submitted">
 
-  <div class="alert alert-info" *ngIf="(foundUsers$ | async).length === 0">
-    No user matches "<em>{{searchForm.controls.value.value}}</em>".
-  </div>
+    <table class="table" *ngIf="foundUsers.length > 0">
+      <thead>
+      <tr>
+        <th width="1">&nbsp;</th>
+        <th>Username</th>
+        <th>Email</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let user of foundUsers">
+        <td>
+          <selectable-checkbox
+            [item]="user"
+            [selectable]="usersSelectable"
+          >
+          </selectable-checkbox>
+        </td>
+        <td>{{user.username}}</td>
+        <td class="text-break">{{user.email}}</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <div class="alert alert-info" *ngIf="foundUsers.length === 0">
+      No user matches "<em>{{searchForm.controls.value.value}}</em>".
+    </div>
+
+  </ng-container>
 
 </div>
 
