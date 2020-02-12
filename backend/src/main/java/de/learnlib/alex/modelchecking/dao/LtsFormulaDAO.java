@@ -23,6 +23,7 @@ import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.modelchecking.entities.LtsFormula;
 import de.learnlib.alex.modelchecking.repositories.LtsFormulaRepository;
+import net.automatalib.modelcheckers.ltsmin.LTSminLTLParser;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,6 +71,8 @@ public class LtsFormulaDAO {
     }
 
     public LtsFormula create(User user, Long projectId, LtsFormula formula) throws NotFoundException {
+        LTSminLTLParser.requireValidIOFormula(formula.getFormula());
+
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
@@ -80,6 +83,8 @@ public class LtsFormulaDAO {
     }
 
     public LtsFormula update(User user, Long projectId, LtsFormula formula) throws NotFoundException {
+        LTSminLTLParser.requireValidIOFormula(formula.getFormula());
+
         final Project project = projectRepository.findById(projectId).orElse(null);
         final LtsFormula formulaInDb = ltsFormulaRepository.findById(formula.getId()).orElse(null);
         checkAccess(user, project, formulaInDb);

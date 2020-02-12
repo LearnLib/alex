@@ -112,7 +112,7 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
 
     @Test
     public void startLearningProcessFromSetupWithoutOptions() throws InterruptedException, IOException {
-        startLearningFromSetup(null, null);
+        startLearningFromSetup(null, "testSetup");
     }
 
     @Test

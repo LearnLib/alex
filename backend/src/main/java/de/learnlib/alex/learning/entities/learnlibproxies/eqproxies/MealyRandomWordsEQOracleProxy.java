@@ -26,10 +26,6 @@ import net.automatalib.words.Word;
 import java.io.Serializable;
 import java.util.Random;
 
-/**
- * Proxy around a {@link de.learnlib.oracle.equivalence.RandomWordsEQOracle.MealyRandomWordsEQOracle}.
- * The Proxy is needed to make it easier to (de-)serialize the Transition into/ from JSON.
- */
 @JsonTypeName("random_word")
 public class MealyRandomWordsEQOracleProxy extends AbstractEquivalenceOracleProxy implements Serializable {
 
@@ -166,8 +162,7 @@ public class MealyRandomWordsEQOracleProxy extends AbstractEquivalenceOracleProx
     @Override
     public EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> createEqOracle(
             MembershipOracle<String, Word<String>> membershipOracle) {
-        return new RandomWordsEQOracle.MealyRandomWordsEQOracle<>(membershipOracle, minLength, maxLength, maxNoOfTests,
-                                                                  new Random(seed), batchSize);
+        return new RandomWordsEQOracle<>(membershipOracle, minLength, maxLength, maxNoOfTests, new Random(seed), batchSize);
     }
 
 }

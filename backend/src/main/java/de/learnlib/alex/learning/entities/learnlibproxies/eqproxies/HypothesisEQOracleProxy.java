@@ -66,6 +66,6 @@ public class HypothesisEQOracleProxy extends AbstractEquivalenceOracleProxy impl
             MembershipOracle<String, Word<String>> membershipOracle) {
         Alphabet<String> alphabet = hypothesis.createAlphabet();
         CompactMealy<String, String> compactMealy = hypothesis.createMealyMachine(alphabet);
-        return new SimulatorEQOracle.MealySimulatorEQOracle<>(compactMealy);
+        return new SimulatorEQOracle<>(compactMealy);
     }
 }

@@ -24,7 +24,7 @@ import de.learnlib.datastructure.discriminationtree.model.AbstractWordBasedDiscr
 import de.learnlib.oracle.membership.SULOracle;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
-import net.automatalib.words.impl.SimpleAlphabet;
+import net.automatalib.words.impl.GrowingMapAlphabet;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -43,7 +43,7 @@ public class DiscriminationTreeTest {
 
     @Test
     public void shouldCreateCorrectLearner() {
-        Alphabet<String> sigma = new SimpleAlphabet<>();
+        Alphabet<String> sigma = new GrowingMapAlphabet<>();
         sigma.add("a");
         sigma.add("b");
         SULOracle<String, String> oracle = mock(SULOracle.class);
