@@ -17,7 +17,6 @@
 package de.learnlib.alex.data.rest;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.data.dao.SymbolGroupDAO;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.entities.export.SymbolGroupsImportableEntity;
@@ -192,7 +191,7 @@ public class SymbolGroupResource {
     public ResponseEntity update(@PathVariable("projectId") Long projectId,
                                  @PathVariable("groupId") Long groupId,
                                  @RequestBody SymbolGroup group) {
-        User user = authContext.getUser();
+        final User user = authContext.getUser();
         LOGGER.traceEntry("update({}, {}, {}) for user {}.", projectId, groupId, group, user);
 
         symbolGroupDAO.update(user, group);
@@ -222,7 +221,7 @@ public class SymbolGroupResource {
     public ResponseEntity move(@PathVariable("projectId") Long projectId,
                                @PathVariable("groupId") Long groupId,
                                @RequestBody SymbolGroup group) {
-        User user = authContext.getUser();
+        final User user = authContext.getUser();
         LOGGER.traceEntry("move({}, {}, {}) for user {}.", projectId, groupId, group, user);
 
         final SymbolGroup movedGroup = symbolGroupDAO.move(user, group);
@@ -245,17 +244,12 @@ public class SymbolGroupResource {
             value = "/{groupId}"
     )
     public ResponseEntity delete(@PathVariable("projectId") Long projectId, @PathVariable("groupId") Long groupId) {
-        User user = authContext.getUser();
+        final User user = authContext.getUser();
         LOGGER.traceEntry("delete({}, {}) for user {}.", projectId, groupId, user);
 
-        try {
-            symbolGroupDAO.delete(user, projectId, groupId);
-            LOGGER.traceExit("Group {} deleted.", groupId);
-            webhookService.fireEvent(user, new SymbolGroupEvent.Deleted(groupId));
-            return ResponseEntity.noContent().build();
-        } catch (IllegalArgumentException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update", HttpStatus.BAD_REQUEST, e);
-        }
+        symbolGroupDAO.delete(user, projectId, groupId);
+        LOGGER.traceExit("Group {} deleted.", groupId);
+        webhookService.fireEvent(user, new SymbolGroupEvent.Deleted(groupId));
+        return ResponseEntity.noContent().build();
     }
 }

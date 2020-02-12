@@ -87,9 +87,6 @@ public class FileResource {
             final UploadableFile file = fileDAO.create(user, projectId, fileToUpload);
             LOGGER.traceExit(file);
             return ResponseEntity.ok(file);
-        } catch (IllegalArgumentException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("FileResource.uploadFile", HttpStatus.NOT_FOUND, e);
         } catch (IOException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("FileResource.uploadFile", HttpStatus.INTERNAL_SERVER_ERROR, e);

@@ -20,59 +20,57 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
-import de.learnlib.alex.learning.entities.LearnerResultStep;
-import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
+import de.learnlib.alex.learning.entities.LearnerSetup;
+import de.learnlib.alex.learning.events.LearnerEvent;
 import de.learnlib.alex.learning.services.connectors.PreparedContextHandler;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import org.apache.logging.log4j.ThreadContext;
 
 /** The learner thread that is used for starting a new experiment. */
-public class StartingLearnerProcess extends AbstractLearnerProcess<LearnerStartConfiguration> {
+public class StartingLearnerProcess extends AbstractLearnerProcess {
 
-    public StartingLearnerProcess(User user, LearnerResultDAO learnerResultDAO, WebhookService webhookService,
-                                  TestDAO testDAO, PreparedContextHandler contextHandler, LearnerResult result,
-                                  LearnerStartConfiguration configuration) {
-        super(user, learnerResultDAO, webhookService, testDAO, contextHandler, result, configuration);
+    public StartingLearnerProcess(User user,
+                                  LearnerResultDAO learnerResultDAO,
+                                  WebhookService webhookService,
+                                  TestDAO testDAO,
+                                  PreparedContextHandler contextHandler,
+                                  LearnerResult result,
+                                  LearnerSetup setup) {
+        super(user, learnerResultDAO, webhookService, testDAO, contextHandler, result, setup, setup.getEquivalenceOracle());
     }
 
     @Override
     public void run() {
         ThreadContext.put("userId", String.valueOf(user.getId()));
-        LOGGER.traceEntry();
-        LOGGER.info(LoggerMarkers.LEARNER, "Started a new learner thread.");
+        logger.traceEntry();
+        logger.info(LoggerMarkers.LEARNER, "Started a new learner thread.");
 
         try {
-            startLearning();
+            learn();
         } catch (Exception e) {
-            LOGGER.error(LoggerMarkers.LEARNER, "Something in the LearnerThread went wrong:", e);
+            logger.error(LoggerMarkers.LEARNER, "Something in the LearnerThread went wrong:", e);
             e.printStackTrace();
-            updateOnError(e);
         } finally {
             shutdown();
-            LOGGER.info(LoggerMarkers.LEARNER, "The learner thread has finished.");
-            LOGGER.traceExit();
+            logger.info(LoggerMarkers.LEARNER, "The learner thread has finished.");
+            logger.traceExit();
             ThreadContext.remove("userId");
         }
     }
 
-    private void startLearning() {
-        LOGGER.traceEntry();
+    private void learn() throws Exception {
+        logger.traceEntry();
 
-        // variables for measuring the execution time of the learner
-        long start, end;
-
-        // start learning
         learnerPhase = LearnerService.LearnerPhase.LEARNING;
-        start = System.currentTimeMillis();
+        final long learnerStartTime = System.currentTimeMillis();
         learner.startLearning();
-        end = System.currentTimeMillis();
+        final long learnerEndTime = System.currentTimeMillis();
 
-        // persist the first step.
-        LearnerResultStep currentStep = createStep(start, end, 0, null);
+        createStep(learnerEndTime, learnerStartTime);
+        startLearningLoop();
 
-        doLearn(currentStep);
-
-        LOGGER.traceExit();
+        webhookService.fireEvent(user, new LearnerEvent.Finished(result));
+        logger.traceExit();
     }
 }

@@ -1,5 +1,7 @@
+const env = require('./env.default.js');
+
 module.exports = {
-    base: '/alex/book/1.8.0/',
+    base: env.BASE,
     title: 'ALEX Docs (v1.8.0-SNAPSHOT)',
     description: 'User documentation for ALEX',
     dest: './.vuepress/dist',

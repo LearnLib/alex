@@ -34,7 +34,6 @@ import { TestQueueItem, TestReportStatus } from '../../entities/test-status';
 import { TestReportApiService } from '../../services/api/test-report-api.service';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { TestCase } from '../../entities/test-case';
 import { ParametrizedSymbol } from '../../entities/parametrized-symbol';
 
 @Component({

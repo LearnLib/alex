@@ -14,14 +14,30 @@
  * limitations under the License.
  */
 
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import {
+  AfterViewChecked,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges
+} from '@angular/core';
 import { Edge as NgxGraphEdge, Node, NodePosition } from '@swimlane/ngx-graph';
+import { Subject } from 'rxjs';
 
 export interface Edge {
   from: string,
   to: string,
   input: string,
   output: string
+}
+
+export interface Hypothesis {
+  nodes: number[],
+  initNode: number,
+  edges: Edge[]
 }
 
 @Component({
@@ -35,7 +51,7 @@ export class HypothesisComponent implements OnChanges {
   selectEdge = new EventEmitter<Edge>();
 
   @Input()
-  data: any;
+  data: Hypothesis;
 
   @Input()
   layoutSettings: any;
@@ -47,13 +63,21 @@ export class HypothesisComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.data != null) {
-      if (changes.data.firstChange || changes.data.currentValue.nodes.length != changes.data.previousValue.nodes.length) {
-        this.init();
-      }
+    if (changes.data.firstChange || this.stateSizeChanged(changes) || this.alphabetChanged(changes)) {
+      this.init();
     }
 
     this.cd.detectChanges();
+  }
+
+  private stateSizeChanged(changes: SimpleChanges): boolean {
+    return changes.data.currentValue.nodes.length != changes.data.previousValue.nodes.length
+  }
+
+  private alphabetChanged(changes: SimpleChanges): boolean {
+    const curr = new Set(changes.data.currentValue.edges.map(e => e.input));
+    const prev = new Set(changes.data.previousValue.edges.map(e => e.input));
+    return curr.size != prev.size;
   }
 
   handleEdgeClick(link: NgxGraphEdge, label: string): void {
@@ -70,30 +94,31 @@ export class HypothesisComponent implements OnChanges {
     this.nodes = [];
     this.links = [];
 
-    this.data.nodes.forEach(node => {
-      this.nodes.push({
+    setTimeout(() => {
+      this.nodes = this.data.nodes.map(node => ({
         id: node.toString(),
         label: node.toString()
+      }));
+
+      const edges = {};
+      this.data.edges.forEach(edge => {
+        if (edges[edge.from] == null) edges[edge.from] = {};
+        if (edges[edge.from][edge.to] == null) edges[edge.from][edge.to] = [];
+        edges[edge.from][edge.to].push(`${edge.input} / ${edge.output}`);
       });
-    });
 
-    const edges = {};
-    this.data.edges.forEach(edge => {
-      if (edges[edge.from] == null) edges[edge.from] = {};
-      if (edges[edge.from][edge.to] == null) edges[edge.from][edge.to] = [];
-      edges[edge.from][edge.to].push(`${edge.input} / ${edge.output}`);
-    });
-
-    for (let from in edges) {
-      for (let to in edges[from]) {
-        this.links.push({
-          id: `edge-${from}-${to}`,
-          source: `${from}`,
-          target: `${to}`,
-          label: edges[from][to]
-        });
+      this.links = [];
+      for (let from in edges) {
+        for (let to in edges[from]) {
+          this.links.push({
+            id: `edge-${from}-${to}`,
+            source: `${from}`,
+            target: `${to}`,
+            label: edges[from][to]
+          });
+        }
       }
-    }
+    });
   }
 
   getMidPoint(link: NgxGraphEdge): NodePosition {

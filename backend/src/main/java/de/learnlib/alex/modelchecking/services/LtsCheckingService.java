@@ -68,7 +68,7 @@ public class LtsCheckingService {
      *         If the project or a lts formula could not be found.
      */
     public List<LtsCheckingResult> check(User user, Long projectId, LtsCheckingConfig config) throws NotFoundException {
-        final LearnerResult learnerResult = learnerResultDAO.get(user, projectId, config.getLearnerResultId(), true);
+        final LearnerResult learnerResult = learnerResultDAO.get(user, projectId, config.getLearnerResultId());
         final LearnerResultStep step = learnerResult.getSteps().get(config.getStepNo() - 1);
 
         final Alphabet<String> alphabet = step.getHypothesis().createAlphabet();

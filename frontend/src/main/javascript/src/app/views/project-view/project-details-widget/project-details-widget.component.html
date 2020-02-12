@@ -16,7 +16,11 @@
       </tr>
       <tr>
         <td><strong>Default URL</strong></td>
-        <td>{{project.getDefaultEnvironment().getDefaultUrl().url}}</td>
+        <td class="text-break">
+          <a [href]="project.getDefaultEnvironment().getDefaultUrl().url">
+            {{project.getDefaultEnvironment().getDefaultUrl().url}}
+          </a>
+        </td>
       </tr>
       </tbody>
     </table>

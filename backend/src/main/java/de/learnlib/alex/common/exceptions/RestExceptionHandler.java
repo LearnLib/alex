@@ -90,4 +90,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         final RESTError error = new RESTError(HttpStatus.BAD_REQUEST, e);
         return ResponseEntity.badRequest().body(error);
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    protected ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException e) {
+        LOGGER.info("IllegalArgumentException caught.", e);
+        final RESTError error = new RESTError(HttpStatus.BAD_REQUEST, e);
+        return ResponseEntity.badRequest().body(error);
+    }
 }

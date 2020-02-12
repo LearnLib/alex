@@ -134,12 +134,13 @@ export class LearnerResultsCompareViewComponent implements OnInit {
           this.toastService.info('Cannot find a difference.');
         } else {
           this.addPanel(<any>{
-            hypothesis: data,
-            steps: [{hypothesis: data}],
-            testNo: `Diff ${this.panels[0].result.testNo} vs. ${this.panels[1].result.testNo}`,
-            algorithm: {
-              name: ''
-            }
+              steps: [{hypothesis: data}],
+              testNo: `Diff ${this.panels[0].result.testNo} vs. ${this.panels[1].result.testNo}`,
+              setup: {
+                algorithm: {
+                  name: 'TTT'
+                }
+              }
           });
         }
       },

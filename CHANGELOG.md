@@ -28,6 +28,7 @@
 * Specify default test configurations
 * Multiple pre and post steps for test cases
 * Queue test and learn processes
+* Save learning setups
 
 # ALEX 1.7.2
 

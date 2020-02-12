@@ -72,15 +72,6 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
         projectRepository.save(project); // should fail
     }
 
-    //TODO: new policy: duplicate names allowed
-    @Test(expected = DataIntegrityViolationException.class)
-    public void shouldFailToSaveAProjectsWithADuplicateNamesForOneUser() {
-        Project project1 = createProject(user, "Test Project");
-        projectRepository.save(project1);
-        Project project2 = createProject(user, "Test Project");
-        projectRepository.save(project2); // should fail
-    }
-
     @Test
     public void shouldSaveAProjectsWithADuplicateNameForMultipleUsers() {
         User otherUser = createUser("foo@test.example");

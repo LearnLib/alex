@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Project } from '../../../entities/project';
 import { LearnerApiService } from '../../../services/api/learner-api.service';
 import { ToastService } from '../../../services/toast.service';

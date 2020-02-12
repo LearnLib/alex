@@ -7,93 +7,94 @@
 
 <div class="modal-body">
 
-  <table class="table">
-    <tr class="active">
-      <td colspan="2"><strong>About this test</strong></td>
-    </tr>
-    <tr>
-      <td>nth Test</td>
-      <td>{{result.testNo}}</td>
-    </tr>
-    <tr>
-      <td>|Sigma|</td>
-      <td>{{result.symbols.length}}</td>
-    </tr>
-    <tr>
-      <td>Algorithm</td>
-      <td>{{result.algorithm.name | formatLearningAlgorithm}}</td>
-    </tr>
-    <tr>
-      <td>Web Driver</td>
-      <td>
-        {{result.driverConfig.name | formatWebBrowser}} ({{result.driverConfig.width}}px x
-        {{result.driverConfig.height}}px)
-      </td>
-    </tr>
-  </table>
-
-  <h4>Statistics</h4>
-  <hr>
-
   <ngb-tabset [justify]="'fill'">
-    <ngb-tab *ngFor="let tab of tabs" [title]="tab.heading">
+    <ngb-tab title="Test run">
       <ng-template ngbTabContent>
-
-        <div *ngIf="tab.result.error" class="alert alert-condensed alert-danger">
-          <i class="fas fa-fw fa-warning"></i>
-          <strong>This step failed:</strong>
-          <span>{{tab.result.errorText}}</span>
-        </div>
+        <br>
 
         <table class="table">
-
-          <tr *ngIf="tab.result.stepNo != null">
-            <td>nth Step</td>
-            <td>{{tab.result.stepNo}}</td>
-          </tr>
-
           <tr>
-            <td>Started</td>
-            <td>{{tab.result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}</td>
-          </tr>
-
-          <tr *ngIf="tab.result.eqOracle" class="active">
-            <td colspan="2"><strong>Configuration</strong></td>
-          </tr>
-          <tr *ngIf="tab.result.eqOracle">
-            <td>EQ Oracle</td>
-            <td>{{tab.result.eqOracle.type | formatEqOracle}}</td>
-          </tr>
-
-          <tr class="active">
-            <td colspan="2"><strong>Numbers</strong></td>
+            <td>Description</td>
+            <td>{{result.comment}}</td>
           </tr>
           <tr>
-            <td>Duration</td>
-            <td>{{tab.result.statistics.duration.total | formatMilliseconds}} (Learner:
-              {{tab.result.statistics.duration.learner | formatMilliseconds}}, EQ Oracle:
-              {{tab.result.statistics.duration.eqOracle | formatMilliseconds}})
-            </td>
+            <td>nth Test</td>
+            <td>{{result.testNo}}</td>
           </tr>
           <tr>
-            <td>#Membership Queries</td>
-            <td>{{tab.result.statistics.mqsUsed.total}} (Learner: {{tab.result.statistics.mqsUsed.learner}}, EQ Oracle:
-              {{tab.result.statistics.mqsUsed.eqOracle}})
-            </td>
+            <td>Status</td>
+            <td>{{result.status}}</td>
           </tr>
           <tr>
-            <td>#Equivalence Queries</td>
-            <td>{{tab.result.statistics.eqsUsed}}</td>
+            <td>Steps</td>
+            <td>{{result.steps.length}}</td>
           </tr>
           <tr>
-            <td>#Symbol Calls</td>
-            <td>{{tab.result.statistics.symbolsUsed.total}} (Learner: {{tab.result.statistics.symbolsUsed.learner}}, EQ
-              Oracle: {{tab.result.statistics.symbolsUsed.eqOracle}})
-            </td>
+            <td>Error</td>
+            <td>{{result.error}}</td>
           </tr>
-
         </table>
+      </ng-template>
+    </ngb-tab>
+    <ngb-tab title="Setup">
+      <ng-template ngbTabContent>
+        <br>
 
+        <learner-setup-table [setup]="result.setup"></learner-setup-table>
+      </ng-template>
+    </ngb-tab>
+    <ngb-tab title="Statistics">
+      <ng-template ngbTabContent>
+        <br>
+
+        <ngb-tabset [justify]="'fill'">
+          <ngb-tab *ngFor="let tab of tabs" [title]="tab.heading">
+            <ng-template ngbTabContent>
+
+              <table class="table">
+
+                <tr *ngIf="tab.result.stepNo != null">
+                  <td>nth Step</td>
+                  <td>{{tab.result.stepNo}}</td>
+                </tr>
+
+                <tr>
+                  <td>Started</td>
+                  <td>{{tab.result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}</td>
+                </tr>
+
+                <tr class="active">
+                  <td colspan="2"><strong>Numbers</strong></td>
+                </tr>
+                <tr>
+                  <td>Duration</td>
+                  <td>{{tab.result.statistics.duration.total | formatMilliseconds}} (Learner:
+                    {{tab.result.statistics.duration.learner | formatMilliseconds}}, EQ Oracle:
+                    {{tab.result.statistics.duration.eqOracle | formatMilliseconds}})
+                  </td>
+                </tr>
+                <tr>
+                  <td>#Membership Queries</td>
+                  <td>{{tab.result.statistics.mqsUsed.total}} (Learner: {{tab.result.statistics.mqsUsed.learner}}, EQ Oracle:
+                    {{tab.result.statistics.mqsUsed.eqOracle}})
+                  </td>
+                </tr>
+                <tr>
+                  <td>#Equivalence Queries</td>
+                  <td>{{tab.result.statistics.eqsUsed}}</td>
+                </tr>
+                <tr>
+                  <td>#Symbol Calls</td>
+                  <td>{{tab.result.statistics.symbolsUsed.total}} (Learner: {{tab.result.statistics.symbolsUsed.learner}}, EQ
+                    Oracle: {{tab.result.statistics.symbolsUsed.eqOracle}})
+                  </td>
+                </tr>
+
+              </table>
+
+            </ng-template>
+          </ngb-tab>
+        </ngb-tabset>
       </ng-template>
     </ngb-tab>
   </ngb-tabset>

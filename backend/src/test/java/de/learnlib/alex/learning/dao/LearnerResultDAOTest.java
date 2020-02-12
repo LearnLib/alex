@@ -19,31 +19,19 @@ package de.learnlib.alex.learning.dao;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.ProjectDAO;
-import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
-import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
-import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
-import de.learnlib.alex.data.repositories.SymbolParameterValueRepository;
 import de.learnlib.alex.learning.entities.LearnerResult;
-import de.learnlib.alex.learning.entities.LearnerResultStep;
-import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
-import de.learnlib.alex.learning.entities.LearnerStatus;
-import de.learnlib.alex.learning.entities.Statistics;
-import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;
-import de.learnlib.alex.learning.services.LearnerService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import javax.persistence.EntityManager;
-import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -55,8 +43,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -78,26 +64,17 @@ public class LearnerResultDAOTest {
     private LearnerResultStepRepository learnerResultStepRepository;
 
     @Mock
-    private LearnerService learnerService;
-
-    @Mock
     private EntityManager entityManager;
 
     @Mock
-    private ParameterizedSymbolRepository parameterizedSymbolRepository;
-    @Mock
-    private SymbolParameterValueRepository symbolParameterValueRepository;
-
-    @Mock
-    private ProjectEnvironmentRepository projectEnvironmentRepository;
+    private LearnerSetupDAO learnerSetupDAO;
 
     private LearnerResultDAO learnerResultDAO;
-
 
     @Before
     public void setUp() {
         learnerResultDAO = new LearnerResultDAO(projectDAO, learnerResultRepository, learnerResultStepRepository,
-                entityManager, parameterizedSymbolRepository, symbolParameterValueRepository, projectEnvironmentRepository);
+                entityManager, learnerSetupDAO);
     }
 
     @Test
@@ -115,7 +92,7 @@ public class LearnerResultDAOTest {
         given(learnerResultRepository.saveAndFlush(result)).willReturn(result);
 
         try {
-            learnerResultDAO.create(user, result);
+            learnerResultDAO.create(user, project, result);
         } catch (NotFoundException e) {
             e.printStackTrace();
         }
@@ -125,89 +102,12 @@ public class LearnerResultDAOTest {
     }
 
     @Test
-    public void shouldSaveAValidLearnerResultWhenItIsTheFirstResult() throws Exception {
-        User user = new User();
-        user.setId(USER_ID);
-
-        Project project = new Project();
-        project.setId(PROJECT_ID);
-
-        LearnerResult result = createLearnerResultsList().get(0);
-        result.setProject(project);
-
-        given(learnerResultRepository.findHighestTestNo(PROJECT_ID)).willReturn(null);
-        given(learnerResultRepository.saveAndFlush(result)).willReturn(result);
-
-        try {
-            learnerResultDAO.create(user, result);
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-        }
-
-        verify(learnerResultRepository).saveAndFlush(result);
-        assertThat(result.getTestNo(), is(equalTo(0L)));
-    }
-
-    @Test(expected = ValidationException.class)
-    public void shouldHandleDataIntegrityViolationExceptionOnLearnerResultCreationGracefully() throws Exception {
-        User user = new User();
-        user.setId(USER_ID);
-
-        Project project = new Project();
-        project.setId(PROJECT_ID);
-
-        LearnerResult result = createLearnerResultsList().get(0);
-        result.setProject(project);
-
-        given(learnerResultRepository.saveAndFlush(result)).willThrow(DataIntegrityViolationException.class);
-
-        try {
-            learnerResultDAO.create(user, result); // should fail
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test(expected = ValidationException.class)
-    public void shouldNotSaveALearnResultWithoutAProject() {
-        User user = new User();
-
-        LearnerResult result = new LearnerResult();
-
-        try {
-            learnerResultDAO.create(user, result); // should fail
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test(expected = ValidationException.class)
-    public void shouldNotSaveALearnerResultWithATestNo() {
-        User user = new User();
-
-        Project project = new Project();
-
-        LearnerResult result = new LearnerResult();
-        result.setProject(project);
-        result.setTestNo(0L);
-
-        try {
-            learnerResultDAO.create(user, result); // should fail
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
     public void shouldGetAllResultsOfOneProject() throws NotFoundException {
         User user = new User();
 
         List<LearnerResult> results = createLearnerResultsList();
-
-        given(learnerResultRepository.findByProject_IdOrderByTestNoAsc(PROJECT_ID))
-                .willReturn(results);
-
-        List<LearnerResult> resultsFromDAO = learnerResultDAO.getAll(user, PROJECT_ID, true);
+        given(learnerResultRepository.findByProject_Id(PROJECT_ID)).willReturn(results);
+        List<LearnerResult> resultsFromDAO = learnerResultDAO.getAll(user, PROJECT_ID);
 
         assertThat(results.size(), is(equalTo(resultsFromDAO.size())));
         for (LearnerResult r : resultsFromDAO) {
@@ -219,13 +119,12 @@ public class LearnerResultDAOTest {
     public void ensureThatGettingAllResultsReturnsAnEmptyListIfNoLearnerResultCouldBeFound() throws NotFoundException {
         User user = new User();
 
-        given(learnerResultRepository.findByProject_IdOrderByTestNoAsc(PROJECT_ID))
+        given(learnerResultRepository.findByProject_Id(PROJECT_ID))
                 .willReturn(Collections.emptyList());
 
-        List<LearnerResult> results = learnerResultDAO.getAll(user, PROJECT_ID, true);
+        List<LearnerResult> results = learnerResultDAO.getAll(user, PROJECT_ID);
         assertEquals(results.size(), 0);
     }
-
 
     @Test
     public void shouldGetMultipleResults() throws NotFoundException {
@@ -237,23 +136,12 @@ public class LearnerResultDAOTest {
         given(learnerResultRepository.findByProject_IdAndTestNoIn(PROJECT_ID, testNos))
                 .willReturn(results);
 
-        List<LearnerResult> resultsFromDAO = learnerResultDAO.getAll(user, PROJECT_ID, testNos, true);
+        List<LearnerResult> resultsFromDAO = learnerResultDAO.getAll(user, PROJECT_ID, testNos);
 
         assertThat(results.size(), is(equalTo(resultsFromDAO.size())));
         for (LearnerResult r : resultsFromDAO) {
             assertTrue(results.contains(r));
         }
-    }
-
-    @Test(expected = NotFoundException.class)
-    public void ensureThatGettingMultipleResultThrowsAnExceptionIfOneResultIdIsInvalid() throws NotFoundException {
-        User user = new User();
-        List<Long> testNos = Arrays.asList(0L, 1L, 2L);
-
-        given(learnerResultRepository.findByProject_IdAndTestNoIn(PROJECT_ID, testNos))
-                .willReturn(Collections.emptyList());
-
-        learnerResultDAO.getAll(user, PROJECT_ID, testNos, true); // should fail
     }
 
     @Test(expected = NotFoundException.class)
@@ -263,88 +151,18 @@ public class LearnerResultDAOTest {
         given(learnerResultRepository.findOneByProject_IdAndTestNo(PROJECT_ID, 0L))
                 .willReturn(null);
 
-        learnerResultDAO.get(user, PROJECT_ID, 0L, true); // should fail
-    }
-
-    @Test
-    public void shouldCreateAStepFromValidConfiguration() throws NotFoundException {
-        Project project = new Project();
-
-        LearnerResult result = new LearnerResult();
-        result.setProject(project);
-
-        LearnerResumeConfiguration configuration = new LearnerResumeConfiguration();
-        configuration.setEqOracle(EXAMPLE_EQ_ORACLE);
-
-        LearnerResultStep step = learnerResultDAO.createStep(result, configuration);
-        assertThat(step.getStepNo(), is(equalTo(1L)));
-    }
-
-    @Test
-    public void shouldCreateAStepFromAPreviousStep() throws NotFoundException {
-        Project project = new Project();
-
-        LearnerResult result = new LearnerResult();
-        result.setProject(project);
-
-        LearnerResumeConfiguration configuration = new LearnerResumeConfiguration();
-        configuration.setEqOracle(EXAMPLE_EQ_ORACLE);
-        LearnerResultStep step = learnerResultDAO.createStep(result, configuration);
-        result.getSteps().add(step);
-
-        LearnerResultStep newStep = learnerResultDAO.createStep(result);
-
-        assertThat(newStep.getStepNo(), is(equalTo(2L)));
-    }
-
-    @Test
-    public void shouldSaveAStep() throws NotFoundException {
-        Statistics.DetailedStatistics detailedStatistics = new Statistics.DetailedStatistics(1L, 1L);
-
-        Project project = new Project();
-
-        LearnerResult result = new LearnerResult();
-        result.setProject(project);
-
-        LearnerResumeConfiguration configuration = new LearnerResumeConfiguration();
-        configuration.setEqOracle(EXAMPLE_EQ_ORACLE);
-        LearnerResultStep step = learnerResultDAO.createStep(result, configuration);
-
-        Statistics statistics = new Statistics();
-        statistics.setEqsUsed(1L);
-        statistics.setDuration(detailedStatistics);
-        statistics.setMqsUsed(detailedStatistics);
-        statistics.setSymbolsUsed(detailedStatistics);
-
-        CompactMealyMachineProxy hypothesis = mock(CompactMealyMachineProxy.class);
-        step.setHypothesis(hypothesis);
-        step.setStatistics(statistics);
-
-        learnerResultDAO.saveStep(result, step);
-
-        verify(learnerResultStepRepository, times(1)).save(step);
+        learnerResultDAO.get(user, PROJECT_ID, 0L); // should fail
     }
 
     @Test
     public void shouldDeleteMultipleResults() throws NotFoundException {
         List<Long> testNos = Arrays.asList(0L, 1L);
-        LearnerStatus status = new LearnerStatus();
 
         given(learnerResultRepository.deleteByProject_IdAndTestNoIn(PROJECT_ID, testNos)).willReturn(2L);
 
-        learnerResultDAO.delete(learnerService, PROJECT_ID, testNos);
+        learnerResultDAO.deleteAll(new User(USER_ID), PROJECT_ID, testNos);
 
         verify(learnerResultRepository).deleteByProject_IdAndTestNoIn(PROJECT_ID, testNos);
-    }
-
-    @Test(expected = NotFoundException.class)
-    public void shouldThrowAnExceptionIfTheTestResultToDeleteWasNotFound() throws NotFoundException {
-        List<Long> testNos = Arrays.asList(0L, 1L);
-        LearnerStatus status = new LearnerStatus();
-
-        given(learnerResultRepository.deleteByProject_IdAndTestNoIn(PROJECT_ID, testNos)).willReturn(1L);
-
-        learnerResultDAO.delete(learnerService, PROJECT_ID, testNos);
     }
 
     private List<LearnerResult> createLearnerResultsList() throws NotFoundException {
@@ -358,8 +176,6 @@ public class LearnerResultDAOTest {
             Symbol s2 = new Symbol();
             s2.setId(2L);
             s2.setProject(project);
-            r.setResetSymbol(new ParameterizedSymbol(s1));
-            r.setSymbols(Collections.singletonList(new ParameterizedSymbol(s2)));
             results.add(r);
         }
         return results;

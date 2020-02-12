@@ -19,16 +19,15 @@ package de.learnlib.alex.learning.services;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.LoggerMarkers;
-import de.learnlib.alex.data.dao.ProjectEnvironmentDAO;
-import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
-import de.learnlib.alex.data.entities.ProjectEnvironment;
-import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
+import de.learnlib.alex.learning.dao.LearnerSetupDAO;
+import de.learnlib.alex.learning.entities.LearnerOptions;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
+import de.learnlib.alex.learning.entities.LearnerSetup;
 import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStatus;
 import de.learnlib.alex.learning.entities.LearningProcessStatus;
@@ -52,9 +51,9 @@ import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -70,7 +69,7 @@ import java.util.stream.Collectors;
 @Service
 public class LearnerService {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
     /** Indicator for in which phase the learner currently is. */
     public enum LearnerPhase {
@@ -82,36 +81,30 @@ public class LearnerService {
         EQUIVALENCE_TESTING
     }
 
-    /** The SymbolDAO to use. */
-    @Inject
-    private SymbolDAO symbolDAO;
+    private final LearnerSetupDAO learnerSetupDAO;
+    private final LearnerResultDAO learnerResultDAO;
+    private final WebhookService webhookService;
+    private final PreparedConnectorContextHandlerFactory contextHandlerFactory;
+    private final TestDAO testDAO;
+    private final LearnerResultRepository learnerResultRepository;
 
-    /** The LearnerResultDAO to use. */
-    @Inject
-    private LearnerResultDAO learnerResultDAO;
-
-    /** The {@link WebhookService} to use. */
-    @Inject
-    private WebhookService webhookService;
-
-    /** Factory to create a new ContextHandler. */
-    @Inject
-    private PreparedConnectorContextHandlerFactory contextHandlerFactory;
-
-    /** The injected test DAO. */
-    @Inject
-    private TestDAO testDAO;
-
-    @Inject
-    private ProjectEnvironmentDAO projectEnvironmentDAO;
-
-    @Inject
-    private LearnerResultRepository learnerResultRepository;
-
-    /** The last thread of an user, if one exists. */
+    /** The learner threads for users (userId -> thread). */
     private final Map<Long, LearnerThread> learnerThreads;
 
-    public LearnerService() {
+    @Autowired
+    public LearnerService(LearnerSetupDAO learnerSetupDAO,
+                          LearnerResultDAO learnerResultDAO,
+                          WebhookService webhookService,
+                          PreparedConnectorContextHandlerFactory contextHandlerFactory,
+                          TestDAO testDAO,
+                          LearnerResultRepository learnerResultRepository) {
+        this.learnerSetupDAO = learnerSetupDAO;
+        this.learnerResultDAO = learnerResultDAO;
+        this.webhookService = webhookService;
+        this.contextHandlerFactory = contextHandlerFactory;
+        this.testDAO = testDAO;
+        this.learnerResultRepository = learnerResultRepository;
+
         this.learnerThreads = new HashMap<>();
     }
 
@@ -122,7 +115,7 @@ public class LearnerService {
      *         The user that wants to start the learning process.
      * @param project
      *         The project the learning process runs in.
-     * @param configuration
+     * @param startConfiguration
      *         The configuration to use for the learning process.
      * @throws IllegalArgumentException
      *         If the configuration was invalid or the user tried to start a second active learning thread.
@@ -131,18 +124,25 @@ public class LearnerService {
      * @throws NotFoundException
      *         If the symbols specified in the configuration could not be found.
      */
-    public LearnerResult start(User user, Project project, LearnerStartConfiguration configuration)
-            throws IllegalArgumentException, IllegalStateException, NotFoundException {
-        final List<ProjectEnvironment> environments = projectEnvironmentDAO.getByIds(user, project.getId(), configuration.getEnvironmentIds());
-        configuration.setEnvironments(environments);
+    public LearnerResult start(User user, Project project, LearnerStartConfiguration startConfiguration) {
+        final LearnerSetup setup = startConfiguration.getSetup();
+        final LearnerSetup createdSetup = setup.getId() != null ? setup : learnerSetupDAO.create(user, project.getId(), setup);
 
-        final LearnerResult result = createLearnerResult(user, project, configuration);
+        final LearnerOptions options = startConfiguration.getOptions();
+        if (options.getComment() == null || options.getComment().trim().equals("")) {
+            options.setComment(createdSetup.getName());
+        }
+
+        LearnerResult result = new LearnerResult();
+        result.setSetup(createdSetup);
+        result.setComment(startConfiguration.getOptions().getComment());
+        result = learnerResultDAO.create(user, project, result);
 
         final PreparedContextHandler contextHandler = contextHandlerFactory
-                .createPreparedContextHandler(user, project, configuration.getDriverConfig(), result.getResetSymbol(), result.getPostSymbol());
+                .createPreparedContextHandler(user, project, createdSetup.getWebDriver(), createdSetup.getPreSymbol(), createdSetup.getPostSymbol());
 
         final AbstractLearnerProcess learnThread = new StartingLearnerProcess(user, learnerResultDAO, webhookService,
-                testDAO, contextHandler, result, configuration);
+                testDAO, contextHandler, result, createdSetup);
 
         enqueueLearningProcess(project.getId(), learnThread);
 
@@ -174,83 +174,17 @@ public class LearnerService {
         }
 
         if (configuration.getEqOracle() instanceof SampleEQOracleProxy) {
-            validateCounterexample(user, project, configuration);
+            validateCounterexample(user, result, configuration);
         }
 
-        final Symbol resetSymbol = symbolDAO.get(user, project.getId(), result.getResetSymbol().getSymbol().getId());
-        result.getResetSymbol().setSymbol(resetSymbol);
+        final LearnerSetup setup = result.getSetup();
+        final PreparedContextHandler contextHandler = contextHandlerFactory.createPreparedContextHandler(
+                user, project, setup.getWebDriver(), setup.getPreSymbol(), setup.getPostSymbol());
 
-        final List<Long> symbolIds = result.getSymbols().stream()
-                .map(s -> s.getSymbol().getId())
-                .collect(Collectors.toList());
-        final List<Symbol> symbols = symbolDAO.getByIds(user, project.getId(), symbolIds);
+        final AbstractLearnerProcess learnThread = new ResumingLearnerProcess(user, learnerResultDAO, learnerSetupDAO,
+                webhookService, testDAO, contextHandler, result, setup, configuration);
 
-        final Map<Long, Symbol> symbolMap = new HashMap<>();
-        symbols.forEach(s -> symbolMap.put(s.getId(), s));
-        result.getSymbols().forEach(ps -> ps.setSymbol(symbolMap.get(ps.getSymbol().getId())));
-
-        final List<ProjectEnvironment> envs = projectEnvironmentDAO.getByIds(user, project.getId(), configuration.getEnvironmentIds());
-        result.setEnvironments(envs);
-        configuration.setEnvironments(envs);
-
-        if (result.getPostSymbol() != null) {
-            final Symbol postSymbol = symbolDAO.get(user, project.getId(), result.getPostSymbol().getSymbol().getId());
-            result.getPostSymbol().setSymbol(postSymbol);
-        }
-
-        final PreparedContextHandler contextHandler = contextHandlerFactory.createPreparedContextHandler(user, project,
-                result.getDriverConfig(), result.getResetSymbol(), result.getPostSymbol());
-
-        final AbstractLearnerProcess learnThread = new ResumingLearnerProcess(user, learnerResultDAO, webhookService,
-                testDAO, contextHandler, result, configuration);
         enqueueLearningProcess(project.getId(), learnThread);
-    }
-
-    private LearnerResult createLearnerResult(User user, Project project, LearnerStartConfiguration configuration)
-            throws NotFoundException, IllegalArgumentException {
-
-        // It is not allowed to start a learning process with predefined counterexamples.
-        configuration.checkConfiguration();
-
-        final LearnerResult learnerResult = new LearnerResult();
-        learnerResult.setProject(project);
-
-        try {
-            final ParameterizedSymbol pResetSymbol = configuration.getResetSymbol();
-            final Symbol resetSymbol = symbolDAO.get(user, project.getId(), pResetSymbol.getSymbol().getId());
-            pResetSymbol.setSymbol(resetSymbol);
-            learnerResult.setResetSymbol(pResetSymbol);
-
-            if (configuration.getPostSymbol() != null) {
-                final ParameterizedSymbol pPostSymbol = configuration.getPostSymbol();
-                final Symbol postSymbol = symbolDAO.get(user, project.getId(), pPostSymbol.getSymbol().getId());
-                pPostSymbol.setSymbol(postSymbol);
-                learnerResult.setPostSymbol(pPostSymbol);
-            }
-        } catch (NotFoundException e) {
-            throw new NotFoundException("Could not find the reset symbol", e);
-        }
-
-        final List<Long> symbolIds = configuration.getSymbols().stream()
-                .map(s -> s.getSymbol().getId())
-                .collect(Collectors.toList());
-        final List<Symbol> alphabet = symbolDAO.getByIds(user, project.getId(), symbolIds);
-
-        final Map<Long, Symbol> symbolMap = new HashMap<>();
-        alphabet.forEach(s -> symbolMap.put(s.getId(), s));
-
-        configuration.getSymbols().forEach(s -> s.setSymbol(symbolMap.get(s.getSymbol().getId())));
-
-        learnerResult.setSymbols(configuration.getSymbols());
-        learnerResult.setDriverConfig(configuration.getDriverConfig());
-        learnerResult.setAlgorithm(configuration.getAlgorithm());
-        learnerResult.setComment(configuration.getComment());
-        learnerResult.setUseMQCache(configuration.isUseMQCache());
-
-        final List<ProjectEnvironment> environments = projectEnvironmentDAO.getByIds(user, project.getId(), configuration.getEnvironmentIds());
-        learnerResult.setEnvironments(environments);
-
-        return learnerResultDAO.create(user, learnerResult);
     }
 
     /**
@@ -275,35 +209,17 @@ public class LearnerService {
         }
     }
 
-    /**
-     * If the new configuration is base on manual counterexamples, these samples must be checked.
-     *
-     * @param user
-     *         The user to validate the counterexample for.
-     * @param configuration
-     *         The new configuration.
-     * @throws IllegalArgumentException
-     *         If the new configuration is based on manual counterexamples and at least one of them is wrong.
-     */
-    private void validateCounterexample(User user, Project project, LearnerResumeConfiguration configuration)
+    private void validateCounterexample(User user, LearnerResult result, LearnerResumeConfiguration configuration)
             throws IllegalArgumentException {
 
         final SampleEQOracleProxy oracle = (SampleEQOracleProxy) configuration.getEqOracle();
-        final LearnerResult lastResult;
-
-        try {
-            lastResult = learnerResultDAO.get(user, project.getId(), configuration.getTestNo(), false);
-        } catch (NotFoundException e) {
-            throw new IllegalArgumentException(e);
-        }
-
         for (List<SampleEQOracleProxy.InputOutputPair> counterexample : oracle.getCounterExamples()) {
             List<ParameterizedSymbol> symbolsFromCounterexample = new ArrayList<>();
             List<String> outputs = new ArrayList<>();
 
             // search symbols in configuration where symbol.name == counterexample.input
             for (SampleEQOracleProxy.InputOutputPair io : counterexample) {
-                Optional<ParameterizedSymbol> symbol = lastResult.getSymbols().stream()
+                Optional<ParameterizedSymbol> symbol = result.getSetup().getSymbols().stream()
                         .filter(s -> s.getAliasOrComputedName().equals(io.getInput()))
                         .findFirst();
 
@@ -319,11 +235,11 @@ public class LearnerService {
 
             // finally check if the given sample matches the behavior of the SUL
             List<String> results = readOutputs(user,
-                    lastResult.getProject(),
-                    lastResult.getResetSymbol(),
+                    result.getProject(),
+                    result.getSetup().getPreSymbol(),
                     symbolsFromCounterexample,
-                    lastResult.getPostSymbol(),
-                    lastResult.getDriverConfig())
+                    result.getSetup().getPostSymbol(),
+                    result.getSetup().getWebDriver())
                     .stream()
                     .map(ExecuteResult::getOutput)
                     .collect(Collectors.toList());
@@ -406,13 +322,13 @@ public class LearnerService {
     public List<ExecuteResult> readOutputs(User user, Project project, ParameterizedSymbol resetSymbol,
                                            List<ParameterizedSymbol> symbols, ParameterizedSymbol postSymbol, AbstractWebDriverConfig driverConfig)
             throws LearnerException {
-        LOGGER.traceEntry();
-        LOGGER.info(LoggerMarkers.LEARNER, "Learner.readOutputs({}, {}, {}, {}, {})", user, project, resetSymbol, symbols, driverConfig);
+        logger.traceEntry();
+        logger.info(LoggerMarkers.LEARNER, "Learner.readOutputs({}, {}, {}, {}, {})", user, project, resetSymbol, symbols, driverConfig);
 
         SymbolSet symbolSet = new SymbolSet(resetSymbol, symbols, postSymbol);
         ReadOutputConfig config = new ReadOutputConfig(symbolSet, driverConfig);
 
-        LOGGER.traceExit();
+        logger.traceExit();
         return readOutputs(user, project, config);
     }
 

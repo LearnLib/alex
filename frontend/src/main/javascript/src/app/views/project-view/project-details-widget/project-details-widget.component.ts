@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Project } from '../../../entities/project';
-import { SymbolGroupApiService } from '../../../services/api/symbol-group-api.service';
-import { LearnerResultApiService } from '../../../services/api/learner-result-api.service';
-import { SymbolGroupUtils } from '../../../utils/symbol-group-utils';
 
 @Component({
   selector: 'project-details-widget',
-  templateUrl: './project-details-widget.component.html',
-  styleUrls: ['./project-details-widget.component.scss']
+  templateUrl: './project-details-widget.component.html'
 })
 export class ProjectDetailsWidgetComponent {
 

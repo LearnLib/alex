@@ -78,31 +78,6 @@
 
           </ng-template>
         </ngb-panel>
-        <ngb-panel id="static-4" title="Targets">
-          <ng-template ngbPanelContent>
-
-            <div class="form-group mb-0">
-              <div class="list-group">
-                <div
-                  *ngFor="let env of project.environments"
-                  class="list-group-item d-flex flex-row align-items-center"
-                >
-                  <div>
-                    <selectable-checkbox
-                      (change)="updateEnvironments()" [item]="env"
-                      [selectable]="selectedEnvironments"
-                    >
-                    </selectable-checkbox>
-                  </div>
-                  <div class="w-100 ml-3">
-                    <strong>{{env.name}}</strong>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </ng-template>
-        </ngb-panel>
       </ngb-accordion>
 
     </form>

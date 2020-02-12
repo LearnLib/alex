@@ -35,7 +35,7 @@ export class LearnerResultDownloadService {
    * @param results The learn results to download as csv.
    */
   download(results: LearnerResult[]): Promise<any> {
-    let csv = 'Project;Test no;Start time;Step no;Algorithm;EQ oracle;|Sigma|;#EQs;'
+    let csv = 'Project;Test no;Start time;Step no;Algorithm;Web browser;EQ oracle;|Sigma|;#EQs;'
       + '#MQs (total);#MQs (learner);#MQs (EQ oracle);'
       + '#Symbol calls (total);#Symbol calls (learner);#Symbol calls (EQ oracle);'
       + 'Duration (total); Duration (learner); Duration (EQ oracle)\n';
@@ -46,9 +46,10 @@ export class LearnerResultDownloadService {
         csv += result.testNo.toString() + ';';
         csv += '"' + step.statistics.startDate + '";';
         csv += step.stepNo.toString() + ';';
-        csv += result.algorithm.name + ';';
+        csv += result.setup.algorithm.name + ';';
+        csv += result.setup.webDriver.name + ';';
         csv += step.eqOracle.type + ';';
-        csv += result.symbols.length.toString() + ';';
+        csv += result.setup.symbols.length.toString() + ';';
         csv += step.statistics.eqsUsed.toString() + ';';
         csv += step.statistics.mqsUsed.total.toString() + ';';
         csv += step.statistics.mqsUsed.learner.toString() + ';';
@@ -65,7 +66,7 @@ export class LearnerResultDownloadService {
     });
 
     const name = `statistics-${results.map(r => r.testNo).join(',')}`;
-    return this.promptService.prompt('Enter a name for the csv file', name)
+    return this.promptService.prompt('Enter a name for the csv file', {defaultValue: name})
       .then(filename => this.downloadService.downloadCsv(csv, filename));
   }
 }

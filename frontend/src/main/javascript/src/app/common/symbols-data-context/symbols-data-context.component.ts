@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { ParametrizedSymbol } from '../../entities/parametrized-symbol';
 import { uniqBy } from 'lodash';
 

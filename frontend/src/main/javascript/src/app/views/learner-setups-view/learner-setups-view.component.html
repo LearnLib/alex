@@ -1,0 +1,64 @@
+<div class="view">
+
+  <action-bar>
+    <div class="d-flex">
+      <a class="btn btn-sm btn-primary" [routerLink]="['.', 'new']">
+        <i class="fas fa-fw fa-plus"></i> New Setup
+      </a>
+    </div>
+  </action-bar>
+
+  <div class="view-body">
+    <div class="container-fluid">
+
+      <div class="row">
+        <div class="col-12 col-md-9 order-2 order-md-1">
+
+          <div class="alert alert-info" *ngIf="learnerSetups.length === 0">
+            <i class="fas fa-fw fa-info"></i>
+            You haven't created any setups yet.
+          </div>
+
+          <div class="list-group">
+            <div class="list-group-item d-flex flex-column flex-md-row" *ngFor="let setup of learnerSetups">
+              <learner-setup-table [setup]="setup" class="w-100 order-2 order-md-1"></learner-setup-table>
+              <div class="ml-md-3 flex-shrink-0 order-1 order-md-2 text-right">
+                <div class="btn-group btn-group-sm">
+                  <button class="btn btn-success" (click)="runSetup(setup)">
+                    <i class="fas fa-fw fa-play"></i> Run
+                  </button>
+                  <div class="btn btn-default" ngbDropdown placement="bottom-right">
+                  <span ngbDropdownToggle class="no-caret cursor-pointer">
+                    <i class="fas fa-fw fa-bars"></i>
+                  </span>
+                  <div ngbDropdownMenu>
+                    <a ngbDropdownItem [routerLink]="[setup.id]">
+                      <i class="fas fa-fw fa-edit"></i> Edit
+                    </a>
+                    <button ngbDropdownItem (click)="deleteSetup(setup)">
+                      <i class="fas fa-fw fa-trash"></i> Delete
+                    </button>
+                    <div class="dropdown-divider"></div>
+                    <button ngbDropdownItem (click)="copySetup(setup)">
+                      <i class="fas fa-fw fa-copy"></i> Copy
+                    </button>
+                  </div>
+                  </div>
+                </div>
+                <hr class="d-block d-md-none">
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="col-12 col-md-3 order-1 order-md-2">
+          <learner-status-widget
+            class="d-block mb-4"
+          >
+          </learner-status-widget>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

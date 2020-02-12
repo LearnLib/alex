@@ -120,7 +120,7 @@ export class ProjectsViewStoreService {
   }
 
   exportProject(project: Project): void {
-    this.promptService.prompt('Enter a name for the json file.', project.name).then(name => {
+    this.promptService.prompt('Enter a name for the json file.', {defaultValue: project.name}).then(name => {
       this.projectApi.export(project.id).subscribe(data => {
         this.downloadService.downloadObject(data, name);
       });

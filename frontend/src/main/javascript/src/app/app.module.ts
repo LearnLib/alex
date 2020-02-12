@@ -142,11 +142,10 @@ import { SymbolsSymbolGroupTreeComponent } from './views/symbols-view/symbols-sy
 import { SymbolItemComponent } from './views/symbols-view/symbols-symbol-group-tree/symbol-item/symbol-item.component';
 import { SidebarComponent } from './common/sidebar/sidebar.component';
 import { UserLoginFormComponent } from './common/user-login-form/user-login-form.component';
-import { UserRegistrationFormComponent } from "./common/user-registration-form/user-registration-form.component";
+import { UserRegistrationFormComponent } from './common/user-registration-form/user-registration-form.component';
 import { RootViewComponent } from './views/root-view/root-view.component';
 import { NodeFormGroupComponent } from './common/node-form-group/node-form-group.component';
-import { LearnerSettingsModalComponent } from './views/learner-setup-view/learner-settings-modal/learner-settings-modal.component';
-import { LearnerSetupViewComponent } from './views/learner-setup-view/learner-setup-view.component';
+import { LearnerSetupsViewComponent } from './views/learner-setups-view/learner-setups-view.component';
 import { SymbolViewComponent } from './views/symbol-view/symbol-view.component';
 import { CreateActionModalComponent } from './views/symbol-view/create-action-modal/create-action-modal.component';
 import { EditActionModalComponent } from './views/symbol-view/edit-action-modal/edit-action-modal.component';
@@ -239,6 +238,11 @@ import { SymbolsDataContextComponent } from './common/symbols-data-context/symbo
 import { ClipboardModule } from 'ngx-clipboard';
 import { WebdriverSettingsFormComponent } from './views/admin-settings-view/webdriver-settings-form/webdriver-settings-form.component';
 import { ToggleButtonComponent } from './common/toggle-button/toggle-button.component';
+import { LearnerSetupApiService } from './services/api/learner-setup-api.service';
+import { LearnerSetupTableComponent } from './common/learner-setup-table/learner-setup-table.component';
+import { LearnerSetupsCreateViewComponent } from './views/learner-setups-create-view/learner-setups-create-view.component';
+import { LearnerSetupsEditViewComponent } from './views/learner-setups-edit-view/learner-setups-edit-view.component';
+import { LearnerSetupFormComponent } from './common/learner-setup-form/learner-setup-form.component';
 
 
 @NgModule({
@@ -350,8 +354,7 @@ import { ToggleButtonComponent } from './common/toggle-button/toggle-button.comp
     UserRegistrationFormComponent,
     RootViewComponent,
     NodeFormGroupComponent,
-    LearnerSetupViewComponent,
-    LearnerSettingsModalComponent,
+    LearnerSetupsViewComponent,
     SymbolViewComponent,
     CreateActionModalComponent,
     EditActionModalComponent,
@@ -438,7 +441,11 @@ import { ToggleButtonComponent } from './common/toggle-button/toggle-button.comp
     AddUserModalComponent,
     SymbolsDataContextComponent,
     WebdriverSettingsFormComponent,
-    ToggleButtonComponent
+    ToggleButtonComponent,
+    LearnerSetupTableComponent,
+    LearnerSetupsCreateViewComponent,
+    LearnerSetupsEditViewComponent,
+    LearnerSetupFormComponent
   ],
   imports: [
     BrowserModule,
@@ -476,6 +483,7 @@ import { ToggleButtonComponent } from './common/toggle-button/toggle-button.comp
     CounterApiService,
     ProjectApiService,
     ProjectEnvironmentApiService,
+    LearnerSetupApiService,
     LtsFormulaApiService,
     SymbolApiService,
     ClipboardService,
@@ -532,7 +540,6 @@ import { ToggleButtonComponent } from './common/toggle-button/toggle-button.comp
     TestsImportModalComponent,
     LearnerResultListModalComponent,
     SeparatingWordModalComponent,
-    LearnerSettingsModalComponent,
     CreateActionModalComponent,
     EditActionModalComponent,
     AboutModalComponent,

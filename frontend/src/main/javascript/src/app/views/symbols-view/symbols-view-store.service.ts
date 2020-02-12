@@ -94,7 +94,7 @@ export class SymbolsViewStoreService {
 
   copySymbol(symbol: AlphabetSymbol): void {
     const newName = symbol.name + ' - Copy';
-    this.promptService.prompt('Enter a name for the new symbol', newName)
+    this.promptService.prompt('Enter a name for the new symbol', {defaultValue: newName})
       .then(name => {
 
         this.symbolApi.export(symbol.project, {symbolIds: [symbol.id], symbolsOnly: true}).subscribe(

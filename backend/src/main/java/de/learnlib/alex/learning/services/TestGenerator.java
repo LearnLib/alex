@@ -32,7 +32,6 @@ import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestCase;
 import de.learnlib.alex.testing.entities.TestCaseStep;
 import de.learnlib.alex.testing.entities.TestSuite;
-import de.learnlib.alex.testing.repositories.TestRepository;
 import de.learnlib.algorithms.discriminationtree.hypothesis.HState;
 import de.learnlib.algorithms.discriminationtree.mealy.DTLearnerMealy;
 import de.learnlib.algorithms.ttt.base.BaseTTTDiscriminationTree;
@@ -72,17 +71,14 @@ public class TestGenerator {
     private final LearnerResultDAO learnerResultDAO;
     private final ProjectDAO projectDAO;
     private final TestDAO testDAO;
-    private TestRepository testRepository;
 
     @Inject
     public TestGenerator(LearnerResultDAO learnerResultDAO,
                          TestDAO testDAO,
-                         ProjectDAO projectDAO,
-                         TestRepository testRepository) {
+                         ProjectDAO projectDAO) {
         this.learnerResultDAO = learnerResultDAO;
         this.testDAO = testDAO;
         this.projectDAO = projectDAO;
-        this.testRepository = testRepository;
     }
 
     /**
@@ -108,7 +104,7 @@ public class TestGenerator {
     public TestSuite generate(User user, Long projectId, Long testNo, TestSuiteGenerationConfig config)
             throws NotFoundException, IOException, ClassNotFoundException {
 
-        final LearnerResult result = learnerResultDAO.get(user, projectId, testNo, true);
+        final LearnerResult result = learnerResultDAO.get(user, projectId, testNo);
         final LearnerResultStep step = result.getSteps().stream()
                 .filter(s -> s.getStepNo().equals(config.getStepNo()))
                 .findFirst()
@@ -117,7 +113,7 @@ public class TestGenerator {
         // Restore the state of the learner so that one can access the discrimination tree.
         // Leave the mq oracle null since we don't want to continue learning.
         final Alphabet<String> alphabet = result.getSteps().get(result.getSteps().size() - 1).getHypothesis().createAlphabet();
-        final AbstractLearningAlgorithm<String, String> algorithm = result.getAlgorithm();
+        final AbstractLearningAlgorithm<String, String> algorithm = result.getSetup().getAlgorithm();
         final LearningAlgorithm.MealyLearner<String, String> learner = algorithm.createLearner(alphabet, null);
         algorithm.resume(learner, step.getState());
 
@@ -162,10 +158,10 @@ public class TestGenerator {
                 }
                 break;
             case W_METHOD:
-                computeTestCasesWMethod(testCaseFn, learner.getHypothesisModel(), result, new WMethodTestsIterator<>(learner.getHypothesisModel(), result.getSigma(), 0), generatedTestCases);
+                computeTestCasesWMethod(testCaseFn, learner.getHypothesisModel(), result, new WMethodTestsIterator<>(learner.getHypothesisModel(), result.getSetup().getSigma(), 0), generatedTestCases);
                 break;
             case WP_METHOD:
-                computeTestCasesWMethod(testCaseFn, learner.getHypothesisModel(), result, new WpMethodTestsIterator<>(learner.getHypothesisModel(), result.getSigma(), 0), generatedTestCases);
+                computeTestCasesWMethod(testCaseFn, learner.getHypothesisModel(), result, new WpMethodTestsIterator<>(learner.getHypothesisModel(), result.getSetup().getSigma(), 0), generatedTestCases);
                 break;
             case TRANS_COVER:
                 computeTestCasesTransCover(testCaseFn, learner.getHypothesisModel(), result, alphabet, generatedTestCases);
@@ -187,7 +183,7 @@ public class TestGenerator {
         int testNum = 0;
         while (testsIterator.hasNext()) {
             final Word<String> word = testsIterator.next();
-            final List<Long> pSymbolIds = convertWordToPSymbolIds(word, lr.getSymbols());
+            final List<Long> pSymbolIds = convertWordToPSymbolIds(word, lr.getSetup().getSymbols());
             final TestCase testCase = createTestCaseFn.apply(String.valueOf(testNum++));
             setTestCaseSteps(testCase, lr, pSymbolIds, hypothesis.computeOutput(word), generatedTestCases);
         }
@@ -201,7 +197,7 @@ public class TestGenerator {
 
         int testNum = 0;
         for (Word<String> word: Automata.transitionCover(hypothesis, alphabet)) {
-            final List<Long> pSymbolIds = convertWordToPSymbolIds(word, lr.getSymbols());
+            final List<Long> pSymbolIds = convertWordToPSymbolIds(word, lr.getSetup().getSymbols());
             final TestCase testCase = createTestCaseFn.apply(String.valueOf(testNum++));
             setTestCaseSteps(testCase, lr, pSymbolIds, hypothesis.computeOutput(word), generatedTestCases);
         }
@@ -225,7 +221,7 @@ public class TestGenerator {
                 Word<String> accessSequenceOutcome = asTransformer.apply(accessSequence);
 
                 List<Long> accessSequenceAsIds =
-                        new ArrayList<>(convertWordToPSymbolIds(accessSequence, lr.getSymbols()));
+                        new ArrayList<>(convertWordToPSymbolIds(accessSequence, lr.getSetup().getSymbols()));
                 List<String> outcomeList = new ArrayList<>();
                 List<Long> testCaseSymbols = new ArrayList<>();
 
@@ -239,7 +235,7 @@ public class TestGenerator {
 
                     DSCR discriminator = nodeP.getDiscriminator();
                     testCaseSymbols.addAll(accessSequenceAsIds);
-                    testCaseSymbols.addAll(convertWordToPSymbolIds(dscrExtractor.apply(discriminator), lr.getSymbols()));
+                    testCaseSymbols.addAll(convertWordToPSymbolIds(dscrExtractor.apply(discriminator), lr.getSetup().getSymbols()));
 
                     final TestCase testCase = createTestCaseFn.apply(String.valueOf(i++));
 
@@ -253,7 +249,7 @@ public class TestGenerator {
                 accessSequenceAsIds.clear();
             } else if (e.isRoot() && e.getData() != null) {
                 final List<Long> accessSequenceAsList =
-                        convertWordToPSymbolIds(accessSequenceExtractor.apply(e.getData()), lr.getSymbols());
+                        convertWordToPSymbolIds(accessSequenceExtractor.apply(e.getData()), lr.getSetup().getSymbols());
 
                 final TestCase testCase = createTestCaseFn.apply(String.valueOf(i++));
                 setTestCaseSteps(testCase, lr, accessSequenceAsList, Word.epsilon(), generatedTestCases);
@@ -274,9 +270,9 @@ public class TestGenerator {
     private void setTestCaseSteps(TestCase testCase, LearnerResult lr, List<Long> pSymbolIds,
                                   Word<String> outputs, List<TestCase> generatedTestCases)
             throws NotFoundException {
-        setSteps(lr.getResetSymbol(), testCase, testCase.getPreSteps());
+        setSteps(lr.getSetup().getPreSymbol(), testCase, testCase.getPreSteps());
         setStepsByPSymbolIds(lr, testCase, pSymbolIds);
-        setSteps(lr.getPostSymbol(), testCase, testCase.getPostSteps());
+        setSteps(lr.getSetup().getPostSymbol(), testCase, testCase.getPostSteps());
 
         for (int i = 0; i < outputs.size(); i++) {
             final TestCaseStep step = testCase.getSteps().get(i);
@@ -304,7 +300,7 @@ public class TestGenerator {
     }
 
     private void setStepsByPSymbolIds(LearnerResult result, TestCase testCase, List<Long> pSymbolIds) throws NotFoundException {
-        final Map<Long, ParameterizedSymbol> pSymbolMap = result.getSymbols().stream()
+        final Map<Long, ParameterizedSymbol> pSymbolMap = result.getSetup().getSymbols().stream()
                 .collect(Collectors.toMap(ParameterizedSymbol::getId, Function.identity()));
 
         for (Long id : pSymbolIds) {

@@ -248,25 +248,20 @@ public class UserResource {
         String oldPassword = (String) json.get("oldPassword");
         String newPassword = (String) json.get("newPassword");
 
-        try {
-            User realUser = userDAO.getById(userId);
+        User realUser = userDAO.getById(userId);
 
-            // make sure that the password is valid
-            if (!realUser.isValidPassword(oldPassword)) {
-                throw new IllegalArgumentException("Please provide your old password!");
-            }
-
-            realUser.setEncryptedPassword(newPassword);
-            userDAO.update(realUser);
-
-            LOGGER.traceExit(realUser);
-
-            webhookService.fireEvent(user, new UserEvent.CredentialsUpdated(userId));
-            return ResponseEntity.ok(realUser);
-        } catch (IllegalArgumentException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.changePassword", HttpStatus.FORBIDDEN, e);
+        // make sure that the password is valid
+        if (!realUser.isValidPassword(oldPassword)) {
+            throw new IllegalArgumentException("Please provide your old password!");
         }
+
+        realUser.setEncryptedPassword(newPassword);
+        userDAO.update(realUser);
+
+        LOGGER.traceExit(realUser);
+
+        webhookService.fireEvent(user, new UserEvent.CredentialsUpdated(userId));
+        return ResponseEntity.ok(user);
     }
 
     /**
@@ -504,9 +499,6 @@ public class UserResource {
 
             LOGGER.traceExit(json);
             return ResponseEntity.ok(json);
-        } catch (IllegalArgumentException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", HttpStatus.UNAUTHORIZED, e);
         } catch (JoseException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", HttpStatus.INTERNAL_SERVER_ERROR, e);

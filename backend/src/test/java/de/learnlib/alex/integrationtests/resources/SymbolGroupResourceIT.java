@@ -30,7 +30,6 @@ import org.springframework.http.HttpStatus;
 
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
-
 import java.util.Arrays;
 import java.util.List;
 

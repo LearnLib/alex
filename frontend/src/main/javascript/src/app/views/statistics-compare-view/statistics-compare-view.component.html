@@ -42,25 +42,29 @@
         </thead>
         <tbody *ngIf="chartData.context.length === 0">
         <tr>
-          <td><strong>Test {{chartData.context.testNo}}</strong></td>
+          <td style="width: 100px">
+            <strong>Test {{chartData.context.testNo}}</strong>
+          </td>
           <td>
-            {{chartData.context.driverConfig.name | formatWebBrowser}} ({{chartData.context.driverConfig.width}}px
-            x {{chartData.context.driverConfig.height}}px)
+            {{chartData.context.setup.webDriver.name | formatWebBrowser}} ({{chartData.context.setup.webDriver.width}}px
+            x {{chartData.context.setup.webDriver.height}}px)
           </td>
           <td>{{chartData.context.algorithm.name | formatLearningAlgorithm}}</td>
-          <td>{{chartData.context.symbols.length}}</td>
+          <td>{{chartData.context.setup.symbols.length}}</td>
           <td>{{chartData.context.statistics.eqsUsed}}</td>
         </tr>
         </tbody>
         <tbody *ngIf="chartData.context.length > 0">
         <tr *ngFor="let result of chartData.context">
-          <td><strong>Test {{result.testNo}}</strong></td>
-          <td>
-            {{result.driverConfig.name | formatWebBrowser}} ({{result.driverConfig.width}}px
-            x {{result.driverConfig.height}}px)
+          <td style="width: 100px">
+            <strong>Test {{result.testNo}}</strong>
           </td>
-          <td>{{result.algorithm.name | formatLearningAlgorithm}}</td>
-          <td>{{result.symbols.length}}</td>
+          <td>
+            {{result.setup.webDriver.name | formatWebBrowser}} ({{result.setup.webDriver.width}}px
+            x {{result.setup.webDriver.height}}px)
+          </td>
+          <td>{{result.setup.algorithm.name | formatLearningAlgorithm}}</td>
+          <td>{{result.setup.symbols.length}}</td>
           <td>{{result.statistics.eqsUsed}}</td>
         </tr>
         </tbody>

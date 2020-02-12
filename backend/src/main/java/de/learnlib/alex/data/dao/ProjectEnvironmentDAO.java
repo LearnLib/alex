@@ -30,7 +30,10 @@ import de.learnlib.alex.data.repositories.ProjectEnvironmentVariableRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.ProjectUrlRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
+import de.learnlib.alex.learning.dao.LearnerSetupDAO;
+import de.learnlib.alex.learning.entities.LearnerSetup;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
+import de.learnlib.alex.learning.repositories.LearnerSetupRepository;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
@@ -54,7 +57,8 @@ public class ProjectEnvironmentDAO {
     private final ProjectUrlRepository urlRepository;
     private final SymbolActionRepository symbolActionRepository;
     private final TestReportRepository testReportRepository;
-    private final LearnerResultRepository learnerResultRepository;
+    private final LearnerSetupRepository learnerSetupRepository;
+    private final LearnerSetupDAO learnerSetupDAO;
 
     @Inject
     public ProjectEnvironmentDAO(ProjectDAO projectDAO,
@@ -64,7 +68,8 @@ public class ProjectEnvironmentDAO {
                                  ProjectUrlRepository urlRepository,
                                  SymbolActionRepository symbolActionRepository,
                                  TestReportRepository testReportRepository,
-                                 LearnerResultRepository learnerResultRepository) {
+                                 LearnerSetupRepository learnerSetupRepository,
+                                 LearnerSetupDAO learnerSetupDAO) {
         this.projectDAO = projectDAO;
         this.projectRepository = projectRepository;
         this.environmentRepository = environmentRepository;
@@ -72,7 +77,8 @@ public class ProjectEnvironmentDAO {
         this.urlRepository = urlRepository;
         this.symbolActionRepository = symbolActionRepository;
         this.testReportRepository = testReportRepository;
-        this.learnerResultRepository = learnerResultRepository;
+        this.learnerSetupRepository = learnerSetupRepository;
+        this.learnerSetupDAO = learnerSetupDAO;
     }
 
     public ProjectEnvironment create(User user, Long projectId, ProjectEnvironment environment) {
@@ -146,7 +152,14 @@ public class ProjectEnvironmentDAO {
 
         // delete test reports and learner results that have been executed in the environment
         testReportRepository.deleteAllByEnvironment_Id(environment.getId());
-        learnerResultRepository.deleteAllByEnvironmentsContains(environment);
+        final List<LearnerSetup> learnerSetups = learnerSetupRepository.findAllByEnvironmentsContains(environment);
+        for (LearnerSetup learnerSetup: learnerSetups) {
+            learnerSetup.getEnvironments().remove(environment);
+            if (learnerSetup.getEnvironments().isEmpty()) {
+                learnerSetupDAO.delete(user, projectId, learnerSetup.getId());
+            }
+            learnerSetupRepository.save(learnerSetup);
+        }
 
         project.getEnvironments().remove(environment);
         projectRepository.save(project);
@@ -189,18 +202,6 @@ public class ProjectEnvironmentDAO {
         final ProjectEnvironment env = environmentRepository.findById(envId).orElse(null);
         checkAccess(user, env.getProject(), env);
         return ProjectEnvironmentDAO.loadLazyRelations(env);
-    }
-
-    public List<ProjectEnvironment> getByIds(User user, Long projectId, List<Long> envIds) {
-        final Project project = projectRepository.findById(projectId).orElse(null);
-        final List<ProjectEnvironment> envs = environmentRepository.findAllById(envIds);
-
-        for (ProjectEnvironment env: envs) {
-            checkAccess(user, project, env);
-            loadLazyRelations(env);
-        }
-
-        return envs;
     }
 
     public ProjectEnvironmentVariable createVariable(User user, Long projectId, Long environmentId, ProjectEnvironmentVariable variable) {

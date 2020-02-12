@@ -23,8 +23,8 @@ import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolPSymbolStep;
 import de.learnlib.alex.data.entities.SymbolUsageResult;
 import de.learnlib.alex.data.repositories.SymbolPSymbolStepRepository;
-import de.learnlib.alex.learning.entities.LearnerResult;
-import de.learnlib.alex.learning.repositories.LearnerResultRepository;
+import de.learnlib.alex.learning.entities.LearnerSetup;
+import de.learnlib.alex.learning.repositories.LearnerSetupRepository;
 import de.learnlib.alex.testing.entities.TestCase;
 import de.learnlib.alex.testing.entities.TestCaseStep;
 import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
@@ -45,17 +45,17 @@ public class SymbolUsageService {
     private SymbolDAO symbolDAO;
     private SymbolPSymbolStepRepository symbolPSymbolStepRepository;
     private TestCaseStepRepository testCaseStepRepository;
-    private LearnerResultRepository learnerResultRepository;
+    private LearnerSetupRepository learnerSetupRepository;
 
     @Inject
     public SymbolUsageService(SymbolDAO symbolDAO,
                               SymbolPSymbolStepRepository symbolPSymbolStepRepository,
                               TestCaseStepRepository testCaseStepRepository,
-                              LearnerResultRepository learnerResultRepository) {
+                              LearnerSetupRepository learnerSetupRepository) {
         this.symbolDAO = symbolDAO;
         this.symbolPSymbolStepRepository = symbolPSymbolStepRepository;
         this.testCaseStepRepository = testCaseStepRepository;
-        this.learnerResultRepository = learnerResultRepository;
+        this.learnerSetupRepository = learnerSetupRepository;
     }
 
     public SymbolUsageResult findUsages(User user, Long projectId, Long symbolId) {
@@ -75,21 +75,22 @@ public class SymbolUsageService {
         foundInTestCases.forEach(tc -> tc.setSteps(new ArrayList<>()));
         usageResult.setTestCases(foundInTestCases);
 
-        final Set<LearnerResult> foundInLearnerResults = new HashSet<>();
-        final List<LearnerResult> learnerResults = learnerResultRepository.findByProject_IdOrderByTestNoAsc(symbol.getProjectId());
-        for (LearnerResult r: learnerResults) {
-            if (r.getResetSymbol().getSymbol().getId().equals(symbolId) || (r.getPostSymbol() != null && r.getPostSymbol().getSymbol().getId().equals(symbolId))) {
-                foundInLearnerResults.add(r);
+        final Set<LearnerSetup> foundInLearnerSetup = new HashSet<>();
+        final List<LearnerSetup> setups = learnerSetupRepository.findAllByProject_Id(symbol.getProjectId());
+        for (LearnerSetup s: setups) {
+            if (s.getPreSymbol().getSymbol().getId().equals(symbolId)
+                    || (s.getPostSymbol() != null && s.getPostSymbol().getSymbol().getId().equals(symbolId))) {
+                foundInLearnerSetup.add(s);
                 continue;
             }
-            for (ParameterizedSymbol ps: r.getSymbols()) {
+            for (ParameterizedSymbol ps: s.getSymbols()) {
                 if (ps.getSymbol().getId().equals(symbolId)) {
-                    foundInLearnerResults.add(r);
+                    foundInLearnerSetup.add(s);
                     break;
                 }
             }
         }
-        usageResult.setLearnerResults(foundInLearnerResults);
+        usageResult.setLearnerSetups(foundInLearnerSetup);
 
         return usageResult;
     }

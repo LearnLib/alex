@@ -19,16 +19,26 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PromptModalComponent } from '../common/modals/prompt-modal/prompt-modal.component';
 import { ConfirmModalComponent } from '../common/modals/confirm-modal/confirm-modal.component';
 
+export interface PromptOptions {
+  defaultValue?: string;
+  required?: boolean;
+  okBtnText?: string;
+  cancelBtnText?: string;
+}
+
 @Injectable()
 export class PromptService {
 
   constructor(private modalService: NgbModal) {
   }
 
-  prompt(text: string, defaultValue: string = ''): Promise<any> {
+  prompt(text: string, options: PromptOptions = {
+    defaultValue: '',
+    required: true
+  }): Promise<any> {
     const modalRef = this.modalService.open(PromptModalComponent);
     modalRef.componentInstance.text = text;
-    modalRef.componentInstance.defaultValue = defaultValue;
+    modalRef.componentInstance.options = options;
     return modalRef.result;
   }
 

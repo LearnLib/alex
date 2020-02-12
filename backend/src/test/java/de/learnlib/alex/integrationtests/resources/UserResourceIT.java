@@ -21,9 +21,9 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.entities.UserRole;
-import de.learnlib.alex.settings.entities.Settings;
 import de.learnlib.alex.integrationtests.resources.api.SettingsApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
+import de.learnlib.alex.settings.entities.Settings;
 import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -179,7 +179,7 @@ public class UserResourceIT extends AbstractResourceIT {
         userApi.create(createUserJson("test@test.de", "test"));
         final Response res = userApi.loginRaw("test@test.de", "123");
 
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
         assertFalse(res.readEntity(String.class).contains("Bearer: "));
     }
 
@@ -305,9 +305,9 @@ public class UserResourceIT extends AbstractResourceIT {
         checkIsRestError(res.readEntity(String.class));
     }
 
-    private void shouldNotLoginWith401(String email, String password) throws Exception {
+    private void shouldNotLoginWith400(String email, String password) throws Exception {
         final Response res = userApi.loginRaw(email, password);
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
         checkIsRestError(res.readEntity(String.class));
     }
 
@@ -330,7 +330,7 @@ public class UserResourceIT extends AbstractResourceIT {
         System.out.println(res.readEntity(String.class));
         assertEquals(HttpStatus.OK.value(), res.getStatus());
 
-        shouldNotLoginWith401("test@test.de", "test");
+        shouldNotLoginWith400("test@test.de", "test");
         shouldLogin("test@test.de", "new");
     }
 

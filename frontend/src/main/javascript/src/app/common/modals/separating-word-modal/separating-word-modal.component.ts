@@ -46,15 +46,16 @@ export class SeparatingWordModalComponent {
 
   generateTestCase(which: number): void {
     const result = which == 1 ? this.result1 : this.result2;
+    const setup = result.setup;
     const symbolMap = {};
-    result.symbols.forEach(s => symbolMap[s.getAliasOrComputedName()] = s);
+    setup.symbols.forEach(s => symbolMap[s.getAliasOrComputedName()] = s);
 
     const tc = new TestCase();
     tc.name = 'Test Case';
     tc.project = result.project;
 
-    const preStep = TestCaseStep.fromSymbol(result.resetSymbol.symbol);
-    preStep.pSymbol.parameterValues = result.resetSymbol.parameterValues;
+    const preStep = TestCaseStep.fromSymbol(setup.preSymbol.symbol);
+    preStep.pSymbol.parameterValues = setup.preSymbol.parameterValues;
     tc.preSteps = [preStep];
 
     for (let i = 0; i < this.diff.input.length; i++) {
@@ -68,9 +69,9 @@ export class SeparatingWordModalComponent {
       tc.steps.push(step);
     }
 
-    const postStep = result.postSymbol == null ? null : TestCaseStep.fromSymbol(result.postSymbol.symbol);
+    const postStep = setup.postSymbol == null ? null : TestCaseStep.fromSymbol(setup.postSymbol.symbol);
     if (postStep != null) {
-      postStep.pSymbol.parameterValues = result.postSymbol.parameterValues;
+      postStep.pSymbol.parameterValues = setup.postSymbol.parameterValues;
       tc.postSteps = [postStep];
     }
 
