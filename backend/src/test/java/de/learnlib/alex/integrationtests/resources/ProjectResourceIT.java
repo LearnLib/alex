@@ -37,6 +37,7 @@ import java.util.Collections;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -50,17 +51,21 @@ public class ProjectResourceIT extends AbstractResourceIT {
 
     private UserApi userApi;
 
+    private int userId;
+
     private ProjectApi projectApi;
 
     private SymbolGroupApi symbolGroupApi;
 
     @Before
-    public void pre() {
+    public void pre() throws IOException {
         userApi = new UserApi(client, port);
         projectApi = new ProjectApi(client, port);
         symbolGroupApi = new SymbolGroupApi(client, port);
 
-        userApi.create("{\"email\":\"test@test.de\",\"username\":\"test\",\"password\":\"test\"}");
+        final Response res =
+            userApi.create("{\"email\":\"test@test.de\",\"username\":\"test\",\"password\":\"test\"}");
+        userId = JsonPath.read(res.readEntity(String.class), "id");
 
         adminJwt = userApi.login(ADMIN_EMAIL, ADMIN_PASSWORD);
         userJwt = userApi.login("test@test.de", "test");
@@ -133,17 +138,6 @@ public class ProjectResourceIT extends AbstractResourceIT {
     @Test
     public void shouldNotCreateProjectWithEmptyTitle() {
         final String project = createProjectJson("", "http://localhost:8080");
-        final Response res = projectApi.create(project, adminJwt);
-
-        assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
-    }
-
-    @Test
-    public void shouldNotCreateTheSameProjectTwice() {
-        final String project =
-                createProjectJson("test", "http://localhost:8080");
-        projectApi.create(project, adminJwt);
-
         final Response res = projectApi.create(project, adminJwt);
 
         assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
@@ -479,6 +473,96 @@ public class ProjectResourceIT extends AbstractResourceIT {
 
         final Response res5 = projectApi.get(projectId, adminJwt);
         assertEquals(HttpStatus.NOT_FOUND.value(), res5.getStatus());
+    }
+
+    @Test
+    public void shouldCreateProjectWithAlreadyExistingName() throws IOException {
+        final Response res1 =
+                projectApi.create(createProjectJson("test", "http://localhost:8080"), adminJwt);
+        assertEquals(HttpStatus.CREATED.value(), res1.getStatus());
+
+        final JsonNode project1 = objectMapper.readTree(res1.readEntity(String.class));
+        final int projectId1 = project1.get("id").asInt();
+
+        final Response res2 =
+                projectApi.create(createProjectJson("test", "http://localhost:8080"), adminJwt);
+        assertEquals(HttpStatus.CREATED.value(), res2.getStatus());
+
+        final JsonNode project2 = objectMapper.readTree(res2.readEntity(String.class));
+        final int projectId2 = project2.get("id").asInt();
+
+        final Response res3 =
+                projectApi.getAll(adminJwt);
+        final String body = res3.readEntity(String.class);
+        List<Integer> projectIds = new ArrayList<>();
+        projectIds.add(JsonPath.read(body, "[0].id"));
+        projectIds.add(JsonPath.read(body, "[1].id"));
+        assertTrue(projectIds.contains(projectId1));
+        assertTrue(projectIds.contains(projectId2));
+    }
+
+    @Test
+    public void shouldUpdateProjectNameToAlreadyExistingName() throws IOException {
+        final Response res1 =
+                projectApi.create(createProjectJson("test", "http://localhost:8080"), adminJwt);
+        assertEquals(HttpStatus.CREATED.value(), res1.getStatus());
+
+        final JsonNode project1 = objectMapper.readTree(res1.readEntity(String.class));
+        final int projectId1 = project1.get("id").asInt();
+
+        final Response res2 =
+                projectApi.create(createProjectJson("test2", "http://localhost:8080"), adminJwt);
+        assertEquals(HttpStatus.CREATED.value(), res2.getStatus());
+
+        final JsonNode project2 = objectMapper.readTree(res2.readEntity(String.class));
+        final int projectId2 = project2.get("id").asInt();
+
+        ((ObjectNode) project2).put("name", "test");
+
+        final Response res3 =
+                projectApi.update(projectId2, project2.toString(), adminJwt);
+        assertEquals(HttpStatus.OK.value(), res3.getStatus());
+
+        final Response res4 =
+                projectApi.getAll(adminJwt);
+        final String body = res4.readEntity(String.class);
+        List<Integer> projectIds = new ArrayList<>();
+        projectIds.add(JsonPath.read(body, "[0].id"));
+        projectIds.add(JsonPath.read(body, "[1].id"));
+        assertTrue(projectIds.contains(projectId1));
+        assertTrue(projectIds.contains(projectId2));
+    }
+
+    @Test
+    public void shouldGetCorrectlyAddedToProjectWithSameName() throws IOException {
+        final Response res1 =
+                projectApi.create(createProjectJson("test", "http://localhost:8080"), adminJwt);
+        assertEquals(HttpStatus.CREATED.value(), res1.getStatus());
+
+        final JsonNode project1 = objectMapper.readTree(res1.readEntity(String.class));
+        final int projectId1 = project1.get("id").asInt();
+
+        final Response res2 =
+                projectApi.create(createProjectJson("test2", "http://localhost:8080"), userJwt);
+        assertEquals(HttpStatus.CREATED.value(), res2.getStatus());
+
+        final JsonNode project2 = objectMapper.readTree(res2.readEntity(String.class));
+        final int projectId2 = project2.get("id").asInt();
+
+        final Response res3 =
+                projectApi.addOwners(projectId1, Collections.singletonList(String.valueOf(userId)), adminJwt);
+        assertEquals(HttpStatus.OK.value(), res3.getStatus());
+
+        final Response res4 =
+                projectApi.getAll(userJwt);
+        final String body = res4.readEntity(String.class);
+        List<Integer> projectIds = new ArrayList<>();
+        projectIds.add(JsonPath.read(body, "[0].id"));
+        projectIds.add(JsonPath.read(body, "[1].id"));
+        assertTrue(projectIds.contains(projectId1));
+        assertTrue(projectIds.contains(projectId2));
+
+
     }
 
     private String createProjectJson(String name, String url) {
