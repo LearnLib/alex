@@ -148,11 +148,6 @@ public class ProjectDAO {
         testSuite.setProject(project);
         project.getTests().add(testSuite);
 
-        final Project projectWithSameName = projectRepository.findByUser_IdAndName(user.getId(), project.getName());
-        if (projectWithSameName != null && !projectWithSameName.getId().equals(project.getId())) {
-            throw new ValidationException("A project with that name already exists.");
-        }
-
         final Project createdProject = projectRepository.save(project);
 
         final ProjectEnvironment defaultEnv = new ProjectEnvironment();
@@ -194,10 +189,6 @@ public class ProjectDAO {
 
         if (!projectInDb.getOwners().contains(user) && user.getRole() != UserRole.ADMIN) {
             throw new UnauthorizedException("You are not allowed to update this project.");
-        }
-
-        if (projectRepository.findByUser_IdAndNameAndIdNot(user.getId(), project.getName(), projectInDb.getId()) != null) {
-            throw new ValidationException("The name of the project already exists.");
         }
 
         projectInDb.setName(project.getName());
@@ -298,11 +289,6 @@ public class ProjectDAO {
     }
 
     private void check(User user, Project project) {
-        // name is unique
-        if (projectRepository.findByUser_IdAndName(user.getId(), project.getName()) != null) {
-            throw new ValidationException("A project with the name already exists");
-        }
-
         // there is a default environment
         if (project.getEnvironments().stream().filter(ProjectEnvironment::isDefault).count() != 1) {
             throw new ValidationException("There has to be exactly one environment");
