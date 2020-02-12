@@ -246,7 +246,7 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
         assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
         res.readEntity(SpringRestError.class);
 
-        final Project p = projectApi.get(project.getId().intValue(), adminJwt).readEntity(Project.class);
+        final Project p = projectApi.get(project.getId(), adminJwt).readEntity(Project.class);
         assertEquals(1, p.getEnvironments().size());
     }
 
@@ -256,11 +256,11 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
         env.setName("env2");
 
         envApi.create(project.getId(), env, adminJwt);
-        project = projectApi.get(project.getId().intValue(), adminJwt).readEntity(Project.class);
+        project = projectApi.get(project.getId(), adminJwt).readEntity(Project.class);
 
         final Long defaultEnvId = project.getDefaultEnvironment().getId();
         final Response res = envApi.delete(project.getId(), defaultEnvId, adminJwt);
-        project = projectApi.get(project.getId().intValue(), adminJwt).readEntity(Project.class);
+        project = projectApi.get(project.getId(), adminJwt).readEntity(Project.class);
 
         assertEquals(HttpStatus.NO_CONTENT.value(), res.getStatus());
         assertEquals(1, project.getEnvironments().size());
@@ -280,7 +280,7 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
 
         env2.setName("env3");
         final Response res = envApi.update(project.getId(), env2.getId(), env2, adminJwt);
-        project = projectApi.get(project.getId().intValue(), adminJwt).readEntity(Project.class);
+        project = projectApi.get(project.getId(), adminJwt).readEntity(Project.class);
 
         env2 = project.getEnvironments().stream().filter(e -> e.getName().equals("env2")).findFirst().orElse(null);
         env3 = project.getEnvironments().stream().filter(e -> e.getName().equals("env3")).findFirst().orElse(null);
@@ -300,7 +300,7 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
         env2.setDefault(true);
         env2 = envApi.update(project.getId(), env2.getId(), env2, adminJwt).readEntity(ProjectEnvironment.class);
 
-        project = projectApi.get(project.getId().intValue(), adminJwt).readEntity(Project.class);
+        project = projectApi.get(project.getId(), adminJwt).readEntity(Project.class);
 
         assertEquals(env2.getId(), project.getDefaultEnvironment().getId());
         assertEquals(1, project.getEnvironments().stream().filter(ProjectEnvironment::isDefault).count());
@@ -321,7 +321,7 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
         var2.setValue("test");
 
         final Response res = envApi.createVariable(project.getId(), env.getId(), var1, adminJwt);
-        project = projectApi.get(project.getId().intValue(), adminJwt).readEntity(Project.class);
+        project = projectApi.get(project.getId(), adminJwt).readEntity(Project.class);
 
         res.readEntity(SpringRestError.class);
         assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
@@ -347,7 +347,7 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
         var2.setName("var1");
 
         final Response res = envApi.updateVariable(project.getId(), project.getDefaultEnvironment().getId(), var2.getId(), var2, adminJwt);
-        project = projectApi.get(project.getId().intValue(), adminJwt).readEntity(Project.class);
+        project = projectApi.get(project.getId(), adminJwt).readEntity(Project.class);
 
         res.readEntity(SpringRestError.class);
         assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());

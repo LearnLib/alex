@@ -349,6 +349,8 @@ public class ProjectDAO {
             Hibernate.initialize(env.getUrls());
             Hibernate.initialize(env.getVariables());
         });
+        Hibernate.initialize(project.getOwners());
+        Hibernate.initialize(project.getMembers());
         return project;
     }
 

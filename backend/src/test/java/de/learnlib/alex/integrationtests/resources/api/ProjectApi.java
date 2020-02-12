@@ -22,6 +22,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ProjectApi extends AbstractApi {
 
@@ -48,20 +49,20 @@ public class ProjectApi extends AbstractApi {
                 .get();
     }
 
-    public Response get(int projectId, String jwt) {
+    public Response get(Long projectId, String jwt) {
         return client.target(url() + "/" + projectId).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
                 .get();
     }
 
-    public Response update(int projectId, String project, String jwt) {
+    public Response update(Long projectId, String project, String jwt) {
         return client.target(url() + "/" + projectId).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .put(Entity.json(project));
     }
 
-    public Response delete(int projectId, String jwt) {
+    public Response delete(Long projectId, String jwt) {
         return client.target(url() + "/" + projectId).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .delete();
@@ -73,26 +74,34 @@ public class ProjectApi extends AbstractApi {
                 .delete();
     }
 
-    public Response addOwners(int projectId, List<String> ownerIds, String jwt) {
+    public Response addOwners(Long projectId, List<Long> ownerIds, String jwt) {
         return client.target(url() + "/" + projectId + "/owners").request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .post(Entity.json(ownerIds));
     }
 
-    public Response addMembers(int projectId, List<String> memberIds, String jwt) {
+    public Response addMembers(Long projectId, List<Long> memberIds, String jwt) {
         return client.target(url() + "/" + projectId + "/members").request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .post(Entity.json(memberIds));
     }
 
-    public Response removeMembers(int projectId, List<String> memberIds, String jwt) {
-        return client.target(url() + "/" + projectId + "/members/" + String.join(",", memberIds)).request()
+    public Response removeMembers(Long projectId, List<Long> memberIds, String jwt) {
+        final String ids = memberIds.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+
+        return client.target(url() + "/" + projectId + "/members/" + ids).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .delete();
     }
 
-    public Response removeOwners(int projectId, List<String> ownerIds, String jwt) {
-        return client.target(url() + "/" + projectId + "/owners/" + String.join(",", ownerIds)).request()
+    public Response removeOwners(Long projectId, List<Long> ownerIds, String jwt) {
+        final String ids = ownerIds.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+
+        return client.target(url() + "/" + projectId + "/owners/" + ids).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .delete();
     }
