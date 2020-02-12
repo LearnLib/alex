@@ -16,7 +16,7 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
-import com.jayway.jsonpath.JsonPath;
+import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.ProjectEnvironmentVariable;
@@ -32,7 +32,6 @@ import org.springframework.http.HttpStatus;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -51,8 +50,6 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
 
     private String memberJwt;
 
-    private int memberId;
-
     private Project project;
 
     @Before
@@ -63,16 +60,15 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
 
         adminJwt = userApi.login("admin@alex.example", "admin");
 
-        final Response res =
-                userApi.create("{\"email\":\"test@test.de\",\"username\":\"test\",\"password\":\"test\"}");
-        memberId = JsonPath.read(res.readEntity(String.class), "id");
+        final User member = userApi.create("{\"email\":\"test@test.de\",\"username\":\"test\",\"password\":\"test\"}")
+                .readEntity(User.class);
 
         memberJwt = userApi.login("test@test.de", "test");
 
         final Response res2 = projectApi.create("{\"name\":\"test\",\"url\":\"http://localhost:8080\"}", adminJwt);
         project = res2.readEntity(Project.class);
 
-        projectApi.addMembers(Math.toIntExact(project.getId()), Collections.singletonList(String.valueOf(memberId)), adminJwt);
+        projectApi.addMembers(project.getId(), Collections.singletonList(member.getId()), adminJwt);
     }
 
     @Test
