@@ -203,6 +203,7 @@ public class LtsFormulaResource {
         final User user = authContext.getUser();
 
         config.validate();
+
         try {
             final List<LtsCheckingResult> results = ltsCheckingService.check(user, projectId, config);
             webhookService.fireEvent(user, new ModelCheckerEvent.CheckedMany(results));
