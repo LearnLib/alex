@@ -84,6 +84,7 @@ public class ProjectEnvironmentDAO {
     public ProjectEnvironment create(User user, Long projectId, ProjectEnvironment environment) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
+        checkPermissions(user, project);
 
         if (environmentRepository.findByProject_IdAndName(projectId, environment.getName()) != null) {
             throw new ValidationException("There has to be at least one environment.");
@@ -137,6 +138,7 @@ public class ProjectEnvironmentDAO {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final ProjectEnvironment environment = environmentRepository.findById(environmentId).orElse(null);
         checkAccess(user, project, environment);
+        checkPermissions(user, project);
 
         if (environmentRepository.findAllByProject_Id(projectId).size() == 1) {
             throw new ValidationException("There has to be at least one environment.");
@@ -170,6 +172,7 @@ public class ProjectEnvironmentDAO {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final ProjectEnvironment envInDb = environmentRepository.findById(envId).orElse(null);
         checkAccess(user, project, envInDb);
+        checkPermissions(user, project);
 
         if (environmentRepository.findByProject_IdAndNameAndIdNot(projectId, env.getName(), envInDb.getId()) != null) {
             throw new ValidationException("The name of the environment already exists");
@@ -208,6 +211,7 @@ public class ProjectEnvironmentDAO {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final ProjectEnvironment env = environmentRepository.findById(environmentId).orElse(null);
         checkAccess(user, project, env);
+        checkPermissions(user, project);
 
         if (variableRepository.findByEnvironment_IdAndName(environmentId, variable.getName()) != null) {
             throw new ValidationException("The name of the variable already exists");
@@ -233,6 +237,7 @@ public class ProjectEnvironmentDAO {
         final ProjectEnvironment env = environmentRepository.findById(environmentId).orElse(null);
         final ProjectEnvironmentVariable variable = variableRepository.findById(variableId).orElse(null);
         checkAccess(user, project, env, variable);
+        checkPermissions(user, project);
 
         variableRepository.deleteAllByEnvironment_Project_IdAndName(projectId, variable.getName());
     }
@@ -242,6 +247,7 @@ public class ProjectEnvironmentDAO {
         final ProjectEnvironment env = environmentRepository.findById(environmentId).orElse(null);
         final ProjectEnvironmentVariable variableInDb = variableRepository.findById(variableId).orElse(null);
         checkAccess(user, project, env, variableInDb);
+        checkPermissions(user, project);
 
         if (variableRepository.findByEnvironment_IdAndNameAndIdNot(environmentId, variable.getName(), variableId) != null) {
             throw new ValidationException("The name of the variable already exists");
@@ -264,6 +270,7 @@ public class ProjectEnvironmentDAO {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final ProjectEnvironment env = environmentRepository.findById(environmentId).orElse(null);
         checkAccess(user, project, env);
+        checkPermissions(user, project);
 
         if (urlRepository.findByEnvironment_IdAndName(environmentId, url.getName()) != null) {
             throw new ValidationException("The name for the URL already exists.");
@@ -288,6 +295,7 @@ public class ProjectEnvironmentDAO {
         final ProjectEnvironment env = environmentRepository.findById(environmentId).orElse(null);
         final ProjectUrl url = urlRepository.findById(urlId).orElse(null);
         checkAccess(user, project, env, url);
+        checkPermissions(user, project);
 
         final List<ProjectEnvironment> envs = environmentRepository.findAllByProject_Id(projectId);
         for (ProjectEnvironment e: envs) {
@@ -324,6 +332,7 @@ public class ProjectEnvironmentDAO {
         final ProjectEnvironment env = environmentRepository.findById(envId).orElse(null);
         final ProjectUrl urlInDb = urlRepository.findById(urlId).orElse(null);
         checkAccess(user, project, env, urlInDb);
+        checkPermissions(user, project);
 
         if (urlRepository.findByEnvironment_IdAndNameAndIdNot(envId, url.getName(), urlInDb.getId()) != null) {
             throw new ValidationException("The name of the URL already exists.");
@@ -382,9 +391,7 @@ public class ProjectEnvironmentDAO {
             throw new NotFoundException("The environment could not be found.");
         }
 
-        if (!env.getProjectId().equals(project.getId())
-            || (!project.getOwners().contains(user))
-            && project.getOwners().stream().noneMatch(u -> u.getId().equals(user.getId()))) {
+        if (!env.getProjectId().equals(project.getId())) {
             throw new UnauthorizedException("You are not allowed to access the environment.");
         }
     }
@@ -397,9 +404,7 @@ public class ProjectEnvironmentDAO {
             throw new NotFoundException("The url could not be found.");
         }
 
-        if (!url.getEnvironmentId().equals(env.getId())
-            || (!project.getOwners().contains(user))
-            && project.getOwners().stream().noneMatch(u -> u.getId().equals(user.getId()))) {
+        if (!url.getEnvironmentId().equals(env.getId())) {
             throw new UnauthorizedException("You are not allowed to access the url.");
         }
     }
@@ -412,10 +417,14 @@ public class ProjectEnvironmentDAO {
             throw new NotFoundException("The variable could not be found.");
         }
 
-        if (!variable.getEnvironmentId().equals(env.getId())
-            || (!project.getOwners().contains(user))
-            && project.getOwners().stream().noneMatch(u -> u.getId().equals(user.getId()))) {
+        if (!variable.getEnvironmentId().equals(env.getId())) {
             throw new UnauthorizedException("You are not allowed to access the variable.");
+        }
+    }
+
+    public void checkPermissions(User user, Project project) {
+        if(project.getOwners().stream().noneMatch(u -> u.getId().equals(user.getId()))) {
+            throw new UnauthorizedException("You need to be an owner to do that.");
         }
     }
 
