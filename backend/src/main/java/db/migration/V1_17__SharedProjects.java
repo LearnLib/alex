@@ -22,10 +22,10 @@ public class V1_17__SharedProjects extends BaseJavaMigration {
                                                 "CONSTRAINT unique_project_owner_relation UNIQUE (USER_ID, PROJECT_ID))");
 
         //populate owners
-        final ResultSet projectRows = connection.createStatement().executeQuery("SELECT ID FROM PUBLIC.PROJECT ORDER BY ID");
+        final ResultSet projectRows = connection.createStatement().executeQuery("SELECT ID, USER_ID FROM PUBLIC.PROJECT ORDER BY ID");
         while (projectRows.next()) {
             final long projectId = projectRows.getLong(1);
-            final long userId = projectRows.getLong(4);
+            final long userId = projectRows.getLong(2);
 
             connection.createStatement().executeUpdate("INSERT INTO PUBLIC.PROJECT_OWNERS (PROJECT_ID, USER_ID) VALUES (" + projectId + ", " + userId + ")");
         }
