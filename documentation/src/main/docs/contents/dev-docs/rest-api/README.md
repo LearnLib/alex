@@ -13,7 +13,8 @@ The payload looks like:
 
 ```JSON
 {
-  "email": "<EMAIL>", 
+  "email": "<EMAIL>",
+  "username": "<USERNAME>", 
   "id": <ID>, 
   "role": "<ROLE>"
 }

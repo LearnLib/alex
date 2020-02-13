@@ -7,8 +7,8 @@ On this page, we present some information for developers and maintainers of ALEX
 
 Make sure you have the following software installed on your development machine:
 
-1. Java JDK 8 or JDK 11
-2. Node.js v10 and NPM v6
+1. Java JDK 11
+2. Node.js v12 and NPM v6
 3. Git
 4. Maven 3.3.*
 
