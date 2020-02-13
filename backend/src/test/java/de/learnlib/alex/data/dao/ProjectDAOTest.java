@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.data.dao;
 
+import de.learnlib.alex.auth.dao.UserDAO;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
@@ -40,6 +41,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import javax.persistence.EntityManager;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
@@ -100,6 +102,9 @@ public class ProjectDAOTest {
     private SymbolGroupDAO symbolGroupDAO;
 
     @Mock
+    private UserDAO userDAO;
+
+    @Mock
     private TestRepository testRepository;
 
     @Mock
@@ -119,7 +124,7 @@ public class ProjectDAOTest {
     public void setUp() {
         projectDAO = new ProjectDAO(projectRepository, learnerResultRepository, testReportRepository, fileDAO,
                 parameterizedSymbolRepository, symbolStepRepository, symbolActionRepository, environmentDAO,
-                projectUrlRepository, testExecutionConfigRepository, testDAO, environmentRepository, symbolGroupDAO,
+                projectUrlRepository, testExecutionConfigRepository, testDAO, userDAO, environmentRepository, symbolGroupDAO,
                 testRepository, symbolParameterRepository, uploadableFileRepository, learnerSetupRepository);
         user = new User();
         user.setId(USER_ID);
@@ -145,7 +150,7 @@ public class ProjectDAOTest {
     public void shouldGetAProjectByItsID() throws NotFoundException {
         User user = new User(USER_ID);
         Project project = new Project();
-        project.setUser(user);
+        project.addOwner(user);
 
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
 
@@ -167,7 +172,7 @@ public class ProjectDAOTest {
         user.setId(USER_ID);
 
         Project project = new Project();
-        project.setUser(user);
+        project.addOwner(user);
         project.setId(PROJECT_ID);
 
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
@@ -184,7 +189,7 @@ public class ProjectDAOTest {
         user.setId(USER_ID);
 
         Project project = new Project();
-        project.setUser(user);
+        project.addOwner(user);
         project.setId(PROJECT_ID);
 
         projectDAO.update(user, PROJECT_ID, project);
@@ -196,7 +201,7 @@ public class ProjectDAOTest {
         user.setId(USER_ID);
 
         Project project = new Project();
-        project.setUser(user);
+        project.addOwner(user);
         project.setId(PROJECT_ID);
 
         given(projectRepository.save(project)).willThrow(ConstraintViolationException.class);
@@ -211,7 +216,7 @@ public class ProjectDAOTest {
         user.setId(USER_ID);
 
         Project project = new Project();
-        project.setUser(user);
+        project.addOwner(user);
 
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
 

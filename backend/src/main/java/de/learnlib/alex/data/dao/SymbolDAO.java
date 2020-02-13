@@ -279,12 +279,9 @@ public class SymbolDAO {
     }
 
     private Symbol createOne(User user, Long projectId, Symbol symbol) throws NotFoundException {
-        if (symbol.getProject() != null && !symbol.getProject().getId().equals(projectId)) {
-            throw new ValidationException("The IDs of the projects do not match.");
-        }
-
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
+        symbol.setProject(project);
 
         // make sure the name of the symbol is unique
         if (symbolRepository.findOneByProject_IdAndName(projectId, symbol.getName()) != null) {

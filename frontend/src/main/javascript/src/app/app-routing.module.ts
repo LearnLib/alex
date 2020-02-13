@@ -28,6 +28,8 @@ import { TestCaseResultsViewComponent } from './views/test-case-results-view/tes
 import { LearnerViewComponent } from './views/learner-view/learner-view.component';
 import { ErrorViewComponent } from './views/error-view/error-view.component';
 import { StatisticsCompareViewComponent } from './views/statistics-compare-view/statistics-compare-view.component';
+import { ProjectUsersViewComponent } from './views/project-users-view/project-users-view.component';
+import { ProjectOwnerGuard } from './guards/ProjectOwnerGuard';
 import { LearnerSetupsCreateViewComponent } from './views/learner-setups-create-view/learner-setups-create-view.component';
 import { LearnerSetupsEditViewComponent } from './views/learner-setups-edit-view/learner-setups-edit-view.component';
 
@@ -113,6 +115,7 @@ const routes: Routes = [
               },
               {
                 path: 'environments',
+                canActivate: [ProjectOwnerGuard],
                 component: ProjectEnvironmentsViewComponent
               },
               {
@@ -219,7 +222,13 @@ const routes: Routes = [
                     ]
                   }
                 ]
+              },
+              {
+                path: 'users',
+                canActivate: [ProjectOwnerGuard],
+                component: ProjectUsersViewComponent
               }
+
             ]
           }
         ]

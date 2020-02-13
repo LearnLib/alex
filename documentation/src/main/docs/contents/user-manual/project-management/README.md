@@ -57,3 +57,30 @@ Variables can used in any action with the following notation, similar to how var
 ::: v-pre
 `{{:VAR_NAME}}`
 :::
+
+
+## Collaboration with other users
+
+As of ALEX 1.8, users can add other users to their projects for working collaboratively with them.
+We differentiate between a project **owner** and a project **member**.
+
+A project **owner** is the user who created a project or has been made a project owner by another owner.
+Project owners have exclusive rights to manage users of a project, as well as to making project related changes.
+The latter includes the creation of project environments, URLs and environment variables.
+
+### Leave a project
+
+1. Go to the project overview page
+2. Click on *Leave* in the dropdown menu beside the project
+
+*Note:* As an owner, you cannot leave project if a) it has members and b) you are the only owner left.
+Announce another project member as owner and then you can leave the project.
+
+### Add users to a project
+
+1. In the sidebar, click on *"Users""* in the project group
+2. Click on the *"Add User"*-button in the action bar
+3. In the modal, search for a user by its username
+4. Select the user and click on *Add Users* 
+
+The added user will then see the project in his overview.

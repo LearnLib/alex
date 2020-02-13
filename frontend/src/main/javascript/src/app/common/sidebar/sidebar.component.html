@@ -29,7 +29,10 @@
         <a [routerLink]="['/app', 'projects', project.id]" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{exact: true}">
           <i class="fas fa-fw fa-columns"></i> <span>Dashboard</span>
         </a>
-        <a [routerLink]="['/app', 'projects', project.id, 'environments']" [routerLinkActive]="'active'">
+        <a *ngIf="project.owners.includes(user.id)" [routerLink]="['/app', 'projects', project.id, 'users']" [routerLinkActive]="'active'">
+          <i class="fas fa-fw fa-users"></i> <span>Users</span>
+        </a>
+        <a *ngIf="project.owners.includes(user.id)" [routerLink]="['/app', 'projects', project.id, 'environments']" [routerLinkActive]="'active'">
           <i class="fas fa-fw fa-cloud"></i> <span>Environments</span>
         </a>
         <a [routerLink]="['/app', 'projects', project.id, 'files']" [routerLinkActive]="'active'">

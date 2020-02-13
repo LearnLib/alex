@@ -76,22 +76,27 @@ public class UserTest {
 
         final String userString = om.writeValueAsString(user);
         final String expectedUserString = "{\"id\":1, \"username\": \"user1\", \"email\": \"admin@alex.com\", \"role\": \"ADMIN\"}";
+        System.out.println(userString);
         JSONAssert.assertEquals(expectedUserString, userString, true);
     }
 
     @Test(expected = PathNotFoundException.class)
     public void shouldNotSerializeProjects() throws Exception {
-        final Project p = new Project();
-        p.setId(2L);
+        final Project p1 = new Project();
+        p1.setId(2L);
+        final Project p2 = new Project();
+        p2.setId(3L);
 
         final User user = new User();
         user.setId(1L);
         user.setUsername("user");
         user.setEmail("user@alex.com");
-        user.setProjects(Collections.singleton(p));
+        user.setProjectsOwner(Collections.singleton(p1));
+        user.setProjectsMember(Collections.singleton(p2));
 
         final String userString = om.writeValueAsString(user);
-        JsonPath.read(userString, "projects");
+        JsonPath.read(userString, "projectsMember");
+        JsonPath.read(userString, "projectsOwner");
     }
 
     @Test(expected = PathNotFoundException.class)

@@ -322,25 +322,12 @@ public class UserResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void userShouldNotGetAnotherUser() throws Exception {
-        final Long userId = userApi.create(createUserJson("test2@test.de", "test"))
-                .readEntity(User.class)
-                .getId();
-
-        userApi.create(createUserJson("test1@test.de", "test"));
-        final String jwt = userApi.login("test1@test.de", "test");
-
-        final Response res = userApi.get(userId, jwt);
-        assertEquals(HttpStatus.FORBIDDEN.value(), res.getStatus());
-        checkIsRestError(res.readEntity(String.class));
-    }
-
-    @Test
     public void shouldChangePassword() throws Exception {
         final User user = userApi.create(createUserJson("test@test.de", "test")).readEntity(User.class);
         final String jwt = userApi.login(user.getEmail(), "test");
 
         final Response res = userApi.changePassword(user.getId(), "test", "new", jwt);
+        System.out.println(res.readEntity(String.class));
         assertEquals(HttpStatus.OK.value(), res.getStatus());
 
         shouldNotLoginWith400("test@test.de", "test");

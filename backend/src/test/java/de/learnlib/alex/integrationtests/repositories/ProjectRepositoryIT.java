@@ -57,26 +57,11 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
         assertTrue(project.getId() > 0L);
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
-    public void shouldFailToSaveAProjectWithoutAnUser() {
-        Project project = new Project();
-        project.setName("Test Project");
-        projectRepository.save(project); // should fail
-    }
-
     @Test(expected = TransactionSystemException.class)
     public void shouldFailToSaveAProjectWithoutAName() {
         Project project = new Project();
-        project.setUser(user);
+        project.addOwner(user);
         projectRepository.save(project); // should fail
-    }
-
-    @Test(expected = DataIntegrityViolationException.class)
-    public void shouldFailToSaveAProjectsWithADuplicateNamesForOneUser() {
-        Project project1 = createProject(user, "Test Project");
-        projectRepository.save(project1);
-        Project project2 = createProject(user, "Test Project");
-        projectRepository.save(project2); // should fail
     }
 
     @Test
@@ -105,11 +90,16 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
         Project project3 = createProject(otherUser, "Test Project 3");
         projectRepository.save(project3);
 
+        Project project4 = createProject(otherUser, "Test Project 4");
+        project4.addMember(user);
+        project4 = projectRepository.save(project4);
+
         List<Project> projects = projectRepository.findAllByUser_Id(user.getId());
 
-        assertThat(projects.size(), is(equalTo(2)));
+        assertThat(projects.size(), is(equalTo(3)));
         assertThat(projects, hasItem(equalTo(project1)));
         assertThat(projects, hasItem(equalTo(project2)));
+        assertThat(projects, hasItem(equalTo(project4)));
     }
 
     @Test

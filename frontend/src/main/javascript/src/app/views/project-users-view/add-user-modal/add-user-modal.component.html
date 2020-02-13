@@ -1,0 +1,64 @@
+<div class="modal-header">
+  <h4 class="modal-title">Add user to project</h4>
+  <a (click)="modal.dismiss()" class="btn btn-icon float-right">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<div class="modal-body">
+
+  <div *ngIf="errorMessage != null" class="alert alert-danger">
+    {{errorMessage}}
+  </div>
+
+  <form [formGroup]="searchForm" class="search-form">
+    <div class="form-group d-flex">
+      <input
+        [formControl]="searchForm.controls.value"
+        type="text"
+        class="form-control mr-1"
+        placeholder="Search for an user"
+      >
+      <button [disabled]="searchForm.invalid" class="btn btn-primary btn-sm flex-shrink-0" (click)="searchUser()">
+        <i class="fas fa-fw fa-search"></i>&nbsp;Search
+      </button>
+    </div>
+  </form>
+
+  <ng-container *ngIf="submitted">
+
+    <table class="table" *ngIf="foundUsers.length > 0">
+      <thead>
+      <tr>
+        <th width="1">&nbsp;</th>
+        <th>Username</th>
+        <th>Email</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let user of foundUsers">
+        <td>
+          <selectable-checkbox
+            [item]="user"
+            [selectable]="usersSelectable"
+          >
+          </selectable-checkbox>
+        </td>
+        <td>{{user.username}}</td>
+        <td class="text-break">{{user.email}}</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <div class="alert alert-info" *ngIf="foundUsers.length === 0">
+      No user matches "<em>{{searchForm.controls.value.value}}</em>".
+    </div>
+
+  </ng-container>
+
+</div>
+
+<div class="modal-footer text-right">
+  <button [disabled]="!usersSelectable.isAnySelected()" (click)="addUser()" class="btn btn-primary btn-sm">Add Users</button>
+  <button (click)="modal.dismiss(); $event.stopPropagation()" class="btn btn-default btn-sm">Cancel</button>
+</div>

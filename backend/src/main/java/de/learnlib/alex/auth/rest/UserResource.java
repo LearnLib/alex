@@ -43,10 +43,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.ValidationException;
 import javax.ws.rs.core.MediaType;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -166,6 +168,28 @@ public class UserResource {
     }
 
     /**
+     * Get the account information about multiple users.
+     *
+     * @param userIds The ids of the users.
+     * @return Detailed information about the users.
+     */
+    @GetMapping(
+            value = "/batch/{ids}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity getManyUsers(@PathVariable("ids") List<Long> userIds) {
+        final User user = authContext.getUser();
+        LOGGER.traceEntry("get({}) for user {}.", userIds, user);
+
+        final List<User> users = new ArrayList<>();
+        userIds.forEach(userId -> {
+            users.add(userDAO.getById(userId));
+        });
+        LOGGER.traceExit(users);
+        return ResponseEntity.ok(users);
+    }
+
+    /**
      * Get all users. This is only allowed for admins.
      *
      * @return A list of all users. This list can be empty.
@@ -176,6 +200,24 @@ public class UserResource {
     public ResponseEntity getAll() {
         LOGGER.traceEntry("getAll()");
         final List<User> users = userDAO.getAll();
+        LOGGER.traceExit(users);
+        return ResponseEntity.ok(users);
+    }
+
+    @GetMapping(
+            value = "/search",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity getByUsernameOrEmail(@RequestParam String searchterm) {
+        LOGGER.traceEntry("getByUsernameOrEmail");
+        final List<User> users = new ArrayList<>();
+        try {
+            if (searchterm.contains("@")) {
+                users.add(userDAO.getByEmail(searchterm));
+            } else {
+                users.add(userDAO.getByUsername(searchterm));
+            }
+        } catch (NotFoundException ignored) {};
         LOGGER.traceExit(users);
         return ResponseEntity.ok(users);
     }
@@ -279,6 +321,14 @@ public class UserResource {
         }
     }
 
+    /**
+     * Changes the username of the user. This can only be invoked if you are an administrator.
+     * Please also note: Your new username must not be your current one and no other user should already have this username.
+     *
+     * @param userId The id of the user.
+     * @param json The json with a property 'username'.
+     * @return The updated user.
+     */
     @PutMapping(
             value = "/{id}/username",
             consumes = MediaType.APPLICATION_JSON,
@@ -388,7 +438,7 @@ public class UserResource {
         // the event is not fired if we do it after the user is deleted in the next line
         // since all webhooks registered to the user are deleted as well.
         webhookService.fireEvent(new User(userId), new UserEvent.Deleted(userId));
-        userDAO.delete(userId);
+        userDAO.delete(user, userId);
 
         LOGGER.traceExit("User {} deleted.", userId);
         return ResponseEntity.noContent().build();
@@ -415,7 +465,7 @@ public class UserResource {
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", HttpStatus.BAD_REQUEST, e);
         }
 
-        userDAO.delete(ids);
+        userDAO.delete(user, ids);
         LOGGER.traceExit("User(s) {} deleted.", ids);
 
         ids.forEach(id -> webhookService.fireEvent(new User(id), new UserEvent.Deleted(id)));

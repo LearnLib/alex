@@ -23,10 +23,12 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.FileDAO;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.repositories.ProjectRepository;
+import de.learnlib.alex.settings.dao.SettingsDAO;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Answers;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -34,6 +36,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.TransactionSystemException;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.RollbackException;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
@@ -67,9 +71,17 @@ public class UserDAOTest {
 
     private UserDAO userDAO;
 
+    private User dummyAdmin;
+
+    @Mock
+    private EntityManager entityManager;
+
     @Before
     public void setUp() throws NotFoundException {
         userDAO = new UserDAO(userRepository, fileDAO, projectDAO, projectRepository);
+        dummyAdmin = new User();
+        dummyAdmin.setRole(UserRole.ADMIN);
+        dummyAdmin.setId(-1L);
     }
 
     @Test
@@ -246,7 +258,7 @@ public class UserDAOTest {
         User user = createUser();
         BDDMockito.given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
 
-        userDAO.delete(user.getId());
+        userDAO.delete(dummyAdmin, user.getId());
 
         Mockito.verify(userRepository).delete(user);
     }
@@ -259,7 +271,7 @@ public class UserDAOTest {
         BDDMockito.given(userRepository.findById(adminToDelete.getId())).willReturn(Optional.of(adminToDelete));
         BDDMockito.given(userRepository.findByRole(UserRole.ADMIN)).willReturn(admins);
 
-        userDAO.delete(adminToDelete.getId());
+        userDAO.delete(dummyAdmin, adminToDelete.getId());
 
         Mockito.verify(userRepository).delete(adminToDelete);
     }
@@ -270,7 +282,7 @@ public class UserDAOTest {
         BDDMockito.given(userRepository.findById(admin.getId())).willReturn(Optional.of(admin));
         BDDMockito.given(userRepository.findByRole(UserRole.ADMIN)).willReturn(Collections.singletonList(admin));
 
-        userDAO.delete(admin.getId());
+        userDAO.delete(dummyAdmin, admin.getId());
     }
 
     @Test
@@ -288,7 +300,7 @@ public class UserDAOTest {
         BDDMockito.given(userRepository.findAllByIdIn(Arrays.asList(user1.getId(), user2.getId())))
                 .willReturn(Arrays.asList(user1, user2));
 
-        userDAO.delete(Arrays.asList(user1.getId(), user2.getId()));
+        userDAO.delete(dummyAdmin, Arrays.asList(user1.getId(), user2.getId()));
 
         Assert.assertEquals(userDAO.getAllByRole(UserRole.REGISTERED).size(), 0);
     }
@@ -302,18 +314,18 @@ public class UserDAOTest {
         user1.setEncryptedPassword("test");
 
         userDAO.create(user1);
-        userDAO.delete(Collections.singletonList(user1.getId()));
+        userDAO.delete(dummyAdmin, Collections.singletonList(user1.getId()));
     }
 
     @Test(expected = NotFoundException.class)
     public void shouldFailToDeleteAUserOnInvalidId() throws NotFoundException {
-        userDAO.delete(-1L);
+        userDAO.delete(dummyAdmin, -1L);
     }
 
     @Test(expected = NotFoundException.class)
     public void shouldNotDeleteOnlyExistingAdmin() throws NotFoundException {
         User admin = createAdmin();
-        userDAO.delete(admin.getId());
+        userDAO.delete(dummyAdmin, admin.getId());
     }
 
     private User createUser() {

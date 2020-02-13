@@ -14,18 +14,8 @@
  * limitations under the License.
  */
 
-import {
-  AfterViewChecked,
-  ChangeDetectorRef,
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges
-} from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { Edge as NgxGraphEdge, Node, NodePosition } from '@swimlane/ngx-graph';
-import { Subject } from 'rxjs';
 
 export interface Edge {
   from: string,

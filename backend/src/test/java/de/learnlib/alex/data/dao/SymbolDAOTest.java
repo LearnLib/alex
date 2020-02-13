@@ -140,7 +140,7 @@ public class SymbolDAOTest {
         user.setId(USER_ID);
 
         Project project = new Project();
-        project.setUser(user);
+        project.addOwner(user);
         project.setId(PROJECT_ID);
 
         SymbolGroup group = new SymbolGroup();
@@ -165,7 +165,7 @@ public class SymbolDAOTest {
         user.setId(USER_ID);
 
         Project project = new Project();
-        project.setUser(user);
+        project.addOwner(user);
         project.setId(PROJECT_ID);
 
         SymbolGroup group = new SymbolGroup();
@@ -193,7 +193,7 @@ public class SymbolDAOTest {
         user.setId(USER_ID);
 
         Project project = new Project();
-        project.setUser(user);
+        project.addOwner(user);
         project.setId(PROJECT_ID);
 
         SymbolGroup group = new SymbolGroup();
@@ -216,7 +216,7 @@ public class SymbolDAOTest {
         user.setId(USER_ID);
 
         Project project = new Project();
-        project.setUser(user);
+        project.addOwner(user);
         project.setId(PROJECT_ID);
 
         SymbolGroup group = new SymbolGroup();
@@ -247,7 +247,7 @@ public class SymbolDAOTest {
 
         Project project = new Project();
         project.setId(PROJECT_ID);
-        project.setUser(user);
+        project.addOwner(user);
 
         SymbolGroup group = new SymbolGroup();
         group.setId(GROUP_ID);
@@ -311,7 +311,7 @@ public class SymbolDAOTest {
 
         Project project = new Project();
         project.setId(PROJECT_ID);
-        project.setUser(user);
+        project.addOwner(user);
 
         SymbolGroup group = new SymbolGroup();
         group.setId(GROUP_ID);
@@ -353,7 +353,7 @@ public class SymbolDAOTest {
         user.setId(USER_ID);
 
         Project project = new Project();
-        project.setUser(user);
+        project.addOwner(user);
         project.setId(PROJECT_ID);
 
         SymbolGroup group = new SymbolGroup();
@@ -378,7 +378,7 @@ public class SymbolDAOTest {
         user.setId(USER_ID);
 
         Project project = new Project();
-        project.setUser(user);
+        project.addOwner(user);
         project.setId(PROJECT_ID);
 
         SymbolGroup group = new SymbolGroup();
@@ -408,7 +408,7 @@ public class SymbolDAOTest {
         user.setId(USER_ID);
 
         Project project = new Project();
-        project.setUser(user);
+        project.addOwner(user);
         project.setId(PROJECT_ID);
 
         SymbolGroup group = new SymbolGroup();
@@ -431,7 +431,7 @@ public class SymbolDAOTest {
         user.setId(USER_ID);
 
         Project project = new Project();
-        project.setUser(user);
+        project.addOwner(user);
         project.setId(PROJECT_ID);
 
         SymbolGroup group = new SymbolGroup();
@@ -461,7 +461,7 @@ public class SymbolDAOTest {
         user.setId(USER_ID);
 
         Project project = new Project();
-        project.setUser(user);
+        project.addOwner(user);
         project.setId(PROJECT_ID);
 
         SymbolGroup group1 = new SymbolGroup();

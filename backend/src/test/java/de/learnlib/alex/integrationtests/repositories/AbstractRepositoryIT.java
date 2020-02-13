@@ -49,7 +49,7 @@ public abstract class AbstractRepositoryIT {
 
     @After
     public void tearDown() throws Exception {
-        userDAO.delete(
+        userDAO.delete(userDAO.getById(Long.valueOf("1")),
                 userRepository.findAll().stream()
                         .map(User::getId)
                         .filter(id -> id > 1)// delete all but the admin
@@ -77,7 +77,7 @@ public abstract class AbstractRepositoryIT {
         env.getUrls().add(url);
 
         final Project project = new Project();
-        project.setUser(user);
+        project.addOwner(user);
         project.setName(name);
         project.getEnvironments().add(env);
         env.setProject(project);

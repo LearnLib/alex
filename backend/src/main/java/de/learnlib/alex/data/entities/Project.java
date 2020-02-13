@@ -28,14 +28,13 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -44,14 +43,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Representation of a testing project with different symbols.
  */
 @Entity
-@Table(
-        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "name"})
-)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Project implements Serializable {
 
@@ -67,10 +64,31 @@ public class Project implements Serializable {
     @GeneratedValue
     private Long id;
 
-    /** The user that owns this project. */
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JsonIgnore
-    private User user;
+    /**
+     * The list of users who are owners of the project.
+     */
+    @ManyToMany(
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE}
+    )
+    @JoinTable(
+            name = "project_owners",
+            joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id")
+    )
+    private List<User> owners;
+
+    /**
+     * The list of users who are members of the project.
+     */
+    @ManyToMany(
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE}
+    )
+    @JoinTable(
+            name = "project_members",
+            joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id")
+    )
+    private List<User> members;
 
     /**
      * The name of the project. This property is required & must be unique.
@@ -164,6 +182,7 @@ public class Project implements Serializable {
      *
      * @param projectId The ID.
      */
+
     public Project(Long projectId) {
         this.id = projectId;
         this.groups = new HashSet<>();
@@ -173,6 +192,8 @@ public class Project implements Serializable {
         this.testExecutionConfigs = new ArrayList<>();
         this.ltsFormulas = new ArrayList<>();
         this.environments = new ArrayList<>();
+        this.owners = new ArrayList<>();
+        this.members = new ArrayList<>();
     }
 
     /**
@@ -194,35 +215,79 @@ public class Project implements Serializable {
     }
 
     /**
-     * @return The user that owns the project.
+     * Get the owners of the project.
+     *
+     * @return The list of owners of the project.
      */
     @JsonIgnore
-    public User getUser() {
-        return user;
+    public List<User> getOwners() {
+        return owners;
     }
 
     /**
-     * @param user The new user that owns the project.
+     * Add an user as an owner to the project.
+     *
+     * @param owner The user who will be added as an owner.
      */
     @JsonIgnore
-    public void setUser(User user) {
-        this.user = user;
+    public void addOwner(User owner) {
+        owners.add(owner);
     }
 
     /**
-     * @return The ID of the user, which is needed for the JSON.
+     * Set a list of users as the owners of the project.
+     *
+     * @param owners The new list of owners.
      */
-    @JsonProperty("user")
-    public Long getUserId() {
-        return user == null ? null : user.getId();
+    @JsonIgnore
+    public void setOwners(List<User> owners) {
+
+        if ( owners != null) {
+            this.owners = owners;
+        }
     }
 
     /**
-     * @param userId The new ID of the user, which is needed for the JSON.
+     * Remove an owner from the project.
+     *
+     * @param owner The user user who will be removed from the list of owners.
+     * @return True if the user was successfully removed
      */
-    @JsonProperty("user")
-    public void setUserId(Long userId) {
-        this.user = new User(userId);
+    @JsonIgnore
+    public boolean removeOwner(User owner) {
+        return owners.remove(owner);
+    }
+
+    @JsonIgnore
+    public List<User> getMembers() {
+        return members;
+    }
+
+    @JsonIgnore
+    public void addMember(User member) {
+        members.add(member);
+    }
+
+    @JsonIgnore
+    public void setMembers(List<User> members) {
+        if (members != null) {
+            this.members = members;
+        }
+    }
+
+    @JsonIgnore
+    public boolean removeMember(User member) {
+        return members.remove(member);
+    }
+
+    @JsonProperty("members")
+    public List<Long> getMemberIds() {
+        return this.members.stream().map(User::getId).collect(Collectors.toList());
+    }
+
+    @JsonProperty("owners")
+    public List<Long> getOwnerIds() {
+        return this.owners.stream().map(User::getId).collect(Collectors.toList());
     }
 
     /**
@@ -390,7 +455,6 @@ public class Project implements Serializable {
     }
 
     @Override
-    @SuppressWarnings("checkstyle:needbraces") // Auto generated by IntelliJ
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -405,7 +469,7 @@ public class Project implements Serializable {
 
     @Override
     public String toString() {
-        return "[Project " + id + "]: " + user + ", " + name;
+        return "[Project " + id + "]: " /* + user */ + ", " + name;
     }
 
 }
