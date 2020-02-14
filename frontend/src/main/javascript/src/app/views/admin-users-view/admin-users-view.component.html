@@ -36,7 +36,6 @@
         </div>
       </form>
 
-      <div class="table-responsive">
         <table class="table">
         <thead>
         <tr>
@@ -82,7 +81,6 @@
         </tr>
         </tbody>
       </table>
-      </div>
 
       <div class="alert alert-info" *ngIf="(filteredUsers$ | async).length === 0">
         No user matches "<em>{{searchForm.controls.value.value}}</em>".
