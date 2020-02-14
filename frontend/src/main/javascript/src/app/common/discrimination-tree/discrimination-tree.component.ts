@@ -89,6 +89,6 @@ export class DiscriminationTreeComponent implements OnChanges {
   }
 
   private generateNodeId(val: string) {
-    return val.replace(/ /g, '-');
+    return CSS.escape(val);
   }
 }
