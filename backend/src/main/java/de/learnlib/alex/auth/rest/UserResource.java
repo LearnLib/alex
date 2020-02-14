@@ -182,9 +182,10 @@ public class UserResource {
         LOGGER.traceEntry("get({}) for user {}.", userIds, user);
 
         final List<User> users = new ArrayList<>();
-        userIds.forEach(userId -> {
-            users.add(userDAO.getById(userId));
-        });
+        for (Long id: userIds) {
+            users.add(userDAO.getById(id));
+        }
+
         LOGGER.traceExit(users);
         return ResponseEntity.ok(users);
     }
@@ -501,7 +502,7 @@ public class UserResource {
             return ResponseEntity.ok(json);
         } catch (JoseException e) {
             LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", HttpStatus.INTERNAL_SERVER_ERROR, e);
+            return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", HttpStatus.UNAUTHORIZED, e);
         }
     }
 

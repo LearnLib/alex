@@ -81,6 +81,17 @@ public class UserApi extends AbstractApi {
                 .get();
     }
 
+    public Response getAll(List<Long> userIds, String jwt) {
+        final String ids = userIds.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+
+        return client.target(url() + "/batch/" + ids).request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
+                .get();
+    }
+
     public Response get(Long id, String jwt) {
         return client.target(url() + "/" + id).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
@@ -99,6 +110,13 @@ public class UserApi extends AbstractApi {
         return client.target(url() + "/batch/" + String.join(",", ids)).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .delete();
+    }
+
+    public Response search(String value, String jwt) {
+        return client.target(url() + "/search?searchterm=" + value).request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
+                .get();
     }
 
     public Response changeRole(int userId, UserRole role, String jwt) {

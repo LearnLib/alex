@@ -16,6 +16,8 @@
 
 package de.learnlib.alex.integrationtests.resources.api;
 
+import de.learnlib.alex.data.entities.Counter;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.HttpHeaders;
@@ -30,39 +32,46 @@ public class CounterApi extends AbstractApi {
         super(client, port);
     }
 
-    public Response getAll(int projectId, String jwt) {
+    public Response getAll(Long projectId, String jwt) {
         return client.target(url(projectId)).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
                 .get();
     }
 
-    public Response create(int projectId, String counter, String jwt) {
+    public Response create(Long projectId, Counter counter, String jwt) {
         return client.target(url(projectId)).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .post(Entity.json(counter));
     }
 
-    public Response update(int projectId, Long counterId, String counter, String jwt) {
+    public Response update(Long projectId, Long counterId, Counter counter, String jwt) {
         return client.target(url(projectId) + "/" + counterId).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .put(Entity.json(counter));
     }
 
-    public Response delete(int projectId, Long counterId, String jwt) {
-        return client.target(url(projectId) + "/" + counterId).request()
+    public Response delete(Long projectId, Counter counter, String jwt) {
+        return client.target(url(projectId, counter.getId())).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .delete();
     }
 
-    public Response delete(int projectId, List<Long> counterNames, String jwt) {
-        final List<String> ids = counterNames.stream().map(String::valueOf).collect(Collectors.toList());
+    public Response delete(Long projectId, List<Counter> counters, String jwt) {
+        final List<String> ids = counters.stream()
+                .map(c -> String.valueOf(c.getId()))
+                .collect(Collectors.toList());
+
         return client.target(url(projectId) + "/batch/" + String.join(",", ids)).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .delete();
     }
 
-    public String url(int projectId) {
+    public String url(Long projectId) {
         return baseUrl() + "/projects/" + projectId + "/counters";
+    }
+
+    public String url(Long projectId, Long counterId) {
+        return url(projectId) + "/" + counterId;
     }
 }

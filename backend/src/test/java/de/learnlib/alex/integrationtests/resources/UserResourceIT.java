@@ -21,6 +21,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.entities.UserRole;
+import de.learnlib.alex.integrationtests.SpringRestError;
 import de.learnlib.alex.integrationtests.resources.api.SettingsApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
 import de.learnlib.alex.settings.entities.Settings;
@@ -30,12 +31,14 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.http.HttpStatus;
 
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class UserResourceIT extends AbstractResourceIT {
 
@@ -427,6 +430,58 @@ public class UserResourceIT extends AbstractResourceIT {
         assertEquals(3, objectMapper.readTree(res4.readEntity(String.class)).size());
     }
 
+    @Test
+    public void shouldSearchUserByEmail() {
+        userApi.create(createUserJson("abc@test.de", "abc", "test", "REGISTERED"));
+        userApi.create(createUserJson("def@test.de", "def", "test", "REGISTERED"));
+
+        final Response res = userApi.search("abc", adminJwt);
+        assertEquals(HttpStatus.OK.value(), res.getStatus());
+        final List<User> users = res.readEntity(new GenericType<List<User>>(){});
+        assertEquals(1, users.size());
+        assertEquals("abc", users.get(0).getUsername());
+    }
+
+    @Test
+    public void shouldSearchUserByUsername() {
+        userApi.create(createUserJson("abc@test.de", "abc", "test", "REGISTERED"));
+        userApi.create(createUserJson("def@test.de", "def", "test", "REGISTERED"));
+
+        final Response res = userApi.search("def@test.de", adminJwt);
+        assertEquals(HttpStatus.OK.value(), res.getStatus());
+        final List<User> users = res.readEntity(new GenericType<List<User>>(){});
+        assertEquals(1, users.size());
+        assertEquals("def@test.de", users.get(0).getEmail());
+    }
+
+    @Test
+    public void shouldReturnEmptyListForEmptySearchResult() {
+        createDemoUsers();
+        final Response res = userApi.search("unknown", adminJwt);
+        assertEquals(HttpStatus.OK.value(), res.getStatus());
+        final List<User> users = res.readEntity(new GenericType<List<User>>(){});
+        assertEquals(0, users.size());
+    }
+
+    @Test
+    public void shouldGetManyUsersByIds() {
+        final List<User> demoUsers = createDemoUsers();
+        final Response res = userApi.getAll(Arrays.asList(demoUsers.get(0).getId(), demoUsers.get(1).getId()), adminJwt);
+        assertEquals(HttpStatus.OK.value(), res.getStatus());
+        final List<User> users = res.readEntity(new GenericType<List<User>>(){});
+        assertEquals(2, users.size());
+        assertTrue(users.stream().anyMatch(u -> u.getId().equals(demoUsers.get(0).getId())));
+        assertTrue(users.stream().anyMatch(u -> u.getId().equals(demoUsers.get(1).getId())));
+    }
+
+    @Test
+    public void shouldFailToGetManyUsersByIdsIfIdIsNotFound() {
+        final List<User> demoUsers = createDemoUsers();
+        final Response res = userApi.getAll(Arrays.asList(demoUsers.get(0).getId(), -1L), adminJwt);
+        assertEquals(HttpStatus.NOT_FOUND.value(), res.getStatus());
+        res.readEntity(SpringRestError.class);
+    }
+
     private void cannotCreateUser(String jwt) throws Exception {
         final String user = "{\"email\":\"test@test.de\",\"password\":\"test\"}";
 
@@ -458,5 +513,16 @@ public class UserResourceIT extends AbstractResourceIT {
                 + ",\"password\":\"" + password + "\""
                 + ",\"role\":\"" + role + "\""
                 + "}";
+    }
+
+    private List<User> createDemoUsers() {
+        final User user1 = userApi.create(createUserJson("user1@test.de", "user1", "test", "REGISTERED"))
+                .readEntity(User.class);
+        final User user2 = userApi.create(createUserJson("user2@test.de", "user2", "test", "REGISTERED"))
+                .readEntity(User.class);
+        final User user3 = userApi.create(createUserJson("user3@test.de", "user3", "test", "REGISTERED"))
+                .readEntity(User.class);
+
+        return Arrays.asList(user1, user2, user3);
     }
 }
