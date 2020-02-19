@@ -21,7 +21,6 @@ import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.transaction.TransactionSystemException;
 

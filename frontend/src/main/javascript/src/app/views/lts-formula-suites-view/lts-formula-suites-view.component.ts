@@ -15,16 +15,16 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { LtsFormulasViewStoreService } from './lts-formulas-view-store.service';
+import { LtsFormulaSuitesViewStoreService } from './lts-formula-suites-view-store.service';
 
 @Component({
   selector: 'lts-formulas-view',
-  templateUrl: './lts-formulas-view.component.html',
-  providers: [LtsFormulasViewStoreService]
+  templateUrl: './lts-formula-suites-view.component.html',
+  providers: [LtsFormulaSuitesViewStoreService]
 })
-export class LtsFormulasViewComponent implements OnInit {
+export class LtsFormulaSuitesViewComponent implements OnInit {
 
-  constructor(public store: LtsFormulasViewStoreService) {
+  constructor(public store: LtsFormulaSuitesViewStoreService) {
   }
 
   ngOnInit(): void {

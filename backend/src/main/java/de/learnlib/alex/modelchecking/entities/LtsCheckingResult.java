@@ -24,7 +24,7 @@ import java.util.List;
 /** The counterexample of a model check. */
 public class LtsCheckingResult {
 
-    /** The forumla that has been checked. */
+    /** The formula that has been checked. */
     private LtsFormula formula;
 
     /** The ID of the learner result. */

@@ -32,10 +32,10 @@ import { CountersViewComponent } from './views/counters-view/counters-view.compo
 import { CreateCounterModalComponent } from './views/counters-view/create-counter-modal/create-counter-modal.component';
 import { ProjectEnvironmentApiService } from './services/api/project-environment-api.service';
 import { LtsFormulaApiService } from './services/api/lts-formula-api.service';
-import { LtsFormulasViewComponent } from './views/lts-formulas-view/lts-formulas-view.component';
-import { CreateLtsFormulaModalComponent } from './views/lts-formulas-view/create-lts-formula-modal/create-lts-formula-modal.component';
-import { EditLtsFormulaModalComponent } from './views/lts-formulas-view/edit-lts-formula-modal/edit-lts-formula-modal.component';
-import { LtsFormulaFormGroupsComponent } from './views/lts-formulas-view/lts-formula-form-groups/lts-formula-form-groups.component';
+import { LtsFormulaSuitesViewComponent } from './views/lts-formula-suites-view/lts-formula-suites-view.component';
+import { CreateLtsFormulaModalComponent } from './views/lts-formula-suite-view/create-lts-formula-modal/create-lts-formula-modal.component';
+import { EditLtsFormulaModalComponent } from './views/lts-formula-suite-view/edit-lts-formula-modal/edit-lts-formula-modal.component';
+import { LtsFormulaFormGroupsComponent } from './views/lts-formula-suite-view/lts-formula-form-groups/lts-formula-form-groups.component';
 import { WebhooksViewComponent } from './views/webhooks-view/webhooks-view.component';
 import { CreateWebhookModalComponent } from './views/webhooks-view/create-webhook-modal/create-webhook-modal.component';
 import { EditWebhookModalComponent } from './views/webhooks-view/edit-webhook-modal/edit-webhook-modal.component';
@@ -244,7 +244,11 @@ import { LearnerSetupsCreateViewComponent } from './views/learner-setups-create-
 import { LearnerSetupsEditViewComponent } from './views/learner-setups-edit-view/learner-setups-edit-view.component';
 import { LearnerSetupFormComponent } from './common/learner-setup-form/learner-setup-form.component';
 import { ProjectListComponent } from './views/projects-view/project-list/project-list.component';
-
+import { LtsFormulaSuiteApiService } from './services/api/lts-formula-suite-api.service';
+import { LtsFormulaSuiteViewComponent } from './views/lts-formula-suite-view/lts-formula-suite-view.component';
+import { TreeViewComponent } from './common/tree-view/tree-view.component';
+import { MoveLtsFormulaModalComponent } from './views/lts-formula-suite-view/move-lts-formula-modal/move-lts-formula-modal.component';
+import { ModelCheckerApiService } from './services/api/model-checker-api.service';
 
 @NgModule({
   declarations: [
@@ -259,7 +263,7 @@ import { ProjectListComponent } from './views/projects-view/project-list/project
     TestCaseTableSymbolColumnComponent,
     CountersViewComponent,
     CreateCounterModalComponent,
-    LtsFormulasViewComponent,
+    LtsFormulaSuitesViewComponent,
     CreateLtsFormulaModalComponent,
     EditLtsFormulaModalComponent,
     LtsFormulaFormGroupsComponent,
@@ -447,7 +451,10 @@ import { ProjectListComponent } from './views/projects-view/project-list/project
     LearnerSetupsCreateViewComponent,
     LearnerSetupsEditViewComponent,
     LearnerSetupFormComponent,
-    ProjectListComponent
+    ProjectListComponent,
+    LtsFormulaSuiteViewComponent,
+    TreeViewComponent,
+    MoveLtsFormulaModalComponent
   ],
   imports: [
     BrowserModule,
@@ -504,7 +511,9 @@ import { ProjectListComponent } from './views/projects-view/project-list/project
     LearnerResultChartService,
     LearnerResultDownloadService,
     ErrorViewStoreService,
-    FormUtilsService
+    FormUtilsService,
+    LtsFormulaSuiteApiService,
+    ModelCheckerApiService
   ],
   entryComponents: [
     CreateCounterModalComponent,
@@ -528,6 +537,7 @@ import { ProjectListComponent } from './views/projects-view/project-list/project
     CreateSymbolGroupModalComponent,
     EditSymbolGroupModalComponent,
     MoveSymbolGroupModalComponent,
+    MoveLtsFormulaModalComponent,
     CreateSymbolModalComponent,
     EditSymbolModalComponent,
     MoveSymbolsModalComponent,

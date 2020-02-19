@@ -18,10 +18,9 @@ package de.learnlib.alex.modelchecking.dao;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
-import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.modelchecking.entities.LtsFormula;
+import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import de.learnlib.alex.modelchecking.repositories.LtsFormulaRepository;
 import net.automatalib.modelcheckers.ltsmin.LTSminLTLParser;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -35,59 +34,41 @@ import java.util.List;
 @Transactional(rollbackOn = Exception.class)
 public class LtsFormulaDAO {
 
-    /** The DAO for projects. */
-    private final ProjectDAO projectDAO;
-
-    /** The repository for projects. */
-    private final ProjectRepository projectRepository;
-
-    /** The repository for lts formulas. */
     private final LtsFormulaRepository ltsFormulaRepository;
+    private final LtsFormulaSuiteDAO ltsFormulaSuiteDAO;
 
     /**
      * Constructor.
      *
-     * @param projectDAO
-     *         {@link #projectDAO}
-     * @param projectRepository
-     *         {@link #projectRepository}
      * @param ltsFormulaRepository
      *         {@link #ltsFormulaRepository}
      */
     @Autowired
-    public LtsFormulaDAO(ProjectDAO projectDAO,
-                         ProjectRepository projectRepository,
-                         LtsFormulaRepository ltsFormulaRepository) {
-        this.projectDAO = projectDAO;
-        this.projectRepository = projectRepository;
+    public LtsFormulaDAO(LtsFormulaRepository ltsFormulaRepository,
+                         LtsFormulaSuiteDAO ltsFormulaSuiteDAO) {
         this.ltsFormulaRepository = ltsFormulaRepository;
+        this.ltsFormulaSuiteDAO = ltsFormulaSuiteDAO;
     }
 
-    public List<LtsFormula> getAll(User user, Long projectId) throws NotFoundException {
-        final Project project = projectRepository.findById(projectId).orElse(null);
-        projectDAO.checkAccess(user, project);
-
-        return ltsFormulaRepository.findAllByProject_Id(projectId);
-    }
-
-    public LtsFormula create(User user, Long projectId, LtsFormula formula) throws NotFoundException {
+    public LtsFormula create(User user, Long projectId, Long suiteId, LtsFormula formula) throws NotFoundException {
         LTSminLTLParser.requireValidIOFormula(formula.getFormula());
 
-        final Project project = projectRepository.findById(projectId).orElse(null);
-        projectDAO.checkAccess(user, project);
+        final LtsFormulaSuite suite = ltsFormulaSuiteDAO.get(user, projectId, suiteId);
 
-        formula.setProject(project);
-        formula.setId(null);
+        final LtsFormula f = new LtsFormula();
+        f.setFormula(formula.getFormula());
+        f.setName(formula.getName());
+        f.setSuite(suite);
 
-        return ltsFormulaRepository.save(formula);
+        return ltsFormulaRepository.save(f);
     }
 
-    public LtsFormula update(User user, Long projectId, LtsFormula formula) throws NotFoundException {
+    public LtsFormula update(User user, Long projectId, Long suiteId, LtsFormula formula) throws NotFoundException {
         LTSminLTLParser.requireValidIOFormula(formula.getFormula());
 
-        final Project project = projectRepository.findById(projectId).orElse(null);
+        final LtsFormulaSuite suite = ltsFormulaSuiteDAO.get(user, projectId, suiteId);
         final LtsFormula formulaInDb = ltsFormulaRepository.findById(formula.getId()).orElse(null);
-        checkAccess(user, project, formulaInDb);
+        checkAccess(user, suite.getProject(), suite, formulaInDb);
 
         formulaInDb.setName(formula.getName());
         formulaInDb.setFormula(formula.getFormula());
@@ -95,29 +76,42 @@ public class LtsFormulaDAO {
         return ltsFormulaRepository.save(formulaInDb);
     }
 
-    public void delete(User user, Long projectId, Long formulaId) throws NotFoundException {
-        final Project project = projectRepository.findById(projectId).orElse(null);
+    public List<LtsFormula> updateParent(User user, Long projectId, Long suiteId, List<Long> formulaIds, LtsFormulaSuite targetSuite) {
+        final LtsFormulaSuite oldSuite = ltsFormulaSuiteDAO.get(user, projectId, suiteId);
+        final LtsFormulaSuite newSuite = ltsFormulaSuiteDAO.get(user, projectId, targetSuite.getId());
+
+        final List<LtsFormula> formulas = ltsFormulaRepository.findAllBySuite_IdAndIdIn(suiteId, formulaIds);
+        for (LtsFormula f: formulas) {
+            checkAccess(user, oldSuite.getProject(), oldSuite, f);
+            f.setSuite(newSuite);
+        }
+
+        return ltsFormulaRepository.saveAll(formulas);
+    }
+
+    public void delete(User user, Long projectId, Long suiteId, Long formulaId) throws NotFoundException {
+        final LtsFormulaSuite suite = ltsFormulaSuiteDAO.get(user, projectId, suiteId);
         final LtsFormula formula = ltsFormulaRepository.findById(formulaId).orElse(null);
-        checkAccess(user, project, formula);
+        checkAccess(user, suite.getProject(), suite, formula);
 
         ltsFormulaRepository.deleteById(formulaId);
     }
 
-    public void delete(User user, Long projectId, List<Long> formulaIds) throws NotFoundException {
+    public void delete(User user, Long projectId, Long suiteId, List<Long> formulaIds) throws NotFoundException {
         for (final Long id : formulaIds) {
-            delete(user, projectId, id);
+            delete(user, projectId, suiteId, id);
         }
     }
 
-    public void checkAccess(User user, Project project, LtsFormula formula) throws NotFoundException {
-        projectDAO.checkAccess(user, project);
+    public void checkAccess(User user, Project project, LtsFormulaSuite suite, LtsFormula formula) throws NotFoundException {
+        ltsFormulaSuiteDAO.checkAccess(user, project, suite);
 
         if (formula == null) {
             throw new NotFoundException("The formula could not be found.");
         }
 
-        if (!formula.getProjectId().equals(project.getId())) {
-            throw new UnauthorizedException("You are not allowed to access this resource.");
+        if (!suite.getId().equals(formula.getSuite().getId())) {
+            throw new UnauthorizedException("You are not allowed to access the resource.");
         }
     }
 }

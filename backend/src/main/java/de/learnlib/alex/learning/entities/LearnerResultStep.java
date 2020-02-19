@@ -23,9 +23,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.DefaultQueryProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
-import net.automatalib.automata.transducers.MealyMachine;
-import net.automatalib.words.Alphabet;
-import net.automatalib.words.impl.GrowingMapAlphabet;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;

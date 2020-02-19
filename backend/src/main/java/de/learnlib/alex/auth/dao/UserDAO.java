@@ -24,8 +24,6 @@ import de.learnlib.alex.data.dao.FileDAO;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.repositories.ProjectRepository;
-import de.learnlib.alex.settings.dao.SettingsDAO;
-import de.learnlib.alex.settings.entities.Settings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;

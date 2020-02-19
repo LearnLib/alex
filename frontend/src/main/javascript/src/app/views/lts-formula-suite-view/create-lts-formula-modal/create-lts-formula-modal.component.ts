@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-import { Component } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { LtsFormulaApiService } from '../../../services/api/lts-formula-api.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppStoreService } from '../../../services/app-store.service';
 import { FormGroup } from '@angular/forms';
+import { LtsFormulaSuiteApiService } from '../../../services/api/lts-formula-suite-api.service';
 
 @Component({
   selector: 'create-lts-formula-modal',
@@ -26,12 +27,16 @@ import { FormGroup } from '@angular/forms';
 })
 export class CreateLtsFormulaModalComponent {
 
-  public errorMessage: string;
-  public createForm: FormGroup;
-  public formula: any;
+  @Input()
+  suite: any;
+
+  errorMessage: string;
+  createForm: FormGroup;
+  formula: any;
 
   constructor(public modal: NgbActiveModal,
               private ltsFormulaApi: LtsFormulaApiService,
+              private ltsFormulaSuiteApiService: LtsFormulaSuiteApiService,
               private appStore: AppStoreService) {
     this.createForm = new FormGroup({});
     this.formula = {};
@@ -41,7 +46,7 @@ export class CreateLtsFormulaModalComponent {
     this.errorMessage = null;
     if (this.createForm.valid) {
       const formula = this.createForm.value;
-      this.ltsFormulaApi.create(this.appStore.project.id, formula).subscribe(
+      this.ltsFormulaApi.create(this.appStore.project.id, this.suite.id, formula).subscribe(
         createdFormula => {
           this.modal.close(createdFormula);
         }, res => this.errorMessage = res.error.message

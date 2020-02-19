@@ -39,7 +39,7 @@ import java.util.function.Function;
 
 /** Service that is used to execute model checks on learned models. */
 @Service
-public class LtsCheckingService {
+public class ModelCheckerService {
 
     /** The DAO for learner results. */
     private LearnerResultDAO learnerResultDAO;
@@ -51,7 +51,7 @@ public class LtsCheckingService {
      *         {@link #learnerResultDAO}
      */
     @Inject
-    public LtsCheckingService(LearnerResultDAO learnerResultDAO) {
+    public ModelCheckerService(LearnerResultDAO learnerResultDAO) {
         this.learnerResultDAO = learnerResultDAO;
     }
 

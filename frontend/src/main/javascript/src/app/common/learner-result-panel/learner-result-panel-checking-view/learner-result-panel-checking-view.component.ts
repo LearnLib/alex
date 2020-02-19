@@ -17,11 +17,14 @@
 import { Selectable } from '../../../utils/selectable';
 import { LearnerResult } from '../../../entities/learner-result';
 import { ToastService } from '../../../services/toast.service';
-import { LtsFormulaApiService } from '../../../services/api/lts-formula-api.service';
 import { Project } from '../../../entities/project';
-import { uniqueId } from 'lodash';
+import { uniqueId, flatMap } from 'lodash';
 import { AppStoreService } from '../../../services/app-store.service';
 import { Component, Input, OnInit } from '@angular/core';
+import { LtsFormulaSuiteApiService } from '../../../services/api/lts-formula-suite-api.service';
+import { ModelCheckerApiService } from '../../../services/api/model-checker-api.service';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { flatten } from '@angular/compiler';
 
 /** Panel view for model checking. */
 @Component({
@@ -40,16 +43,25 @@ export class LearnerResultPanelCheckingViewComponent implements OnInit {
   selectedFormulas: Selectable<any, any>;
   config: any;
   results: any;
-  manualFormula: string;
-  formulas: any[];
+
+  formulaSuites: any[] = [];
+
+  addFormulaForm = new FormGroup({
+    'formula': new FormControl('', [Validators.required])
+  });
+
+  tmpFormulaSuite = {
+    name: 'Custom Formulas',
+    formulas: []
+  };
 
   constructor(private toastService: ToastService,
               private appStore: AppStoreService,
-              private ltsFormulaApi: LtsFormulaApiService) {
+              private modelCheckerApi: ModelCheckerApiService,
+              private ltsFormulaSuiteApi: LtsFormulaSuiteApiService) {
 
     this.selectedFormulas = new Selectable((f) => f.id);
     this.results = {};
-    this.formulas = [];
 
     this.config = {
       minUnfolds: 3,
@@ -60,36 +72,24 @@ export class LearnerResultPanelCheckingViewComponent implements OnInit {
     };
   }
 
-  get project(): Project {
-    return this.appStore.project;
-  }
-
   ngOnInit(): void {
-    this.ltsFormulaApi.getAll(this.project.id)
-      .subscribe(formulas => {
+    this.ltsFormulaSuiteApi.getAll(this.project.id)
+      .subscribe(suites => {
+        this.formulaSuites = suites;
+        const formulas = flatMap(suites, s => s.formulas);
         this.selectedFormulas.addItems(formulas);
-        this.formulas = formulas;
       });
   }
 
   addManualFormula() {
-    if (this.manualFormula != null && this.manualFormula.trim() !== '') {
-      const formula = {
-        formula: this.manualFormula,
-        id: -1 * Number(uniqueId()),
-        projectId: this.project.id
-      };
-      this.formulas.unshift(formula);
-      this.selectedFormulas.addItem(formula);
-      this.selectedFormulas.select(formula);
-      this.manualFormula = '';
-    }
-  }
-
-  removeFormula(i: number) {
-    const f = this.formulas[i];
-    this.formulas.splice(i, 1);
-    this.selectedFormulas.remove(f);
+    const formula = {
+      formula: this.addFormulaForm.controls.formula.value,
+      id: -1 * Number(uniqueId()),
+    };
+    this.tmpFormulaSuite.formulas.push(formula);
+    this.selectedFormulas.addItem(formula);
+    this.selectedFormulas.select(formula);
+    this.addFormulaForm.reset();
   }
 
   check(): void {
@@ -104,7 +104,7 @@ export class LearnerResultPanelCheckingViewComponent implements OnInit {
       return;
     }
 
-    this.ltsFormulaApi.check(this.project.id, this.config).subscribe(
+    this.modelCheckerApi.check(this.project.id, this.config).subscribe(
       data => {
         data.forEach(f => this.results[f.formula.id] = f);
       },
@@ -124,5 +124,17 @@ export class LearnerResultPanelCheckingViewComponent implements OnInit {
   hasCounterexample(id: number): boolean {
     const result = this.results[id];
     return result != null && ((result.prefix.length + result.loop.length) > 0);
+  }
+
+  get allFormulaSuites(): any[] {
+    if (this.tmpFormulaSuite.formulas.length === 0) {
+      return this.formulaSuites;
+    } else {
+      return flatten([this.tmpFormulaSuite, this.formulaSuites]);
+    }
+  }
+
+  get project(): Project {
+    return this.appStore.project;
   }
 }

@@ -18,13 +18,12 @@ package de.learnlib.alex.modelchecking.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.learnlib.alex.data.entities.Project;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
@@ -44,8 +43,11 @@ public class LtsFormula implements Serializable {
 
     /** The project. */
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Project project;
+    @ManyToOne(
+            optional = false
+    )
+    @JoinColumn(name = "suiteId")
+    private LtsFormulaSuite suite;
 
     /** The formula. */
     @Column(columnDefinition = "MEDIUMTEXT")
@@ -64,22 +66,23 @@ public class LtsFormula implements Serializable {
         this.id = id;
     }
 
-    public Project getProject() {
-        return project;
+    public LtsFormulaSuite getSuite() {
+        return suite;
     }
 
-    public void setProject(Project project) {
-        this.project = project;
+    public void setSuite(LtsFormulaSuite suite) {
+        this.suite = suite;
     }
 
-    @JsonProperty("projectId")
-    public Long getProjectId() {
-        return this.project == null ? null : this.project.getId();
+    @JsonProperty("suite")
+    public Long getSuiteId() {
+        return suite == null ? null : suite.getId();
     }
 
-    @JsonProperty("projectId")
-    public void setProjectId(Long projectId) {
-        this.project = new Project(projectId);
+    @JsonProperty("suite")
+    public void setSuiteId(Long suiteId) {
+        this.suite = new LtsFormulaSuite();
+        this.suite.setId(suiteId);
     }
 
     public String getName() {

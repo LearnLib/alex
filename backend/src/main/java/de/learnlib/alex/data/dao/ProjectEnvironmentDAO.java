@@ -32,7 +32,6 @@ import de.learnlib.alex.data.repositories.ProjectUrlRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
 import de.learnlib.alex.learning.dao.LearnerSetupDAO;
 import de.learnlib.alex.learning.entities.LearnerSetup;
-import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.repositories.LearnerSetupRepository;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
 import org.apache.shiro.authz.UnauthorizedException;

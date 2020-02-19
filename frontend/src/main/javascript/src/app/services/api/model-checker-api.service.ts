@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.modelchecking.repositories;
+import { Injectable } from '@angular/core';
+import { BaseApiService } from './base-api.service';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment as env } from '../../../environments/environment';
 
-import de.learnlib.alex.modelchecking.entities.LtsFormula;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+@Injectable()
+export class ModelCheckerApiService extends BaseApiService {
 
-import java.util.List;
+  constructor(private http: HttpClient) {
+    super();
+  }
 
-/** Repository for lts formulas. */
-@Repository
-public interface LtsFormulaRepository extends JpaRepository<LtsFormula, Long> {
-
-    @Transactional(readOnly = true)
-    List<LtsFormula> findAllBySuite_IdAndIdIn(Long suiteId, List<Long> formulaIds);
+  check(projectId: number, config: any): Observable<any> {
+    return this.http.post(`${env.apiUrl}/projects/${projectId}/modelChecker/check`, config, this.defaultHttpOptions);
+  }
 }

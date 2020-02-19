@@ -15,7 +15,7 @@ import { SymbolsViewComponent } from './views/symbols-view/symbols-view.componen
 import { SymbolsArchiveViewComponent } from './views/symbols-archive-view/symbols-archive-view.component';
 import { AuthGuard } from './guards/AuthGuard';
 import { ProjectGuard } from './guards/ProjectGuard';
-import { LtsFormulasViewComponent } from './views/lts-formulas-view/lts-formulas-view.component';
+import { LtsFormulaSuitesViewComponent } from './views/lts-formula-suites-view/lts-formula-suites-view.component';
 import { LearnerResultsViewComponent } from './views/learner-results-view/learner-results-view.component';
 import { LearnerSetupsViewComponent } from './views/learner-setups-view/learner-setups-view.component';
 import { SymbolViewComponent } from './views/symbol-view/symbol-view.component';
@@ -32,6 +32,7 @@ import { ProjectUsersViewComponent } from './views/project-users-view/project-us
 import { ProjectOwnerGuard } from './guards/ProjectOwnerGuard';
 import { LearnerSetupsCreateViewComponent } from './views/learner-setups-create-view/learner-setups-create-view.component';
 import { LearnerSetupsEditViewComponent } from './views/learner-setups-edit-view/learner-setups-edit-view.component';
+import { LtsFormulaSuiteViewComponent } from './views/lts-formula-suite-view/lts-formula-suite-view.component';
 
 const routes: Routes = [
   {
@@ -119,8 +120,18 @@ const routes: Routes = [
                 component: ProjectEnvironmentsViewComponent
               },
               {
-                path: 'lts-formulas',
-                component: LtsFormulasViewComponent
+                path: 'lts-formula-suites',
+                children: [
+                  {
+                    path: '',
+                    component: LtsFormulaSuitesViewComponent,
+                    pathMatch: 'full'
+                  },
+                  {
+                    path: ':suiteId',
+                    component: LtsFormulaSuiteViewComponent
+                  }
+                ]
               },
               {
                 path: 'learner',

@@ -29,7 +29,7 @@ public class LtsCheckingConfig {
     /** The step number in the result. */
     private Integer stepNo;
 
-    /** The IDs of the formulas to check. */
+    /** The formulas to check. */
     private List<LtsFormula> formulas;
 
     /** How many unfolds are used for checking. */

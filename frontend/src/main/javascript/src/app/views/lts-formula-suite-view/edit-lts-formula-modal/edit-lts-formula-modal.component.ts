@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { LtsFormulaApiService } from '../../../services/api/lts-formula-api.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppStoreService } from '../../../services/app-store.service';
 import { FormGroup } from '@angular/forms';
+import { LtsFormulaSuiteApiService } from '../../../services/api/lts-formula-suite-api.service';
 
 @Component({
   selector: 'app-edit-lts-formula-modal',
@@ -27,13 +28,17 @@ import { FormGroup } from '@angular/forms';
 export class EditLtsFormulaModalComponent {
 
   @Input()
-  public formula: any;
+  formula: any;
 
-  public errorMessage: string;
-  public editForm: FormGroup;
+  @Input()
+  suite: any;
+
+  errorMessage: string;
+  editForm: FormGroup;
 
   constructor(public modal: NgbActiveModal,
               private ltsFormulaApi: LtsFormulaApiService,
+              private ltsFormulaSuiteApiService: LtsFormulaSuiteApiService,
               private appStore: AppStoreService) {
     this.editForm = new FormGroup({});
   }
@@ -46,7 +51,7 @@ export class EditLtsFormulaModalComponent {
       this.formula.name = values.name;
       this.formula.formula = values.formula;
 
-      this.ltsFormulaApi.update(this.appStore.project.id, this.formula).subscribe(
+      this.ltsFormulaApi.update(this.appStore.project.id, this.suite.id, this.formula).subscribe(
         updatedFormula => {
           this.modal.close(updatedFormula);
         },

@@ -25,10 +25,10 @@ import { FormUtilsService } from '../../../services/form-utils.service';
 export class LtsFormulaFormGroupsComponent implements OnInit {
 
   @Input()
-  public formula: any;
+  formula: any;
 
   @Input()
-  public form: FormGroup;
+  form: FormGroup;
 
   constructor(public formUtils: FormUtilsService) {
   }

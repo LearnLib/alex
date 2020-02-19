@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.modelchecking.entities.LtsFormula;
+import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
 import de.learnlib.alex.testing.entities.TestReport;
@@ -166,9 +166,9 @@ public class Project implements Serializable {
      */
     @OneToMany(
             mappedBy = "project",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+            cascade = {CascadeType.REMOVE})
     @JsonIgnore
-    private List<LtsFormula> ltsFormulas;
+    private List<LtsFormulaSuite> ltsFormulaSuites;
 
     /**
      * Default constructor.
@@ -190,7 +190,7 @@ public class Project implements Serializable {
         this.tests = new HashSet<>();
         this.testReports = new HashSet<>();
         this.testExecutionConfigs = new ArrayList<>();
-        this.ltsFormulas = new ArrayList<>();
+        this.ltsFormulaSuites = new ArrayList<>();
         this.environments = new ArrayList<>();
         this.owners = new ArrayList<>();
         this.members = new ArrayList<>();
@@ -429,12 +429,12 @@ public class Project implements Serializable {
         this.counters = counters;
     }
 
-    public List<LtsFormula> getLtsFormulas() {
-        return ltsFormulas;
+    public List<LtsFormulaSuite> getLtsFormulaSuites() {
+        return ltsFormulaSuites;
     }
 
-    public void setLtsFormulas(List<LtsFormula> ltsFormulas) {
-        this.ltsFormulas = ltsFormulas;
+    public void setLtsFormulaSuites(List<LtsFormulaSuite> ltsFormulaSuites) {
+        this.ltsFormulaSuites = ltsFormulaSuites;
     }
 
     public List<TestExecutionConfig> getTestExecutionConfigs() {

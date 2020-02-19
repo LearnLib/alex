@@ -21,18 +21,22 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { Selectable } from '../../utils/selectable';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppStoreService } from '../../services/app-store.service';
-import { CreateLtsFormulaModalComponent } from './create-lts-formula-modal/create-lts-formula-modal.component';
-import { EditLtsFormulaModalComponent } from './edit-lts-formula-modal/edit-lts-formula-modal.component';
 import { replaceItem } from '../../utils/list-utils';
+import { LtsFormulaSuiteApiService } from '../../services/api/lts-formula-suite-api.service';
+import { PromptService } from '../../services/prompt.service';
+import { ToastService } from '../../services/toast.service';
 
 @Injectable()
-export class LtsFormulasViewStoreService {
+export class LtsFormulaSuitesViewStoreService {
 
   public formulasSelectable: Selectable<any, any>;
   private formulas: BehaviorSubject<any[]>;
 
   constructor(private ltsFormulaApi: LtsFormulaApiService,
+              private ltsFormulaSuiteApi: LtsFormulaSuiteApiService,
               private modalService: NgbModal,
+              private promptService: PromptService,
+              private toastService: ToastService,
               private appStore: AppStoreService) {
     this.formulas = new BehaviorSubject<any[]>([]);
     this.formulasSelectable = new Selectable<any, any>(f => f.id);
@@ -43,41 +47,49 @@ export class LtsFormulasViewStoreService {
   }
 
   load(): void {
-    this.ltsFormulaApi.getAll(this.appStore.project.id).subscribe(
-      formulas => {
-        this.formulas.next(formulas);
-        this.formulasSelectable.addItems(formulas);
+    this.ltsFormulaSuiteApi.getAll(this.appStore.project.id).subscribe(
+      suites => {
+        this.formulas.next(suites);
+        this.formulasSelectable.addItems(suites);
       }
     )
   }
 
-  create(): void {
-    const modalRef = this.modalService.open(CreateLtsFormulaModalComponent);
-    modalRef.result.then(f => {
-      this.formulas.next([...this.formulas.value, f]);
-      this.formulasSelectable.addItem(f);
-    }).catch(() => {
-    });
+  createSuite(): void {
+    this.promptService.prompt('Enter a name for the formula suite')
+      .then(name => {
+        this.ltsFormulaSuiteApi.create(this.appStore.project.id, {name}).subscribe(
+          suite => {
+            this.formulas.next([...this.formulas.value, suite]);
+            this.formulasSelectable.addItem(suite);
+          },
+          res => this.toastService.danger(`Failed to create formula suite. ${res.error.message}`))
+      });
   }
 
-  edit(formula: any): void {
-    const modalRef = this.modalService.open(EditLtsFormulaModalComponent);
-    modalRef.componentInstance.formula = JSON.parse(JSON.stringify(formula));
-    modalRef.result.then(updatedFormula => {
-      const fs = replaceItem(this.formulas.value, f => f.id === updatedFormula.id, updatedFormula);
-      this.formulas.next(fs);
-      this.formulasSelectable.update(updatedFormula);
-    }).catch(() => {
-    });
+  editSuite(suite: any): void {
+    this.promptService.prompt('Update the name for the formula suite.', {defaultValue: suite.name})
+      .then(name => {
+        if (name !== suite.name) {
+          this.ltsFormulaSuiteApi.update(this.appStore.project.id, suite.id, {name}).subscribe(
+            s => {
+              const fs = replaceItem(this.formulas.value, f => f.id === s.id, s);
+              this.formulas.next(fs);
+              this.formulasSelectable.update(s);
+            },
+            res => this.toastService.danger(`Failed to update formula suite. ${res.error.message}`)
+          );
+        }
+      })
   }
 
-  delete(formula: any): void {
-    this.ltsFormulaApi.delete(this.appStore.project.id, formula.id).subscribe(
+  deleteSuite(suite: any): void {
+    this.ltsFormulaSuiteApi.remove(this.appStore.project.id, suite.id).subscribe(
       () => {
         const fs = [...this.formulas.value];
-        remove(fs, f => f.id === formula.id);
+        remove(fs, f => f.id === suite.id);
         this.formulas.next(fs);
-        this.formulasSelectable.remove(formula);
+        this.formulasSelectable.remove(suite);
       }
     );
   }
@@ -86,7 +98,7 @@ export class LtsFormulasViewStoreService {
     const formulas = this.formulasSelectable.getSelected();
     if (formulas.length > 0) {
       const ids = formulas.map(f => f.id);
-      this.ltsFormulaApi.deleteMany(this.appStore.project.id, ids).subscribe(() => {
+      this.ltsFormulaSuiteApi.removeAll(this.appStore.project.id, ids).subscribe(() => {
         const fs = [...this.formulas.value].filter(f => ids.indexOf(f.id) === -1);
         this.formulas.next(fs);
         this.formulasSelectable.removeMany(formulas);

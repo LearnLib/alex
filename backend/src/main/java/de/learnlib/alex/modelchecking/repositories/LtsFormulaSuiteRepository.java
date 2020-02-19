@@ -16,17 +16,19 @@
 
 package de.learnlib.alex.modelchecking.repositories;
 
-import de.learnlib.alex.modelchecking.entities.LtsFormula;
+import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/** Repository for lts formulas. */
 @Repository
-public interface LtsFormulaRepository extends JpaRepository<LtsFormula, Long> {
+public interface LtsFormulaSuiteRepository extends JpaRepository<LtsFormulaSuite, Long> {
 
     @Transactional(readOnly = true)
-    List<LtsFormula> findAllBySuite_IdAndIdIn(Long suiteId, List<Long> formulaIds);
+    List<LtsFormulaSuite> findAllByProject_Id(Long projectId);
+
+    @Transactional(readOnly = true)
+    LtsFormulaSuite findByProject_IdAndName(Long projectId, String name);
 }
