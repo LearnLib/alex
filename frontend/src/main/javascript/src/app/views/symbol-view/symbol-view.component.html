@@ -23,6 +23,7 @@
             <strong>{{symbol.name}}</strong>
           </h4>
           <small class="text-muted">Updated: {{symbol.updatedOn | date : 'EEE, dd.MM.yyyy, HH:mm'}}</small>
+          <small *ngIf="symbol.lastUpdatedBy != null" class="text-muted">&nbsp;by {{symbol.lastUpdatedBy.username}}</small>
         </div>
       </div>
       <hr>

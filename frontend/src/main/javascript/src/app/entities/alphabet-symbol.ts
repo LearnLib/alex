@@ -16,6 +16,7 @@
 
 import { ActionService } from '../services/action.service';
 import { ParametrizedSymbol } from './parametrized-symbol';
+import { User } from './user';
 
 const actionService = new ActionService();
 
@@ -59,6 +60,8 @@ export class AlphabetSymbol {
 
   public updatedOn: Date;
 
+  public lastUpdatedBy: User;
+
   /**
    * Constructor.
    *
@@ -74,6 +77,7 @@ export class AlphabetSymbol {
     this.inputs = obj.inputs || [];
     this.outputs = obj.outputs || [];
     this.updatedOn = obj.updatedOn == null ? null : new Date(obj.updatedOn);
+    this.lastUpdatedBy = obj.lastUpdatedBy == null ? null : User.fromData(obj.lastUpdatedBy);
 
     this.steps = obj.steps ? obj.steps.map(step => {
       if (step.type === 'symbol') {

@@ -19,13 +19,16 @@ package de.learnlib.alex.testing.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.Constants;
 
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.OrderColumn;
@@ -79,6 +82,9 @@ public class TestCase extends Test {
     @JsonIgnore
     private ZonedDateTime updatedOn;
 
+    /** The last user who modified the symbol. */
+    private User lastUpdatedBy;
+
     /** Constructor. */
     public TestCase() {
         super();
@@ -87,6 +93,7 @@ public class TestCase extends Test {
         this.postSteps = new ArrayList<>();
         this.generated = false;
         this.updatedOn = ZonedDateTime.now();
+        this.lastUpdatedBy = null;
     }
 
     @OneToMany(
@@ -187,6 +194,18 @@ public class TestCase extends Test {
     @JsonProperty("updatedOn")
     public void setUpdatedOnString(String updatedOnString) {
         this.updatedOn = updatedOnString == null ? ZonedDateTime.now() : ZonedDateTime.parse(updatedOnString);
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "lastUpdatedById")
+    @JsonProperty("lastUpdatedBy")
+    public User getLastUpdatedBy() {
+        return this.lastUpdatedBy;
+    }
+
+    @JsonIgnore
+    public void setLastUpdatedBy(User user) {
+        this.lastUpdatedBy = user;
     }
 
     public boolean behavesLike(TestCase testCase) {

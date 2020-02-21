@@ -38,6 +38,7 @@
             </strong>
           </h4>
           <small class="text-muted">Updated: {{testCase.updatedOn | date : 'EEE, dd.MM.yyyy, HH:mm'}}</small>
+          <small *ngIf="testCase.lastUpdatedBy != null" class="text-muted">&nbsp;by: {{testCase.lastUpdatedBy.username}}</small>
         </div>
       </div>
 
