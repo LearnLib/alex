@@ -16,7 +16,7 @@
 
 import { ActionService } from '../services/action.service';
 import { ParametrizedSymbol } from './parametrized-symbol';
-import {User} from "./user";
+import { User } from './user';
 
 const actionService = new ActionService();
 
@@ -61,6 +61,7 @@ export class AlphabetSymbol {
   public updatedOn: Date;
 
   public lastUpdatedBy: User;
+
   /**
    * Constructor.
    *
