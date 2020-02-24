@@ -43,7 +43,7 @@
         <learner-setup-table [setup]="result.setup"></learner-setup-table>
       </ng-template>
     </ngb-tab>
-    <ngb-tab title="Statistics">
+    <ngb-tab [title]="'Statistics' + (result.steps.length == 0 ? ' (n/a)' : '')" [disabled]="result.steps.length === 0">
       <ng-template ngbTabContent>
         <br>
 

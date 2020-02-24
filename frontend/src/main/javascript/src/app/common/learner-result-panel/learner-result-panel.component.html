@@ -53,6 +53,11 @@
       </div>
     </ng-container>
 
+    <ng-container *ngIf="result.steps.length === 0">
+      <button class="btn btn-sm btn-default" (click)="openResultDetailsModal()">
+        <i class="fas fa-fw fa-info"></i> <span class="d-none d-md-inline">Details</span>
+      </button>
+    </ng-container>
   </div>
 
   <div class="learn-result-panel-body d-flex flex-row position-relative" *ngIf="result.steps.length > 0">
@@ -125,6 +130,10 @@
         </learner-result-panel-checking-view>
       </div>
   </div>
+
+  <div class="learn-result-panel-body p-3" *ngIf="result.steps.length === 0">
+    <div class="alert alert-info">
+      No steps have been learned in this learning process.
+    </div>
+  </div>
 </div>
-
-
