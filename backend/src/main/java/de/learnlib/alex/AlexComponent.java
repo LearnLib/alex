@@ -202,6 +202,7 @@ public class AlexComponent {
             if (!remoteDriver.isEmpty()) {
                 new URL(remoteDriver);
                 settings.getDriverSettings().setRemote(remoteDriver);
+                settingsDAO.update(settings);
             }
         } catch (Exception e) {
             e.printStackTrace();
