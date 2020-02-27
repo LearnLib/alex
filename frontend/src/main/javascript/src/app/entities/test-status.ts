@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { User } from "./user";
+
 export enum TestReportStatus {
   PENDING = "PENDING",
   IN_PROGRESS = "IN_PROGRESS",
@@ -23,6 +25,7 @@ export enum TestReportStatus {
 
 export interface TestReport {
   id: number,
+  executedBy: User;
   status: TestReportStatus,
   testResults: any[],
   description: string

@@ -45,6 +45,7 @@ import net.automatalib.automata.transducers.impl.compact.CompactMealy;
 import net.automatalib.words.Alphabet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -210,7 +211,15 @@ public class LearnerResource {
     public ResponseEntity<String> stop(@PathVariable("projectId") Long projectId, @PathVariable("testNo") Long testNo) {
         User user = authContext.getUser();
         LOGGER.traceEntry("stop() for user {}.", user);
-        projectDAO.getByID(user, projectId); // access check
+        Project project = projectDAO.getByID(user, projectId); // access check
+        LearnerResult result = learnerResultDAO.get(user, projectId, testNo);
+
+        if (projectDAO.getByID(user, projectId).getOwners().stream().map(User::getId).noneMatch(ownerId -> ownerId.equals(user.getId()))
+                && result.getExecutedBy() != null && !result.getExecutedBy().getId().equals(user.getId())
+        ) {
+            throw new UnauthorizedException("You are not allowed to abort this learning process.");
+        }
+
         learnerService.stop(projectId, testNo);
         return ResponseEntity.ok().build();
     }

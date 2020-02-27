@@ -12,6 +12,10 @@
           <td>{{(result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm')}}</td>
         </tr>
         <tr>
+          <td><strong>Executed by</strong></td>
+          <td>{{result.executedBy ? result.executedBy.username : "deleted/unknown user"}}</td>
+        </tr>
+        <tr>
           <td><strong>Status</strong></td>
           <td>
             <div *ngIf="result.error">

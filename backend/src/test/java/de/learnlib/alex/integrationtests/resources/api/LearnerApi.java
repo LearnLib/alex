@@ -43,6 +43,12 @@ public class LearnerApi extends AbstractApi {
                 .post(Entity.json(configuration));
     }
 
+    public Response abort(Long projectId, Long testNo, String jwt) {
+        return client.target(url(projectId)+ "/" +  testNo + "/stop").request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .get();
+    }
+
     public Response getStatus(Long projectId, String jwt) {
         return client.target(url(projectId) + "/status").request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)

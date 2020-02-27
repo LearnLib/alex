@@ -26,7 +26,7 @@
 
       <ng-container *ngIf="showReport">
         <h4 class="d-flex">
-          <strong>{{report.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}</strong>
+          <strong>{{report.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}, by: {{report.executedBy ? report.executedBy.username : "deleted/unknown user"}}</strong>
 
           <span class="badge badge-secondary ml-auto">
           {{report.environment.name}}

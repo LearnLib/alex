@@ -6,7 +6,7 @@
         [routerLink]="['/app', 'projects', project.id, 'tests', 'reports', testRun.report.id]"
         class="w-100"
       >
-        Test Run {{testRun.report.id}}
+        Test Run {{testRun.report.id}}, by: {{testRun.report.executedBy ? testRun.report.executedBy.username : "deleted/unknown user"}}
       </a>
 
       <span

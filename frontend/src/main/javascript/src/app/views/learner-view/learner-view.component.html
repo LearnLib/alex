@@ -10,7 +10,7 @@
           <strong *ngIf="status.currentProcess.phase=== 'EQUIVALENCE_TESTING'">testing for equivalence</strong>
         </div>
         <div class="flex-shrink-0">
-          <button (click)="abort()" class="btn btn-info btn-sm">
+          <button *ngIf="canAbort()" (click)="abort()" class="btn btn-info btn-sm">
             <i class="fas fa-times fa-fw"></i> Abort
           </button>
         </div>

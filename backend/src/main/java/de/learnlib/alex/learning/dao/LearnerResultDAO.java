@@ -88,6 +88,7 @@ public class LearnerResultDAO {
     public LearnerResult create(User user, Project project, LearnerResult learnerResult) throws NotFoundException, ValidationException {
         projectDAO.checkAccess(user, project);
         learnerResult.setProject(project);
+        learnerResult.setExecutedBy(user);
 
         // get the current highest test no in the project and add 1 for the next id
         Long maxTestNo = learnerResultRepository.findHighestTestNo(learnerResult.getProjectId());
