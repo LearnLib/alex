@@ -16,6 +16,10 @@
           <td>{{report.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}</td>
         </tr>
         <tr>
+          <td><strong>Executed by</strong></td>
+          <td>{{report.executedBy ? report.executedBy.username : "deleted/unknown user"}}</td>
+        </tr>
+        <tr>
           <td><strong>Status</strong></td>
           <td>
             <span *ngIf="report.passed" class="badge badge-success">Passed</span>

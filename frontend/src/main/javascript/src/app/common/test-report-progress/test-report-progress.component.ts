@@ -38,4 +38,10 @@ export class TestReportProgressComponent {
       this.toastService.success('The test run has been aborted');
     })
   }
+
+  canAbort() {
+    return this.report.executedBy == null
+            || this.report.executedBy.id == this.appStore.user.id
+            || this.appStore.project.owners.includes(this.appStore.user.id);
+  }
 }

@@ -76,6 +76,7 @@ public class TestReportDAO {
         projectDAO.checkAccess(user, project);
 
         testReport.setId(null);
+        testReport.setExecutedBy(user);
         testReport.setProject(project);
         testReport.getTestResults().forEach((testResult) -> {
             testResult.setTestReport(testReport);

@@ -20,6 +20,7 @@ import { LearnerApiService } from '../../../services/api/learner-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { AppStoreService } from '../../../services/app-store.service';
 import { LearnerStatus } from '../../../entities/learner-status';
+import { LearnerResult } from "../../../entities/learner-result";
 
 @Component({
   selector: 'learner-status-widget',
@@ -68,5 +69,11 @@ export class LearnerStatusWidgetComponent implements OnInit, OnDestroy {
 
   get project(): Project {
     return this.appStore.project;
+  }
+
+  canAbort(result: LearnerResult) {
+    return result.executedBy == null
+            || this.appStore.user.id == result.executedBy.id
+            || this.appStore.project.owners.includes(this.appStore.user.id);
   }
 }

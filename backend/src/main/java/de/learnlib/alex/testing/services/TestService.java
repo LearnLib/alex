@@ -28,11 +28,13 @@ import de.learnlib.alex.testing.entities.TestQueueItem;
 import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.entities.TestStatus;
 import de.learnlib.alex.webhooks.services.WebhookService;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 /** The service that executes tests. */
 @Service
@@ -125,7 +127,13 @@ public class TestService {
     }
 
     public void abort(User user, Long projectId, Long reportId) {
-        testReportDAO.get(user, projectId, reportId);
+        TestReport report = testReportDAO.get(user, projectId, reportId);
+
+        if (projectDAO.getByID(user, projectId).getOwners().stream().map(User::getId).noneMatch(ownerId -> ownerId.equals(user.getId()))
+            && report.getExecutedBy() != null && !report.getExecutedBy().getId().equals(user.getId())
+        ) {
+            throw new UnauthorizedException("You are not allowed to abort this testrun.");
+        }
 
         if (testThreads.containsKey(projectId)) {
             final TestThread testThread = testThreads.get(projectId);

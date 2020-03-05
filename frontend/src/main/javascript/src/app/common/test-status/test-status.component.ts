@@ -58,7 +58,10 @@ export class TestStatusComponent implements OnInit, OnDestroy {
   }
 
   canAbort(testReport: TestReport) {
-    return [TestReportStatus.PENDING, TestReportStatus.IN_PROGRESS].includes(testReport.status);
+    return [TestReportStatus.PENDING, TestReportStatus.IN_PROGRESS].includes(testReport.status)
+            && (testReport.executedBy == null
+                || this.appStore.user.id == testReport.executedBy.id
+                || this.appStore.project.owners.includes(this.appStore.user.id));
   }
 
   abort(testReport: TestReport) {

@@ -15,6 +15,7 @@
  */
 
 import { LearnerSetup } from './learner-setup';
+import {User} from "./user";
 
 export enum LearnerResultStatus {
   PENDING = 'PENDING',
@@ -33,6 +34,9 @@ export class LearnerResult {
 
   /** The project id of the learn result. */
   project: number;
+
+  /** The user who initiated the learning process. */
+  executedBy: User;
 
   /** The cumulated statistics. */
   statistics: any;
@@ -61,6 +65,7 @@ export class LearnerResult {
   constructor(obj: any = {}) {
     this.id = obj.id;
     this.project = obj.project;
+    this.executedBy = obj.executedBy;
     this.statistics = obj.statistics;
     this.steps = obj.steps;
     this.testNo = obj.testNo;

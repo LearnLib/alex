@@ -179,4 +179,10 @@ export class LearnerViewComponent implements OnInit, OnDestroy {
       console.error
     );
   }
+
+  canAbort() {
+    return this.currentResult.executedBy == null
+            || this.appStore.user.id == this.currentResult.executedBy.id
+            || this.appStore.project.owners.includes(this.appStore.user.id);
+  }
 }

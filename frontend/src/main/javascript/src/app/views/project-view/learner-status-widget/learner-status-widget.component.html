@@ -15,18 +15,18 @@
       <div class="list-group-item d-flex flex-row align-items-center">
         <a class="w-100" [routerLink]="['/app', 'projects', project.id, 'learner']"
            [queryParams]="{testNo: status.currentProcess.result.testNo}">
-          Test {{status.currentProcess.result.testNo}}
+          Test {{status.currentProcess.result.testNo}}, by: {{status.currentProcess.result.executedBy ? status.currentProcess.result.executedBy.username : "deleted/unknown user"}}
         </a>
         <span class="badge badge-info p-2">
           <i class="fas fa-fw fa-circle-notch fa-spin mr-1"></i> In progress
         </span>
-        <button class="btn btn-sm btn-default ml-1" (click)="abort(status.currentProcess.result.testNo)">Abort</button>
+        <button class="btn btn-sm btn-default ml-1" *ngIf="canAbort(status.currentProcess.result)" (click)="abort(status.currentProcess.result.testNo)">Abort</button>
       </div>
       <div class="list-group-item d-flex flex-row align-items-center" *ngFor="let r of status.queue">
         <span class="w-100">Test {{r.testNo}}</span>
         <span class="badge badge-secondary p-2" *ngIf="r.status === 'PENDING'">Pending</span>
         <span class="badge badge-danger p-2" *ngIf="r.status === 'ABORTED'">Aborted</span>
-        <button class="btn btn-sm btn-default ml-1" (click)="abort(r.testNo)">Abort</button>
+        <button class="btn btn-sm btn-default ml-1" *ngIf="canAbort(status.currentProcess.result)" (click)="abort(r.testNo)">Abort</button>
       </div>
     </div>
 

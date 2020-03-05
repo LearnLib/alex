@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
+import com.jayway.jsonpath.JsonPath;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
@@ -53,6 +54,7 @@ import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.Collections;
@@ -72,6 +74,7 @@ public class LearnerResourceIT extends AbstractResourceIT {
     private LearnerApi learnerApi;
     private LearnerResultApi learnerResultApi;
     private SymbolApi symbolApi;
+    private String memberJwt;
 
     @Before
     public void pre() throws Exception {
@@ -88,9 +91,15 @@ public class LearnerResourceIT extends AbstractResourceIT {
 
         jwt = userApi.login(ADMIN_EMAIL, ADMIN_PASSWORD);
 
+        final Response res1 = userApi.create("{\"email\":\"test1@test.de\", \"username\":\"test1\", \"password\":\"test\"}");
+        final int memberId = JsonPath.read(res1.readEntity(String.class), "id");
+        memberJwt = userApi.login("test1@test.de", "test");
+
         final String url = "http://" + InetAddress.getLocalHost().getHostAddress() + ":" + port;
         project = projectApi.create("{\"name\":\"test\",\"url\":\"" + url + "\"}", jwt)
                 .readEntity(Project.class);
+
+        projectApi.addMembers(project.getId(), Collections.singletonList((long) memberId), jwt);
 
         final ParameterizedSymbol resetSymbol = createResetSymbol();
         final ParameterizedSymbol authSymbol = createAuthSymbol();
@@ -159,6 +168,42 @@ public class LearnerResourceIT extends AbstractResourceIT {
 
         result = learn(result.getTestNo());
         assertLearnerResult(result, LearnerResult.Status.FINISHED, 2, 2);
+    }
+
+    @Test
+    public void abortLearningProcessAsOwner() throws IOException {
+        final Response res1 = learnerApi.start(project.getId(), startConfiguration, memberJwt);
+        assertEquals(HttpStatus.OK.value(), res1.getStatus());
+
+        LearnerResult result = objectMapper.readValue(res1.readEntity(String.class), LearnerResult.class);
+        assertTrue(isActive(result));
+
+        final Response res2 = learnerApi.abort(project.getId(), result.getTestNo(), jwt);
+        assertEquals(HttpStatus.OK.value(), res2.getStatus());
+    }
+
+    @Test
+    public void abortOwnLearningProcessAsMember() throws IOException {
+        final Response res1 = learnerApi.start(project.getId(), startConfiguration, memberJwt);
+        assertEquals(HttpStatus.OK.value(), res1.getStatus());
+
+        LearnerResult result = objectMapper.readValue(res1.readEntity(String.class), LearnerResult.class);
+        assertTrue(isActive(result));
+
+        final Response res2 = learnerApi.abort(project.getId(), result.getTestNo(), memberJwt);
+        assertEquals(HttpStatus.OK.value(), res2.getStatus());
+    }
+
+    @Test
+    public void failToAbortLearningProcessAsMember() throws IOException {
+        final Response res1 = learnerApi.start(project.getId(), startConfiguration, jwt);
+        assertEquals(HttpStatus.OK.value(), res1.getStatus());
+
+        LearnerResult result = objectMapper.readValue(res1.readEntity(String.class), LearnerResult.class);
+        assertTrue(isActive(result));
+
+        final Response res2 = learnerApi.abort(project.getId(), result.getTestNo(), memberJwt);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res2.getStatus());
     }
 
     @Test

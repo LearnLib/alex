@@ -18,6 +18,7 @@ package de.learnlib.alex.testing.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 
@@ -26,6 +27,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -45,6 +47,7 @@ public class TestReport implements Serializable {
     /** The date formatter for the report. */
     private static final DateTimeFormatter DATE_TIME_FORMATTER =
             DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
+
 
     public enum  Status {
         PENDING,
@@ -82,6 +85,11 @@ public class TestReport implements Serializable {
 
     /** The user defined description of the corresponding execution config. */
     private String description;
+
+    /** The user who started the test. */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "executedById")
+    private User executedBy;
 
     /** Constructor. */
     public TestReport() {
@@ -149,6 +157,16 @@ public class TestReport implements Serializable {
 
     public void setTestResults(List<TestResult> testResults) {
         this.testResults = testResults;
+    }
+
+    @JsonProperty("executedBy")
+    public User getExecutedBy() {
+        return executedBy;
+    }
+
+    @JsonIgnore
+    public void setExecutedBy(User executedBy) {
+        this.executedBy = executedBy;
     }
 
     public Long getId() {
