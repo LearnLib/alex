@@ -9,7 +9,7 @@ LTSmin has to be downloaded from the homepage and extracted to a place of your c
 Inside the folder, there is a *bin* directory that contains all the binaries.
 When starting ALEX, specify the path to the bin directory as an additional argument:
 
-`java -jar alex-1.8.0-SNAPSHOT.war --ltsmin.path=/path/to/ltsmin/bin`
+`java -jar alex-2.0.0-SNAPSHOT.war --ltsmin.path=/path/to/ltsmin/bin`
 
 
 ## Define LTL formulas

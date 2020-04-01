@@ -7,7 +7,7 @@ Further, a **modern browser** like Google Chrome, Mozilla Firefox or Microsoft E
 ## Bundled version
 
 1. [Download][download] the latest version.
-2. Open a terminal and start ALEX via `java -jar alex-1.8.0-SNAPSHOT.war`.
+2. Open a terminal and start ALEX via `java -jar alex-2.0.0-SNAPSHOT.war`.
 3. Wait until the command line prints something like `Started App in XX.XXX seconds`.
 3. Open *http://localhost:8000* in a web browser.
 
@@ -38,7 +38,7 @@ cd alex
 mvn install package [-DskipTests]
 ```
 
-The bundle can then be found at `build/target/alex-1.8.0-SNAPSHOT.war`.
+The bundle can then be found at `build/target/alex-2.0.0-SNAPSHOT.war`.
 Run it using the instructions for running the bundled version from above.
 
-[download]: https://github.com/LearnLib/alex/releases/download/v1.8.0-SNAPSHOT/alex-1.8.0-SNAPSHOT.war
+[download]: https://github.com/LearnLib/alex/releases/download/v2.0.0-SNAPSHOT/alex-2.0.0-SNAPSHOT.war

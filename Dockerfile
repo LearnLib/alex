@@ -18,7 +18,7 @@ RUN tar -xzf ltsmin-v3.0.2-linux.tgz
 RUN mv v3.0.2 ltsmin
 
 FROM openjdk:12
-COPY --from=builder-backend /root/workdir/build/target/alex-1.8.0-SNAPSHOT.war /usr/share/java/alex/alex.war
+COPY --from=builder-backend /root/workdir/build/target/alex-2.0.0-SNAPSHOT.war /usr/share/java/alex/alex.war
 COPY --from=builder-ltsmin /root/workdir/ltsmin /opt/ltsmin
 WORKDIR /var/lib/alex
 EXPOSE 8000

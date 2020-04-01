@@ -1,6 +1,6 @@
 {
   "name": "alex-frontend",
-  "version": "1.8.0-SNAPSHOT",
+  "version": "2.0.0-SNAPSHOT",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json",

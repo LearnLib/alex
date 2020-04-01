@@ -1,4 +1,4 @@
-# ALEX 1.8.0
+# ALEX 2.0.0
 
 ## Fixes
 
