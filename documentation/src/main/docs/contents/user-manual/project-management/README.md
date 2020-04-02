@@ -61,7 +61,7 @@ Variables can used in any action with the following notation, similar to how var
 
 ## Collaboration with other users
 
-As of ALEX 1.8, users can add other users to their projects for working collaboratively with them.
+Users can add other users to their projects for working collaboratively with them.
 We differentiate between a project **owner** and a project **member**.
 
 A project **owner** is the user who created a project or has been made a project owner by another owner.

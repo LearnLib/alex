@@ -40,8 +40,7 @@ module.exports = {
                 title: 'Examples',
                 collapsable: true,
                 children: [
-                    ['/contents/examples/todomvc/', 'TodoMVC'],
-                    ['/contents/examples/wordpress/', 'Wordpress']
+                    ['/contents/examples/todomvc/', 'TodoMVC']
                 ]
             },
             {
