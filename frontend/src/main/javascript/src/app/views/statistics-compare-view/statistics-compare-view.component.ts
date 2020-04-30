@@ -162,7 +162,7 @@ export class StatisticsCompareViewComponent {
   downloadChart(selector: string): void {
     const el = document.querySelector(selector + ' svg');
     this.promptService.prompt('Enter a name for the svg file')
-      .then(filename => this.downloadService.downloadSvgEl(el, false, filename));
+      .then(filename => this.downloadService.downloadSvg(el, filename));
   }
 
   /** Reformat X Values to avoid floating point numbers to be displayed. */

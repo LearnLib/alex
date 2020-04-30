@@ -88,7 +88,7 @@ export class LearnerResultPanelDefaultViewComponent implements OnInit {
       if (curr.nodeName === 'LEARNER-RESULT-PANEL') {
         const svg = curr.querySelector('svg');
         this.promptService.prompt('Enter a name for the svg file')
-          .then(filename => this.downloadService.downloadSvgEl(svg, true, filename));
+          .then(filename => this.downloadService.downloadHypothesisAsSvg(svg, filename));
         break;
       }
     }

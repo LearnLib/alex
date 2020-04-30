@@ -15,6 +15,7 @@
  */
 
 import { Injectable } from '@angular/core';
+import * as SvgSaver from 'svgsaver';
 
 /**
  * The service that helps with downloading various kind of files.
@@ -122,35 +123,47 @@ export class DownloadService {
    * Downloads the svg.
    *
    * @param svg The svg element to download.
-   * @param adjustSize If the svg content should be resized to the svg element dimensions.
    * @param filename The name of the file to download.
    */
-  downloadSvgEl(svg: any, adjustSize: boolean, filename: string): void {
+  downloadHypothesisAsSvg(svg: any, filename: string): void {
+    const panningRectEl = svg.querySelector('.panning-rect');
+    const originalWidth = panningRectEl.getAttributeNS(null, 'height');
+    const originalHeight = panningRectEl.getAttributeNS(null, 'height');
+
+    panningRectEl.setAttributeNS(null, 'width', '0');
+    panningRectEl.setAttributeNS(null, 'height', '0');
+
     // copy svg to prevent the svg being clipped due to the window size
     const svgCopy = svg.cloneNode(true);
     const g = svg.querySelector('g');
+    const transform = g.getAttribute('transform');
+    g.removeAttribute('transform');
 
     // set proper xml attributes for downloadable file
     svgCopy.setAttribute('version', '1.1');
     svgCopy.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
 
-    if (adjustSize) {
-      const scale = g.getScreenCTM().inverse().multiply(svg.getScreenCTM()).a;
-      const dimension = g.getBoundingClientRect();
-      const width = Math.ceil(dimension.width / scale) + 20;    // use 20px as offset
-      const height = Math.ceil(dimension.height / scale) + 20;
+    svgCopy.querySelectorAll('.edge > path').forEach(p => {
+      p.setAttributeNS(null, "fill", "none");
+      p.setAttributeNS(null, "stroke", "#000");
+    });
 
-      svgCopy.setAttribute('width', width);
-      svgCopy.setAttribute('height', height);
-      svgCopy.querySelector('g').setAttribute('transform', 'translate(10,10)');
-    }
+    const dimension = g.getBoundingClientRect();
 
-    // create serialized string from svg element and encode it in
-    // base64 otherwise the file will not be completely downloaded
-    // what results in errors opening the file
-    const svgString = new XMLSerializer().serializeToString(svgCopy);
-    const href = 'data:image/svg+xml;base64,\n' + window.btoa(svgString);
+    svgCopy.setAttributeNS(null,'width', '' + dimension.width);
+    svgCopy.setAttributeNS(null,'height', '' + dimension.height);
+    svgCopy.querySelector('g').removeAttribute('transform');
 
-    this.download(filename, 'svg', href);
+    const svgSaver = new SvgSaver();
+    svgSaver.asSvg(svgCopy, filename + '.svg');
+
+    g.setAttribute('transform', transform);
+    panningRectEl.setAttributeNS(null, 'width', '' + originalWidth);
+    panningRectEl.setAttributeNS(null, 'height', '' + originalHeight);
+  }
+
+  downloadSvg(svg: any, filename: string) {
+    const svgSaver = new SvgSaver();
+    svgSaver.asSvg(svg, filename + '.svg');
   }
 }
