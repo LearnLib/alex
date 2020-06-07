@@ -19,6 +19,7 @@ import { AppStoreService } from '../../services/app-store.service';
 import { ErrorViewStoreService } from '../error-view/error-view-store.service';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import {TestPresenceService} from "../../services/test-presence.service";
 
 /**
  * The view for the tests.
@@ -32,10 +33,13 @@ export class TestsViewComponent implements OnInit {
   /** The test case or test suite. */
   test: any;
 
+  dummy : any;
+
   constructor(private route: ActivatedRoute,
               private appStore: AppStoreService,
               private errorViewStore: ErrorViewStoreService,
-              private testApi: TestApiService) {
+              private testApi: TestApiService,
+              private testPresenceService: TestPresenceService) {
   }
 
   ngOnInit(): void {
@@ -58,5 +62,7 @@ export class TestsViewComponent implements OnInit {
         }
       }
     );
+
+    this.testPresenceService.accessedTests$.subscribe(value => this.dummy = value);
   }
 }

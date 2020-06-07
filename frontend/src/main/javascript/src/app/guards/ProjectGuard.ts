@@ -21,6 +21,7 @@ import { Observable, of } from 'rxjs';
 import { ProjectApiService } from '../services/api/project-api.service';
 import { Project } from '../entities/project';
 import { map, tap } from 'rxjs/operators';
+import {ProjectPresenceService} from "../services/project-presence.service";
 
 @Injectable({
   providedIn: 'root'

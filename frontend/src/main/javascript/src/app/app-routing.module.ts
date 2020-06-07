@@ -33,6 +33,7 @@ import { ProjectOwnerGuard } from './guards/ProjectOwnerGuard';
 import { LearnerSetupsCreateViewComponent } from './views/learner-setups-create-view/learner-setups-create-view.component';
 import { LearnerSetupsEditViewComponent } from './views/learner-setups-edit-view/learner-setups-edit-view.component';
 import { LtsFormulaSuiteViewComponent } from './views/lts-formula-suite-view/lts-formula-suite-view.component';
+import {TestGuard} from "./guards/TestGuard";
 
 const routes: Routes = [
   {
@@ -220,6 +221,8 @@ const routes: Routes = [
                   },
                   {
                     path: ':testId',
+                    canActivate: [TestGuard],
+                    canActivateChild: [TestGuard],
                     children: [
                       {
                         path: '',

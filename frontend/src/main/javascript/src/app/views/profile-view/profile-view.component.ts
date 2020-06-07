@@ -98,7 +98,7 @@ export class ProfileViewComponent {
         this.userApi.remove(this.user).subscribe(
           () => {
             this.toastService.success('Your account has been deleted');
-            this.appStore.logout();
+            this.appStore.logout(true);
           },
           response => {
             this.toastService.danger('The profile could not be deleted. ' + response.error.message);

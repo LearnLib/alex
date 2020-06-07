@@ -1,10 +1,25 @@
 <div id="alex" class="d-flex flex-column">
-  <nav class="navbar navbar-expand-lg navbar-dark flex-shrink-0">
+  <nav class="navbar navbar-expand-sm navbar-dark flex-shrink-0">
     <a class="navbar-brand d-flex flex-row align-items-center" [routerLink]="['.']">
       <img height="18" src="/assets/images/favicon.png" width="18"> <strong class="ml-1">LEX</strong>
     </a>
 
     <ul class="navbar-nav ml-auto">
+      <ng-container *ngIf="appStore.project != null">
+      <li *ngIf="(projectPresenceService.activeUsers$ | async).get(appStore.project.id) as users"
+          class="nav-item dropdown" ngbDropdown>
+        <a class="nav-link dropdown-toggle cursor-pointer" ngbDropdownToggle>
+            Active Users: {{users.size}}
+        </a>
+        <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu>
+          <div *ngFor="let activeUser of users | keyvalue" ngbDropdownItem>
+            <span class="color-box" [style.background-color]="'#'+activeUser.value"></span>
+            <span class="user-name">{{activeUser.key}}</span>
+          </div>
+        </div>
+      </li>
+      </ng-container>
+
       <li class="nav-item dropdown" ngbDropdown>
         <a class="nav-link dropdown-toggle cursor-pointer" ngbDropdownToggle>
           {{username}}

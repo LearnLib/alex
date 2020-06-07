@@ -16,6 +16,7 @@
 
 import { Component } from '@angular/core';
 import { AppStoreService } from '../../services/app-store.service';
+import {ProjectPresenceService} from "../../services/project-presence.service";
 
 @Component({
   selector: 'app-view',
@@ -24,7 +25,8 @@ import { AppStoreService } from '../../services/app-store.service';
 })
 export class AppViewComponent {
 
-  constructor(public appStore: AppStoreService) { }
+  constructor(public appStore: AppStoreService,
+              public projectPresenceService: ProjectPresenceService) { }
 
   get username(): string {
     return this.appStore.user.username;

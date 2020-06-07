@@ -249,6 +249,10 @@ import { LtsFormulaSuiteViewComponent } from './views/lts-formula-suite-view/lts
 import { TreeViewComponent } from './common/tree-view/tree-view.component';
 import { MoveLtsFormulaModalComponent } from './views/lts-formula-suite-view/move-lts-formula-modal/move-lts-formula-modal.component';
 import { ModelCheckerApiService } from './services/api/model-checker-api.service';
+import { WebSocketAPIService } from "./services/api/websocket-api.service";
+import { WebSocketService } from "./services/websocket.service";
+import { ProjectPresenceService } from "./services/project-presence.service";
+import {TestPresenceService} from "./services/test-presence.service";
 
 @NgModule({
   declarations: [
@@ -513,7 +517,11 @@ import { ModelCheckerApiService } from './services/api/model-checker-api.service
     ErrorViewStoreService,
     FormUtilsService,
     LtsFormulaSuiteApiService,
-    ModelCheckerApiService
+    ModelCheckerApiService,
+    WebSocketAPIService,
+    WebSocketService,
+    ProjectPresenceService,
+    TestPresenceService
   ],
   bootstrap: [AppComponent]
 })

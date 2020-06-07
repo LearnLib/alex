@@ -6,3 +6,16 @@ nav {
 .navbar-nav .dropdown-menu {
   position: absolute;
 }
+
+.color-box {
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  margin-right: 8px;
+  border-radius: 3px;
+  vertical-align: middle;
+}
+
+.user-name {
+  vertical-align: middle;
+}

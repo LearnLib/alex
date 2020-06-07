@@ -18,6 +18,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { AppStoreService } from '../services/app-store.service';
+import {WebSocketService} from "../services/websocket.service";
 
 @Injectable({
   providedIn: 'root'

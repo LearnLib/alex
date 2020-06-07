@@ -17,6 +17,8 @@
 import { Component } from '@angular/core';
 import { AppStoreService } from '../../services/app-store.service';
 import { Project } from '../../entities/project';
+import {WebSocketService} from "../../services/websocket.service";
+import {WebSocketMessage} from "../../entities/websocket-message";
 
 @Component({
   selector: 'project-view',
