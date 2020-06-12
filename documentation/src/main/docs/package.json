@@ -1,6 +1,6 @@
 {
   "name": "alex-docs",
-  "version": "2.0.0-SNAPSHOT",
+  "version": "2.0.0",
   "description": "Documentation for ALEX.",
   "licence": {
     "type": "Apache-2.0",

@@ -9,8 +9,8 @@ The following arguments can be passed to the bundled version of ALEX:
 
 | Argument          | Description                                                                                            |
 |-------------------|--------------------------------------------------------------------------------------------------------|
-| `server.port`     | The port under which ALEX is available <br> `java -jar alex-2.0.0-SNAPSHOT.war --server.port=8000`     |
-| `alex.dbpath`     | The path where the HSQLDB is stored. <br> `java -jar alex-2.0.0-SNAPSHOT.war --alex.dbpath=mem:testdb` |
+| `server.port`     | The port under which ALEX is available <br> `java -jar alex-2.0.0.war --server.port=8000`     |
+| `alex.dbpath`     | The path where the HSQLDB is stored. <br> `java -jar alex-2.0.0.war --alex.dbpath=mem:testdb` |
 | `chromeDriver`    | The absolute path to the Chrome driver executable on your system                                       |
 | `edgeDriver`      | The absolute path to the Edge driver executable on your system                                         |
 | `firefoxDriver`   | The absolute path to the Gecko driver executable on your system                                        |
@@ -38,7 +38,7 @@ Here, we assume that a MySQL server is running under port *3306* and a database 
 Then, start ALEX and include the *application.properties* file as command line argument:
 
 ```bash
-java -jar alex-2.0.0-SNAPSHOT.war "--spring.config.location=/path/to/your/application.properties"
+java -jar alex-2.0.0.war "--spring.config.location=/path/to/your/application.properties"
 ```
 
 <div class="alert alert-info">
