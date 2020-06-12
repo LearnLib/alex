@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package de.learnlib.alex.testing.repositories;
 
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +35,16 @@ public interface TestExecutionConfigRepository extends JpaRepository<TestExecuti
      *         The id of the project.
      * @return The configurations.
      */
-    @Transactional
+    @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
     List<TestExecutionConfig> findAllByProject_Id(Long projectId);
+
+    @Transactional
+    @SuppressWarnings("checkstyle:methodname")
+    void deleteAllByProject_Id(Long projectId);
+
+    @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
+    @Query(nativeQuery = true, value = "select * from PUBLIC.test_execution_config where project_id = ? and is_default = true limit 1")
+    TestExecutionConfig findByProject_IdAndIs_Default(Long projectId);
 }

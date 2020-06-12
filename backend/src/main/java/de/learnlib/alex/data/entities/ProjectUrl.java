@@ -1,3 +1,19 @@
+/*
+ * Copyright 2015 - 2020 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.data.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -24,20 +40,19 @@ public class ProjectUrl {
 
     /** The project the URL belongs to. */
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "projectId")
+    @JoinColumn(name = "environment_id")
     @JsonIgnore
-    private Project project;
+    private ProjectEnvironment environment;
 
     /** An optional name for the URL. */
     private String name;
 
     /** The URL where the system is accessible. */
     @NotBlank
-    @Pattern(regexp = "^https?://.+?")
+    @Pattern(regexp = "^https?://.*?")
     private String url;
 
-    /** If the URL should be used by default. */
-    private boolean defaultUrl;
+    private boolean isDefault;
 
     public Long getId() {
         return id;
@@ -63,30 +78,31 @@ public class ProjectUrl {
         this.url = url;
     }
 
+    public ProjectEnvironment getEnvironment() {
+        return environment;
+    }
+
+    public void setEnvironment(ProjectEnvironment environment) {
+        this.environment = environment;
+    }
+
+    @JsonProperty("environment")
+    public Long getEnvironmentId() {
+        return environment == null ? null : environment.getId();
+    }
+
+    @JsonProperty("environment")
+    public void setEnvironmentId(Long environmentId) {
+        this.environment = new ProjectEnvironment();
+        this.environment.setId(environmentId);
+    }
+
     public boolean isDefault() {
-        return defaultUrl;
+        return isDefault;
     }
 
-    public void setDefault(boolean isDefault) {
-        this.defaultUrl = isDefault;
-    }
-
-    public Project getProject() {
-        return project;
-    }
-
-    public void setProject(Project project) {
-        this.project = project;
-    }
-
-    @JsonProperty("project")
-    public Long getProjectId() {
-        return project == null ? null : project.getId();
-    }
-
-    @JsonProperty("project")
-    public void setProjectId(Long projectId) {
-        this.project = new Project(projectId);
+    public void setDefault(boolean aDefault) {
+        isDefault = aDefault;
     }
 
     @Override
@@ -107,10 +123,8 @@ public class ProjectUrl {
     public String toString() {
         return "ProjectUrl{"
                 + "id=" + id
-                + ", project=" + project.getId()
                 + ", name='" + name + '\''
                 + ", url='" + url + '\''
-                + ", defaultUrl=" + defaultUrl
                 + '}';
     }
 }

@@ -1,0 +1,41 @@
+<div class="simple-symbol-group-tree-item">
+  <div class="d-flex flex-row p-1">
+    <div>
+      <i
+        (click)="collapse = !collapse"
+        [ngClass]="{'fa-minus-square': !collapse, 'fa-plus-square': collapse}"
+        class="far fa-fw cursor-pointer"
+      >
+      </i>
+    </div>
+    <div
+      (click)="groupSelected.emit(group)"
+      [ngClass]="{'selected': selectedGroup != null && selectedGroup.id === group.id}"
+      class="group w-100 ml-2"
+    >
+      <i class="fas fa-fw fa-folder m-1"></i>
+      <strong class="pl-1">{{group.name}}</strong>
+    </div>
+  </div>
+  <div [ngbCollapse]="collapse" class="ml-3 pl-3 border-left">
+    <simple-symbol-group-tree-item
+      *ngFor="let g of group.groups"
+      (groupSelected)="groupSelected.emit($event)"
+      (symbolSelected)="symbolSelected.emit($event)"
+      [group]="g"
+      [selectedGroup]="selectedGroup"
+      [selectedSymbol]="selectedSymbol"
+    >
+    </simple-symbol-group-tree-item>
+    <div *ngFor="let symbol of orderedSymbols" class="d-flex p-1 ml-4">
+      <div
+        (click)="symbolSelected.emit(symbol)"
+        [ngClass]="{'selected': selectedSymbol != null && selectedSymbol.id === symbol.id}"
+        class="symbol w-100 flex-shrink-0"
+      >
+        <i class="fas fa-fw fa-file-code ml-1"></i>
+        <span class="pl-1">{{symbol.name}}</span>
+      </div>
+    </div>
+  </div>
+</div>

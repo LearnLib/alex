@@ -1,0 +1,47 @@
+<form (ngSubmit)="generateTestCase()" [formGroup]="form">
+  <div class="card">
+    <div class="card-header">
+      <strong>Generate test case</strong>
+    </div>
+    <div class="card-body">
+      <div class="form-group">
+        <label>Name of the test</label>
+        <input
+          [class.is-invalid]="formUtils.isInvalidFormControl(form.controls.name)"
+          [formControl]="form.controls.name"
+          class="form-control"
+          placeholder="Test Case"
+          type="text"
+        >
+        <div class="invalid-feedback">
+          Enter a name for the test case.
+        </div>
+      </div>
+
+      <div *ngIf="testCase.steps.length > 0" class="list-group mb-0">
+        <div *ngFor="let step of testCase.steps; let i = index" class="list-group-item d-flex">
+          <div class="w-100 mr-1">
+            {{step.pSymbol.symbol.name}}
+          </div>
+          <div class="mx-2 flex-shrink-0 text-right">
+            {{step.getComputedOutputMessage()}}
+          </div>
+          <div>
+            <i (click)="testCase.steps.splice(i, 1)" class="fas fa-fw fa-times text-muted cursor-pointer"></i>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="testCase.steps.length === 0" class="alert alert-info mb-0">
+        Select the labels of the model to create a test.
+      </div>
+    </div>
+    <div class="card-footer text-right">
+      <button [disabled]="form.invalid || testCase.steps.length === 0" class="btn btn-sm btn-primary mr-2">Generate
+      </button>
+      <button (click)="removeSteps(); $event.preventDefault()" *ngIf="testCase.steps.length > 0"
+              class="btn btn-sm btn-default">Cancel
+      </button>
+    </div>
+  </div>
+</form>

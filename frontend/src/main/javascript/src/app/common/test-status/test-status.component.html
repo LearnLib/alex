@@ -1,0 +1,31 @@
+<div *ngIf="status?.active">
+  <div class="list-group mb-0" [class.list-group-flush]="flush">
+    <div class="list-group-item d-flex flex-row align-items-center" *ngFor="let testRun of allTestRuns">
+
+      <a
+        [routerLink]="['/app', 'projects', project.id, 'tests', 'reports', testRun.report.id]"
+        class="w-100"
+      >
+        Test Run {{testRun.report.id}}, by: {{testRun.report.executedBy ? testRun.report.executedBy.username : "deleted/unknown user"}}
+      </a>
+
+      <span
+        class="badge ml-2 p-2"
+        [class.badge-success]="testRun.report.status === testReportStatus.FINISHED"
+        [class.badge-danger]="testRun.report.status === testReportStatus.ABORTED"
+        [class.badge-info]="testRun.report.status === testReportStatus.IN_PROGRESS"
+        [class.badge-secondary]="testRun.report.status === testReportStatus.PENDING"
+      >
+        <i class="fas fa-fw fa-spin fa-circle-notch" *ngIf="testRun.report.status === testReportStatus.IN_PROGRESS"></i>
+        {{testRun.report.status | normalizeUpperCase}}
+      </span>
+
+      <button class="btn btn-sm btn-default ml-2" *ngIf="canAbort(testRun.report)" (click)="abort(testRun.report)">Abort</button>
+
+    </div>
+  </div>
+</div>
+
+<div class="alert alert-info mb-0" *ngIf="status == null || !status.active" [class.no-border-radius]="flush">
+  There is no active test run.
+</div>

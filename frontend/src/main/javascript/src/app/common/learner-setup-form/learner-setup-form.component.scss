@@ -1,0 +1,25 @@
+input.symbol-alias {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0);
+  outline: none;
+  background: none;
+  color: #797979;
+
+  &:active, &:focus, &:hover {
+    box-shadow: none;
+  }
+}
+
+.setup-name {
+  display: block;
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 1.5rem;
+  border-bottom: 1px solid #e5e5e5;
+  padding: .5rem 1rem;
+  color: #666666;
+  font-weight: bold;
+}

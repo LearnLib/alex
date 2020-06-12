@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package de.learnlib.alex.integrationtests.resources;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
+import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.integrationtests.resources.api.ProjectApi;
 import de.learnlib.alex.integrationtests.resources.api.SymbolGroupApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
@@ -27,10 +28,14 @@ import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.http.HttpStatus;
 
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class SymbolGroupResourceIT extends AbstractResourceIT {
 
@@ -50,16 +55,16 @@ public class SymbolGroupResourceIT extends AbstractResourceIT {
         final ProjectApi projectApi = new ProjectApi(client, port);
         symbolGroupApi = new SymbolGroupApi(client, port);
 
-        userApi.create("{\"email\":\"test1@test.de\",\"password\":\"test\"}");
-        userApi.create("{\"email\":\"test2@test.de\",\"password\":\"test\"}");
+        userApi.create("{\"email\":\"test1@test.de\",\"username\":\"test1\",\"password\":\"test\"}");
+        userApi.create("{\"email\":\"test2@test.de\",\"username\":\"test2\",\"password\":\"test\"}");
 
         jwtUser1 = userApi.login("test1@test.de", "test");
         jwtUser2 = userApi.login("test2@test.de", "test");
 
         final Response res1 =
-                projectApi.create("{\"name\":\"test\",\"urls\":[{\"url\":\"http://localhost:8080\"}]}", jwtUser1);
+                projectApi.create("{\"name\":\"test\",\"url\":\"http://localhost:8080\"}", jwtUser1);
         final Response res2 =
-                projectApi.create("{\"name\":\"test\",\"urls\":[{\"url\":\"http://localhost:8080\"}]}", jwtUser2);
+                projectApi.create("{\"name\":\"test\",\"url\":\"http://localhost:8080\"}", jwtUser2);
 
         projectId1 = JsonPath.read(res1.readEntity(String.class), "id");
         projectId2 = JsonPath.read(res2.readEntity(String.class), "id");
@@ -82,6 +87,25 @@ public class SymbolGroupResourceIT extends AbstractResourceIT {
         assertEquals(HttpStatus.CREATED.value(), res.getStatus());
         assertEquals(2, getNumberOfGroups(projectId1, jwtUser1));
         JsonPath.read(res.readEntity(String.class), "id");
+    }
+
+    @Test
+    public void createAGroupWithAParent() throws Exception {
+        SymbolGroup parent = new SymbolGroup();
+        parent.setName("parent");
+
+        parent = symbolGroupApi.create(projectId1, objectMapper.writeValueAsString(parent), jwtUser1)
+                .readEntity(SymbolGroup.class);
+
+        SymbolGroup child = new SymbolGroup();
+        child.setName("child");
+        child.setParent(parent);
+
+        final Response res = symbolGroupApi.create(projectId1, objectMapper.writeValueAsString(child), jwtUser1);
+        child = res.readEntity(SymbolGroup.class);
+
+        assertEquals(HttpStatus.CREATED.value(), res.getStatus());
+        assertEquals(parent.getId(), child.getParent().getId());
     }
 
     @Test
@@ -205,6 +229,38 @@ public class SymbolGroupResourceIT extends AbstractResourceIT {
         assertEquals(HttpStatus.UNAUTHORIZED.value(), res3.getStatus());
         assertEquals(2, getNumberOfGroups(projectId2, jwtUser2));
         assertEquals(1, getNumberOfGroups(projectId1, jwtUser1));
+    }
+
+    @Test
+    public void shouldGetAGroupById() {
+        final String group = createSymbolGroupJson(projectId1, "group", null);
+        final Response res1 = symbolGroupApi.create(projectId1, group, jwtUser1);
+        final SymbolGroup g = res1.readEntity(SymbolGroup.class);
+
+        final Response res2 = symbolGroupApi.get(g.getProjectId(), g.getId(), jwtUser1);
+        final SymbolGroup g2 = res2.readEntity(SymbolGroup.class);
+
+        assertEquals(g.getId(), g2.getId());
+    }
+
+    @Test
+    public void shouldCreateMultipleGroupsAtOnce() {
+        final SymbolGroup g1 = new SymbolGroup();
+        g1.setName("group1");
+
+        final SymbolGroup g2 = new SymbolGroup();
+        g2.setName("group2");
+
+        final Response res = symbolGroupApi.create(projectId1, Arrays.asList(g1, g2), jwtUser1);
+        final List<SymbolGroup> createdGroups = res.readEntity(new GenericType<List<SymbolGroup>>(){});
+
+        assertEquals(2, createdGroups.size());
+        assertEquals("group1", createdGroups.get(0).getName());
+        assertEquals("group2", createdGroups.get(1).getName());
+
+        final Response res1 = symbolGroupApi.getAll(projectId1, jwtUser1);
+        final List<SymbolGroup> allGroups = res1.readEntity(new GenericType<List<SymbolGroup>>(){});
+        assertTrue(allGroups.containsAll(createdGroups));
     }
 
     private String getDefaultGroupJson(int projectId, String jwt) throws Exception {

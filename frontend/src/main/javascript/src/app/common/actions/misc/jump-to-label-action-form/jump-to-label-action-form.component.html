@@ -1,0 +1,53 @@
+<h5><strong>Jump to label</strong></h5>
+
+<p class="text-muted">
+  Jump to a label.
+</p>
+<hr>
+
+<div class="form-group">
+  <label>Label</label>
+  <input
+      type="text"
+      class="form-control"
+      [(ngModel)]="action.label"
+      placeholder="The name of the label"
+  >
+</div>
+
+<div class="form-group">
+  <label>Condition (JavaScript)</label> <br>
+  <small class="text-muted"><em>Has to return a boolean value</em></small>
+
+  <div
+    ace-editor
+    [(text)]="action.script"
+    [theme]="'eclipse'"
+    [mode]="'javascript'"
+    style="min-height: 200px; width:100%; overflow: auto;"
+  >
+  </div>
+</div>
+
+<div class="form-group form-check">
+  <label class="form-check-label">
+    <input
+        class="form-check-input"
+        type="checkbox"
+        name="async"
+        [(ngModel)]="action.async"
+    >
+    Async
+  </label>
+</div>
+
+<div class="form-group">
+  <label>Script timeout (seconds)</label>
+  <input
+      class="form-control"
+      type="number"
+      min="0"
+      placeholder="The maximum time to wait for a result"
+      [(ngModel)]="action.timeout"
+  >
+</div>

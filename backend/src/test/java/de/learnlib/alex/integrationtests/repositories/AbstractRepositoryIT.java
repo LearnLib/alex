@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ package de.learnlib.alex.integrationtests.repositories;
 import de.learnlib.alex.auth.dao.UserDAO;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.repositories.UserRepository;
-import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.repositories.ProjectRepository;
@@ -45,14 +45,11 @@ public abstract class AbstractRepositoryIT {
     protected UserRepository userRepository;
 
     @Inject
-    protected ProjectDAO projectDAO;
-
-    @Inject
     protected ProjectRepository projectRepository;
 
     @After
     public void tearDown() throws Exception {
-        userDAO.delete(
+        userDAO.delete(userDAO.getById(Long.valueOf("1")),
                 userRepository.findAll().stream()
                         .map(User::getId)
                         .filter(id -> id > 1)// delete all but the admin
@@ -63,21 +60,27 @@ public abstract class AbstractRepositoryIT {
 
     User createUser(String email) {
         User user = new User();
+        user.setUsername(email.split("@")[0]);
         user.setEmail(email);
         user.setPassword("test");
         return user;
     }
 
     Project createProject(User user, String name) {
-        ProjectUrl url = new ProjectUrl();
-        url.setUrl("http://localhost");
-        url.setDefault(true);
+        final ProjectEnvironment env = new ProjectEnvironment();
+        env.setName("Testing");
+        env.setDefault(true);
 
-        Project project = new Project();
-        project.setUser(user);
+        final ProjectUrl url = new ProjectUrl();
+        url.setUrl("http://localhost");
+        url.setEnvironment(env);
+        env.getUrls().add(url);
+
+        final Project project = new Project();
+        project.addOwner(user);
         project.setName(name);
-        project.getUrls().add(url);
-        url.setProject(project);
+        project.getEnvironments().add(env);
+        env.setProject(project);
 
         SymbolGroup defaultGroup = new SymbolGroup();
         defaultGroup.setProject(project);

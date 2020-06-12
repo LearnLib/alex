@@ -1,0 +1,22 @@
+<h5><strong>Upload file</strong></h5>
+
+<p class="text-muted">
+  Uploads a file to an <strong>input[type="file"]</strong> element.
+</p>
+<hr>
+
+<div *ngIf="files.length === 0" class="alert alert-info">
+  There are no uploaded files in ALEX yet.
+</div>
+
+<div *ngIf="files.length > 0">
+  <node-form-group [node]="action.node"></node-form-group>
+
+  <div class="form-group">
+    <label>File to upload</label>
+    <select [(ngModel)]="action.fileName" class="form-control">
+      <option selected value="">Select a file to upload</option>
+      <option *ngFor="let file of files" [value]="file.name">{{file.name}}</option>
+    </select>
+  </div>
+</div>

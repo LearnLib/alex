@@ -1,0 +1,37 @@
+<div class="modal-header">
+  <h4 class="modal-title">Move the symbols into another group</h4>
+  <a (click)="modal.dismiss()" class="btn btn-icon float-right">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<div class="modal-body">
+
+  <div *ngIf="errorMessage != null" class="alert alert-danger">
+    {{errorMessage}}
+  </div>
+
+  <div class="alert alert-info alert-condensed">
+    <span>{{symbols.length}}</span> symbols selected
+  </div>
+
+  <label>Select a group</label>
+
+  <div class="card">
+    <div class="card-body p-2" style="max-height: 240px; overflow: auto">
+      <simple-symbol-group-tree
+        (groupSelected)="selectGroup($event)"
+        [groups]="groups"
+        [selectedGroup]="selectedGroup"
+      >
+      </simple-symbol-group-tree>
+    </div>
+  </div>
+
+</div>
+
+<div class="modal-footer">
+  <button (click)="moveSymbols()" [disabled]="selectedGroup == null" class="btn btn-sm btn-primary">Move</button>
+  <button (click)="modal.dismiss()" class="btn btn-sm btn-default">Cancel</button>
+</div>
+

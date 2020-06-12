@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class CallActionTest extends RestActionTest {
 
+    private static final String BASE_URL = "Base";
     private static final String TEST_BASE_URL = "http://example.com/api";
     private static final String TEST_API_PATH = "/test";
 
@@ -57,6 +58,7 @@ public class CallActionTest extends RestActionTest {
         c.setSymbol(symbol);
         c.setMethod(CallAction.Method.GET);
         c.setUrl(TEST_API_PATH);
+        c.setBaseUrl(BASE_URL);
         HashMap<String, String> cookies = new HashMap<>();
         cookies.put("cookie", "Lorem Ipsum");
         c.setCookies(cookies);
@@ -93,41 +95,41 @@ public class CallActionTest extends RestActionTest {
     }
 
     @Test
-    public void shouldDoAValidGetCall() {
+    public void shouldDoAValidGetCall() throws Exception {
         ExecuteResult result = c.executeAction(connectors);
 
         assertTrue(result.isSuccess());
-        verify(webServiceConnector).get(eq(TEST_API_PATH), any(), anySet(), eq(0));
+        verify(webServiceConnector).get(eq(BASE_URL), eq(TEST_API_PATH), any(), anySet(), eq(0));
     }
 
     @Test
-    public void shouldDoAValidPostCall() {
+    public void shouldDoAValidPostCall() throws Exception {
         c.setMethod(CallAction.Method.POST);
 
         ExecuteResult result = c.executeAction(connectors);
 
         assertTrue(result.isSuccess());
-        verify(webServiceConnector).post(eq(TEST_API_PATH), any(), anySet(), eq("{}"), eq(0));
+        verify(webServiceConnector).post(eq(BASE_URL), eq(TEST_API_PATH), any(), anySet(), eq("{}"), eq(0));
     }
 
     @Test
-    public void shouldDoAValidPutCall() {
+    public void shouldDoAValidPutCall() throws Exception {
         c.setMethod(CallAction.Method.PUT);
 
         ExecuteResult result = c.executeAction(connectors);
 
         assertTrue(result.isSuccess());
-        verify(webServiceConnector).put(eq(TEST_API_PATH), any(), anySet(), eq("{}"), eq(0));
+        verify(webServiceConnector).put(eq(BASE_URL), eq(TEST_API_PATH), any(), anySet(), eq("{}"), eq(0));
     }
 
     @Test
-    public void shouldDoAValidDeleteCall() {
+    public void shouldDoAValidDeleteCall() throws Exception {
         c.setMethod(CallAction.Method.DELETE);
 
         ExecuteResult result = c.executeAction(connectors);
 
         assertTrue(result.isSuccess());
-        verify(webServiceConnector).delete(eq(TEST_API_PATH), any(), anySet(), eq(0));
+        verify(webServiceConnector).delete(eq(BASE_URL), eq(TEST_API_PATH), any(), anySet(), eq(0));
     }
 
 }

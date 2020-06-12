@@ -1,0 +1,70 @@
+<form (ngSubmit)="generateTestSuite()" [formGroup]="form">
+
+  <div class="card">
+    <div class="card-header">
+      <strong>Generate test suite</strong>
+    </div>
+    <div class="card-body">
+      <div class="form-group">
+        <label>Name</label>
+        <input
+          [class.is-invalid]="formUtils.isInvalidFormControl(form.controls.name)"
+          [formControl]="form.controls.name"
+          class="form-control"
+          minlength="1"
+          placeholder="The name of the generated test suite"
+          required
+          type="text"
+        >
+        <div class="invalid-feedback">
+          Enter a name for the test suite
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Step No</label>
+        <input
+          [class.is-invalid]="formUtils.isInvalidFormControl(form.controls.stepNo)"
+          [formControl]="form.controls.stepNo"
+          [max]="result.steps.length"
+          class="form-control"
+          min="1"
+          required
+          type="number"
+        >
+        <div class="invalid-feedback">
+          The step number must be > 0
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Strategy</label>
+        <select [formControl]="form.controls.method" class="form-control">
+          <option [value]="'DT'">Discrimination tree</option>
+          <option [value]="'W_METHOD'">W-Method</option>
+          <option [value]="'WP_METHOD'">Wp-Method</option>
+          <option [value]="'TRANS_COVER'">Transition cover</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Test suite to update</label>
+        <div class="card">
+          <div class="card-body">
+            <test-suite-tree
+              (selected)="handleTestSuiteSelected($event)"
+              *ngIf="rootTestSuite != null"
+              [selectedTestSuite]="selectedTestSuite"
+              [testSuite]="rootTestSuite"
+            >
+            </test-suite-tree>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer text-right">
+      <button [disabled]="form.invalid" class="btn btn-primary btn-sm">Generate</button>
+    </div>
+  </div>
+
+</form>

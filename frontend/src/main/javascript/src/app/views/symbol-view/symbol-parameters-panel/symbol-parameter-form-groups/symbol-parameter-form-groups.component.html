@@ -1,0 +1,25 @@
+<div class="form-group">
+  <label>Name</label>
+  <input
+    class="form-control"
+    required
+    type="text"
+    [class.is-invalid]="formUtils.isInvalidFormControl(form.controls.name)"
+    [formControl]="form.controls.name"
+  >
+  <div class="invalid-feedback">
+    Please provide a name.
+  </div>
+</div>
+
+<div class="form-group">
+  <label>Type</label>
+  <select
+    class="form-control"
+    required
+    [formControl]="form.controls.parameterType"
+    [class.is-invalid]="formUtils.isInvalidFormControl(form.controls.parameterType)"
+  >
+    <option *ngFor="let type of types" [value]="type">{{type | normalizeUpperCase}}</option>
+  </select>
+</div>

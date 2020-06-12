@@ -1,0 +1,34 @@
+<h5><strong>Set counter</strong></h5>
+
+<p class="text-muted">
+  Set the value of a counter.
+</p>
+<hr>
+
+<div class="form-group">
+  <label>Name</label>
+  <input
+    [(ngModel)]="action.name"
+    class="form-control"
+    placeholder="The name of the counter"
+    type="text"
+  >
+</div>
+
+<div class="form-group">
+  <label>Value</label>
+  <input
+    [(ngModel)]="action.value"
+    class="form-control"
+    placeholder="0"
+    type="text"
+  >
+</div>
+
+<div class="form-group">
+  <label>Value type</label>
+  <select [(ngModel)]="action.valueType" class="form-control">
+    <option [value]="null" disabled>Select a type</option>
+    <option *ngFor="let m of ['NUMBER', 'VARIABLE']" [value]="m">{{m}}</option>
+  </select>
+</div>

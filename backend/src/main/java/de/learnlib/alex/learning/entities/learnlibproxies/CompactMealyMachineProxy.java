@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import net.automatalib.automata.concepts.StateIDs;
 import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.automata.transducers.impl.compact.CompactMealy;
 import net.automatalib.words.Alphabet;
-import net.automatalib.words.impl.SimpleAlphabet;
+import net.automatalib.words.impl.GrowingMapAlphabet;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -237,10 +237,11 @@ public class CompactMealyMachineProxy implements Serializable {
     @Transient
     @JsonIgnore
     public Alphabet<String> createAlphabet() {
-        Set<String> inputs = edges.stream().map(CompactMealyTransitionProxy::getInput)
+        final Set<String> inputs = edges.stream()
+                .map(CompactMealyTransitionProxy::getInput)
                 .collect(Collectors.toSet());
 
-        return new SimpleAlphabet<>(inputs);
+        return new GrowingMapAlphabet<>(inputs);
     }
 
     /**

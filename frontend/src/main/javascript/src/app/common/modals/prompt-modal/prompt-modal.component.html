@@ -1,0 +1,31 @@
+<div class="modal-header">
+  <h4>{{text}}</h4>
+</div>
+
+<form [formGroup]="form" (ngSubmit)="accept()">
+
+  <div class="modal-body">
+    <div class="form-group mb-0">
+      <input
+        [formControl]="form.controls.input"
+        [class.is-invalid]="formUtils.isInvalidFormControl(form.controls.input)"
+        class="form-control"
+        name="input"
+        type="text"
+      >
+      <div class="invalid-feedback">
+        Please enter a value.
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-primary btn-sm" type="submit" [disabled]="form.invalid">
+      {{okBtnText}}
+    </button>
+    <button (click)="modal.dismiss(); $event.preventDefault()" class="btn btn-default btn-sm">
+      {{cancelBtnText}}
+    </button>
+  </div>
+
+</form>

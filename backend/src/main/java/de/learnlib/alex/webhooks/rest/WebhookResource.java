@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,28 +17,24 @@
 package de.learnlib.alex.webhooks.rest;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.auth.security.UserPrincipal;
-import de.learnlib.alex.common.utils.IdsList;
+import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.webhooks.dao.WebhookDAO;
 import de.learnlib.alex.webhooks.entities.EventType;
 import de.learnlib.alex.webhooks.entities.Webhook;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.security.RolesAllowed;
-import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -46,15 +42,14 @@ import java.util.List;
 /**
  * The resource for webhooks.
  */
-@Path("/webhooks")
-@RolesAllowed({"REGISTERED"})
+@RestController
+@RequestMapping("/rest/webhooks")
 public class WebhookResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
     /** The security context containing the user of the request. */
-    @Context
-    private SecurityContext securityContext;
+    private AuthContext authContext;
 
     /** The {@link WebhookDAO} to use. */
     private WebhookDAO webhookDAO;
@@ -65,8 +60,9 @@ public class WebhookResource {
      * @param webhookDAO
      *         The {@link WebhookDAO} to use.
      */
-    @Inject
-    public WebhookResource(WebhookDAO webhookDAO) {
+    @Autowired
+    public WebhookResource(AuthContext authContext, WebhookDAO webhookDAO) {
+        this.authContext = authContext;
         this.webhookDAO = webhookDAO;
     }
 
@@ -77,16 +73,17 @@ public class WebhookResource {
      *         The webhook to create.
      * @return The created webhook.
      */
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response create(Webhook webhook) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @PostMapping(
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity create(@RequestBody Webhook webhook) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("create '{}' for user '{}'", webhook, user);
 
         final Webhook createdWebhook = webhookDAO.create(user, webhook);
         LOGGER.traceExit(createdWebhook);
-        return Response.ok(createdWebhook).build();
+        return ResponseEntity.ok(createdWebhook);
     }
 
     /**
@@ -94,33 +91,38 @@ public class WebhookResource {
      *
      * @return The list of registered webhooks.
      */
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response get() {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @GetMapping(
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity get() {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("get webhooks for user '{}'", user);
         final List<Webhook> webhooks = webhookDAO.getAll(user);
         LOGGER.traceExit(webhooks);
-        return Response.ok(webhooks).build();
+        return ResponseEntity.ok(webhooks);
     }
 
     /**
      * Update a webhook.
      *
+     * @param webhookId
+     *         The ID of the webhook to update.
      * @param webhook
      *         The updated webhook.
      * @return The updated webhook on success.
      */
-    @PUT
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response update(Webhook webhook) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @PutMapping(
+            value = "/{webhookId}",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity update(@PathVariable("webhookId") Long webhookId, @RequestBody Webhook webhook) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("update webhook '{}' for user '{}'", webhook, user);
 
-        final Webhook updatedWebhook = webhookDAO.update(user, webhook);
+        final Webhook updatedWebhook = webhookDAO.update(user, webhookId, webhook);
         LOGGER.traceExit("Webhook '{}' updated", updatedWebhook);
-        return Response.ok(updatedWebhook).build();
+        return ResponseEntity.ok(updatedWebhook);
     }
 
     /**
@@ -130,16 +132,17 @@ public class WebhookResource {
      *         The id of the webhook.
      * @return No no content on success.
      */
-    @DELETE
-    @Path("/{webhookId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("webhookId") Long webhookId) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @DeleteMapping(
+            value = "/{webhookId}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity delete(@PathVariable("webhookId") Long webhookId) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("delete webhook '{}' for user '{}'", webhookId, user);
 
         webhookDAO.delete(user, webhookId);
         LOGGER.traceExit("Webhook {} deleted", webhookId);
-        return Response.noContent().build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -149,16 +152,17 @@ public class WebhookResource {
      *         The list of ids of the webhooks to delete.
      * @return Not content on success.
      */
-    @DELETE
-    @Path("/batch/{webhookIds}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("webhookIds") IdsList webhookIds) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @DeleteMapping(
+            value = "/batch/{webhookIds}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity delete(@PathVariable("webhookIds") List<Long> webhookIds) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("delete webhooks '{}' for user '{}'", webhookIds, user);
 
         webhookDAO.delete(user, webhookIds);
         LOGGER.traceExit("Webhooks {} deleted", webhookIds);
-        return Response.noContent().build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -166,13 +170,14 @@ public class WebhookResource {
      *
      * @return All available events.
      */
-    @GET
-    @Path("/events")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getEvents() {
+    @GetMapping(
+            value = "/events",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity getEvents() {
         LOGGER.traceEntry("getEvents");
         final List<EventType> eventTypes = new ArrayList<>(EnumSet.allOf(EventType.class));
         LOGGER.traceExit(eventTypes);
-        return Response.ok(eventTypes).build();
+        return ResponseEntity.ok(eventTypes);
     }
 }

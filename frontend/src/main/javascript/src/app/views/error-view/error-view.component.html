@@ -1,0 +1,8 @@
+<div class="container">
+  <div class="alert alert-danger text-center mt-4">
+    <i class="fas fa-4x fa-exclamation-triangle my-3"></i>
+    <h3>Something went wrong!</h3>
+    <p *ngIf="store.message != null">{{store.message}}</p>
+    <p *ngIf="store.message == null">There is no message</p>
+  </div>
+</div>

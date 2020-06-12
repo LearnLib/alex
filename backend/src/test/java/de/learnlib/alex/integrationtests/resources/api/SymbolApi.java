@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,45 @@ public class SymbolApi extends AbstractApi {
 
     public SymbolApi(Client client, int port) {
         super(client, port);
+    }
+
+    public Response get(int projectId, Long symbolId, String jwt) {
+        return client.target(url(projectId, symbolId)).request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
+                .get();
+    }
+
+    public Response update(int projectId, Long symbolId, String symbol, String jwt) {
+        return client.target(url(projectId, symbolId)).request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
+                .put(Entity.json(symbol));
+    }
+
+    public Response move(int projectId, Long symbolId, Long groupId, String jwt) {
+        return client.target(url(projectId, symbolId) + "/moveTo/" + groupId).request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
+                .put(Entity.json("{}"));
+    }
+
+    public Response move(int projectId, List<Long> symbolIds, Long groupId, String jwt) {
+        final String ids = symbolIds.stream().map(String::valueOf).collect(Collectors.joining(","));
+
+        return client.target(url(projectId) + "/batch/" + ids + "/moveTo/" + groupId).request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
+                .put(Entity.json("{}"));
+    }
+
+    public Response get(int projectId, List<Long> symbolIds, String jwt) {
+        final String ids = symbolIds.stream().map(String::valueOf).collect(Collectors.joining(","));
+
+        return client.target(url(projectId) + "/batch/" + ids).request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
+                .get();
     }
 
     public Response getAll(int projectId, String jwt) {
@@ -59,15 +98,51 @@ public class SymbolApi extends AbstractApi {
     }
 
     public Response archiveMany(int projectId, List<Integer> symbolIds, String jwt) {
-        final List<String> ids = symbolIds.stream().map(String::valueOf).collect(Collectors.toList());
+        final String ids = symbolIds.stream().map(String::valueOf).collect(Collectors.joining(","));
 
-        return client.target(url(projectId) + "/batch/" + String.join(",", ids) + "/hide").request()
+        return client.target(url(projectId) + "/batch/" + ids + "/hide").request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
                 .post(null);
     }
 
+    public Response restore(Long projectId, Long symbolId, String jwt) {
+        return client.target(url(projectId) + "/" + symbolId + "/show").request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
+                .post(null);
+    }
+
+    public Response restore(Long projectId, List<Long> symbolIds, String jwt) {
+        final String ids = symbolIds.stream().map(String::valueOf).collect(Collectors.joining(","));
+
+        return client.target(url(projectId) + "/batch/" + ids + "/show").request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
+                .post(null);
+    }
+
+    public Response delete(int projectId, Long symbolId, String jwt) {
+        return client.target(url(projectId, symbolId)).request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
+                .delete();
+    }
+
+    public Response delete(int projectId, List<Long> symbolIds, String jwt) {
+        final String ids = symbolIds.stream().map(String::valueOf).collect(Collectors.joining(","));
+
+        return client.target(url(projectId) + "/batch/" + ids).request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
+                .delete();
+    }
+
     public String url(long projectId) {
         return baseUrl() + "/projects/" + projectId + "/symbols";
+    }
+
+    public String url(long projectId, long symbolId) {
+        return baseUrl() + "/projects/" + projectId + "/symbols/" + symbolId;
     }
 }

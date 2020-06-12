@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -60,25 +61,38 @@ public class TestCaseStep implements Serializable {
     @JsonIgnore
     private int number;
 
+    /** If disabled, the step is not executed. */
+    private boolean disabled;
+
     /** The symbol to execute. */
     @OneToOne(
             fetch = FetchType.EAGER,
-            cascade = CascadeType.REMOVE
+            cascade = CascadeType.ALL
     )
     private ParameterizedSymbol pSymbol;
-
-    /** If the step should fail. This eliminates the need to create a separate symbol. */
-    @NotNull
-    private boolean shouldFail;
 
     /** The expected result of the step in a natural language. */
     @Column(columnDefinition = "MEDIUMTEXT")
     private String expectedResult;
 
+    @NotNull
+    private boolean expectedOutputSuccess;
+
+    @NotNull
+    private String expectedOutputMessage;
+
     /** Constructor. */
     public TestCaseStep() {
-        this.shouldFail = false;
         this.expectedResult = "";
+        this.expectedOutputSuccess = true;
+        this.expectedOutputMessage = "";
+        this.disabled = false;
+    }
+
+    @Transient
+    @JsonIgnore
+    public String getComputedOutput() {
+        return new ExecuteResult(expectedOutputSuccess, expectedOutputMessage.equals("") ? null : expectedOutputMessage).getOutput();
     }
 
     /**
@@ -126,19 +140,40 @@ public class TestCaseStep implements Serializable {
         this.pSymbol = pSymbol;
     }
 
-    public boolean isShouldFail() {
-        return shouldFail;
-    }
-
-    public void setShouldFail(boolean shouldFail) {
-        this.shouldFail = shouldFail;
-    }
-
     public String getExpectedResult() {
         return expectedResult;
     }
 
     public void setExpectedResult(String expectedResult) {
         this.expectedResult = expectedResult == null ? "" : expectedResult;
+    }
+
+    public boolean isExpectedOutputSuccess() {
+        return expectedOutputSuccess;
+    }
+
+    public void setExpectedOutputSuccess(boolean expectedOutputSuccess) {
+        this.expectedOutputSuccess = expectedOutputSuccess;
+    }
+
+    public String getExpectedOutputMessage() {
+        return expectedOutputMessage;
+    }
+
+    public void setExpectedOutputMessage(String expectedOutputMessage) {
+        this.expectedOutputMessage = expectedOutputMessage;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public boolean behavesLike(TestCaseStep step) {
+        return getComputedOutput().equals(step.getComputedOutput())
+                && pSymbol.getAliasOrComputedName().equals(step.getPSymbol().getAliasOrComputedName());
     }
 }

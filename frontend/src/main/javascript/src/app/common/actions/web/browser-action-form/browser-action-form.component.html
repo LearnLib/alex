@@ -1,0 +1,16 @@
+<h5>
+  <strong>Browser window</strong>
+</h5>
+
+<p class="text-muted">
+  Perform an action on the current browser window.
+</p>
+<hr>
+
+<div class="form-group">
+  <label>Action</label>
+  <select [(ngModel)]="action.action" class="form-control">
+    <option [value]="null" disabled>Select an action</option>
+    <option *ngFor="let action of actions" [value]="action">{{action}}</option>
+  </select>
+</div>

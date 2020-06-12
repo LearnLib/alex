@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.modelchecking.entities.LtsFormula;
+import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
 import de.learnlib.alex.testing.entities.TestReport;
@@ -28,16 +28,14 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,21 +43,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Representation of a testing project with different symbols.
  */
 @Entity
-@Table(
-        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "name"})
-)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Project implements Serializable {
 
     private static final long serialVersionUID = -6760395646972200067L;
 
     /** The maximum length for the project description. */
-    private static final int MAX_DESCRIPTION_LENGTH = 250;
+    public static final int MAX_DESCRIPTION_LENGTH = 250;
 
     /**
      * The project ID.
@@ -68,10 +64,31 @@ public class Project implements Serializable {
     @GeneratedValue
     private Long id;
 
-    /** The user that owns this project. */
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JsonIgnore
-    private User user;
+    /**
+     * The list of users who are owners of the project.
+     */
+    @ManyToMany(
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE}
+    )
+    @JoinTable(
+            name = "project_owners",
+            joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id")
+    )
+    private List<User> owners;
+
+    /**
+     * The list of users who are members of the project.
+     */
+    @ManyToMany(
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE}
+    )
+    @JoinTable(
+            name = "project_members",
+            joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id")
+    )
+    private List<User> members;
 
     /**
      * The name of the project. This property is required & must be unique.
@@ -86,17 +103,6 @@ public class Project implements Serializable {
     private String description;
 
     /**
-     * The URLs where instances of the target system a accessible.
-     */
-    @OneToMany(
-            mappedBy = "project",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
-            orphanRemoval = true
-    )
-    @NotNull
-    private List<ProjectUrl> urls;
-
-    /**
      * The list of groups in the project.
      */
     @OneToMany(
@@ -105,6 +111,12 @@ public class Project implements Serializable {
     )
     @JsonIgnore
     private Set<SymbolGroup> groups;
+
+    @OneToMany(
+            mappedBy = "project",
+            cascade = {CascadeType.REMOVE}
+    )
+    private List<ProjectEnvironment> environments;
 
     /**
      * The list of test reports in the project.
@@ -154,9 +166,9 @@ public class Project implements Serializable {
      */
     @OneToMany(
             mappedBy = "project",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+            cascade = {CascadeType.REMOVE})
     @JsonIgnore
-    private List<LtsFormula> ltsFormulas;
+    private List<LtsFormulaSuite> ltsFormulaSuites;
 
     /**
      * Default constructor.
@@ -170,6 +182,7 @@ public class Project implements Serializable {
      *
      * @param projectId The ID.
      */
+
     public Project(Long projectId) {
         this.id = projectId;
         this.groups = new HashSet<>();
@@ -177,8 +190,10 @@ public class Project implements Serializable {
         this.tests = new HashSet<>();
         this.testReports = new HashSet<>();
         this.testExecutionConfigs = new ArrayList<>();
-        this.urls = new ArrayList<>();
-        this.ltsFormulas = new ArrayList<>();
+        this.ltsFormulaSuites = new ArrayList<>();
+        this.environments = new ArrayList<>();
+        this.owners = new ArrayList<>();
+        this.members = new ArrayList<>();
     }
 
     /**
@@ -200,35 +215,79 @@ public class Project implements Serializable {
     }
 
     /**
-     * @return The user that owns the project.
+     * Get the owners of the project.
+     *
+     * @return The list of owners of the project.
      */
     @JsonIgnore
-    public User getUser() {
-        return user;
+    public List<User> getOwners() {
+        return owners;
     }
 
     /**
-     * @param user The new user that owns the project.
+     * Add an user as an owner to the project.
+     *
+     * @param owner The user who will be added as an owner.
      */
     @JsonIgnore
-    public void setUser(User user) {
-        this.user = user;
+    public void addOwner(User owner) {
+        owners.add(owner);
     }
 
     /**
-     * @return The ID of the user, which is needed for the JSON.
+     * Set a list of users as the owners of the project.
+     *
+     * @param owners The new list of owners.
      */
-    @JsonProperty("user")
-    public Long getUserId() {
-        return user == null ? null : user.getId();
+    @JsonIgnore
+    public void setOwners(List<User> owners) {
+
+        if ( owners != null) {
+            this.owners = owners;
+        }
     }
 
     /**
-     * @param userId The new ID of the user, which is needed for the JSON.
+     * Remove an owner from the project.
+     *
+     * @param owner The user user who will be removed from the list of owners.
+     * @return True if the user was successfully removed
      */
-    @JsonProperty("user")
-    public void setUserId(Long userId) {
-        this.user = new User(userId);
+    @JsonIgnore
+    public boolean removeOwner(User owner) {
+        return owners.remove(owner);
+    }
+
+    @JsonIgnore
+    public List<User> getMembers() {
+        return members;
+    }
+
+    @JsonIgnore
+    public void addMember(User member) {
+        members.add(member);
+    }
+
+    @JsonIgnore
+    public void setMembers(List<User> members) {
+        if (members != null) {
+            this.members = members;
+        }
+    }
+
+    @JsonIgnore
+    public boolean removeMember(User member) {
+        return members.remove(member);
+    }
+
+    @JsonProperty("members")
+    public List<Long> getMemberIds() {
+        return this.members.stream().map(User::getId).collect(Collectors.toList());
+    }
+
+    @JsonProperty("owners")
+    public List<Long> getOwnerIds() {
+        return this.owners.stream().map(User::getId).collect(Collectors.toList());
     }
 
     /**
@@ -313,6 +372,14 @@ public class Project implements Serializable {
         this.symbols = symbols;
     }
 
+    public List<ProjectEnvironment> getEnvironments() {
+        return environments;
+    }
+
+    public void setEnvironments(List<ProjectEnvironment> environments) {
+        this.environments = environments;
+    }
+
     /**
      * Add a Symbol to the Project and set the Project in the Symbol.
      * This only establishes the bidirectional relation does nothing else,
@@ -349,6 +416,7 @@ public class Project implements Serializable {
      * @return All the counters of the Project.
      */
     @JsonProperty
+    @JsonIgnore
     public Set<Counter> getCounters() {
         return counters;
     }
@@ -361,29 +429,12 @@ public class Project implements Serializable {
         this.counters = counters;
     }
 
-    public List<LtsFormula> getLtsFormulas() {
-        return ltsFormulas;
+    public List<LtsFormulaSuite> getLtsFormulaSuites() {
+        return ltsFormulaSuites;
     }
 
-    public void setLtsFormulas(List<LtsFormula> ltsFormulas) {
-        this.ltsFormulas = ltsFormulas;
-    }
-
-    public List<ProjectUrl> getUrls() {
-        return urls;
-    }
-
-    public void setUrls(List<ProjectUrl> urls) {
-        this.urls = urls;
-    }
-
-    @JsonIgnore
-    @Transient
-    public ProjectUrl getDefaultUrl() {
-        return this.urls.stream()
-                .filter(ProjectUrl::isDefault)
-                .findFirst()
-                .orElse(null);
+    public void setLtsFormulaSuites(List<LtsFormulaSuite> ltsFormulaSuites) {
+        this.ltsFormulaSuites = ltsFormulaSuites;
     }
 
     public List<TestExecutionConfig> getTestExecutionConfigs() {
@@ -394,8 +445,16 @@ public class Project implements Serializable {
         this.testExecutionConfigs = testExecutionConfigs;
     }
 
+    @Transient
+    @JsonIgnore
+    public ProjectEnvironment getDefaultEnvironment() {
+        return this.environments.stream()
+                .filter(ProjectEnvironment::isDefault)
+                .findFirst()
+                .orElse(null);
+    }
+
     @Override
-    @SuppressWarnings("checkstyle:needbraces") // Auto generated by IntelliJ
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -410,7 +469,7 @@ public class Project implements Serializable {
 
     @Override
     public String toString() {
-        return "[Project " + id + "]: " + user + ", " + name;
+        return "[Project " + id + "]: " /* + user */ + ", " + name;
     }
 
 }

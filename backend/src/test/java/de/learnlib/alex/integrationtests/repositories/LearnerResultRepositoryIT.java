@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,7 +98,8 @@ public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
     }
 
     @Test
-    public void shouldFetchAllLearnerResultsOfAProject() { LearnerResult result1 = createLearnerResult(project, 0L);
+    public void shouldFetchAllLearnerResultsOfAProject() {
+        LearnerResult result1 = createLearnerResult(project, 0L);
         learnerResultRepository.save(result1);
         LearnerResult result2 = createLearnerResult(project, 1L);
         learnerResultRepository.save(result2);

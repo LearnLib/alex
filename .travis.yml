@@ -1,16 +1,7 @@
 language: java
 
-dist: trusty
+dist: bionic
 sudo: true
-
-addons:
-  apt:
-    sources:
-      - sourceline: "deb https://deb.nodesource.com/node_10.x trusty main"
-        key_url:    "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
-    packages:
-      - nodejs
-      - chromium-chromedriver
 
 cache:
   directories:
@@ -26,7 +17,7 @@ install:
   - cp ${TRAVIS_BUILD_DIR}/.travis/settings.xml ${HOME}/.m2/settings.xml
 
 script:
-  - mvn clean install -Pbootstrap,code-analysis,documentation,integration-tests
+  - mvn clean install -Pcode-analysis,documentation,integration-tests
 
 branches:
   only:
@@ -35,12 +26,10 @@ branches:
 
 jobs:
   include:
-  - jdk: openjdk8
   - jdk: openjdk11
-  - jdk: oraclejdk8
   - jdk: oraclejdk11
   - stage: "Coverage"
-    jdk: openjdk8
+    jdk: openjdk11
     script:
-    - mvn install -Pbootstrap,code-analysis,integration-tests # code-analysis currently includes JaCoCo
+    - mvn clean install -Pcode-analysis,integration-tests
     - mvn coveralls:report

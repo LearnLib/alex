@@ -1,0 +1,51 @@
+<div class="form-group">
+  <label>Name</label>
+  <input
+    [class.is-invalid]="formUtils.isInvalidFormControl(form.controls.name)"
+    [formControl]="form.controls.name"
+    autofocus
+    class="form-control"
+    maxlength="100"
+    placeholder="The name of the symbol"
+    required
+    type="text"
+  >
+
+  <div class="invalid-feedback">
+    The name is required
+  </div>
+</div>
+
+<div class="form-group">
+  <label>Description</label>
+  <textarea
+    [class.is-invalid]="formUtils.isInvalidFormControl(form.controls.description)"
+    [formControl]="form.controls.description"
+    class="form-control"
+    maxlength="1024"
+    placeholder="Describe what the symbol does."
+    rows="2"
+  >
+    </textarea>
+
+  <div class="invalid-feedback">
+    The description cannot be more than 1024 characters long
+  </div>
+</div>
+
+<div class="form-group">
+  <label>Expected result</label>
+  <textarea
+    [class.is-invalid]="formUtils.isInvalidFormControl(form.controls.expectedResult)"
+    [formControl]="form.controls.expectedResult"
+    class="form-control"
+    maxlength="1024"
+    placeholder="Describe what should be the state after the symbol has been executed."
+    rows="2"
+  >
+    </textarea>
+
+  <div class="invalid-feedback">
+    The expected result cannot be more than 1024 characters long
+  </div>
+</div>

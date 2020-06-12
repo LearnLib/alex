@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package de.learnlib.alex.integrationtests.resources.api;
 
+import de.learnlib.alex.modelchecking.entities.LtsFormula;
+import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.HttpHeaders;
@@ -30,52 +33,59 @@ public class LtsFormulaApi extends AbstractApi {
         super(client, port);
     }
 
-    public Response getAll(int projectId, String jwt) {
-        return client.target(url(projectId)).request()
-                .header(HttpHeaders.AUTHORIZATION, jwt)
-                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
-                .get();
-    }
-
-    public Response create(int projectId, String formula, String jwt) {
-        return client.target(url(projectId)).request()
+    public Response create(Long projectId, Long suiteId, LtsFormula formula, String jwt) {
+        return client.target(url(projectId, suiteId)).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
                 .post(Entity.json(formula));
     }
 
-    public Response update(int projectId, int formulaId, String formula, String jwt) {
-        return client.target(url(projectId, formulaId)).request()
+    public Response update(Long projectId, Long suiteId, Long formulaId, LtsFormula formula, String jwt) {
+        return client.target(url(projectId, suiteId, formulaId)).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
                 .put(Entity.json(formula));
     }
 
-    public Response delete(int projectId, int formulaId, String jwt) {
-        return client.target(url(projectId, formulaId)).request()
+    public Response delete(Long projectId, Long suiteId, Long formulaId, String jwt) {
+        return client.target(url(projectId, suiteId, formulaId)).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
                 .delete();
     }
 
-    public Response delete(int projectId, List<Integer> formulaIds, String jwt) {
-        return client.target(url(projectId, formulaIds)).request()
+    public Response delete(Long projectId, Long suiteId, List<Long> formulaIds, String jwt) {
+        return client.target(url(projectId, suiteId, formulaIds)).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
                 .delete();
     }
 
-    private String url(int projectId) {
-        return baseUrl() + "/projects/" + projectId + "/ltsFormulas";
+    public Response updateSuite(Long projectId, Long suiteId, Long formulaId, LtsFormulaSuite suite, String jwt) {
+        return client.target(url(projectId, suiteId, formulaId) + "/suite").request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
+                .put(Entity.json(suite));
     }
 
-    private String url(int projectId, int formulaId) {
-        return url(projectId) + "/" + formulaId;
+    public Response updateSuite(Long projectId, Long suiteId, List<Long> formulaIds, LtsFormulaSuite suite, String jwt) {
+        return client.target(url(projectId, suiteId, formulaIds) + "/suite").request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
+                .put(Entity.json(suite));
     }
 
-    private String url(int projectId, List<Integer> formulaIds) {
+    private String url(Long projectId, Long suiteId) {
+        return baseUrl() + "/projects/" + projectId + "/ltsFormulaSuites/" + suiteId + "/ltsFormulas";
+    }
+
+    private String url(Long projectId, Long suiteId, Long formulaId) {
+        return url(projectId, suiteId) + "/" + formulaId;
+    }
+
+    private String url(Long projectId, Long suiteId, List<Long> formulaIds) {
         final List<String> ids = formulaIds.stream().map(String::valueOf).collect(Collectors.toList());
-        return url(projectId) + "/batch/" + String.join(",", ids);
+        return url(projectId, suiteId) + "/batch/" + String.join(",", ids);
     }
 
 }

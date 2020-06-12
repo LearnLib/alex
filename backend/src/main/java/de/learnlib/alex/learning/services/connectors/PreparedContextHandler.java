@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import de.learnlib.alex.data.dao.FileDAO;
 import de.learnlib.alex.data.entities.Counter;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ public class PreparedContextHandler {
         this.postSymbol = postSymbol;
     }
 
-    public ConnectorContextHandler create(String url) {
+    public ConnectorContextHandler create(ProjectEnvironment environment) {
         final List<Counter> counters = new ArrayList<>();
         try {
             counters.addAll(counterDAO.getAll(user, project.getId()));
@@ -61,9 +62,9 @@ public class PreparedContextHandler {
             e.printStackTrace();
         }
 
-        final ConnectorManager connectors = new ConnectorManager();
-        connectors.addConnector(new WebSiteConnector(url, driverConfig));
-        connectors.addConnector(new WebServiceConnector(url));
+        final ConnectorManager connectors = new ConnectorManager(environment);
+        connectors.addConnector(new WebSiteConnector(environment, driverConfig));
+        connectors.addConnector(new WebServiceConnector(environment));
         connectors.addConnector(new CounterStoreConnector(counterDAO, user, project, counters));
         connectors.addConnector(new VariableStoreConnector());
         connectors.addConnector(new FileStoreConnector(fileDAO, user));

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,28 +16,19 @@
 
 package de.learnlib.alex.data.entities.actions.web;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Project;
-import de.learnlib.alex.data.entities.PropertyFilterMixIn;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolActionStep;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.entities.actions.misc.WaitAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
-import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
-import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
-import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.io.File;
 import java.io.IOException;
@@ -118,28 +109,6 @@ public class WebSymbolTest {
     }
 
     @Test
-    public void ensureThatSerializingASymbolWithoutProjectDoesNotCrash() throws JsonProcessingException, JSONException {
-        String expectedJson = "{\"steps\":" + createActionSteps(symbol.getId()) + ",\"description\":\"\",\"expectedResult\":\"\",\"group\":2,\"id\":null,\"inputs\":[],\"name\":\"WebSymbol\",\"outputs\":[],\"project\":null,\"successOutput\":null}";
-        symbol.setProject(null);
-
-        mapper.addMixIn(Object.class, PropertyFilterMixIn.class);
-
-        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept("hidden");
-        FilterProvider filters = new SimpleFilterProvider().addFilter("filter properties by name", filter);
-
-        String json = mapper.writer(filters).writeValueAsString(symbol);
-        JSONAssert.assertEquals(expectedJson, json, true);
-    }
-
-    @Test
-    public void ensureThatSerializingCreatesTheRightJSON() throws JsonProcessingException, JSONException {
-        String expectedJson = "{\"steps\":" + createActionSteps(symbol.getId()) + ",\"description\":\"\",\"expectedResult\":\"\",\"group\":2,\"hidden\":false,\"id\":null,\"inputs\":[],\"name\":\"WebSymbol\",\"outputs\":[],\"project\":1,\"successOutput\":null}";
-        String json = mapper.writeValueAsString(symbol);
-
-        JSONAssert.assertEquals(expectedJson, json, true);
-    }
-
-    @Test
     public void shouldReadJSONFileCorrectly() throws IOException, URISyntaxException {
         File file = new File(getClass().getResource("/actions/websymbolactions/WebSymbolTestData.json").toURI());
         symbol = mapper.readValue(file, Symbol.class);
@@ -170,9 +139,6 @@ public class WebSymbolTest {
         WebSymbolAction action2 = mock(WebSymbolAction.class);
         given(action2.executeAction(connector)).willReturn(new ExecuteResult(true));
 
-        given(connector.getConnector(VariableStoreConnector.class)).willReturn(mock(VariableStoreConnector.class));
-        given(connector.getConnector(CounterStoreConnector.class)).willReturn(mock(CounterStoreConnector.class));
-
         final SymbolActionStep s1 = new SymbolActionStep(action1);
         final SymbolActionStep s2 = new SymbolActionStep(action2);
 
@@ -188,9 +154,6 @@ public class WebSymbolTest {
         WebSymbolAction action1 = mock(WebSymbolAction.class);
         given(action1.executeAction(connector)).willReturn(new ExecuteResult(false));
         WebSymbolAction action2 = mock(WebSymbolAction.class);
-
-        given(connector.getConnector(VariableStoreConnector.class)).willReturn(mock(VariableStoreConnector.class));
-        given(connector.getConnector(CounterStoreConnector.class)).willReturn(mock(CounterStoreConnector.class));
 
         final SymbolActionStep s1 = new SymbolActionStep(action1);
         final SymbolActionStep s2 = new SymbolActionStep(action2);

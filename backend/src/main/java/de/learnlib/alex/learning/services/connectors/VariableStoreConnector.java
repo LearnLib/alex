@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -83,22 +82,6 @@ public class VariableStoreConnector implements Connector {
 
         LOGGER.debug("Got the variable '{}' with the value '{}'.", name, variable);
         return variable;
-    }
-
-    /**
-     * Updates the current store by variables in another store.
-     *
-     * @param storeToMerge
-     *         The store with updated variables.
-     * @param namesToMerge
-     *         The names of the variables that should be transferred to this one.
-     */
-    public void merge(VariableStoreConnector storeToMerge, List<String> namesToMerge) {
-        namesToMerge.forEach(name -> {
-            if (storeToMerge.store.containsKey(name)) {
-                store.put(name, storeToMerge.store.get(name));
-            }
-        });
     }
 
     /**

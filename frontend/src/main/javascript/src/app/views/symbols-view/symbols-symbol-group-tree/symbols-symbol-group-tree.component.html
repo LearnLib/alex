@@ -1,0 +1,21 @@
+<div class="symbol-group-tree">
+  <symbol-group-header [group]="group"></symbol-group-header>
+  <div *ngIf="!store.isGroupCollapsed(group)">
+    <div *ngIf="group.groups.length > 0" class="children">
+      <symbols-symbol-group-tree
+        *ngFor="let group of orderedGroups"
+        [group]="group"
+      >
+      </symbols-symbol-group-tree>
+    </div>
+    <div *ngIf="group.symbols.length > 0" class="symbol-list">
+      <symbol-item
+        *ngFor="let symbol of orderedSymbols"
+        [symbol]="symbol"
+      >
+      </symbol-item>
+    </div>
+  </div>
+</div>
+
+

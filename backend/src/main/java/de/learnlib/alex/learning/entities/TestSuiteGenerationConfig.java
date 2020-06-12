@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,8 @@ public class TestSuiteGenerationConfig {
 
         /** Use the wp method. */
         WP_METHOD,
+
+        TRANS_COVER,
     }
 
     /** The number of the step. */
@@ -40,8 +42,7 @@ public class TestSuiteGenerationConfig {
     /** The name of the generated test suite. */
     private String name;
 
-    /** If concrete parameter values are generated as well. */
-    private boolean includeParameterValues;
+    private Long testSuiteToUpdateId;
 
     /** which method is used. */
     private GenerationMethod method;
@@ -50,7 +51,6 @@ public class TestSuiteGenerationConfig {
     public TestSuiteGenerationConfig() {
         this.stepNo = 1L;
         this.name = "test suite";
-        this.includeParameterValues = true;
         this.method = GenerationMethod.DT;
     }
 
@@ -70,20 +70,20 @@ public class TestSuiteGenerationConfig {
         this.name = name;
     }
 
-    public boolean isIncludeParameterValues() {
-        return includeParameterValues;
-    }
-
-    public void setIncludeParameterValues(boolean includeParameterValues) {
-        this.includeParameterValues = includeParameterValues;
-    }
-
     public GenerationMethod getMethod() {
         return method;
     }
 
     public void setMethod(GenerationMethod method) {
         this.method = method;
+    }
+
+    public Long getTestSuiteToUpdateId() {
+        return testSuiteToUpdateId;
+    }
+
+    public void setTestSuiteToUpdateId(Long testSuiteToUpdateId) {
+        this.testSuiteToUpdateId = testSuiteToUpdateId;
     }
 
     /**

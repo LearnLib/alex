@@ -1,0 +1,32 @@
+<div class="d-flex learner-result-list-item">
+  <selectable-checkbox [item]="result" [selectable]="selectable" *ngIf="selectable != null"></selectable-checkbox>
+  <div class="flex-grow-1 mr-3 ml-3">
+    <span *ngIf="result.error" class="badge badge-danger float-right">Failed</span>
+    <strong>
+      <a [routerLink]="[result.id]" *ngIf="result.status !== 'IN_PROGRESS'">
+        Test No {{result.testNo}}
+      </a>
+      <a [routerLink]="['/app', 'projects', result.project, 'learner']" [queryParams]="{testNo: result.testNo}" *ngIf="result.status === 'IN_PROGRESS'">
+        Test No {{result.testNo}}
+      </a>
+    </strong>
+    [{{result.setup.algorithm.name | formatLearningAlgorithm}}]
+    <div class="text-muted">
+      <em>
+        Started: {{result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}
+      </em>
+    </div>
+    <div>
+      <span *ngFor="let env of result.setup.environments" class="badge badge-secondary mr-1">{{env.name}}</span>
+    </div>
+    <div *ngIf="result.comment" class="comment text-muted pl-2 mt-2" style="border-left: 2px solid #ddd">{{result.comment}}</div>
+  </div>
+  <div *ngIf="result.status === 'IN_PROGRESS'">
+    <span class="badge badge-info p-2">
+      <i class="fas fa-fw fa-circle-notch fa-spin mr-1"></i> In progress
+    </span>
+  </div>
+  <div *ngIf="result.status !== 'IN_PROGRESS'">
+    <ng-content></ng-content>
+  </div>
+</div>

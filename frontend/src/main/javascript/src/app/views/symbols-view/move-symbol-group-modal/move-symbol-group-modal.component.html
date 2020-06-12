@@ -1,0 +1,35 @@
+<div class="modal-header">
+  <h4 class="modal-title">Move group</h4>
+  <a (click)="modal.dismiss()" class="btn btn-icon float-right">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<form (ngSubmit)="moveGroup()">
+
+  <div class="modal-body">
+
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{errorMessage}}
+    </div>
+
+    <label>New parent group</label>
+    <div class="card">
+      <div class="card-body p-2" style="max-height: 240px; overflow: auto">
+        <simple-symbol-group-tree
+          (groupSelected)="setSelectedGroup($event)"
+          [groups]="groups"
+          [selectedGroup]="selectedGroup"
+        >
+        </simple-symbol-group-tree>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-primary btn-sm" type="submit">Move</button>
+    <button (click)="modal.dismiss(); $event.preventDefault()" class="btn btn-default btn-sm">Cancel</button>
+  </div>
+
+</form>

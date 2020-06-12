@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -96,7 +96,7 @@ public final class SearchHelper {
 
         String result = "" + text;
 
-        final Pattern pattern = Pattern.compile("\\{\\{(\\$|\\#|\\\\)(.*?)}}");
+        final Pattern pattern = Pattern.compile("\\{\\{(\\$|\\#|\\\\|:)(.*?)}}");
         final Matcher matcher = pattern.matcher(result);
 
         while (matcher.find()) {
@@ -113,6 +113,10 @@ public final class SearchHelper {
                 case "\\":
                     final String path = fileStore.getAbsoluteFileLocation(projectId, name);
                     result = result.replaceAll("\\{\\{\\\\" + name + "}}", path);
+                    break;
+                case ":":
+                    final String value = connector.getEnvironment().getVariablesAsMap().get(name);
+                    result = result.replaceAll("\\{\\{:" + name + "}}", value);
                     break;
                 default:
                     break;

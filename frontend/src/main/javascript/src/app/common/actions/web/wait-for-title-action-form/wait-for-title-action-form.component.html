@@ -1,0 +1,30 @@
+<h5><strong>Wait for title</strong></h5>
+
+<p class="text-muted">
+  Wait until the title of the page changes.
+</p>
+<hr>
+
+<label>Value</label>
+<div class="form-group">
+  <input [(ngModel)]="action.value" class="form-control" placeholder="The value of the title" type="text">
+</div>
+
+<div class="form-group form-check">
+  <label class="form-check-label">
+    <input [(ngModel)]="action.waitCriterion" class="form-check-input" name="waitType" type="radio" value="IS">
+    Wait until the title <strong>is</strong> the given value
+  </label>
+</div>
+<div class="form-group form-check">
+  <label class="form-check-label">
+    <input [(ngModel)]="action.waitCriterion" class="form-check-input" name="waitType" type="radio" value="CONTAINS">
+    Wait until the title <strong>contains</strong> the given value
+  </label>
+</div>
+
+<div class="form-group">
+  <label>Max. wait time (seconds)</label>
+  <input [(ngModel)]="action.maxWaitTime" class="form-control" min="0" placeholder="The maximum time to wait for a change"
+         type="number">
+</div>

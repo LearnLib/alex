@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,9 @@
 
 package de.learnlib.alex.learning.repositories;
 
-import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.learning.entities.LearnerResult;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -55,6 +56,14 @@ public interface LearnerResultRepository extends JpaRepository<LearnerResult, Lo
     @SuppressWarnings("checkstyle:methodname")
     List<LearnerResult> findByProject_IdAndTestNoIn(Long projectId, List<Long> testNos);
 
+    @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
+    List<LearnerResult> findByProject_Id(Long projectId);
+
+    @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
+    Page<LearnerResult> findByProject_Id(Long projectId, Pageable pageable);
+
     /**
      * Find a single learner result.
      *
@@ -79,17 +88,6 @@ public interface LearnerResultRepository extends JpaRepository<LearnerResult, Lo
     @SuppressWarnings("checkstyle:methodname")
     @Query("SELECT MAX(l.testNo) FROM LearnerResult l WHERE l.project.id = ?1")
     Long findHighestTestNo(Long projectId);
-
-    /**
-     * Get all learner results that contain specific project URLs.
-     *
-     * @param urls
-     *         The URLs the learner result should contain.
-     * @return The learner results.
-     */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
-    List<LearnerResult> findAllByUrlsIn(List<ProjectUrl> urls);
 
     /**
      * Get the latest learner result.
@@ -126,4 +124,9 @@ public interface LearnerResultRepository extends JpaRepository<LearnerResult, Lo
     @SuppressWarnings("checkstyle:methodname")
     Long deleteAllByProject_Id(Long projectId);
 
+    @Transactional(readOnly = true)
+    List<LearnerResult> findAllByStatusIn(List<LearnerResult.Status> statusList);
+
+    @Transactional
+    Long countAllBySetup_Id(Long setupId);
 }

@@ -1,0 +1,91 @@
+<div class="view">
+  <action-bar>
+    <div *ngIf="(store.users$ | async).length > 0" class="d-flex flex-row align-items-center">
+      <selectable-checkbox-multiple [selectable]="store.usersSelectable"></selectable-checkbox-multiple>
+
+      <div class="w-100 ml-3">
+        <button (click)="store.createUser()" class="btn btn-sm btn-primary mr-2">
+          Create
+        </button>
+
+        <div class="btn-group btn-group-sm">
+          <button
+            (click)="store.editUser(store.usersSelectable.getSelected()[0])"
+            [disabled]="store.usersSelectable.getSelected().length !== 1"
+            class="btn btn-default">
+            Edit
+          </button>
+          <button
+            (click)="store.deleteSelectedUsers()"
+            [disabled]="!store.usersSelectable.isAnySelected()"
+            class="btn btn-default">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </action-bar>
+
+  <div class="view-body">
+    <div class="container-fluid">
+
+      <form [formGroup]="searchForm" class="search-form">
+        <div class="form-group">
+          <i class="fa fa-fw fa-search"></i>
+          <input [formControl]="searchForm.controls.value" type="text" class="form-control" placeholder="Search for a user">
+        </div>
+      </form>
+
+        <table class="table">
+        <thead>
+        <tr>
+          <th width="1">&nbsp;</th>
+          <th width="1" class="d-none d-md-table-cell">ID</th>
+          <th width="1">Username</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let user of filteredUsers$ | async">
+          <td>
+            <selectable-checkbox
+              [item]="user"
+              [selectable]="store.usersSelectable"
+            >
+            </selectable-checkbox>
+          </td>
+          <td class="d-none d-md-table-cell">{{user.id}}</td>
+          <td>{{user.username}}</td>
+          <td class="text-break">{{user.email}}</td>
+          <td>
+            <span
+              [ngClass]="{
+                'badge-danger': user.role === 'ADMIN',
+                'badge-primary': user.role !== 'ADMIN'
+              }"
+              class="badge"
+            >
+              {{user.role | normalizeUpperCase}}
+            </span>
+          </td>
+          <td class="text-right">
+            <button
+              class="btn btn-default btn-sm"
+              (click)="store.editUser(user)"
+            >
+              <i class="fas fa-edit fa-fw"></i>
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <div class="alert alert-info" *ngIf="(filteredUsers$ | async).length === 0">
+        No user matches "<em>{{searchForm.controls.value.value}}</em>".
+      </div>
+
+    </div>
+  </div>
+</div>

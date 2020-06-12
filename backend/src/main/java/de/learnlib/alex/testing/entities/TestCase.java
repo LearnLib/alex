@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,24 @@
 
 package de.learnlib.alex.testing.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.common.Constants;
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.OrderColumn;
 import javax.persistence.Transient;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,16 +76,29 @@ public class TestCase extends Test {
     @OrderColumn(name = "post")
     private List<TestCaseStep> postSteps;
 
+    private boolean generated;
+
+    /** The date when the symbol was updated the last time. */
+    @JsonIgnore
+    private ZonedDateTime updatedOn;
+
+    /** The last user who modified the symbol. */
+    private User lastUpdatedBy;
+
     /** Constructor. */
     public TestCase() {
         super();
         this.steps = new ArrayList<>();
         this.preSteps = new ArrayList<>();
         this.postSteps = new ArrayList<>();
+        this.generated = false;
+        this.updatedOn = ZonedDateTime.now();
+        this.lastUpdatedBy = null;
     }
 
     @OneToMany(
-            orphanRemoval = true
+            orphanRemoval = true,
+            cascade = {CascadeType.ALL}
     )
     @JoinTable(
             name = "testCase_steps",
@@ -95,7 +115,8 @@ public class TestCase extends Test {
     }
 
     @OneToMany(
-            orphanRemoval = true
+            orphanRemoval = true,
+            cascade = {CascadeType.ALL}
     )
     @JoinTable(
             name = "testCase_preSteps",
@@ -112,7 +133,8 @@ public class TestCase extends Test {
     }
 
     @OneToMany(
-            orphanRemoval = true
+            orphanRemoval = true,
+            cascade = {CascadeType.ALL}
     )
     @JoinTable(
             name = "testCase_postSteps",
@@ -145,5 +167,60 @@ public class TestCase extends Test {
 
     @JsonProperty("status")
     public void setStatus(Status status) {
+    }
+
+    public boolean isGenerated() {
+        return generated;
+    }
+
+    public void setGenerated(boolean generated) {
+        this.generated = generated;
+    }
+
+    public ZonedDateTime getUpdatedOn() {
+        return updatedOn;
+    }
+
+    public void setUpdatedOn(ZonedDateTime updatedOn) {
+        this.updatedOn = updatedOn;
+    }
+
+    @Transient
+    @JsonProperty("updatedOn")
+    public String getUpdatedOnString() {
+        return updatedOn.format(Constants.DATE_TIME_FORMATTER);
+    }
+
+    @JsonProperty("updatedOn")
+    public void setUpdatedOnString(String updatedOnString) {
+        this.updatedOn = updatedOnString == null ? ZonedDateTime.now() : ZonedDateTime.parse(updatedOnString);
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "lastUpdatedById")
+    @JsonProperty("lastUpdatedBy")
+    public User getLastUpdatedBy() {
+        return this.lastUpdatedBy;
+    }
+
+    @JsonIgnore
+    public void setLastUpdatedBy(User user) {
+        this.lastUpdatedBy = user;
+    }
+
+    public boolean behavesLike(TestCase testCase) {
+        return areSameSteps(preSteps, testCase.preSteps)
+                && areSameSteps(postSteps, testCase.postSteps)
+                && areSameSteps(steps, testCase.steps);
+    }
+
+    private boolean areSameSteps(List<TestCaseStep> stepsA, List<TestCaseStep> stepsB) {
+        if (stepsA.size() != stepsB.size()) return false;
+
+        for (int i = 0; i < stepsA.size(); i++) {
+            if (!stepsA.get(i).behavesLike(stepsB.get(i))) return false;
+        }
+
+        return true;
     }
 }

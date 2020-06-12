@@ -25,14 +25,14 @@ public class WebhookApi extends AbstractApi {
                 .get();
     }
 
-    public Response update(String webhook, String jwt) {
-        return client.target(url()).request()
+    public Response update(Integer webhookId, String webhook, String jwt) {
+        return client.target(url() + "/" + webhookId).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .put(Entity.json(webhook));
     }
 
     public Response delete(Integer webhookId, String jwt) {
-        return client.target(url() + "/" + String.valueOf(webhookId)).request()
+        return client.target(url() + "/" + webhookId).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .delete();
     }

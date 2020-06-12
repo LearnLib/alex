@@ -193,7 +193,8 @@
           "name": "",
           "password": ""
         },
-        "timeout": 0
+        "timeout": 0,
+        "baseUrl": "Base"
       },
       "position": 13
     },
@@ -214,7 +215,8 @@
           "name": "",
           "password": ""
         },
-        "timeout": 0
+        "timeout": 0,
+        "baseUrl": "Base"
       },
       "position": 14
     },
@@ -239,7 +241,8 @@
           "name": "test",
           "password": "test"
         },
-        "timeout": 0
+        "timeout": 0,
+        "baseUrl": "Base"
       },
       "position": 15
     },

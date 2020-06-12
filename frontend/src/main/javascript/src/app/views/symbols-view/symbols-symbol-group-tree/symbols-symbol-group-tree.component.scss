@@ -1,0 +1,18 @@
+.symbol-group-tree {
+
+  .children {
+    margin-left: 2rem;
+
+    .symbol-group-header {
+      border-radius: 0 0 0 4px;
+
+      &.collapse {
+        border-radius: 0;
+      }
+    }
+  }
+
+  .symbol-list {
+    margin-left: 2rem;
+  }
+}

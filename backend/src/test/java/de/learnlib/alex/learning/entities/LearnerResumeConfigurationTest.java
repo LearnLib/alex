@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package de.learnlib.alex.learning.entities;
 
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
+import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -35,14 +36,14 @@ public class LearnerResumeConfigurationTest {
 
     @Test
     public void shouldSayThatItIsAValidConfigurationIfItIsOne() {
-        configuration.checkConfiguration(); // nothing should happen
+        configuration.setEqOracle(new MealyRandomWordsEQOracleProxy());
+        configuration.checkConfiguration();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void ensureThatAnExceptionIsThrownIfNoEqOracleIsGiven() {
         configuration.setEqOracle(null);
-
-        configuration.checkConfiguration(); // should fail
+        configuration.checkConfiguration();
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -50,8 +51,7 @@ public class LearnerResumeConfigurationTest {
         AbstractEquivalenceOracleProxy eqOracle = mock(AbstractEquivalenceOracleProxy.class);
         willThrow(IllegalArgumentException.class).given(eqOracle).checkParameters();
         configuration.setEqOracle(eqOracle);
-
-        configuration.checkConfiguration(); // should fail
+        configuration.checkConfiguration();
     }
 
 }

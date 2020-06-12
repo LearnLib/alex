@@ -1,0 +1,32 @@
+<div class="form-group">
+  <label class="control-label">Name*</label>
+
+  <input
+    [class.is-invalid]="formUtils.isInvalidFormControl(form.controls.name)"
+    [formControl]="form.controls.name"
+    class="form-control"
+    name="name"
+    placeholder="Enter a name for the project"
+    required
+    type="text"
+  >
+  <div class="invalid-feedback">
+    Please provide a name.
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="control-label">Description</label>
+  <textarea
+    [class.is-invalid]="formUtils.isInvalidFormControl(form.controls.description)"
+    [formControl]="form.controls.description"
+    class="form-control"
+    name="description"
+    placeholder="Enter the description for the project"
+    rows="2"
+  >
+  </textarea>
+  <div class="invalid-feedback">
+    The description may not be longer than 250 characters.
+  </div>
+</div>

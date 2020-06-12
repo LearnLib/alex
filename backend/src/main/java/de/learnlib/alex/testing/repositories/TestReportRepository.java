@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /** The repository for test reports. */
 @Repository
@@ -51,6 +53,9 @@ public interface TestReportRepository extends JpaRepository<TestReport, Long> {
     @SuppressWarnings("checkstyle:methodname")
     Page<TestReport> findAllByProject_Id(Long projectId, Pageable pageable);
 
+    @Transactional(readOnly = true)
+    List<TestReport> findAllByStatusIn(List<TestReport.Status> statusList);
+
     /**
      * Delete all test reports by project id.
      *
@@ -61,4 +66,8 @@ public interface TestReportRepository extends JpaRepository<TestReport, Long> {
     @Transactional
     @SuppressWarnings("checkstyle:methodname")
     Long deleteAllByProject_Id(Long projectId);
+
+    @Transactional
+    @SuppressWarnings("checkstyle:methodname")
+    void deleteAllByEnvironment_Id(Long envId);
 }

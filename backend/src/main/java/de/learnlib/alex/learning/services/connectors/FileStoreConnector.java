@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,7 +69,7 @@ public class FileStoreConnector implements Connector {
      */
     public String getAbsoluteFileLocation(Long projectId, String fileName) throws IllegalStateException {
         try {
-            return fileDAO.getAbsoluteFilePath(user, projectId, fileName);
+            return fileDAO.getFileByName(user, projectId, fileName).getAbsolutePath();
         } catch (NotFoundException e) {
             throw new IllegalStateException("No file with the name '" + fileName + "' was uploaded into the project "
                     + projectId + ".");

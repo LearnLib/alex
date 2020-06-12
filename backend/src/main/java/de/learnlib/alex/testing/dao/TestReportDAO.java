@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,115 +18,162 @@ package de.learnlib.alex.testing.dao;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
+import de.learnlib.alex.data.dao.ProjectDAO;
+import de.learnlib.alex.data.dao.ProjectEnvironmentDAO;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.ProjectEnvironment;
+import de.learnlib.alex.data.repositories.ProjectRepository;
+import de.learnlib.alex.testing.entities.TestCaseResult;
 import de.learnlib.alex.testing.entities.TestReport;
+import de.learnlib.alex.testing.repositories.TestReportRepository;
 import org.apache.shiro.authz.UnauthorizedException;
+import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
-/** The DAO for test reports. */
-public interface TestReportDAO {
+/** The implementation of the test report DAO . */
+@Service
+@Transactional(rollbackOn = Exception.class)
+public class TestReportDAO {
+
+    /** The test report repository. */
+    private TestReportRepository testReportRepository;
+
+    /** The project repository. */
+    private ProjectRepository projectRepository;
+
+    private ProjectEnvironmentDAO projectEnvironmentDAO;
+
+    /** The project DAO. */
+    private ProjectDAO projectDAO;
 
     /**
-     * Create a test report.
+     * Constructor.
      *
-     * @param user
-     *         The user.
-     * @param projectId
-     *         The id of the project.
-     * @param testReport
-     *         The report to create.
-     * @throws NotFoundException
-     *         If the project could not be found.
+     * @param testReportRepository
+     *         {@link #testReportRepository}
+     * @param projectRepository
+     *         {@link #projectRepository}
+     * @param projectDAO
+     *         {@link #projectDAO}
      */
-    void create(User user, Long projectId, TestReport testReport) throws NotFoundException;
+    @Autowired
+    public TestReportDAO(TestReportRepository testReportRepository, ProjectRepository projectRepository,
+                         ProjectDAO projectDAO, ProjectEnvironmentDAO projectEnvironmentDAO) {
+        this.testReportRepository = testReportRepository;
+        this.projectRepository = projectRepository;
+        this.projectDAO = projectDAO;
+        this.projectEnvironmentDAO = projectEnvironmentDAO;
+    }
 
-    /**
-     * Get all test reports in a project.
-     *
-     * @param user
-     *         The user.
-     * @param projectId
-     *         The id of the project.
-     * @param pageable
-     *         The pageable object.
-     * @return The reports in the project.
-     * @throws NotFoundException
-     *         If the project could not be found.
-     */
-    Page<TestReport> getAll(User user, Long projectId, Pageable pageable) throws NotFoundException;
+    public TestReport create(User user, Long projectId, TestReport testReport) throws NotFoundException {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        projectDAO.checkAccess(user, project);
 
-    /**
-     * Get a single test report.
-     *
-     * @param user
-     *         The user.
-     * @param projectId
-     *         The project.
-     * @param testReportId
-     *         The id of the report in the project.
-     * @return The report.
-     * @throws NotFoundException
-     *         If the project or the report could not be found.
-     */
-    TestReport get(User user, Long projectId, Long testReportId) throws NotFoundException;
+        testReport.setId(null);
+        testReport.setExecutedBy(user);
+        testReport.setProject(project);
+        testReport.getTestResults().forEach((testResult) -> {
+            testResult.setTestReport(testReport);
+            testResult.setProject(project);
+        });
 
-    /**
-     * Get the latest test report.
-     *
-     * @param user
-     *         The user.
-     * @param projectId
-     *         The id of the project.
-     * @return The latest test report or null.
-     * @throws NotFoundException
-     *         If the project could not be found.
-     */
-    TestReport getLatest(User user, Long projectId) throws NotFoundException;
+        final ProjectEnvironment env = projectEnvironmentDAO.getById(user, testReport.getEnvironment().getId());
+        testReport.setEnvironment(env);
 
-    /**
-     * Deletes a single test report.
-     *
-     * @param user
-     *         The user.
-     * @param projectId
-     *         The id of the project.
-     * @param testReportId
-     *         The id of the report.
-     * @throws NotFoundException
-     *         If the project or the report could not be found.
-     */
-    void delete(User user, Long projectId, Long testReportId) throws NotFoundException;
+        final TestReport createdTestReport = testReportRepository.save(testReport);
+        loadLazyRelations(createdTestReport);
+        return createdTestReport;
+    }
 
-    /**
-     * Deletes multiple test reports at once.
-     *
-     * @param user
-     *         The user.
-     * @param projectId
-     *         The id of the project.
-     * @param testReportIds
-     *         The ids of the reports.
-     * @throws NotFoundException
-     *         If the project or a report could not be found.
-     */
-    void delete(User user, Long projectId, List<Long> testReportIds) throws NotFoundException;
+    public Page<TestReport> getAll(User user, Long projectId, Pageable pageable) throws NotFoundException {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        projectDAO.checkAccess(user, project);
 
-    /**
-     * Checks if the user has access to the test report.
-     *
-     * @param user
-     *         The user.
-     * @param project
-     *         The project.
-     * @param report
-     *         The test report.
-     * @throws NotFoundException
-     *         If one of the entities could not be found.
-     * @throws UnauthorizedException
-     *         If the user has no access to one of the entities.
-     */
-    void checkAccess(User user, Project project, TestReport report) throws NotFoundException, UnauthorizedException;
+        final Page<TestReport> testReports = testReportRepository.findAllByProject_Id(projectId, pageable);
+        testReports.forEach(this::loadLazyRelations);
+        return testReports;
+    }
+
+    public TestReport get(User user, Long projectId, Long testReportId) throws NotFoundException {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final TestReport testReport = testReportRepository.findById(testReportId).orElse(null);
+        checkAccess(user, project, testReport);
+
+        loadLazyRelations(testReport);
+        return testReport;
+    }
+
+    public TestReport getLatest(User user, Long projectId) throws NotFoundException {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        projectDAO.checkAccess(user, project);
+
+        final TestReport latestReport = testReportRepository.findFirstByProject_IdOrderByIdDesc(projectId);
+        if (latestReport != null) {
+            loadLazyRelations(latestReport);
+            return latestReport;
+        } else {
+            return null;
+        }
+    }
+
+    public TestReport update(User user, Long projectId, Long reportId, TestReport report) throws NotFoundException {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final TestReport reportInDb = testReportRepository.findById(reportId).orElse(null);
+        checkAccess(user, project, reportInDb);
+
+        reportInDb.setStatus(report.getStatus());
+        reportInDb.setTestResults(report.getTestResults());
+        reportInDb.getTestResults().forEach((testResult) -> {
+            testResult.setTestReport(reportInDb);
+            testResult.setProject(project);
+        });
+
+        return testReportRepository.save(reportInDb);
+    }
+
+    public void delete(User user, Long projectId, Long testReportId) throws NotFoundException {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final TestReport testReport = testReportRepository.findById(testReportId).orElse(null);
+        checkAccess(user, project, testReport);
+
+        testReportRepository.delete(testReport);
+    }
+
+    public void delete(User user, Long projectId, List<Long> testReportIds) throws NotFoundException {
+        for (Long id : testReportIds) {
+            delete(user, projectId, id);
+        }
+    }
+
+    public void checkAccess(User user, Project project, TestReport report)
+            throws NotFoundException, UnauthorizedException {
+        projectDAO.checkAccess(user, project);
+
+        if (report == null) {
+            throw new NotFoundException("The test report could not be found.");
+        }
+
+        if (!report.getProject().equals(project)) {
+            throw new UnauthorizedException("You are not allowed to access the test report.");
+        }
+    }
+
+    private void loadLazyRelations(TestReport testReport) {
+        Hibernate.initialize(testReport.getProject());
+        Hibernate.initialize(testReport.getTestResults());
+        Hibernate.initialize(testReport.getEnvironment());
+        ProjectEnvironmentDAO.loadLazyRelations(testReport.getEnvironment());
+
+        testReport.getTestResults().forEach((result) -> {
+            if (result instanceof TestCaseResult) {
+                Hibernate.initialize(((TestCaseResult) result).getOutputs());
+            }
+        });
+    }
 }

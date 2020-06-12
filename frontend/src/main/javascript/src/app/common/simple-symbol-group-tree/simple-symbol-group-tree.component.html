@@ -1,0 +1,11 @@
+<div class="simple-symbol-group-tree">
+  <simple-symbol-group-tree-item
+    (groupSelected)="groupSelected.emit($event)"
+    (symbolSelected)="symbolSelected.emit($event)"
+    *ngFor="let group of orderedGroups"
+    [group]="group"
+    [selectedGroup]="selectedGroup"
+    [selectedSymbol]="selectedSymbol"
+  >
+  </simple-symbol-group-tree-item>
+</div>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package de.learnlib.alex.data.entities;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -37,7 +36,6 @@ public class CounterTest {
     @Before
     public void before() {
         final Project project = new Project(1L);
-
         c = new Counter();
         c.setId(1L);
         c.setName("test");
@@ -46,14 +44,9 @@ public class CounterTest {
     }
 
     @Test
-    public void shouldCloneCounter() {
-        Assert.assertEquals(c, c.clone());
-    }
-
-    @Test
     public void shouldSerializeCounterCorrectly() throws Exception {
         final String counterString = om.writeValueAsString(c);
-        final String expectedCounterString = "{\"name\":\"test\",\"project\":1,\"value\":42}";
+        final String expectedCounterString = "{\"id\":1,\"name\":\"test\",\"project\":1,\"value\":42}";
         JSONAssert.assertEquals(expectedCounterString, counterString, true);
     }
 }

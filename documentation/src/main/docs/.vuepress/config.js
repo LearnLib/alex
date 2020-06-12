@@ -1,6 +1,8 @@
+const env = require('./env.default.js');
+
 module.exports = {
-    base: '/alex/book/1.7.0/',
-    title: 'ALEX Docs (v1.7.2)',
+    base: env.BASE,
+    title: 'ALEX Docs (v2.0.0)',
     description: 'User documentation for ALEX',
     dest: './.vuepress/dist',
     markdown: {
@@ -38,9 +40,7 @@ module.exports = {
                 title: 'Examples',
                 collapsable: true,
                 children: [
-                    ['/contents/examples/todo/', 'ToDo'],
-                    ['/contents/examples/todomvc/', 'TodoMVC'],
-                    ['/contents/examples/wordpress/', 'Wordpress']
+                    ['/contents/examples/todomvc/', 'TodoMVC']
                 ]
             },
             {
@@ -52,7 +52,6 @@ module.exports = {
                     ['/contents/dev-docs/cli/', 'CLI']
                 ]
             },
-            ['/contents/faq/', 'FAQ'],
             ['/contents/about/', 'About']
         ],
         nav: [

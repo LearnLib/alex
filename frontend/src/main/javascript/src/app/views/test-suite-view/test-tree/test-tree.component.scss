@@ -1,0 +1,46 @@
+.test-tree {
+  user-select: none;
+}
+
+.test-name {
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.header {
+  border-radius: 3px;
+
+  &:hover {
+    background: #f2f2f2;
+  }
+
+  .test-icon {
+    margin-right: .5rem;
+  }
+}
+
+.test-case-node {
+  .name {
+    padding-right: 22px;
+  }
+
+  > .header > .test-icon i {
+    color: #afafaf;
+  }
+}
+
+.test-suite-node {
+  > .header > .test-icon i {
+    color: #5a99d0;
+  }
+}
+
+.test-case-node .test-name,
+.test-suite-node .name {
+  color: #555;
+
+  &:hover {
+    text-decoration: none;
+  }
+}

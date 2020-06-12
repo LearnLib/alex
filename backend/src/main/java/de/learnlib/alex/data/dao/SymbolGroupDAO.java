@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,176 +16,391 @@
 
 package de.learnlib.alex.data.dao;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolGroup;
+import de.learnlib.alex.data.entities.SymbolStep;
+import de.learnlib.alex.data.entities.export.SymbolGroupsImportableEntity;
+import de.learnlib.alex.data.entities.export.SymbolImportConflictResolutionStrategy;
+import de.learnlib.alex.data.repositories.ProjectRepository;
+import de.learnlib.alex.data.repositories.SymbolGroupRepository;
+import de.learnlib.alex.data.repositories.SymbolRepository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
+import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.ValidationException;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
- * Interface to describe how Groups are handled.
+ * Implementation of a SymbolGroupDAO using Spring Data.
  */
-public interface SymbolGroupDAO {
+@Service
+@Transactional(rollbackFor = Exception.class)
+public class SymbolGroupDAO {
 
-    /**
-     * Enum to select which fields should be not only referenced but directly be included, i.e. loaded from the DB.
-     */
-    enum EmbeddableFields {
-        /** Fetch all fields. */
-        ALL,
+    /** The format for archived symbols. */
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd-HH:mm:ss");
 
-        /** Fetch all the symbols with all actions. */
-        COMPLETE_SYMBOLS,
+    private static final Logger LOGGER = LogManager.getLogger();
 
-        /** Fetch the symbols. */
-        SYMBOLS;
+    private ProjectRepository projectRepository;
+    private ProjectDAO projectDAO;
+    private SymbolGroupRepository symbolGroupRepository;
+    private SymbolRepository symbolRepository;
+    private SymbolDAO symbolDAO;
+    private ObjectMapper objectMapper;
 
-        /**
-         * Parse a string into an entry of this enum. It is forbidden to override toValue(), so we use this method to
-         * allow the lowercase variants, too.
-         *
-         * @param name
-         *         THe name to parse into an entry.
-         * @return The fitting entry of this enum.
-         * @throws IllegalArgumentException
-         *         If the name could not be parsed.
-         */
-        public static EmbeddableFields fromString(String name) throws IllegalArgumentException {
-            return EmbeddableFields.valueOf(name.toUpperCase());
+    @Autowired
+    public SymbolGroupDAO(ProjectRepository projectRepository, ProjectDAO projectDAO,
+                          SymbolGroupRepository symbolGroupRepository, SymbolRepository symbolRepository,
+                          @Lazy SymbolDAO symbolDAO, ObjectMapper objectMapper) {
+        this.projectRepository = projectRepository;
+        this.projectDAO = projectDAO;
+        this.symbolGroupRepository = symbolGroupRepository;
+        this.symbolRepository = symbolRepository;
+        this.symbolDAO = symbolDAO;
+        this.objectMapper = objectMapper;
+    }
+
+    public List<SymbolGroup> importGroups(User user, Long projectId, SymbolGroupsImportableEntity importableEntity) {
+        LOGGER.traceEntry("import()");
+
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        projectDAO.checkAccess(user, project);
+
+        try {
+            final SymbolGroup[] symbolGroups = objectMapper.readValue(importableEntity.getSymbolGroups().toString(), SymbolGroup[].class);
+            return importGroups(user, project, Arrays.asList(symbolGroups), importableEntity.getConflictResolutions());
+        } catch (IOException e) {
+            throw new ValidationException("The input could not be parsed");
+        }
+    }
+
+    public List<SymbolGroup> importGroups(User user, Project project, List<SymbolGroup> groups, Map<String, SymbolImportConflictResolutionStrategy> conflictResolutions) {
+        LOGGER.traceEntry("import({})", groups);
+        projectDAO.checkAccess(user, project);
+
+        // name -> symbol
+        // save symbols steps
+        final Map<String, List<SymbolStep>> symbolNameToStepsMap = new HashMap<>();
+        groups.forEach(group -> group.walk(g -> null, s -> {
+            symbolNameToStepsMap.put(s.getName(), s.getSteps());
+            s.setSteps(new ArrayList<>());
+            return null;
+        }));
+
+        // create symbol groups and symbols without steps
+        // because one might reference names of symbols in steps that have not yet been created
+        final List<SymbolGroup> importedGroups = importGroups(user, project, groups, null, conflictResolutions);
+
+        // create symbol steps
+        final Map<Long, List<SymbolStep>> symbolIdToStepsMap = new HashMap<>();
+        final List<Symbol> symbols = symbolDAO.getAll(user, project.getId()).stream()
+                .filter(s -> symbolNameToStepsMap.containsKey(s.getName()))
+                .collect(Collectors.toList());
+
+        symbols.forEach(s -> symbolIdToStepsMap.put(s.getId(), symbolNameToStepsMap.get(s.getName())));
+
+        symbolDAO.saveSymbolSteps(project.getId(), symbols, symbolIdToStepsMap);
+
+        return importedGroups;
+    }
+
+    private List<SymbolGroup> importGroups(User user, Project project, List<SymbolGroup> groups, SymbolGroup parent, Map<String, SymbolImportConflictResolutionStrategy> conflictResolutions) {
+        final List<SymbolGroup> importedGroups = new ArrayList<>();
+        for (SymbolGroup group: groups) {
+            final List<SymbolGroup> children = group.getGroups();
+            final Set<Symbol> symbols = group.getSymbols();
+
+            group.setGroups(new ArrayList<>());
+            group.setSymbols(new HashSet<>());
+            group.setProject(project);
+            group.setParent(parent);
+            group.setName(createGroupName(project, group));
+
+            beforePersistGroup(group);
+            final SymbolGroup createdGroup = symbolGroupRepository.save(group);
+
+            symbols.forEach(symbol -> {
+                symbol.setProject(project);
+                symbol.setGroup(createdGroup);
+            });
+            symbolDAO.importSymbols(user, project, new ArrayList<>(symbols), conflictResolutions);
+
+            final List<SymbolGroup> createdChildren = importGroups(user, project, children, createdGroup, conflictResolutions);
+            createdGroup.setGroups(createdChildren);
+            importedGroups.add(createdGroup);
+        }
+        return importedGroups;
+    }
+
+    public void create(User user, SymbolGroup group) throws NotFoundException, ValidationException {
+        LOGGER.traceEntry("create({})", group);
+
+        final Project project = projectRepository.findById(group.getProjectId()).orElse(null);
+        projectDAO.checkAccess(user, project);
+
+        group.setId(null);
+        group.setName(createGroupName(project, group));
+        project.addGroup(group);
+        beforePersistGroup(group);
+
+        if (group.getParentId() != null) {
+            final SymbolGroup parent = symbolGroupRepository.findById(group.getParentId()).orElse(null);
+            checkAccess(user, project, parent);
+
+            group.setParent(parent);
+            parent.getGroups().add(parent);
+            symbolGroupRepository.save(parent);
         }
 
-        @Override
-        public String toString() {
-            return name().toLowerCase();
+        symbolGroupRepository.save(group);
+
+        LOGGER.traceExit(group);
+    }
+
+    public List<SymbolGroup> create(User user, Long projectId, List<SymbolGroup> groups)
+            throws NotFoundException, ValidationException {
+        LOGGER.traceEntry("create({})", groups);
+
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        projectDAO.checkAccess(user, project);
+
+        final List<SymbolGroup> createdGroups = create(user, project, groups, null);
+        createdGroups.forEach(this::loadLazyRelations);
+        return groups;
+    }
+
+    private List<SymbolGroup> create(User user, Project project, List<SymbolGroup> groups, SymbolGroup parent)
+            throws NotFoundException, ValidationException {
+        final List<SymbolGroup> createdGroups = new ArrayList<>();
+        for (SymbolGroup group : groups) {
+            createdGroups.add(create(user, project, group, parent));
+        }
+        return createdGroups;
+    }
+
+    private SymbolGroup create(User user, Project project, SymbolGroup group, SymbolGroup parent)
+            throws NotFoundException, ValidationException {
+        final List<SymbolGroup> children = group.getGroups();
+        final Set<Symbol> symbols = group.getSymbols();
+
+        group.setGroups(new ArrayList<>());
+        group.setSymbols(new HashSet<>());
+        group.setProject(project);
+        group.setParent(parent);
+        group.setName(createGroupName(project, group));
+
+        beforePersistGroup(group);
+        final SymbolGroup createdGroup = symbolGroupRepository.save(group);
+
+        symbols.forEach(symbol -> {
+            symbol.setProject(project);
+            symbol.setGroup(createdGroup);
+        });
+        symbolDAO.create(user, project.getId(), new ArrayList<>(symbols));
+
+        final List<SymbolGroup> createdChildren = create(user, project, children, createdGroup);
+        createdGroup.setGroups(createdChildren);
+        return createdGroup;
+    }
+
+    public List<SymbolGroup> getAll(User user, long projectId)
+            throws NotFoundException {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        projectDAO.checkAccess(user, project);
+
+        final List<SymbolGroup> groups = symbolGroupRepository.findAllByProject_IdAndParent_id(projectId, null);
+        for (SymbolGroup group : groups) {
+            loadLazyRelations(group);
+        }
+
+        return groups;
+    }
+
+    public SymbolGroup get(User user, long projectId, Long groupId)
+            throws NotFoundException {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final SymbolGroup group = symbolGroupRepository.findById(groupId).orElse(null);
+        checkAccess(user, project, group);
+
+        loadLazyRelations(group);
+
+        return group;
+    }
+
+    public void update(User user, SymbolGroup group) throws NotFoundException, ValidationException {
+        final Project project = projectRepository.findById(group.getProjectId()).orElse(null);
+        final SymbolGroup groupInDB = symbolGroupRepository.findById(group.getId()).orElse(null);
+        checkAccess(user, project, groupInDB);
+
+        if (!group.getName().equals(groupInDB.getName())) {
+            group.setName(createGroupName(project, group));
+        }
+
+        if (group.getParentId() != null && group.getParentId().equals(groupInDB.getId())) {
+            throw new ValidationException("A group cannot have itself as child.");
+        }
+
+        final SymbolGroup defaultGroup = symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(project.getId());
+        if (defaultGroup.equals(groupInDB) && group.getParentId() != null) {
+            throw new ValidationException("The default group cannot be a child of another group.");
+        }
+
+        groupInDB.setProject(project);
+        groupInDB.setName(group.getName());
+        symbolGroupRepository.save(groupInDB);
+    }
+
+    public SymbolGroup move(User user, SymbolGroup group) throws NotFoundException, ValidationException {
+        final Project project = projectRepository.findById(group.getProjectId()).orElse(null);
+        final SymbolGroup groupInDB = symbolGroupRepository.findById(group.getId()).orElse(null);
+        checkAccess(user, project, groupInDB);
+
+        final SymbolGroup defaultGroup = symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(project.getId());
+        if (defaultGroup.equals(groupInDB)) {
+            throw new ValidationException("You cannot move the default group.");
+        }
+
+        if (group.getParent() != null && groupInDB.getId().equals(group.getParentId())) {
+            throw new ValidationException("A group cannot be a parent of itself.");
+        }
+
+        final SymbolGroup movedGroup;
+        if (group.getParentId() == null) {
+            // move group to the upmost level
+            groupInDB.getParent().getGroups().remove(groupInDB);
+            symbolGroupRepository.save(groupInDB.getParent());
+            group.setName(createGroupName(project, group));
+            movedGroup = symbolGroupRepository.save(group);
+        } else {
+            final SymbolGroup newParent = symbolGroupRepository.findById(group.getParentId()).orElse(null);
+            checkAccess(user, project, newParent);
+
+            // remove group from old parent
+            if (groupInDB.getParent() != null) {
+                if (newParent.isDescendantOf(groupInDB)) {
+                    throw new ValidationException("A group cannot be moved to a child group.");
+                }
+                groupInDB.getParent().getGroups().remove(groupInDB);
+                symbolGroupRepository.save(groupInDB.getParent());
+            }
+
+            // add group to new parent
+            newParent.getGroups().add(groupInDB);
+            groupInDB.setParent(newParent);
+            symbolGroupRepository.save(newParent);
+            group.setName(createGroupName(project, group));
+            movedGroup = symbolGroupRepository.save(groupInDB);
+        }
+
+        loadLazyRelations(movedGroup);
+        return movedGroup;
+    }
+
+    public void delete(User user, long projectId, Long groupId) throws IllegalArgumentException, NotFoundException {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final SymbolGroup group = symbolGroupRepository.findById(groupId).orElse(null);
+        checkAccess(user, project, group);
+
+        final SymbolGroup defaultGroup = symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(projectId);
+        if (defaultGroup.equals(group)) {
+            throw new IllegalArgumentException("You can not delete the default group of a project.");
+        }
+
+        group.walk(g -> {
+            hideSymbols(g, defaultGroup);
+            return null;
+        }, s -> null);
+
+        if (group.getParent() != null) {
+            group.getParent().getGroups().remove(group);
+            symbolGroupRepository.save(group.getParent());
+        }
+
+        group.setSymbols(null);
+        symbolGroupRepository.delete(group);
+    }
+
+    private void hideSymbols(SymbolGroup group, SymbolGroup defaultGroup) {
+        for (Symbol symbol : group.getSymbols()) {
+            symbol.setGroup(defaultGroup);
+            symbol.setHidden(true);
+            final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            symbol.setName(symbol.getName() + "--" + DATE_FORMAT.format(timestamp));
+            symbolRepository.save(symbol);
+        }
+    }
+
+    public void checkAccess(User user, Project project, SymbolGroup group)
+            throws NotFoundException, UnauthorizedException {
+        projectDAO.checkAccess(user, project);
+
+        if (group == null) {
+            throw new NotFoundException("The group could not be found.");
+        }
+
+        if (!group.getProject().equals(project)) {
+            throw new UnauthorizedException("You are not allowed to access the group.");
+        }
+    }
+
+    private String createGroupName(Project project, SymbolGroup group) {
+        int i = 1;
+        String name = group.getName();
+        while (symbolGroupRepository.findOneByProject_IdAndParent_IdAndName(project.getId(), group.getParentId(), name) != null) {
+            name = group.getName() + " (" + i + ")";
+            i++;
+        }
+        return name;
+    }
+
+    private void loadLazyRelations(SymbolGroup group) {
+        Hibernate.initialize(group.getGroups());
+        Hibernate.initialize(group.getSymbols());
+        group.getSymbols().forEach(SymbolDAO::loadLazyRelations);
+
+        for (SymbolGroup g: group.getGroups()) {
+            loadLazyRelations(g);
         }
     }
 
     /**
-     * Save a group.
+     * This method makes sure that all Symbols within the provided group will also be persisted.
      *
-     * @param user
-     *         The user who wants to perform this method.
      * @param group
-     *         The group to persist.
-     * @throws NotFoundException
-     *         If one of the entities could not be found.
-     * @throws ValidationException
-     *         IF the Group is not valid and could not be created.
+     *         The Group to take care of its Symbols.
      */
-    void create(User user, SymbolGroup group) throws NotFoundException, ValidationException;
+    private void beforePersistGroup(SymbolGroup group) {
+        LOGGER.traceEntry("beforePersistGroup({})", group);
 
-    /**
-     * Create multiple symbol groups.
-     *
-     * @param user
-     *         The user.
-     * @param projectId
-     *         The ID of the project.
-     * @param groups
-     *         The groups to create.
-     * @return The created symbol groups.
-     * @throws NotFoundException
-     *         If one of the entities could not be found.
-     * @throws ValidationException
-     *         If the groups are not valid.
-     */
-    List<SymbolGroup> create(User user, Long projectId, List<SymbolGroup> groups)
-            throws NotFoundException, ValidationException;
+        final Project project = group.getProject();
 
-    /**
-     * Get a list of all groups withing one project.
-     *
-     * @param user
-     *         The user who wants to perform this method.
-     * @param projectId
-     *         The project the groups should belong to.
-     * @param embedFields
-     *         A list of field to directly embed/ load into the returned groups.
-     * @return A List of groups. Can be empty.
-     * @throws NotFoundException
-     *         If no project with the given id was found.
-     */
-    List<SymbolGroup> getAll(User user, long projectId, EmbeddableFields... embedFields) throws NotFoundException;
+        group.getSymbols().forEach(symbol -> {
+            project.addSymbol(symbol);
+            symbol.setGroup(group);
+            SymbolDAO.beforeSymbolSave(symbol);
+        });
 
-    /**
-     * Get one group.
-     *
-     * @param user
-     *         The user who wants to perform this method.
-     * @param projectId
-     *         The project the group belongs to.
-     * @param groupId
-     *         The ID of the group within the project.
-     * @param embedFields
-     *         A list of field to directly embed/ load into the returned groups.
-     * @return The group you are looking for.
-     * @throws NotFoundException
-     *         If the Project or the Group could not be found.
-     */
-    SymbolGroup get(User user, long projectId, Long groupId, EmbeddableFields... embedFields) throws NotFoundException;
-
-    /**
-     * Update a group.
-     *
-     * @param user
-     *         The user who wants to perform this method.
-     * @param group
-     *         The group to update.
-     * @throws NotFoundException
-     *         If the group was not found, because you can only update existing groups.
-     * @throws ValidationException
-     *         If the group was invalid.
-     */
-    void update(User user, SymbolGroup group) throws NotFoundException, ValidationException;
-
-    /**
-     * Move a group.
-     *
-     * @param user
-     *         The user who wants to perform this method.
-     * @param group
-     *         The group to move which contains the new parent id.
-     * @return The updated group.
-     * @throws NotFoundException
-     *         If the group was not found, because you can only update existing groups.
-     * @throws ValidationException
-     *         If the group was invalid.
-     */
-    SymbolGroup move(User user, SymbolGroup group) throws NotFoundException, ValidationException;
-
-    /**
-     * Delete a group.
-     *
-     * @param user
-     *         The user who wants to perform this method.
-     * @param projectId
-     *         The project the group belongs to.
-     * @param groupId
-     *         The ID of the group within the project.
-     * @throws IllegalArgumentException
-     *         If you want to delete a default group.
-     * @throws NotFoundException
-     *         If The project or group could not be found.
-     */
-    void delete(User user, long projectId, Long groupId) throws IllegalArgumentException, NotFoundException;
-
-    /**
-     * Checks if the user has access to the group.
-     *
-     * @param user
-     *         The user.
-     * @param project
-     *         The project.
-     * @param group
-     *         The group.
-     * @throws NotFoundException
-     *         If one of the entities could not be found.
-     * @throws UnauthorizedException
-     *         If the user does not have access to one of the resources.
-     */
-    void checkAccess(User user, Project project, SymbolGroup group) throws NotFoundException, UnauthorizedException;
-
+        LOGGER.traceExit();
+    }
 }

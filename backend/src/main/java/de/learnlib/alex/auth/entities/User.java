@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -37,6 +38,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The model for a user.
@@ -55,6 +57,10 @@ public class User implements Serializable {
     @GeneratedValue
     private Long id;
 
+    /** The username of the user. */
+    @Column(unique = true)
+    private String username;
+
     /** The email address of the user he uses to login. */
     @NotBlank
     @Email
@@ -71,11 +77,15 @@ public class User implements Serializable {
     /** The role of the user. */
     private UserRole role;
 
-    /** The projects of the user. */
-    @OneToMany(mappedBy = "user")
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
+    /** The set of projects in which the user is an owner. */
+    @ManyToMany(mappedBy = "owners")
     @JsonIgnore
-    private Set<Project> projects;
+    private Set<Project> projectsOwner;
+
+    /** The set of projects in which the user is a member. */
+    @ManyToMany(mappedBy = "members")
+    @JsonIgnore
+    private Set<Project> projectsMember;
 
     /** The list of webhooks. */
     @OneToMany(mappedBy = "user")
@@ -87,7 +97,8 @@ public class User implements Serializable {
      * Default constructor that gives the user the role of "registered".
      */
     public User() {
-        this.projects = new HashSet<>();
+        this.projectsOwner = new HashSet<>();
+        this.projectsMember = new HashSet<>();
         this.webhooks = new ArrayList<>();
         role = UserRole.REGISTERED;
     }
@@ -109,8 +120,25 @@ public class User implements Serializable {
         return id;
     }
 
+    /**
+     * @param id The ID of the user.
+     */
     public void setId(Long id) {
         this.id = id;
+    }
+
+    /**
+     * @return The current username of the user.
+     */
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * @param username The new username of the user.
+     */
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     /**
@@ -139,6 +167,54 @@ public class User implements Serializable {
      */
     public void setRole(UserRole role) {
         this.role = role;
+    }
+
+    /**
+     * @return The set of projects in which the user is an owner.
+     */
+    @JsonIgnore
+    public Set<Project> getProjectsOwner() {
+        return projectsOwner;
+    }
+
+    /**
+     * @param projectsOwner The set of projects in which the user is an owner.
+     */
+    @JsonIgnore
+    public void setProjectsOwner(Set<Project> projectsOwner) {
+        this.projectsOwner = projectsOwner;
+    }
+
+    /**
+     * @return The set of projects in which the user is a member.
+     */
+    @JsonIgnore
+    public Set<Project> getProjectsMember() {
+        return projectsMember;
+    }
+
+    /**
+     * @param projectsMember The set of projects in which the user is a member.
+     */
+    @JsonIgnore
+    public void setProjectsMember(Set<Project> projectsMember) {
+        this.projectsMember = projectsMember;
+    }
+
+    /**
+     * @return The list of ids of projects in which the user is a member.
+     */
+    @JsonIgnore
+    public List<Long> getProjectsMemberIds() {
+        return this.projectsMember.stream().map(Project::getId).collect(Collectors.toList());
+    }
+
+    /**
+     * @return The list of ids of projects in which the user is an owner.
+     */
+    @JsonIgnore
+    public List<Long> getProjectsOwnerIds() {
+        return this.projectsOwner.stream().map(Project::getId).collect(Collectors.toList());
     }
 
     /**
@@ -192,20 +268,6 @@ public class User implements Serializable {
      */
     public void setSalt(String salt) {
         this.salt = salt;
-    }
-
-    /**
-     * @return All Projects owned by the User.
-     */
-    public Set<Project> getProjects() {
-        return projects;
-    }
-
-    /**
-     * @param projects The new set of the Projects owned by the User.
-     */
-    public void setProjects(Set<Project> projects) {
-        this.projects = projects;
     }
 
     public List<Webhook> getWebhooks() {

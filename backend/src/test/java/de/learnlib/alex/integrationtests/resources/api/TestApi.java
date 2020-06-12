@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,14 +58,7 @@ public class TestApi extends AbstractApi {
                 .get();
     }
 
-    public Response getAll(int projectId, String jwt) {
-        return client.target(url(projectId) + "?type=case").request()
-                .header(HttpHeaders.AUTHORIZATION, jwt)
-                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
-                .get();
-    }
-
-    public Response update(int projectId, int testId, String test, String jwt) {
+    public Response update(Long projectId, Long testId, String test, String jwt) {
         return client.target(url(projectId) + "/" + testId).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)

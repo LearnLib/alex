@@ -1,0 +1,34 @@
+<h5>
+  <strong>Select value</strong>
+</h5>
+
+<p class="text-muted">
+  Select a value from a select input.
+</p>
+<hr>
+
+<node-form-group [node]="action.node"></node-form-group>
+
+<div class="form-group">
+  <label class="control-label">Value</label>
+  <input [(ngModel)]="action.value" class="form-control" placeholder="Selected value" type="text">
+</div>
+
+<div class="form-group form-check">
+  <label class="form-check-label">
+    <input [(ngModel)]="action.selectBy" [value]="'TEXT'" class="form-check-input" name="selectBy" type="radio"> By
+    visible text
+  </label>
+</div>
+<div class="form-group form-check">
+  <label class="form-check-label">
+    <input [(ngModel)]="action.selectBy" [value]="'VALUE'" class="form-check-input" name="selectBy" type="radio"> By
+    "value" attribute
+  </label>
+</div>
+<div class="form-group form-check">
+  <label class="form-check-label">
+    <input [(ngModel)]="action.selectBy" [value]="'INDEX'" class="form-check-input" name="selectBy" type="radio"> By
+    index
+  </label>
+</div>

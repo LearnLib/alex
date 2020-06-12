@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,14 +27,6 @@ import java.util.List;
 @Repository
 public interface LtsFormulaRepository extends JpaRepository<LtsFormula, Long> {
 
-    /**
-     * Get all formulas in a project.
-     *
-     * @param projectId
-     *         The ID of the project.
-     * @return The formulas stored in the project.
-     */
     @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
-    List<LtsFormula> findAllByProject_Id(Long projectId);
+    List<LtsFormula> findAllBySuite_IdAndIdIn(Long suiteId, List<Long> formulaIds);
 }

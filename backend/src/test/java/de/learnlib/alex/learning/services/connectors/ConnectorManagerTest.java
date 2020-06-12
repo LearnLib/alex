@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package de.learnlib.alex.learning.services.connectors;
 
+import de.learnlib.alex.data.entities.ProjectEnvironment;
 import org.junit.Test;
 
 import static org.mockito.Mockito.mock;
@@ -28,7 +29,7 @@ public class ConnectorManagerTest {
         Connector connector1 = mock(WebSiteConnector.class);
         Connector connector2 = mock(WebServiceConnector.class);
 
-        ConnectorManager manager = new ConnectorManager();
+        ConnectorManager manager = new ConnectorManager(new ProjectEnvironment());
         manager.addConnector(connector1);
         manager.addConnector(connector2);
 

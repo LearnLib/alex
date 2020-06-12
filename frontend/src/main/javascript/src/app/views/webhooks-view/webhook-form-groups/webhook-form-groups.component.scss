@@ -1,0 +1,9 @@
+.badge-event {
+  i {
+    visibility: hidden;
+  }
+
+  &:hover i {
+    visibility: visible;
+  }
+}

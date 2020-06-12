@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package de.learnlib.alex.learning.services.connectors;
 
 import de.learnlib.alex.common.utils.CSSUtils;
 import de.learnlib.alex.common.utils.LoggerMarkers;
+import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.data.entities.actions.Credentials;
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
@@ -49,7 +50,7 @@ public class WebSiteConnector implements Connector {
     private AbstractWebDriverConfig driverConfig;
 
     /** A managed base url to use. */
-    private BaseUrlManager baseUrl;
+    private BaseUrlManager baseUrlManager;
 
     /** The driver used to send and receive data to a WebSite. */
     private WebDriver driver;
@@ -59,14 +60,9 @@ public class WebSiteConnector implements Connector {
 
     /**
      * Constructor.
-     *
-     * @param baseUrl
-     *         The new base url to use for further request. All request will be based on this!
-     * @param driverConfig
-     *         The driver config to use for further request.
      */
-    public WebSiteConnector(String baseUrl, AbstractWebDriverConfig driverConfig) {
-        this.baseUrl = new BaseUrlManager(baseUrl);
+    public WebSiteConnector(ProjectEnvironment environment, AbstractWebDriverConfig driverConfig) {
+        this.baseUrlManager = new BaseUrlManager(environment);
         this.driverConfig = driverConfig;
     }
 
@@ -123,17 +119,16 @@ public class WebSiteConnector implements Connector {
      * @throws Exception
      *         If the application could not connect to the web driver.
      */
-    public void get(String path, Credentials credentials) throws Exception {
+    public void get(String baseUrl, String path, Credentials credentials) throws Exception {
         if (this.driver == null) {
             this.driver = driverConfig.createDriver();
         }
 
-        String url;
+        final String url = baseUrlManager.getAbsoluteUrl(baseUrl, path, credentials);
         try {
-            new URL(path);
-            url = BaseUrlManager.getUrlWithCredentials(path, credentials);
+            new URL(url);
         } catch (MalformedURLException e) {
-            url = baseUrl.getAbsoluteUrl(path, credentials);
+            throw new Exception("The URL is malformed.");
         }
 
         int numRetries = 0;

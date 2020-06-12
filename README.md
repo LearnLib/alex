@@ -15,11 +15,11 @@ an automaton model (a [Mealy machine][mealy]), which represents the behavior of 
 
 ## Installation
 
-Make sure you have Java 8 installed on your system.
+Make sure you have Java 8 or 11 installed on your system.
 We advise to use a modern web browser like Google Chrome, Mozilla Firefox or Microsoft Edge with JavaScript enabled.
 
 1. [Download](https://github.com/LearnLib/alex/releases/latest) the latest version.
-2. Open a terminal and start ALEX via `java -jar alex-1.7.2.war [--server.port=XXXX]`.
+2. Open a terminal and start ALEX via `java -jar alex-2.0.0.war [--server.port=XXXX]`.
 3. Wait until the command line prints something like `de.learnlib.alex.App - Started App in XX.XXX seconds`.
 3. Open *http://localhost:8000* in a web browser.
 
@@ -32,9 +32,9 @@ Password: *admin*
 
 In order to build ALEX from source make sure your system matches the following requirements:
 
-* Java JDK 8
+* Java JDK 8 or 11
 * Maven 3
-* Node.js (v10.0.0) and the NPM (v6.0.0)
+* Node.js (v12.*.*) and the NPM (v6.*.*)
 
 To build ALEX, open a terminal and follow the instructions below:
 
@@ -49,7 +49,9 @@ cd alex
 mvn install package [-DskipTests]
 ```
 
-The bundle can then be found at `build/target/alex-build-1.7.2.war`.
+The bundle can then be found at `build/target/alex-2.0.0.war`.
+
+Only build the REST API and skip the frontend with `mvn package -P!build-frontend`
 
 ## Connecting to a database
 
@@ -71,7 +73,7 @@ spring.jpa.hibernate.ddl-auto=update
 
 Then, start ALEX like this:
 
-`java -jar alex-buid-1.7.2.war "--spring.config.location=/path/to/your/application.properties"`
+`java -jar alex-buid-2.0.0.war "--spring.config.location=/path/to/your/application.properties"`
 
 
 ## Using LTSMin
@@ -81,7 +83,7 @@ If you want to use its capabilities, download version **3.0.2** and append the `
 The value for the argument should be the *bin* directory where the compiled binaries of LTSMin are located.
 Example:
 
-`java -jar alex-1.7.2.war --ltsmin.path="/path/to/ltsmin/bin"`
+`java -jar alex-2.0.0.war --ltsmin.path="/path/to/ltsmin/bin"`
 
 
 

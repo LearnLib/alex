@@ -1,0 +1,81 @@
+<div class="card">
+  <div class="card-header">
+    <strong>Checking Config</strong>
+  </div>
+  <div class="card-body">
+    <div class="list-group mb-3">
+      <div class="list-group-item d-flex flex-row align-items-center">
+        <selectable-checkbox-multiple [selectable]="selectedFormulas"></selectable-checkbox-multiple>
+        <form class="form-inline d-block w-100 ml-3 flex-shrink-0" [formGroup]="addFormulaForm" (ngSubmit)="addManualFormula()">
+          <input type="text" class="form-control" name="formula" [formControl]="addFormulaForm.controls.formula" placeholder="LTL formula">
+          <button class="btn btn-default ml-1" [disabled]="addFormulaForm.invalid">Add</button>
+        </form>
+      </div>
+    </div>
+
+    <div *ngFor="let suite of allFormulaSuites">
+      <div class="list-group mb-3">
+        <div class="list-group-item list-group-item-light d-flex flex-row align-items-center" style="background: #f2f2f2">
+          <selectable-checkbox-multiple [selectable]="selectedFormulas" [items]="suite.formulas"></selectable-checkbox-multiple>
+          <span class="text-muted ml-3 w-100">{{suite.name}}</span>
+        </div>
+
+        <div *ngFor="let formula of suite.formulas; let i = index" [ngClass]="getItemClass(formula.id)" class="list-group-item">
+          <div class="d-flex">
+            <div>
+              <selectable-checkbox [item]="formula" [selectable]="selectedFormulas"></selectable-checkbox>
+            </div>
+            <div class="pl-3 w-100">
+              <div class="d-flex">
+                <div class="w-100">
+                  <strong *ngIf="formula.name != null" class="d-block">{{formula.name}}</strong>
+                  <span>{{formula.formula}}</span>
+                </div>
+                <div class="ml-2" *ngIf="results[formula.id] != null">
+                  <span *ngIf="results[formula.id].passed" class="badge badge-success">passed</span>
+                  <span *ngIf="!results[formula.id].passed" class="badge badge-danger">failed</span>
+                </div>
+              </div>
+              <div *ngIf="hasCounterexample(formula.id)"
+                   style="border-top: 1px solid rgba(0,0,0,.3); margin-top: 4px; padding-top: 4px">
+                <div class="d-flex flex-row">
+                  <div style="width: 50px;">Prefix:</div>
+                  <div class="w-100">
+                        <span *ngFor="let s of results[formula.id].prefix; let last = last">{{s}}<span
+                          *ngIf="!last">, </span></span>
+                  </div>
+                </div>
+                <div class="d-flex flex-row">
+                  <div style="width: 50px;">Loop:</div>
+                  <div class="w-100">
+                        <span *ngFor="let s of results[formula.id].loop; let last = last">{{s}}<span
+                          *ngIf="!last">, </span></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert alert-info mt-3" *ngIf="formulaSuites.length === 0">
+      There are no formula suites yet.
+    </div>
+
+    <hr>
+    <div class="form-group">
+      <label class="control-label">Minimum unfolds</label>
+      <input [(ngModel)]="config.minUnfolds" class="form-control" min="0" name="minUnfolds" type="number">
+    </div>
+    <div class="form-group">
+      <label class="control-label">Multiplier</label>
+      <input [(ngModel)]="config.multiplier" class="form-control" min="0" name="multiplier" type="number">
+    </div>
+  </div>
+  <div class="card-footer text-right">
+    <button (click)="check()" [disabled]="!selectedFormulas.isAnySelected()" class="btn btn-sm btn-primary">Run
+      checks
+    </button>
+  </div>
+</div>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,17 +17,24 @@
 package de.learnlib.alex.integrationtests.resources;
 
 import com.jayway.jsonpath.JsonPath;
+import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.integrationtests.resources.api.LtsFormulaApi;
+import de.learnlib.alex.integrationtests.resources.api.LtsFormulaSuiteApi;
 import de.learnlib.alex.integrationtests.resources.api.ProjectApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
-import org.junit.Assert;
+import de.learnlib.alex.modelchecking.entities.LtsFormula;
+import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import org.junit.Before;
 import org.junit.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
+import org.springframework.http.HttpStatus;
 
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
+import static org.junit.Assert.assertEquals;
 
 public class LtsFormulaResourceIT extends AbstractResourceIT {
 
@@ -35,149 +42,257 @@ public class LtsFormulaResourceIT extends AbstractResourceIT {
 
     private String jwtUser2;
 
-    private int projectId1;
+    private Long projectId1;
 
-    private int projectId2;
+    private Long projectId2;
 
-    private LtsFormulaApi api;
+    private LtsFormulaApi formulaApi;
+    private LtsFormulaSuiteApi formulaSuiteApi;
+
+    private LtsFormulaSuite suite1;
+    private LtsFormulaSuite suite2;
 
     @Before
     public void before() {
-        this.api = new LtsFormulaApi(client, port);
+        this.formulaApi = new LtsFormulaApi(client, port);
 
         final UserApi userApi = new UserApi(client, port);
         final ProjectApi projectApi = new ProjectApi(client, port);
+        formulaSuiteApi = new LtsFormulaSuiteApi(client, port);
 
-        userApi.create("{\"email\":\"test1@test.de\",\"password\":\"test\"}");
-        userApi.create("{\"email\":\"test2@test.de\",\"password\":\"test\"}");
+        userApi.create("{\"email\":\"test1@test.de\",\"username\":\"test1\",\"password\":\"test\"}");
+        userApi.create("{\"email\":\"test2@test.de\",\"username\":\"test2\",\"password\":\"test\"}");
         jwtUser1 = userApi.login("test1@test.de", "test");
         jwtUser2 = userApi.login("test2@test.de", "test");
 
-        final Response res1 = projectApi.create("{\"name\":\"test\",\"urls\":[{\"url\":\"http://localhost:8080\"}]}", jwtUser1);
-        final Response res2 = projectApi.create("{\"name\":\"test\",\"urls\":[{\"url\":\"http://localhost:8080\"}]}", jwtUser2);
-        projectId1 = JsonPath.read(res1.readEntity(String.class), "id");
-        projectId2 = JsonPath.read(res2.readEntity(String.class), "id");
+        projectId1 = projectApi.create("{\"name\":\"test\",\"url\":\"http://localhost:8080\"}", jwtUser1)
+                .readEntity(Project.class)
+                .getId();
+
+        projectId2 = projectApi.create("{\"name\":\"test\",\"url\":\"http://localhost:8080\"}", jwtUser2)
+                .readEntity(Project.class)
+                .getId();
+
+        final LtsFormulaSuite suite = new LtsFormulaSuite();
+        suite.setName("default");
+
+        this.suite1 = formulaSuiteApi.create(projectId1, suite, jwtUser1)
+                .readEntity(LtsFormulaSuite.class);
+
+        this.suite2 = formulaSuiteApi.create(projectId2, suite, jwtUser2)
+                .readEntity(LtsFormulaSuite.class);
     }
 
     @Test
     public void shouldCreateAFormula() throws Exception {
-        final Response res = api.create(projectId1, "{\"name\":\"test\",\"formula\":\"<> true\"}", jwtUser1);
-        Assert.assertEquals(Response.Status.CREATED.getStatusCode(), res.getStatus());
+        final LtsFormula formula = new LtsFormula();
+        formula.setName("test");
+        formula.setFormula("<>true");
+
+        final Response res = formulaApi.create(projectId1, suite1.getId(), formula, jwtUser1);
+        assertEquals(Response.Status.CREATED.getStatusCode(), res.getStatus());
 
         final String json = res.readEntity(String.class);
         JsonPath.read(json, "$.id");
 
-        Assert.assertEquals(1, getNumberOfFormulas(projectId1, jwtUser1));
+        assertEquals(1, getNumberOfFormulas(projectId1, suite1.getId(), jwtUser1));
     }
 
     @Test
     public void shouldCreateAFormulaWithoutName() throws Exception {
-        final Response res = api.create(projectId1, "{\"formula\":\"<> true\"}", jwtUser1);
-        Assert.assertEquals(Response.Status.CREATED.getStatusCode(), res.getStatus());
+        final LtsFormula formula = new LtsFormula();
+        formula.setFormula("<>true");
 
-        final String json = res.readEntity(String.class);
-        JsonPath.read(json, "$.id");
+        final Response res = formulaApi.create(projectId1, suite1.getId(), formula, jwtUser1);
+        assertEquals(Response.Status.CREATED.getStatusCode(), res.getStatus());
 
-        Assert.assertEquals(1, getNumberOfFormulas(projectId1, jwtUser1));
+        final LtsFormula createdFormula = res.readEntity(LtsFormula.class);
+        assertNotNull(createdFormula.getId());
+        assertEquals(formula.getFormula(), createdFormula.getFormula());
+        assertEquals(formula.getName(), createdFormula.getName());
+
+        assertEquals(1, getNumberOfFormulas(projectId1, suite1.getId(), jwtUser1));
     }
 
     @Test
     public void shouldFailToCreateFormulaWithoutFormula() throws Exception {
-        final Response res = api.create(projectId1, "{\"name\":\"test\"}", jwtUser1);
-        Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), res.getStatus());
-        Assert.assertEquals(0, getNumberOfFormulas(projectId1, jwtUser1));
+        final LtsFormula formula = new LtsFormula();
+        formula.setName("test");
+
+        final Response res = formulaApi.create(projectId1, suite1.getId(), formula, jwtUser1);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), res.getStatus());
+        assertEquals(0, getNumberOfFormulas(projectId1, suite1.getId(), jwtUser1));
     }
 
     @Test
-    public void shouldFailToCreateFormulaWithEmptyFormula() throws Exception {
-        final Response res = api.create(projectId1, "{\"name\":\"test\",\"formula\":\"\"}", jwtUser1);
-        Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), res.getStatus());
-        Assert.assertEquals(0, getNumberOfFormulas(projectId1, jwtUser1));
-    }
+    public void shouldFailToCreateFormulaWithInvalidFormula() throws Exception {
+        final LtsFormula formula = new LtsFormula();
+        formula.setName("test");
+        formula.setFormula("invalid");
 
+        final Response res = formulaApi.create(projectId1, suite1.getId(), formula, jwtUser1);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), res.getStatus());
+        assertEquals(0, getNumberOfFormulas(projectId1, suite1.getId(), jwtUser1));
+    }
 
     @Test
     public void shouldNotCreateFormulaInAnotherUsersProject() throws Exception {
-        final Response res = api.create(projectId2, "{\"name\":\"test\",\"formula\":\"<> true\"}", jwtUser1);
-        Assert.assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), res.getStatus());
-        Assert.assertEquals(0, getNumberOfFormulas(projectId1, jwtUser1));
-        Assert.assertEquals(0, getNumberOfFormulas(projectId2, jwtUser2));
+        final LtsFormula formula = new LtsFormula();
+        formula.setName("test");
+        formula.setFormula("<>true");
+
+        final Response res = formulaApi.create(projectId2, suite2.getId(), formula, jwtUser1);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), res.getStatus());
+        assertEquals(0, getNumberOfFormulas(projectId1, suite1.getId(), jwtUser1));
+        assertEquals(0, getNumberOfFormulas(projectId2, suite2.getId(), jwtUser2));
     }
 
     @Test
     public void shouldDeleteFormula() throws Exception {
-        final int formulaId = createFormula(projectId1, "{\"name\":\"test\",\"formula\":\"<> true\"}", jwtUser1);
-        final Response res = api.delete(projectId1, formulaId, jwtUser1);
-        Assert.assertEquals(Response.Status.NO_CONTENT.getStatusCode(), res.getStatus());
-        Assert.assertEquals(0, getNumberOfFormulas(projectId1, jwtUser1));
+        final LtsFormula formula = createFormula(projectId1, suite1.getId(), "test", "<>true", jwtUser1);
+        final Response res = formulaApi.delete(projectId1, suite1.getId(), formula.getId(), jwtUser1);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), res.getStatus());
+        assertEquals(0, getNumberOfFormulas(projectId1, suite1.getId(), jwtUser1));
     }
 
     @Test
     public void shouldFailToDeleteNonExistingFormula() {
-        final Response res = api.delete(projectId1, -1, jwtUser1);
-        Assert.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), res.getStatus());
+        final Response res = formulaApi.delete(projectId1, suite1.getId(), -1L, jwtUser1);
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), res.getStatus());
     }
 
     @Test
     public void shouldFailToDeleteFormulaOfAnotherUser() throws Exception {
-        final int formulaId = createFormula(projectId1, "{\"name\":\"test\",\"formula\":\"<> true\"}", jwtUser1);
-        final Response res = api.delete(projectId2, formulaId, jwtUser2);
-        Assert.assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), res.getStatus());
-        Assert.assertEquals(1, getNumberOfFormulas(projectId1, jwtUser1));
+        final LtsFormula formula = createFormula(projectId1, suite1.getId(), "test", "<>true", jwtUser1);
+        final Response res = formulaApi.delete(projectId2, suite1.getId(), formula.getId(), jwtUser2);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), res.getStatus());
+        assertEquals(1, getNumberOfFormulas(projectId1, suite1.getId(), jwtUser1));
     }
 
     @Test
     public void shouldDeleteMultipleFormulas() throws Exception {
-        final List<Integer> ids = Arrays.asList(
-                createFormula(projectId1, "{\"name\":\"test\",\"formula\":\"<> true\"}", jwtUser1),
-                createFormula(projectId1, "{\"name\":\"test\",\"formula\":\"<> true\"}", jwtUser1)
+        final List<Long> ids = Arrays.asList(
+                createFormula(projectId1, suite1.getId(), "test", "<> true", jwtUser1).getId(),
+                createFormula(projectId1, suite1.getId(), "test", "<> true", jwtUser1).getId()
         );
-        final Response res = api.delete(projectId1, ids, jwtUser1);
-        Assert.assertEquals(Response.Status.NO_CONTENT.getStatusCode(), res.getStatus());
-        Assert.assertEquals(0, getNumberOfFormulas(projectId1, jwtUser1));
+        final Response res = formulaApi.delete(projectId1, suite1.getId(), ids, jwtUser1);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), res.getStatus());
+        assertEquals(0, getNumberOfFormulas(projectId1, suite1.getId(), jwtUser1));
     }
 
     @Test
     public void shouldFailToDeleteMultipleFormulasIfOneDoesNotExist() throws Exception {
-        final List<Integer> ids = Arrays.asList(
-                createFormula(projectId1, "{\"name\":\"test\",\"formula\":\"<> true\"}", jwtUser1),
-                createFormula(projectId1, "{\"name\":\"test\",\"formula\":\"<> true\"}", jwtUser1),
+        final List<Long> ids = Arrays.asList(
+                createFormula(projectId1, suite1.getId(), "test", "<> true", jwtUser1).getId(),
+                createFormula(projectId1, suite1.getId(), "test", "<> true", jwtUser1).getId()
                 -1
         );
-        final Response res = api.delete(projectId1, ids, jwtUser1);
-        Assert.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), res.getStatus());
-        Assert.assertEquals(ids.size() - 1, getNumberOfFormulas(projectId1, jwtUser1));
+        final Response res = formulaApi.delete(projectId1, suite1.getId(), ids, jwtUser1);
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), res.getStatus());
+        assertEquals(2, getNumberOfFormulas(projectId1, suite1.getId(), jwtUser1));
     }
 
     @Test
     public void shouldUpdateAFormula() throws Exception {
-        final int formulaId = createFormula(projectId1, "{\"name\":\"test\",\"formula\":\"<> true\"}", jwtUser1);
-        final String updatedFormula = "{\"name\":\"newName\",\"id\":" + formulaId + ",\"formula\":\"<> false\",\"projectId\": " + projectId1 + "}";
+        final LtsFormula formula = createFormula(projectId1, suite1.getId(), "test", "<> true", jwtUser1);
+        formula.setName("newName");
+        formula.setFormula("<>false");
 
-        final Response res = api.update(projectId1, formulaId, updatedFormula, jwtUser1);
-        Assert.assertEquals(Response.Status.OK.getStatusCode(), res.getStatus());
-        JSONAssert.assertEquals(updatedFormula, res.readEntity(String.class), true);
-        Assert.assertEquals(1, getNumberOfFormulas(projectId1, jwtUser1));
+        final Response res = formulaApi.update(projectId1, suite1.getId(), formula.getId(), formula, jwtUser1);
+        assertEquals(Response.Status.OK.getStatusCode(), res.getStatus());
+
+        final LtsFormula updatedFormula = res.readEntity(LtsFormula.class);
+        assertEquals(formula.getId(), updatedFormula.getId());
+        assertEquals(formula.getName(), updatedFormula.getName());
+        assertEquals(formula.getFormula(), updatedFormula.getFormula());
+
+        assertEquals(1, getNumberOfFormulas(projectId1, suite1.getId(), jwtUser1));
     }
 
     @Test
-    public void shouldFailToUpdateIfFormulaIsEmpty() throws Exception {
-        final int formulaId = createFormula(projectId1, "{\"name\":\"test\",\"formula\":\"<> true\"}", jwtUser1);
-        final String pre = api.getAll(projectId1, jwtUser1).readEntity(String.class);
-
-        final String updatedFormula = "{\"name\":\"newName\",\"id\":" + formulaId + ",\"formula\":\"\",\"projectId\": " + projectId1 + "}";
-        final Response res = api.update(projectId1, formulaId, updatedFormula, jwtUser1);
-        Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), res.getStatus());
-        JSONAssert.assertEquals(pre, api.getAll(projectId1, jwtUser1).readEntity(String.class), true);
+    public void shouldFailToUpdateIfFormulaIsEmpty() {
+        shouldFailToUpdate(projectId1, "test", "<>true", "newName", "", jwtUser1);
     }
 
-    private int createFormula(int projectId, String formula, String jwt) {
-        final Response res = api.create(projectId, formula, jwt);
-        return JsonPath.read(res.readEntity(String.class), "$.id");
+    @Test
+    public void shouldFailToUpdateIfFormulaIsInvalid() {
+        shouldFailToUpdate(projectId1, "test", "<>true", "newName", "invalid", jwtUser1);
     }
 
-    private int getNumberOfFormulas(int projectId1, String jwt) throws Exception {
-        final Response res = api.getAll(projectId1, jwt);
-        return objectMapper.readTree(res.readEntity(String.class)).size();
+    @Test
+    public void shouldMoveFormulaToAnotherSuite() {
+        LtsFormulaSuite s1 = createFormulaSuite(projectId1,"s1", jwtUser1);
+        LtsFormulaSuite s2 = createFormulaSuite(projectId1,"s2", jwtUser1);
+
+        LtsFormula formula = createFormula(projectId1, s1.getId(), "test", "true", jwtUser1);
+
+        final Response res = formulaApi.updateSuite(projectId1, s1.getId(), formula.getId(), s2, jwtUser1);
+        assertEquals(HttpStatus.OK.value(), res.getStatus());
+        formula = res.readEntity(LtsFormula.class);
+        assertEquals(s2.getId(), formula.getSuiteId());
+    }
+
+    @Test
+    public void shouldMoveMultipleFormulasToAnotherSuite() throws Exception {
+        LtsFormulaSuite s1 = createFormulaSuite(projectId1,"s1", jwtUser1);
+        LtsFormulaSuite s2 = createFormulaSuite(projectId1,"s2", jwtUser1);
+
+        LtsFormula f1 = createFormula(projectId1, s1.getId(), "test", "true", jwtUser1);
+        LtsFormula f2 = createFormula(projectId1, s1.getId(), "test", "true", jwtUser1);
+
+        final Response res = formulaApi.updateSuite(projectId1, s1.getId(), Arrays.asList(f1.getId(), f2.getId()), s2, jwtUser1);
+        assertEquals(HttpStatus.OK.value(), res.getStatus());
+
+        final List<LtsFormula> updatedFormulas = res.readEntity(new GenericType<List<LtsFormula>>(){});
+        for (LtsFormula f: updatedFormulas) {
+            assertEquals(s2.getId(), f.getSuiteId());
+        }
+
+        assertEquals(0, getNumberOfFormulas(projectId1, s1.getId(), jwtUser1));
+        assertEquals(2, getNumberOfFormulas(projectId1, s2.getId(), jwtUser1));
+    }
+
+    private void shouldFailToUpdate(Long projectId, String name, String formula, String newName, String newFormula, String jwt) {
+        final LtsFormula ltlFormula = createFormula(projectId1, suite1.getId(), name, formula, jwtUser1);
+        ltlFormula.setName(newName);
+        ltlFormula.setFormula(newFormula);
+
+        final Response res = formulaApi.update(projectId, suite1.getId(), ltlFormula.getId(), ltlFormula, jwt);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), res.getStatus());
+
+        final LtsFormula f = formulaSuiteApi.get(projectId1, suite1.getId(), jwt)
+                .readEntity(LtsFormulaSuite.class)
+                .getFormulas()
+                .stream()
+                .filter(l -> l.getId().equals(ltlFormula.getId()))
+                .findFirst()
+                .orElse(null);
+
+        assertNotNull(f);
+        assertEquals(name, f.getName());
+        assertEquals(formula, f.getFormula());
+    }
+
+    private LtsFormula createFormula(Long projectId, Long suiteId, String name, String formula, String jwt) {
+        final LtsFormula f = new LtsFormula();
+        f.setName(name);
+        f.setFormula(formula);
+
+        return formulaApi.create(projectId, suiteId, f, jwt)
+                .readEntity(LtsFormula.class);
+    }
+
+    private LtsFormulaSuite createFormulaSuite(Long projectId, String name, String jwt) {
+        final LtsFormulaSuite suite = new LtsFormulaSuite();
+        suite.setName(name);
+        return formulaSuiteApi.create(projectId, suite, jwt)
+                .readEntity(LtsFormulaSuite.class);
+    }
+
+    private int getNumberOfFormulas(Long projectId1, Long suiteId, String jwt) throws Exception {
+        return formulaSuiteApi.get(projectId1, suiteId, jwt)
+                .readEntity(LtsFormulaSuite.class)
+                .getFormulas()
+                .size();
     }
 }

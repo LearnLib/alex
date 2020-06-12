@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,17 +42,15 @@ public interface CounterRepository extends JpaRepository<Counter, Long> {
     List<Counter> findAllByProject(Project project);
 
     /**
-     * Find all counters by their names in a Project of an User.
+     * Get counters by their IDs.
      *
-     * @param project
-     *         The ID the Project the Counters belongs to.
-     * @param name
-     *         The names of the Counters.
-     * @return The Counters with the given name in the given Project.
+     * @param ids
+     *          The IDs of the counters.
+     * @return The counters.
      */
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
-    List<Counter> findAllByProjectAndNameIn(Project project, String... name);
+    List<Counter> findAllByIdIn(List<Long> ids);
 
     /**
      * Find a Counter by its name.

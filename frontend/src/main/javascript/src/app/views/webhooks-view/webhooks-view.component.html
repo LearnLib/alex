@@ -1,0 +1,69 @@
+<div class="view view-webhooks">
+  <action-bar>
+    <div class="d-flex flex-row align-items-center">
+      <selectable-checkbox-multiple [selectable]="store.webhooksSelectable"></selectable-checkbox-multiple>
+
+      <div class="w-100 ml-3">
+        <button (click)="store.create()" class="btn btn-sm btn-primary mr-2">
+          Create
+        </button>
+
+        <button
+          (click)="store.deleteSelected()"
+          [disabled]="!store.webhooksSelectable.isAnySelected()"
+          class="btn btn-sm btn-default"
+        >
+          Delete
+        </button>
+      </div>
+    </div>
+  </action-bar>
+
+  <div class="view-body">
+    <div class="container-fluid">
+
+      <div *ngIf="(store.webhooks$ | async).length > 0" class="list-group">
+        <div *ngFor="let webhook of store.webhooks$ | async" class="list-group-item d-flex flex-row">
+          <div>
+            <selectable-checkbox [item]="webhook" [selectable]="store.webhooksSelectable"></selectable-checkbox>
+          </div>
+
+          <div class="w-100 mx-3">
+            <strong class="d-block">{{webhook.name}}</strong>
+            <em class="text-muted d-block">{{webhook.url}}</em>
+            <hr class="mt-2 mb-3 mx-0">
+            <div>
+              <span
+                *ngFor="let event of webhook.events"
+                class="badge badge-success py-2 px-3 mr-2 mb-2 d-inline-block"
+              >
+                {{event | normalizeUpperCase}}
+              </span>
+            </div>
+          </div>
+
+          <div>
+            <div class="d-inline-block" ngbDropdown placement="bottom-right">
+              <button class="btn btn-sm btn-icon no-caret" ngbDropdownToggle>
+                <i class="fas fa-fw fa-bars"></i>
+              </button>
+              <div ngbDropdownMenu>
+                <button (click)="store.edit(webhook)" ngbDropdownItem>
+                  <i class="fas fa-fw fa-edit"></i> Edit
+                </button>
+                <button (click)="store.delete(webhook)" ngbDropdownItem>
+                  <i class="fas fa-fw fa-trash"></i> Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="(store.webhooks$ | async).length === 0" class="alert alert-info">
+        You haven't registered any webhooks yet.
+      </div>
+
+    </div>
+  </div>
+</div>

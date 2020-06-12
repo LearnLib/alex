@@ -1,0 +1,31 @@
+.learn-result-panel {
+  display: flex;
+  flex-direction: column;
+
+  .learn-result-panel-header {
+    background: #f9f9f9;
+    border-bottom: 1px solid #ddd;
+    padding: .75rem 1rem;
+
+    .learn-result-panel-resume-button {
+      margin-left: 5px;
+    }
+  }
+
+  .learn-result-panel-body {
+    height: 100%;
+  }
+}
+
+.right-sidebar {
+  background: #f2f2f2;
+  min-width: 340px;
+  max-width: 340px;
+  border-left: 1px solid #ddd;
+  overflow: auto;
+  padding: .75rem 1rem;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  top: 0;
+}

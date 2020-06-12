@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,7 +80,7 @@ public class CounterStoreConnector implements Connector {
         }
 
         // get all counters from the db
-        Map<String, Counter> counters = new HashMap<>();
+        final Map<String, Counter> counters = new HashMap<>();
         try {
             counterDAO.getAll(user, project.getId()).forEach(c -> counters.put(c.getName(), c));
         } catch (NotFoundException e) {
@@ -93,7 +93,7 @@ public class CounterStoreConnector implements Connector {
                 boolean counterExists = counters.containsKey(name);
                 if (counterExists) {
                     counters.get(name).setValue(Math.max(counters.get(name).getValue(), countersMap.get(name)));
-                    counterDAO.update(user, counters.get(name));
+                    counters.put(name, counterDAO.update(user, counters.get(name)));
                 } else {
                     Counter counter = createCounter(project.getId(), name, countersMap.get(name));
                     counterDAO.create(user, counter);
@@ -171,20 +171,8 @@ public class CounterStoreConnector implements Connector {
         return countersMap.get(name);
     }
 
-    /**
-     * Updates the current store by variables in another store.
-     *
-     * @param storeToMerge
-     *         The store with updated variables.
-     * @param namesToMerge
-     *         The names of the variables that should be transferred to this one.
-     */
-    public void merge(CounterStoreConnector storeToMerge, List<String> namesToMerge) {
-        namesToMerge.forEach(name -> {
-            if (storeToMerge.countersMap.containsKey(name)) {
-                countersMap.put(name, storeToMerge.countersMap.get(name));
-            }
-        });
+    public boolean contains(String name) {
+        return countersMap.containsKey(name);
     }
 
     /**

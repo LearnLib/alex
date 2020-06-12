@@ -1,0 +1,46 @@
+<div class="card">
+  <div class="card-header">
+    <strong>Latest test report</strong>
+  </div>
+  <div class="card-body">
+
+    <div *ngIf="report == null || report === ''" class="alert alert-info mb-0">
+      There is no test report for this project yet.
+    </div>
+
+    <div *ngIf="report != null && report !== ''">
+      <table class="table">
+        <tbody>
+        <tr>
+          <td><strong>Date</strong></td>
+          <td>{{report.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}</td>
+        </tr>
+        <tr>
+          <td><strong>Executed by</strong></td>
+          <td>{{report.executedBy ? report.executedBy.username : "deleted/unknown user"}}</td>
+        </tr>
+        <tr>
+          <td><strong>Status</strong></td>
+          <td>
+            <span *ngIf="report.passed" class="badge badge-success">Passed</span>
+            <span *ngIf="!report.passed" class="badge badge-danger">Failed</span>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Tests</strong></td>
+          <td>{{report.numTests - report.numTestsFailed}}/{{report.numTests}} tests passed</td>
+        </tr>
+        <tr>
+          <td><strong>Duration</strong></td>
+          <td>{{report.time | formatMilliseconds}}</td>
+        </tr>
+        </tbody>
+      </table>
+
+      <a class="btn btn-default mr-md-2 btn-block btn-md-sm" [routerLink]="['tests', 'reports', report.id]">
+        <i class="fas fa-fw fa-eye"></i> Show report
+      </a>
+    </div>
+
+  </div>
+</div>

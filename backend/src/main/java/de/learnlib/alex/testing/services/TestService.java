@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,59 +17,34 @@
 package de.learnlib.alex.testing.services;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.common.utils.LoggerMarkers;
-import de.learnlib.alex.common.utils.SearchHelper;
 import de.learnlib.alex.data.dao.ProjectDAO;
-import de.learnlib.alex.data.entities.ExecuteResult;
-import de.learnlib.alex.data.entities.ParameterizedSymbol;
+import de.learnlib.alex.data.dao.ProjectEnvironmentDAO;
 import de.learnlib.alex.data.entities.Project;
-import de.learnlib.alex.data.entities.ProjectUrl;
-import de.learnlib.alex.data.entities.Symbol;
-import de.learnlib.alex.data.entities.SymbolParameter;
-import de.learnlib.alex.data.entities.SymbolStep;
-import de.learnlib.alex.data.repositories.ProjectUrlRepository;
-import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
-import de.learnlib.alex.learning.services.connectors.ConnectorManager;
-import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import de.learnlib.alex.learning.services.connectors.PreparedConnectorContextHandlerFactory;
-import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.dao.TestReportDAO;
-import de.learnlib.alex.testing.entities.Test;
-import de.learnlib.alex.testing.entities.TestCase;
-import de.learnlib.alex.testing.entities.TestCaseResult;
-import de.learnlib.alex.testing.entities.TestCaseStep;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
-import de.learnlib.alex.testing.entities.TestExecutionResult;
+import de.learnlib.alex.testing.entities.TestQueueItem;
 import de.learnlib.alex.testing.entities.TestReport;
-import de.learnlib.alex.testing.entities.TestResult;
 import de.learnlib.alex.testing.entities.TestStatus;
-import de.learnlib.alex.testing.entities.TestSuite;
-import de.learnlib.alex.testing.entities.TestSuiteResult;
 import de.learnlib.alex.webhooks.services.WebhookService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.function.Function;
 
 /** The service that executes tests. */
 @Service
 public class TestService {
 
-    private static final Logger LOGGER = LogManager.getLogger();
-
     /** Factory to create a new ContextHandler. */
     private final PreparedConnectorContextHandlerFactory contextHandlerFactory;
 
-    /** The running testing threads. userId -> (projectId -> TestThread). */
-    private final Map<Long, Map<Long, TestThread>> testingThreads;
+    /** The running testing threads (projectId -> TestThread). */
+    private final Map<Long, TestThread> testThreads;
 
     /** The {@link WebhookService} to use. */
     private final WebhookService webhookService;
@@ -80,39 +55,22 @@ public class TestService {
     /** The {@link TestReportDAO} to use. */
     private final TestReportDAO testReportDAO;
 
-    /** The {@link ProjectUrlRepository} to use. */
-    private final ProjectUrlRepository projectUrlRepository;
-
     /** The {@link ProjectDAO} to use. */
     private final ProjectDAO projectDAO;
 
-    /**
-     * Constructor.
-     *
-     * @param contextHandlerFactory
-     *         The injected {@link PreparedConnectorContextHandlerFactory}.
-     * @param webhookService
-     *         The injected {@link WebhookService}.
-     * @param testDAO
-     *         The injected {@link TestDAO}.
-     * @param testReportDAO
-     *         The injected {@link TestReportDAO}.
-     * @param projectUrlRepository
-     *         The injected {@link ProjectUrlRepository}.
-     * @param projectDAO
-     *         The injected {@link ProjectDAO}.
-     */
+    private final ProjectEnvironmentDAO environmentDAO;
+
     @Inject
     public TestService(PreparedConnectorContextHandlerFactory contextHandlerFactory, WebhookService webhookService,
-                       TestDAO testDAO, TestReportDAO testReportDAO, ProjectUrlRepository projectUrlRepository,
+                       TestDAO testDAO, TestReportDAO testReportDAO, ProjectEnvironmentDAO environmentDAO,
                        ProjectDAO projectDAO) {
         this.contextHandlerFactory = contextHandlerFactory;
         this.webhookService = webhookService;
         this.testDAO = testDAO;
         this.testReportDAO = testReportDAO;
-        this.testingThreads = new HashMap<>();
-        this.projectUrlRepository = projectUrlRepository;
+        this.testThreads = new HashMap<>();
         this.projectDAO = projectDAO;
+        this.environmentDAO = environmentDAO;
     }
 
     /**
@@ -126,45 +84,22 @@ public class TestService {
      *         The config for the tests.
      * @return A test status.
      */
-    public TestStatus start(User user, Project project, TestExecutionConfig config) {
-        final TestThread thread = new TestThread(user, project, config, webhookService, testDAO,
-                testReportDAO, this, () -> {
-            this.testingThreads.get(user.getId()).remove(project.getId());
-            if (this.testingThreads.get(user.getId()).values().size() == 0) {
-                this.testingThreads.remove(user.getId());
-            }
-        });
+    public TestQueueItem start(User user, Project project, TestExecutionConfig config) {
+        final TestReport r = new TestReport();
+        r.setEnvironment(config.getEnvironment());
 
-        if (testingThreads.containsKey(user.getId())) {
-            if (testingThreads.get(user.getId()).containsKey(project.getId())) {
-                testingThreads.get(user.getId()).get(project.getId()).add(config);
-            } else {
-                testingThreads.get(user.getId()).put(project.getId(), thread);
-                thread.start();
-            }
+        if (testThreads.containsKey(project.getId())) {
+            final TestThread testThread = testThreads.get(project.getId());
+            return testThread.add(config);
         } else {
-            this.testingThreads.put(user.getId(), new HashMap<>());
-            this.testingThreads.get(user.getId()).put(project.getId(), thread);
-            thread.start();
-        }
-
-        return getStatus(user, project);
-    }
-
-    /**
-     * Abort the test thread of the user and the project.
-     *
-     * @param user
-     *         The user.
-     * @param projectId
-     *         The ID of the project.
-     * @throws NotFoundException
-     *         If the project cannot be found.
-     */
-    public void abort(User user, Long projectId) throws NotFoundException {
-        final Project project = projectDAO.getByID(user.getId(), projectId, ProjectDAO.EmbeddableFields.COUNTERS);
-        if (testingThreads.containsKey(user.getId()) && testingThreads.get(user.getId()).containsKey(project.getId())) {
-            testingThreads.get(user.getId()).get(project.getId()).abort();
+            final TestThread testThread = new TestThread(user, project, webhookService, testDAO,
+                    testReportDAO, createTestExecutor(), () ->
+                this.testThreads.remove(project.getId())
+            );
+            this.testThreads.put(project.getId(), testThread);
+            final TestQueueItem testStatus = testThread.add(config);
+            testThread.start();
+            return testStatus;
         }
     }
 
@@ -179,220 +114,34 @@ public class TestService {
      */
     public TestStatus getStatus(User user, Project project) {
         final TestStatus status = new TestStatus();
+        projectDAO.checkAccess(user, project);
 
-        if (!testingThreads.containsKey(user.getId())) {
-            status.setActive(false);
-        } else {
-            if (!testingThreads.get(user.getId()).containsKey(project.getId())) {
-                status.setActive(false);
-            } else {
-                final TestReport report = testingThreads.get(user.getId()).get(project.getId()).getReport();
-                status.setReport(report);
-                status.setActive(true);
-                status.setTestsInQueue(testingThreads.get(user.getId()).get(project.getId()).getNumberOfTestsInQueue());
-            }
+        if (testThreads.containsKey(project.getId())) {
+            final TestThread testThread = testThreads.get(project.getId());
+            status.setTestRunQueue(testThread.getTestQueue());
+            status.setCurrentTestRun(testThread.getCurrentTest());
+            status.setCurrentTest(testThread.getTestExecutor().getCurrentTest());
         }
 
         return status;
     }
 
-    /**
-     * Executes multiple tests.
-     *
-     * @param user
-     *         The user that executes the test suite.
-     * @param tests
-     *         The tests that should be executed.
-     * @param testConfig
-     *         The config for the test.
-     * @param results
-     *         The map with the test results.
-     * @return The updated test result map.
-     */
-    public Map<Long, TestResult> executeTests(User user, List<Test> tests, TestExecutionConfig testConfig,
-                                              Map<Long, TestResult> results) {
-        for (Test test : tests) {
-            if (test instanceof TestCase) {
-                executeTestCase(user, (TestCase) test, testConfig, results);
-            } else if (test instanceof TestSuite) {
-                executeTestSuite(user, (TestSuite) test, testConfig, results);
-            }
-        }
-        return results;
-    }
+    public void abort(User user, Long projectId, Long reportId) {
+        TestReport report = testReportDAO.get(user, projectId, reportId);
 
-    /**
-     * Execute a test suite.
-     *
-     * @param user
-     *         The user that executes the test suite.
-     * @param testSuite
-     *         The test suite that is being executed.
-     * @param testConfig
-     *         The config for the test.
-     * @param results
-     *         The map with the test results.
-     * @return The updated test result map.
-     */
-    public TestSuiteResult executeTestSuite(User user, TestSuite testSuite, TestExecutionConfig testConfig,
-                                            Map<Long, TestResult> results) {
-        final TestSuiteResult tsResult = new TestSuiteResult(testSuite, 0L, 0L);
-
-        final List<Test> testCases = testSuite.getTests().stream()
-                .filter(TestCase.class::isInstance)
-                .collect(Collectors.toList());
-
-        for (Test test : testCases) {
-            final TestCaseResult result = executeTestCase(user, (TestCase) test, testConfig, results);
-            tsResult.add(result);
+        if (projectDAO.getByID(user, projectId).getOwners().stream().map(User::getId).noneMatch(ownerId -> ownerId.equals(user.getId()))
+            && report.getExecutedBy() != null && !report.getExecutedBy().getId().equals(user.getId())
+        ) {
+            throw new UnauthorizedException("You are not allowed to abort this testrun.");
         }
 
-        final List<Test> testSuites = testSuite.getTests().stream()
-                .filter(TestSuite.class::isInstance)
-                .collect(Collectors.toList());
-
-        for (Test test : testSuites) {
-            final TestSuiteResult result = executeTestSuite(user, (TestSuite) test, testConfig, results);
-            tsResult.add(result);
-        }
-
-        results.put(testSuite.getId(), tsResult);
-        return tsResult;
-    }
-
-    /**
-     * Executes a test case.
-     *
-     * @param user
-     *         The user that executes the test suite.
-     * @param testCase
-     *         The test case that is being executed.
-     * @param testConfig
-     *         The config for the test.
-     * @param results
-     *         The map with the test results.
-     * @return The updated test result map.
-     */
-    public TestCaseResult executeTestCase(User user, TestCase testCase, TestExecutionConfig testConfig,
-                                          Map<Long, TestResult> results) {
-        LOGGER.info(LoggerMarkers.LEARNER, "Execute test[id={}] '{}'", testCase.getId(), testCase.getName());
-
-        final Symbol dummySymbol = new Symbol();
-        dummySymbol.setName("dummy");
-        dummySymbol.getSteps().add(new SymbolStep() {
-            @Override
-            public ExecuteResult execute(int i, ConnectorManager connectors) {
-                return new ExecuteResult(true);
-            }
-        });
-        final ParameterizedSymbol dummyPSymbol = new ParameterizedSymbol(dummySymbol);
-
-        final ProjectUrl projectUrl = projectUrlRepository.findById(testConfig.getUrlId()).orElse(null);
-
-        final ConnectorContextHandler ctxHandler = contextHandlerFactory
-                .createPreparedContextHandler(user, testCase.getProject(), testConfig.getDriverConfig(), dummyPSymbol, null)
-                .create(projectUrl.getUrl());
-
-        final long startTime = System.currentTimeMillis();
-        final ConnectorManager connectors = ctxHandler.createContext();
-
-        final List<ExecuteResult> outputs = new ArrayList<>();
-
-        boolean preSuccess = executePreSteps(connectors, testCase, testCase.getPreSteps());
-
-        // execute the steps as long as they do not fail
-        int failedStepIndex = 0;
-
-        if (preSuccess) {
-            for (int i = 0; i < testCase.getSteps().size(); i++) {
-                final TestCaseStep step = testCase.getSteps().get(i);
-
-                ExecuteResult result = executeStep(connectors, testCase, step);
-                if (!result.isSuccess() && step.isShouldFail()) {
-                    result = new ExecuteResult(true, result.getOutput(), result.getTime());
-                }
-
-                outputs.add(result);
-                failedStepIndex = i;
-                if (!result.isSuccess()) {
-                    break;
-                }
-            }
-        } else {
-            failedStepIndex = -1;
-        }
-
-        // the remaining steps after the failing step are not executed
-        while (failedStepIndex + 1 < testCase.getSteps().size()) {
-            outputs.add(new ExecuteResult(false, "Not executed"));
-            failedStepIndex++;
-        }
-
-        executePostSteps(connectors, testCase, testCase.getPostSteps());
-
-        connectors.dispose();
-        connectors.post();
-        final long time = System.currentTimeMillis() - startTime;
-
-        final List<TestExecutionResult> sulOutputs = outputs.stream()
-                .map(TestExecutionResult::new)
-                .collect(Collectors.toList());
-
-        boolean passed = true;
-        for (int i = 0; i < outputs.size(); i++) {
-            final ExecuteResult output = outputs.get(i);
-            passed = passed & output.isSuccess();
-
-            final TestCaseStep step = testCase.getSteps().get(i);
-            sulOutputs.get(i).setSymbol(step.getPSymbol().getSymbol());
-        }
-
-        final TestCaseResult result = new TestCaseResult(testCase, sulOutputs, passed, time);
-        results.put(testCase.getId(), result);
-
-        LOGGER.info(LoggerMarkers.LEARNER, "Finished executing test[id={}], passed=" + String.valueOf(passed), testCase.getId());
-        return result;
-    }
-
-    private boolean executePreSteps(ConnectorManager connectors, TestCase testCase, List<TestCaseStep> preSteps) {
-        for (TestCaseStep preStep : preSteps) {
-            final ExecuteResult result = executeStep(connectors, testCase, preStep);
-            if (!result.isSuccess()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private void executePostSteps(ConnectorManager connectors, TestCase testCase, List<TestCaseStep> postSteps) {
-        for (TestCaseStep postStep : postSteps) {
-            executeStep(connectors, testCase, postStep);
+        if (testThreads.containsKey(projectId)) {
+            final TestThread testThread = testThreads.get(projectId);
+            testThread.abort(reportId);
         }
     }
 
-    private ExecuteResult executeStep(ConnectorManager connectors, TestCase testCase, TestCaseStep step) {
-        final VariableStoreConnector variableStore = connectors.getConnector(VariableStoreConnector.class);
-        final CounterStoreConnector counterStore = connectors.getConnector(CounterStoreConnector.class);
-
-        try {
-            // here, the values for the parameters of the symbols are set
-            step.getPSymbol().getParameterValues().stream()
-                    .filter(value -> value.getValue() != null)
-                    .forEach(value -> {
-                        final String valueWithVariables =
-                                SearchHelper.insertVariableValues(connectors, testCase.getProjectId(), value.getValue());
-
-                        if (value.getParameter().getParameterType().equals(SymbolParameter.ParameterType.STRING)) {
-                            variableStore.set(value.getParameter().getName(), valueWithVariables);
-                        } else {
-                            counterStore.set(testCase.getProject().getId(), value.getParameter()
-                                    .getName(), Integer.valueOf(valueWithVariables));
-                        }
-                    });
-
-            return step.execute(connectors);
-        } catch (Exception e) {
-            return new ExecuteResult(false);
-        }
+    public TestExecutor createTestExecutor() {
+        return new TestExecutor(contextHandlerFactory, environmentDAO);
     }
 }

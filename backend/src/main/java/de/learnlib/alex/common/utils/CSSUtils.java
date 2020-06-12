@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,10 @@ package de.learnlib.alex.common.utils;
 public final class CSSUtils {
 
     /** ASCII Code for the unit separator character, which is not really printable. */
-    public static final int UNIT_SEPARATOR_CHARACTER = 31;
+    private static final int UNIT_SEPARATOR_CHARACTER = 31;
 
     /** ASCII Code for the delete character, which is not really printable. */
-    public static final int DELETE_CHARACTER = 127;
+    private static final int DELETE_CHARACTER = 127;
 
     /**
      * Deactivate the constructor because this is a utility class.

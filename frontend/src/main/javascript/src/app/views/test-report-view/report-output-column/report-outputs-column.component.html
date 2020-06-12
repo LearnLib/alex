@@ -1,0 +1,56 @@
+<div class="d-flex flex-row">
+  <div *ngIf="collapse" class="w-100">
+    <span
+      *ngFor="let output of outputs"
+      [ngClass]="{'badge-success': output.success,'badge-danger':!output.success}"
+      class="badge d-inline-block"
+      style="margin-left: 3px"
+    >
+        {{output.output}}
+    </span>
+  </div>
+  <div *ngIf="!collapse" class="w-100">
+    <table class="table table-hollow">
+      <tbody>
+      <tr *ngFor="let output of outputs">
+        <td class="text-right" style="width: 1px">
+          <a
+            [routerLink]="['/app', 'projects', project.id, 'symbols', output.symbol.id]"
+            class="badge badge-secondary cursor-pointer"
+          >
+            {{output.symbol.name}}
+          </a>
+        </td>
+        <td class="w-100">
+          <span
+            [ngClass]="{'badge-success': output.success,'badge-danger':!output.success}"
+            class="badge"
+          >
+            {{output.output}}
+          </span>
+          <output-error-trace [output]="output" [showFirst]="false"></output-error-trace>
+        </td>
+        <td style="width: 1px">
+          <i
+            (click)="showResultDetails(output)"
+            class="fa fa-fw fa-search cursor-pointer result-details-icon"
+            ngbTooltip="Details"
+            placement="left"
+          >
+          </i>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div>
+    <i
+      (click)="toggleCollapse()"
+      [ngClass]="{'fa-caret-square-down': !collapse, 'fa-caret-square-right': collapse}"
+      class="fas fa-fw cursor-pointer"
+      ngbTooltip="Details"
+      placement="left"
+    >
+    </i>
+  </div>
+</div>

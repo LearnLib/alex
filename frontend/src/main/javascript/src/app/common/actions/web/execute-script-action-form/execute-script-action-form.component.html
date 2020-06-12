@@ -1,0 +1,37 @@
+<h5>
+  <strong>Execute JavaScript</strong>
+</h5>
+
+<p class="text-muted">Execute JavaScript in the browser and store the return value in a variable.</p>
+<hr>
+
+<div class="form-group">
+  <label>JavaScript</label>
+
+  <div
+    ace-editor
+    [(text)]="action.script"
+    [theme]="'eclipse'"
+    [mode]="'text'"
+    style="min-height: 200px; width:100%; overflow: auto;"
+  >
+  </div>
+</div>
+
+<div class="form-group form-check">
+  <label class="form-check-label">
+    <input [(ngModel)]="action.async" class="form-check-input" name="async" type="checkbox"> Async
+  </label>
+</div>
+
+<div class="form-group">
+  <label>Variable</label>
+  <input [(ngModel)]="action.name" class="form-control" placeholder="The variable the return value can be saved in"
+         type="text">
+</div>
+
+<div class="form-group">
+  <label>Script timeout (seconds)</label>
+  <input [(ngModel)]="action.timeout" class="form-control" min="0" placeholder="The maximum time to wait for a result"
+         type="number">
+</div>

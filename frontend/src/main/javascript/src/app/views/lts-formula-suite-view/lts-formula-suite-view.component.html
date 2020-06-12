@@ -1,0 +1,85 @@
+<div class="view">
+  <action-bar>
+    <div class="d-flex flex-row align-items-center">
+      <selectable-checkbox-multiple [selectable]="formulasSelectable"></selectable-checkbox-multiple>
+      <div class="w-100 ml-3">
+        <button class="btn btn-sm btn-primary mr-2" (click)="createFormula()">
+          Create
+        </button>
+
+        <div class="btn-group btn-group-sm">
+          <button
+            class="btn btn-default"
+            (click)="editFormula(formulasSelectable.getSelected()[0])"
+            [disabled]="formulasSelectable.getSelected().length !== 1"
+          >
+            Edit
+          </button>
+          <button
+            class="btn btn-default"
+            (click)="moveFormulas(formulasSelectable.getSelected())"
+            [disabled]="formulasSelectable.getSelected().length === 0"
+          >
+            Move
+          </button>
+          <button
+            class="btn btn-default"
+            (click)="deleteFormulas(formulasSelectable.getSelected())"
+            [disabled]="formulasSelectable.getSelected().length === 0"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </action-bar>
+
+  <div class="view-body">
+    <div class="container-fluid">
+
+      <div class="d-flex flex-row align-items-center">
+        <a
+          class="btn btn-default btn-sm mr-3"
+          [routerLink]="['..']"
+        >
+          <i class="fas fa-fw fa-level-up-alt"></i>
+        </a>
+        <h4 class="m-0">
+          <strong>{{suite?.name}}</strong>
+        </h4>
+      </div>
+      <hr>
+
+      <div class="list-group" *ngIf="suite?.formulas.length > 0">
+        <div class="list-group-item d-flex flex-row" *ngFor="let f of suite.formulas">
+          <selectable-checkbox [selectable]="formulasSelectable" [item]="f" class="mr-3"></selectable-checkbox>
+          <div class="w-100">
+            <div *ngIf="f.name != null && f.name !== ''">
+              <strong>{{f.name}}</strong>
+            </div>
+            <div>{{f.formula}}</div>
+          </div>
+          <div class="ml-3">
+            <div class="d-inline-block" ngbDropdown placement="bottom-right">
+              <button class="btn btn-sm btn-icon no-caret" ngbDropdownToggle>
+                <i class="fas fa-fw fa-bars"></i>
+              </button>
+              <div ngbDropdownMenu>
+                <button (click)="editFormula(f)" ngbDropdownItem>
+                  <i class="fas fa-fw fa-edit"></i> Edit
+                </button>
+                <button (click)="deleteFormula(f)" ngbDropdownItem>
+                  <i class="fas fa-fw fa-trash"></i> Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="suite?.formulas.length === 0" class="alert alert-info">
+        There aren't any formulas in this suite yet.
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,46 +16,51 @@
 
 package de.learnlib.alex.testing.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * The class that contains the current status of a test process.
  */
 public class TestStatus {
 
-    /** If the test process is active for a given user and project. */
-    private boolean active;
+    private List<TestQueueItem> testRunQueue;
 
-    /** The test report that contains intermediate results. */
-    private TestReport report;
+    private TestQueueItem currentTestRun;
 
-    /** The number of tests in queue. */
-    private int testsInQueue;
+    /** The test(suite) that is currently being executed. */
+    private Test currentTest;
 
     /** Constructor. */
     public TestStatus() {
-        this.testsInQueue = 0;
+        testRunQueue = new ArrayList<>();
     }
 
-    public int getTestsInQueue() {
-        return testsInQueue;
+    public TestQueueItem getCurrentTestRun() {
+        return currentTestRun;
     }
 
-    public void setTestsInQueue(int testsInQueue) {
-        this.testsInQueue = testsInQueue;
+    public void setCurrentTestRun(TestQueueItem currentTestRun) {
+        this.currentTestRun = currentTestRun;
+    }
+
+    public List<TestQueueItem> getTestRunQueue() {
+        return testRunQueue;
+    }
+
+    public void setTestRunQueue(List<TestQueueItem> testRunQueue) {
+        this.testRunQueue = testRunQueue;
     }
 
     public boolean isActive() {
-        return active;
+        return !(testRunQueue.isEmpty() && currentTestRun == null && currentTest == null);
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public Test getCurrentTest() {
+        return currentTest;
     }
 
-    public TestReport getReport() {
-        return report;
-    }
-
-    public void setReport(TestReport report) {
-        this.report = report;
+    public void setCurrentTest(Test currentTest) {
+        this.currentTest = currentTest;
     }
 }

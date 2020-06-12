@@ -1,0 +1,32 @@
+<h5><strong>Assert counter</strong></h5>
+
+<p class="text-muted">
+  Compare the value of a counter with another integer value.
+</p>
+<hr>
+<div class="form-group">
+  <label>Name</label>
+  <input
+    [(ngModel)]="action.name"
+    class="form-control"
+    placeholder="The name of the counter"
+    type="text"
+  >
+</div>
+<div class="form-group">
+  <label>Operator</label>
+  <select [(ngModel)]="action.operator" class="form-control">
+    <option [value]="null" disabled>Select an operator</option>
+    <option *ngFor="let m of ['LESS_THAN', 'LESS_OR_EQUAL', 'EQUAL', 'GREATER_OR_EQUAL', 'GREATER_THAN']"
+            [value]="m">{{m}}</option>
+  </select>
+</div>
+<div class="form-group">
+  <label>Value</label>
+  <input
+    [(ngModel)]="action.value"
+    class="form-control"
+    placeholder="The integer to compare to"
+    type="number"
+  >
+</div>

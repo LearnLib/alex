@@ -1,0 +1,33 @@
+<div *ngIf="report != null" [ngSwitch]="report.status">
+
+  <div *ngSwitchCase="'FINISHED'">
+    <div *ngIf="!report.passed" class="alert alert-danger">
+      <i class="fas fa-fw fa-exclamation-circle mr-1"></i> <strong>The test run failed.</strong>
+      <a [routerLink]="['/app', 'projects', appStore.project.id, 'tests', 'reports', report.id]">
+        (Show report)
+      </a>
+    </div>
+    <div *ngIf="report.passed" class="alert alert-success">
+      <i class="fas fa-fw fa-check mr-1"></i> <strong>The test run succeeded.</strong>
+      <a [routerLink]="['/app', 'projects', appStore.project.id, 'tests', 'reports', report.id]">
+        (Show report)
+      </a>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="'ABORTED'" class="alert alert-danger">
+    <strong>The rest run has been aborted.</strong>
+    <a [routerLink]="['/app', 'projects', appStore.project.id, 'tests', 'reports', report.id]">
+      (Show report)
+    </a>
+  </div>
+
+  <div class="alert alert-info d-flex flex-row align-items-center" *ngSwitchDefault>
+    <i class="fas fa-fw fa-spin fa-circle-notch"></i>
+    <a class="w-100 ml-2" [routerLink]="['/app', 'projects', appStore.project.id, 'tests', 'reports', report.id]">Report {{report.id}}</a>
+    <span class="btn btn-info btn-sm ml-2 text-nowrap">{{report.status | normalizeUpperCase}}</span>
+    <button class="btn btn-sm btn-info ml-2 text-nowrap" *ngIf="canAbort()" (click)="abort()">Abort</button>
+  </div>
+
+  <hr>
+</div>

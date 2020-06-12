@@ -1,0 +1,28 @@
+<div class="modal-header">
+  <h4 class="modal-title">Edit project <strong>{{project.name}}</strong></h4>
+  <a (click)="modal.dismiss()" class="btn btn-icon float-right">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<form (ngSubmit)="updateProject()" [formGroup]="form">
+
+  <div class="modal-body">
+    <div *ngIf="errorMessage != null" class="alert alert-danger">
+      {{errorMessage}}
+    </div>
+
+    <project-form-groups [form]="form" [project]="project"></project-form-groups>
+
+    <hr>
+    <div class="text-muted">
+      <em>* These fields are required</em>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-primary btn-sm" type="submit" [disabled]="form.invalid">Update</button>
+    <button (click)="modal.dismiss(); $event.stopPropagation()" class="btn btn-default btn-sm">Cancel</button>
+  </div>
+
+</form>

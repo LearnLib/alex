@@ -1,0 +1,60 @@
+<div class="card">
+  <div class="card-header">
+    <strong>Latest learner result</strong>
+  </div>
+  <div class="card-body">
+
+    <div *ngIf="result != null">
+      <table class="table">
+        <tbody>
+        <tr>
+          <td><strong>Date</strong></td>
+          <td>{{(result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm')}}</td>
+        </tr>
+        <tr>
+          <td><strong>Executed by</strong></td>
+          <td>{{result.executedBy ? result.executedBy.username : "deleted/unknown user"}}</td>
+        </tr>
+        <tr>
+          <td><strong>Status</strong></td>
+          <td>
+            <div *ngIf="result.error">
+              <span class="badge badge-danger">Error</span>
+            </div>
+            <div *ngIf="!result.error">
+              <span class="badge badge-success">Success</span>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <div style="line-height: 2.4rem">
+        <a
+          [routerLink]="['learner']"
+          [queryParams]="{testNo: result.testNo}"
+          class="btn btn-default mr-md-2 btn-block btn-md-sm"
+        >
+          <i class="fas fa-fw fa-play"></i> Continue learning
+        </a>
+        <a
+          [routerLink]="['learner', 'results', result.id]"
+          class="btn btn-default mr-md-2 btn-block btn-md-sm"
+        >
+          <i class="fas fa-fw fa-eye"></i> Show result
+        </a>
+        <a
+          [routerLink]="['learner', 'statistics', result.testNo]"
+          class="btn btn-default mr-md-2 btn-block btn-md-sm"
+        >
+          <i class="fas fa-fw fa-chart-bar"></i> Show statistics
+        </a>
+      </div>
+
+    </div>
+    <div *ngIf="result == null" class="alert alert-info mb-0">
+      There are no learner results.
+    </div>
+
+  </div>
+</div>

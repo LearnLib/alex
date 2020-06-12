@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,54 +16,24 @@
 
 package de.learnlib.alex.learning.services;
 
+import de.learnlib.alex.data.entities.ProjectEnvironment;
+import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.actions.Credentials;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class to mange a URL and get URL based on this.
  */
 public class BaseUrlManager {
 
-    /** The base url of the connection. All other urls just extends this. */
-    private String baseUrl;
+    private Map<String, ProjectUrl> urlMap;
 
-    /**
-     * Advanced constructor which sets the base url field.
-     *
-     * @param baseUrl
-     *         The base url to use.
-     */
-    public BaseUrlManager(String baseUrl) {
-        this.baseUrl = baseUrl;
-    }
-
-    /**
-     * Get the base url of the API to call. All absolute paths will be based on this!
-     *
-     * @return The current base url.
-     */
-    public String getBaseUrl() {
-        return baseUrl;
-    }
-
-    /**
-     * Set the base url. All absolute paths will be based on this!
-     *
-     * @param baseUrl
-     *         The new base url to use.
-     */
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
-    }
-
-    /**
-     * Get the absolute URL of a path, i.e. based on the base url (base url + '/' + path'), as String.
-     *
-     * @param path
-     *         The path to append on the base url.
-     * @return An absolute URL as String
-     */
-    public String getAbsoluteUrl(String path) {
-        return combineUrls(baseUrl, path);
+    /** Advanced constructor which sets the base url field. */
+    public BaseUrlManager(ProjectEnvironment environment) {
+        this.urlMap = new HashMap<>();
+        environment.getUrls().forEach(u -> this.urlMap.put(u.getName(), u));
     }
 
     /**
@@ -76,19 +46,14 @@ public class BaseUrlManager {
      *         The credentials to insert into the URL.
      * @return An absolute URL as String
      */
-    public String getAbsoluteUrl(String path, Credentials credentials) {
-        String url = combineUrls(baseUrl, path);
+    public String getAbsoluteUrl(String urlName, String path, Credentials credentials) {
+        final String url = combineUrls(urlMap.get(urlName).getUrl(), path);
         return BaseUrlManager.getUrlWithCredentials(url, credentials);
     }
 
-    public static String getUrlWithCredentials(String url, Credentials credentials) {
-        if (credentials != null && credentials.areValid()) {
-            return url.replaceFirst("^(http[s]?://)", "$1"
-                    + credentials.getName() + ":"
-                    + credentials.getPassword() + "@");
-        } else {
-            return url;
-        }
+    public String getAbsoluteUrl(String urlName, String path) {
+        final String url = combineUrls(urlMap.get(urlName).getUrl(), path);
+        return BaseUrlManager.getUrlWithCredentials(url, null);
     }
 
     /**
@@ -113,4 +78,13 @@ public class BaseUrlManager {
         }
     }
 
+    private static String getUrlWithCredentials(String url, Credentials credentials) {
+        if (credentials != null && credentials.areValid()) {
+            return url.replaceFirst("^(http[s]?://)", "$1"
+                    + credentials.getName() + ":"
+                    + credentials.getPassword() + "@");
+        } else {
+            return url;
+        }
+    }
 }

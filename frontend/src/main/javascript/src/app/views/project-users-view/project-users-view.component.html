@@ -1,0 +1,103 @@
+<div class="view">
+  <action-bar>
+    <div class="d-flex flex-row align-items-center">
+
+      <div class="mr-3">
+        <selectable-checkbox-multiple
+          [selectable]="store.usersSelectable"
+        >
+        </selectable-checkbox-multiple>
+      </div>
+
+      <button
+        (click)="store.addUser()"
+        class="btn btn-primary btn-sm mr-2"
+      >
+        Add User
+      </button>
+
+      <div class="btn-group btn-group-sm mr-2">
+        <button
+          (click)="store.promoteMembers(store.usersSelectable.getSelected())"
+          [disabled]="store.usersSelectable.getSelected().length <= 0 || store.isOwnerSelected()"
+          class="btn btn-default"
+        >
+          Promote
+        </button>
+        <button
+          (click)="store.demoteOwners(store.usersSelectable.getSelected())"
+          [disabled]="store.usersSelectable.getSelected().length <= 0 || store.isMemberSelected()"
+          class="btn btn-default"
+        >
+          Demote
+        </button>
+      </div>
+      <div class="mr-3">
+        <button
+          (click)="store.removeUsers(store.usersSelectable.getSelected())"
+          [disabled]="store.usersSelectable.getSelected().length <= 0 || (store.isMemberSelected() && store.isOwnerSelected())"
+          class="btn btn-danger btn-sm mr-2"
+        >
+          Remove User(s)
+        </button>
+      </div>
+
+    </div>
+  </action-bar>
+
+  <div class="view-body">
+    <div class="container-fluid">
+
+      <table class="table">
+
+        <thead>
+        <tr>
+          <th width="1">&nbsp;</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Role</th>
+        </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let user of (store.owners$ | async)">
+            <td>
+              <selectable-checkbox
+                [item]="user"
+                [selectable]="store.usersSelectable"
+              >
+              </selectable-checkbox>
+            </td>
+            <td class="text-break">{{user.username}}</td>
+            <td class="text-break">{{user.email}}</td>
+            <td>
+              <span [ngClass]="'badge-danger'" class="badge">
+                Owner
+              </span>
+            </td>
+          </tr>
+          <tr *ngFor="let user of (store.members$ | async)">
+            <td>
+              <selectable-checkbox
+                [item]="user"
+                [selectable]="store.usersSelectable"
+              >
+              </selectable-checkbox>
+            </td>
+            <td>{{user.username}}</td>
+            <td>{{user.email}}</td>
+            <td>
+              <span [ngClass]="'badge-primary'" class="badge">
+                Member
+              </span>
+            </td>
+          </tr>
+        </tbody>
+
+      </table>
+
+    </div>
+  </div>
+
+
+</div>

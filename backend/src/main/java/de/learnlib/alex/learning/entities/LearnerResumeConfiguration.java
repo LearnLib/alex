@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,11 @@ package de.learnlib.alex.learning.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
+import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,16 +30,15 @@ import java.util.stream.Collectors;
 /**
  * Entity to hold the information needed to resume a learning process.
  */
-public class LearnerResumeConfiguration extends AbstractLearnerConfiguration implements Serializable {
+public class LearnerResumeConfiguration {
 
-    private static final long serialVersionUID = 2713088191086667675L;
-
-    /** The test no from where to continue. */
+    /** The type of EQ oracle to find a counter example. */
     @NotNull
-    private Long testNo;
+    protected AbstractEquivalenceOracleProxy eqOracle;
 
     /** The step number from where to continue. */
     @NotNull
+    @Min(0)
     private int stepNo;
 
     /** The ids of the symbols to add. */
@@ -50,10 +50,13 @@ public class LearnerResumeConfiguration extends AbstractLearnerConfiguration imp
         this.symbolsToAdd = new ArrayList<>();
     }
 
-    @Override
     public void checkConfiguration() throws IllegalArgumentException {
         // one should be able to continue learning if the sample eq oracle is used without
         // having specified a counterexample if a new symbol is added.
+        if (eqOracle == null) {
+            throw new IllegalArgumentException("Could not find an EQ oracle.");
+        }
+
         if (eqOracle instanceof SampleEQOracleProxy) {
             try {
                 eqOracle.checkParameters();
@@ -63,7 +66,7 @@ public class LearnerResumeConfiguration extends AbstractLearnerConfiguration imp
                 }
             }
         } else {
-            super.check();
+            eqOracle.checkParameters();
         }
 
         if (stepNo <= 0) {
@@ -79,12 +82,12 @@ public class LearnerResumeConfiguration extends AbstractLearnerConfiguration imp
         this.stepNo = stepNo;
     }
 
-    public Long getTestNo() {
-        return testNo;
+    public AbstractEquivalenceOracleProxy getEqOracle() {
+        return eqOracle;
     }
 
-    public void setTestNo(Long testNo) {
-        this.testNo = testNo;
+    public void setEqOracle(AbstractEquivalenceOracleProxy eqOracle) {
+        this.eqOracle = eqOracle;
     }
 
     public List<ParameterizedSymbol> getSymbolsToAdd() {

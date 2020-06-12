@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,6 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
@@ -102,24 +101,6 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
         assertThat(counters.size(), is(equalTo(2)));
         assertThat(counters, hasItem(equalTo(counter1)));
         assertThat(counters, hasItem(equalTo(counter2)));
-    }
-
-    @Test
-    public void shouldFetchCountersOfAProjectByTheirNames() {
-        Counter counter1 = createCounter(project, "TestCounter1");
-        counter1 = counterRepository.save(counter1);
-        Counter counter2 = createCounter(project, "TestCounter2");
-        counter2 = counterRepository.save(counter2);
-        Counter counter3 = createCounter(project, "TestCounter3");
-        counter3 = counterRepository.save(counter3);
-
-        List<Counter> counters = counterRepository.findAllByProjectAndNameIn(project,
-                "TestCounter1", "TestCounter3");
-
-        assertThat(counters.size(), is(equalTo(2)));
-        assertThat(counters, hasItem(equalTo(counter1)));
-        assertThat(counters, not(hasItem(equalTo(counter2))));
-        assertThat(counters, hasItem(equalTo(counter3)));
     }
 
     @Test

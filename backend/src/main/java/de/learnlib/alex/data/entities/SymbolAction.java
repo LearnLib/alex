@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.learnlib.alex.common.utils.SearchHelper;
 import de.learnlib.alex.data.entities.actions.misc.AssertCounterAction;
 import de.learnlib.alex.data.entities.actions.misc.AssertVariableAction;
+import de.learnlib.alex.data.entities.actions.misc.CreateLabelAction;
 import de.learnlib.alex.data.entities.actions.misc.IncrementCounterAction;
+import de.learnlib.alex.data.entities.actions.misc.JumpToLabelAction;
 import de.learnlib.alex.data.entities.actions.misc.SetCounterAction;
 import de.learnlib.alex.data.entities.actions.misc.SetVariableAction;
 import de.learnlib.alex.data.entities.actions.misc.SetVariableByCookieAction;
@@ -56,6 +58,8 @@ import de.learnlib.alex.data.entities.actions.web.ClearAction;
 import de.learnlib.alex.data.entities.actions.web.ClickAction;
 import de.learnlib.alex.data.entities.actions.web.ClickElementByTextAction;
 import de.learnlib.alex.data.entities.actions.web.ClickLinkAction;
+import de.learnlib.alex.data.entities.actions.web.DragAndDropAction;
+import de.learnlib.alex.data.entities.actions.web.DragAndDropByAction;
 import de.learnlib.alex.data.entities.actions.web.ExecuteScriptAction;
 import de.learnlib.alex.data.entities.actions.web.FillAction;
 import de.learnlib.alex.data.entities.actions.web.GotoAction;
@@ -68,6 +72,7 @@ import de.learnlib.alex.data.entities.actions.web.SwitchToFrameAction;
 import de.learnlib.alex.data.entities.actions.web.UploadFileAction;
 import de.learnlib.alex.data.entities.actions.web.WaitForNodeAction;
 import de.learnlib.alex.data.entities.actions.web.WaitForNodeAttributeAction;
+import de.learnlib.alex.data.entities.actions.web.WaitForScriptAction;
 import de.learnlib.alex.data.entities.actions.web.WaitForTextAction;
 import de.learnlib.alex.data.entities.actions.web.WaitForTitleAction;
 import de.learnlib.alex.data.entities.actions.web.WebSymbolAction;
@@ -117,6 +122,8 @@ import java.util.Objects;
         @JsonSubTypes.Type(name = "setVariableByNodeCount", value = SetVariableByNodeCountAction.class),
         @JsonSubTypes.Type(name = "setVariableByRegexGroup", value = SetVariableByRegexGroupAction.class),
         @JsonSubTypes.Type(name = "setVariableByHttpStatus", value = SetVariableByHttpStatusAction.class),
+        @JsonSubTypes.Type(name = "createLabel", value = CreateLabelAction.class),
+        @JsonSubTypes.Type(name = "jumpToLabel", value = JumpToLabelAction.class),
         // Web Actions
         @JsonSubTypes.Type(name = "web", value = WebSymbolAction.class),
         @JsonSubTypes.Type(name = "web_alertAcceptDismiss", value = AlertAcceptDismissAction.class),
@@ -132,6 +139,8 @@ import java.util.Objects;
         @JsonSubTypes.Type(name = "web_click", value = ClickAction.class),
         @JsonSubTypes.Type(name = "web_clickElementByText", value = ClickElementByTextAction.class),
         @JsonSubTypes.Type(name = "web_clickLinkByText", value = ClickLinkAction.class),
+        @JsonSubTypes.Type(name = "web_dragAndDrop", value = DragAndDropAction.class),
+        @JsonSubTypes.Type(name = "web_dragAndDropBy", value = DragAndDropByAction.class),
         @JsonSubTypes.Type(name = "web_executeScript", value = ExecuteScriptAction.class),
         @JsonSubTypes.Type(name = "web_fill", value = FillAction.class),
         @JsonSubTypes.Type(name = "web_goto", value = GotoAction.class),
@@ -146,6 +155,7 @@ import java.util.Objects;
         @JsonSubTypes.Type(name = "web_waitForNode", value = WaitForNodeAction.class),
         @JsonSubTypes.Type(name = "web_waitForNodeAttribute", value = WaitForNodeAttributeAction.class),
         @JsonSubTypes.Type(name = "web_waitForText", value = WaitForTextAction.class),
+        @JsonSubTypes.Type(name = "web_waitForScript", value = WaitForScriptAction.class),
         // REST Actions
         @JsonSubTypes.Type(name = "rest", value = RESTSymbolAction.class),
         @JsonSubTypes.Type(name = "rest_call", value = CallAction.class),

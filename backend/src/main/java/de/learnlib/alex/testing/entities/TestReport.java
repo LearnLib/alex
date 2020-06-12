@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,19 @@ package de.learnlib.alex.testing.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.ProjectEnvironment;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -43,6 +47,14 @@ public class TestReport implements Serializable {
     /** The date formatter for the report. */
     private static final DateTimeFormatter DATE_TIME_FORMATTER =
             DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
+
+
+    public enum  Status {
+        PENDING,
+        IN_PROGRESS,
+        FINISHED,
+        ABORTED
+    }
 
     /** The id in the database. */
     @Id
@@ -65,10 +77,26 @@ public class TestReport implements Serializable {
     )
     private List<TestResult> testResults;
 
+    /** The environment that the test was executed in. */
+    @OneToOne(fetch = FetchType.EAGER)
+    private ProjectEnvironment environment;
+
+    private Status status;
+
+    /** The user defined description of the corresponding execution config. */
+    private String description;
+
+    /** The user who started the test. */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "executedById")
+    private User executedBy;
+
     /** Constructor. */
     public TestReport() {
         this.testResults = new ArrayList<>();
         this.startDate = ZonedDateTime.now();
+        this.status = Status.PENDING;
+        this.description = "";
     }
 
     public ZonedDateTime getStartDate() {
@@ -107,12 +135,38 @@ public class TestReport implements Serializable {
         this.project = new Project(projectId);
     }
 
+    public ProjectEnvironment getEnvironment() {
+        return environment;
+    }
+
+    public void setEnvironment(ProjectEnvironment environment) {
+        this.environment = environment;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public List<TestResult> getTestResults() {
         return testResults;
     }
 
     public void setTestResults(List<TestResult> testResults) {
         this.testResults = testResults;
+    }
+
+    @JsonProperty("executedBy")
+    public User getExecutedBy() {
+        return executedBy;
+    }
+
+    @JsonIgnore
+    public void setExecutedBy(User executedBy) {
+        this.executedBy = executedBy;
     }
 
     public Long getId() {
@@ -130,7 +184,7 @@ public class TestReport implements Serializable {
      */
     @Transient
     public boolean isPassed() {
-        return this.testResults.stream()
+        return this.status.equals(Status.FINISHED) && this.testResults.stream()
                 .map(TestResult::isPassed)
                 .reduce(true, (a, b) -> a && b);
     }
@@ -184,5 +238,13 @@ public class TestReport implements Serializable {
                 .filter(r -> r instanceof TestCaseResult)
                 .filter(TestResult::isPassed)
                 .count();
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }

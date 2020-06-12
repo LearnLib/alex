@@ -1,0 +1,78 @@
+<div class="modal-header">
+  <h4 class="modal-title">Create a new user</h4>
+  <a (click)="modal.dismiss()" class="btn btn-icon float-right">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<form (ngSubmit)="createUser()" [formGroup]="form">
+  <div class="modal-body">
+
+    <div *ngIf="errorMessage != null" class="alert alert-danger">
+      {{errorMessage}}
+    </div>
+
+    <div class="form-group">
+      <label>Username</label>
+      <input
+        class="form-control"
+        name="username"
+        placeholder="Username"
+        required
+        type="text"
+        [class.is-invalid]="formUtils.isInvalidFormControl(form.controls.username)"
+        [formControl]="form.controls.username"
+      >
+      <div class="invalid-feedback">
+        Please enter a username.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Email</label>
+      <input
+        class="form-control"
+        name="email"
+        placeholder="Email address"
+        required
+        type="email"
+        [class.is-invalid]="formUtils.isInvalidFormControl(form.controls.email)"
+        [formControl]="form.controls.email"
+      >
+      <div class="invalid-feedback">
+        Please enter an email address.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Password</label>
+      <input
+        class="form-control"
+        minlength="1"
+        name="password"
+        placeholder="Password"
+        required
+        type="password"
+        [class.is-invalid]="formUtils.isInvalidFormControl(form.controls.password)"
+        [formControl]="form.controls.password"
+      >
+      <div class="invalid-feedback">
+        Please enter a password.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Role</label>
+      <select [formControl]="form.controls.role" class="form-control" name="role">
+        <option [value]="'REGISTERED'">Registered</option>
+        <option [value]="'ADMIN'">Admin</option>
+      </select>
+    </div>
+
+  </div>
+
+  <div class="modal-footer text-right">
+    <button [disabled]="form.invalid" class="btn btn-primary btn-sm">Create</button>
+    <button (click)="modal.dismiss(); $event.stopPropagation()" class="btn btn-default btn-sm">Cancel</button>
+  </div>
+</form>

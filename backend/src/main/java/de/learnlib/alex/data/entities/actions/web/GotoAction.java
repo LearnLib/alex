@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,6 +52,9 @@ public class GotoAction extends WebSymbolAction {
     @NotBlank
     private String url;
 
+    @NotBlank
+    private String baseUrl;
+
     /**
      * Optional credentials to authenticate via HTTP basic auth.
      */
@@ -61,7 +64,7 @@ public class GotoAction extends WebSymbolAction {
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
         try {
-            connector.get(getURLWithVariableValues(), getCredentialsWithVariableValues());
+            connector.get(baseUrl, getURLWithVariableValues(), getCredentialsWithVariableValues());
             LOGGER.info(LoggerMarkers.LEARNER, "Could goto '{}'.", url);
             return getSuccessOutput();
         } catch (Exception e) {
@@ -113,4 +116,11 @@ public class GotoAction extends WebSymbolAction {
         this.credentials = credentials;
     }
 
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
 }

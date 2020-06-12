@@ -1,0 +1,67 @@
+<div class="view">
+  <action-bar>
+    <div class="d-flex flex-row align-items-center">
+      <selectable-checkbox-multiple [selectable]="store.formulasSelectable"></selectable-checkbox-multiple>
+      <div class="w-100 ml-3">
+        <button (click)="store.createSuite()" class="btn btn-sm btn-primary mr-2">
+          Create
+        </button>
+
+        <div class="btn-group btn-group-sm">
+          <button
+            (click)="store.editSuite(store.formulasSelectable.getSelected()[0])"
+            [disabled]="store.formulasSelectable.getSelected().length !== 1"
+            class="btn btn-default"
+          >
+            Edit
+          </button>
+          <button
+            (click)="store.deleteSelected()"
+            [disabled]="!store.formulasSelectable.isAnySelected()"
+            class="btn btn-default"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </action-bar>
+
+  <div class="view-body">
+    <div class="container-fluid">
+
+      <div *ngIf="(store.formulas$ | async).length > 0" class="list-group">
+        <div *ngFor="let suite of store.formulas$ | async" class="list-group-item d-flex flex-row align-items-center">
+          <div class="mr-3">
+            <selectable-checkbox [item]="suite" [selectable]="store.formulasSelectable"></selectable-checkbox>
+          </div>
+          <div class="w-100 mr-3">
+            <a [routerLink]="[suite.id]">
+              <i class="fas fa-fw fa-folder text-muted mr-2"></i>
+              <strong class="mb-0 mt-0">{{suite.name}}</strong>
+            </a>
+          </div>
+          <div>
+            <div class="d-inline-block" ngbDropdown placement="bottom-right">
+              <button class="btn btn-sm btn-icon no-caret" ngbDropdownToggle>
+                <i class="fas fa-fw fa-bars"></i>
+              </button>
+              <div ngbDropdownMenu>
+                <button (click)="store.editSuite(suite)" ngbDropdownItem>
+                  <i class="fas fa-fw fa-edit"></i> Edit
+                </button>
+                <button (click)="store.deleteSuite(suite)" ngbDropdownItem>
+                  <i class="fas fa-fw fa-trash"></i> Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="(store.formulas$ | async).length === 0" class="alert alert-info">
+        There aren't any formula suites.
+      </div>
+    </div>
+  </div>
+</div>

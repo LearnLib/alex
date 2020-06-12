@@ -1,0 +1,69 @@
+<div class="view">
+
+  <action-bar>
+    <div class="d-flex flex-row align-items-center">
+      <button
+        (click)="showSeparatingWord()"
+        [disabled]="panels.length !== 2"
+        class="btn btn-sm btn-default mr-2"
+      >
+        <i class="fas fa-fw fa-bolt"></i> Separating word
+      </button>
+
+      <button
+        (click)="showDifferenceTree()"
+        [disabled]="panels.length !== 2"
+        class="btn btn-sm btn-default"
+      >
+        <i class="fas fa-fw fa-sitemap"></i> Differences
+      </button>
+
+      <button
+        (click)="openResultListModal()"
+        class="btn btn-sm btn-success ml-auto"
+      >
+        <i class="fas fa-fw fa-plus"></i> Add hypothesis
+      </button>
+    </div>
+  </action-bar>
+
+  <div class="view-body p-0">
+
+    <div *ngIf="panels.length === 0" class="container">
+      <div (click)="openResultListModal()" class="alert alert-info m-3">
+        <i class="fas fa-plus-square fa-fw mr-2"></i>
+        <strong>Click to add a hypothesis</strong> or click on the green button on the top right
+      </div>
+    </div>
+
+    <div class="d-flex flex-column h-100" *ngIf="panels.length > 0">
+      <div>
+        <ul class="nav nav-tabs result-tabs">
+          <li class="nav-item" *ngFor="let panel of panels; let i = index">
+            <a class="nav-link" href="#" (click)="activePanel = i; $event.preventDefault()" [class.active]="i === activePanel">
+              Test {{panel.result.testNo}}
+
+              <i class="fas fa-fw fa-times cursor-pointer ml-2 close-icon" (click)="closePanel(i); $event.preventDefault()"></i>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link add-model" ngbTooltip="Add model" placement="right" href="#" (click)="openResultListModal(); $event.preventDefault()">
+              <i class="fas fa-fw fa-plus-square"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div style="flex-grow: 1; flex-basis: 0">
+        <learner-result-panel
+          *ngIf="activePanel != null"
+          (step)="panels[activePanel].step = $event;"
+          [result]="panels[activePanel].result"
+          [pointer]="panels[activePanel].step"
+        >
+        </learner-result-panel>
+      </div>
+    </div>
+
+  </div>
+
+</div>

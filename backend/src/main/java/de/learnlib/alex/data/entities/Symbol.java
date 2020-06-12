@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,13 @@ package de.learnlib.alex.data.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.common.Constants;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.common.utils.SearchHelper;
+import de.learnlib.alex.data.entities.actions.misc.CreateLabelAction;
+import de.learnlib.alex.data.entities.actions.misc.JumpToLabelAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
-import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
-import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.api.exception.SULException;
 import de.learnlib.mapper.api.ContextExecutableInput;
 import org.apache.logging.log4j.LogManager;
@@ -44,10 +46,12 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Representation of a symbol for the learning process. A Symbol is one unit which will be executed and it is made of a
@@ -101,6 +105,13 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     /** The list of output variables. */
     private List<SymbolOutputParameter> outputs;
 
+    /** The date when the symbol was updated the last time. */
+    @JsonIgnore
+    private ZonedDateTime updatedOn;
+
+    /** The last user who modified the symbol. */
+    private User lastUpdatedBy;
+
     /** Constructor. */
     public Symbol() {
         this.inputs = new ArrayList<>();
@@ -108,6 +119,9 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         this.steps = new ArrayList<>();
         this.expectedResult = "";
         this.description = "";
+        this.hidden = false;
+        this.updatedOn = ZonedDateTime.now();
+        this.lastUpdatedBy = null;
     }
 
     /**
@@ -273,7 +287,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      *
      * @return true if the symbol should be considered hidden; false otherwise.
      */
-    @JsonProperty
     public boolean isHidden() {
         return hidden;
     }
@@ -284,7 +297,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * @param hidden
      *         true if the symbol should be considered hidden; false otherwise.
      */
-    @JsonProperty
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
     }
@@ -344,34 +356,35 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         this.steps = steps;
     }
 
+    public ZonedDateTime getUpdatedOn() {
+        return updatedOn;
+    }
+
+    public void setUpdatedOn(ZonedDateTime updatedOn) {
+        this.updatedOn = updatedOn;
+    }
+
+    @Transient
+    @JsonProperty("updatedOn")
+    public String getUpdatedOnString() {
+        return updatedOn.format(Constants.DATE_TIME_FORMATTER);
+    }
+
+    @JsonProperty("updatedOn")
+    public void setUpdatedOnString(String updatedOnString) {
+        this.updatedOn = updatedOnString == null ? ZonedDateTime.now() : ZonedDateTime.parse(updatedOnString);
+    }
+
     @Override
-    public ExecuteResult execute(ConnectorManager connector) throws SULException {
+    public ExecuteResult execute(ConnectorManager connectors) throws SULException {
         LOGGER.info(LoggerMarkers.LEARNER, "Executing Symbol {} ({})...", String.valueOf(id), name);
 
         if (steps.isEmpty()) {
             return new ExecuteResult(false, "Not implemented");
         }
 
-        final VariableStoreConnector globalVariableStore = connector.getConnector(VariableStoreConnector.class);
-        final VariableStoreConnector localVariableStore = new VariableStoreConnector();
 
-        final CounterStoreConnector globalCounterStore = connector.getConnector(CounterStoreConnector.class);
-        final CounterStoreConnector localCounterStore = globalCounterStore.copy();
-
-        try {
-            // get the input variables from the global context
-            inputs.forEach(in -> {
-                if (in.getParameterType().equals(SymbolParameter.ParameterType.STRING)) {
-                    localVariableStore.set(in.getName(), globalVariableStore.get(in.getName()));
-                } else {
-                    localCounterStore.set(project.getId(), in.getName(), globalCounterStore.get(in.getName()));
-                }
-            });
-            connector.addConnector(localVariableStore);
-            connector.addConnector(localCounterStore);
-        } catch (IllegalStateException e) {
-            return new ExecuteResult(false, e.getMessage());
-        }
+        final Map<String, Integer> labels = getLabelsMap();
 
         // assume the output is ok until proven otherwise
         ExecuteResult result = new ExecuteResult(true);
@@ -381,29 +394,28 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
             final SymbolStep step = steps.get(i);
 
             if (!step.isDisabled()) {
-
-                // save dummy variables in the local context so that outputs of executed symbols are saved
-                if (step instanceof SymbolPSymbolStep) {
-                    ((SymbolPSymbolStep) step).getPSymbol().getSymbol().getOutputs().forEach(out -> {
-                        if (out.getParameterType().equals(SymbolParameter.ParameterType.STRING)
-                                && !localVariableStore.contains(out.getName())) {
-                            localVariableStore.set(out.getName(), "");
-                        }
-                    });
-                }
-
-                final ExecuteResult stepResult = step.execute(i, connector);
+                final ExecuteResult stepResult = step.execute(i, connectors);
 
                 if (!stepResult.isSuccess() && !step.isIgnoreFailure()) {
+                    if (step instanceof SymbolActionStep && ((SymbolActionStep) step).getAction() instanceof JumpToLabelAction) {
+                        continue;
+                    }
+
                     result = stepResult;
 
                     if (step.errorOutput != null && !step.errorOutput.equals("")) {
-                        result.setMessage(SearchHelper.insertVariableValues(connector, getProjectId(), step.errorOutput));
+                        result.setMessage(SearchHelper.insertVariableValues(connectors, getProjectId(), step.errorOutput));
                     } else {
                         result.setMessage(String.valueOf(i + 1));
                     }
+                    result.addTrace(this, result);
 
                     break;
+                } else {
+                    if (step instanceof SymbolActionStep && ((SymbolActionStep) step).getAction() instanceof JumpToLabelAction) {
+                        final String label = ((JumpToLabelAction) ((SymbolActionStep) step).getAction()).getLabel();
+                        i = labels.get(label);
+                    }
                 }
             }
         }
@@ -413,31 +425,11 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         // proper values.
         if (result.isSuccess()) {
             if (successOutput != null && !successOutput.trim().equals("")) {
-                result.setMessage(SearchHelper.insertVariableValues(connector, project.getId(), successOutput));
+                result.setMessage(SearchHelper.insertVariableValues(connectors, project.getId(), successOutput));
             }
         }
 
         LOGGER.info(LoggerMarkers.LEARNER, "Executed the Symbol {} ({}) => {}.", String.valueOf(id), name, result);
-
-        // set the values of the outputs to the global context
-        if (result.isSuccess()) {
-            try {
-                globalVariableStore.merge(localVariableStore, outputs.stream()
-                        .filter(out -> out.getParameterType().equals(SymbolParameter.ParameterType.STRING))
-                        .map(SymbolParameter::getName)
-                        .collect(Collectors.toList()));
-
-                globalCounterStore.merge(localCounterStore, outputs.stream()
-                        .filter(out -> out.getParameterType().equals(SymbolParameter.ParameterType.COUNTER))
-                        .map(SymbolParameter::getName)
-                        .collect(Collectors.toList())
-                );
-            } catch (IllegalStateException e) {
-                return new ExecuteResult(false, e.getMessage());
-            }
-        }
-        connector.addConnector(globalVariableStore);
-        connector.addConnector(globalCounterStore);
 
         return result;
     }
@@ -481,6 +473,48 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         } else if (parameter instanceof SymbolOutputParameter) {
             this.outputs.remove(parameter);
         }
+    }
+
+    @Transient
+    private Map<String, Integer> getLabelsMap() {
+        final Map<String, Integer> labelsMap = new HashMap<>();
+
+        for (int i = 0; i < steps.size(); i++) {
+            final SymbolStep step = steps.get(i);
+            if (step instanceof SymbolActionStep && ((SymbolActionStep) step).getAction() instanceof CreateLabelAction) {
+                final String label = ((CreateLabelAction) ((SymbolActionStep) step).getAction()).getLabel();
+                labelsMap.put(label, i);
+            }
+        }
+
+        return labelsMap;
+    }
+
+    public SymbolInputParameter findInputByNameAndType(String name, SymbolParameter.ParameterType type) {
+        return this.inputs.stream()
+                .filter(i -> i.name.equals(name) && i.parameterType.equals(type))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public SymbolOutputParameter findOutputByNameAndType(String name, SymbolParameter.ParameterType type) {
+        return this.outputs.stream()
+                .filter(i -> i.name.equals(name) && i.parameterType.equals(type))
+                .findFirst()
+                .orElse(null);
+    }
+
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "lastUpdatedById")
+    @JsonProperty("lastUpdatedBy")
+    public User getlastUpdatedBy() {
+        return this.lastUpdatedBy;
+    }
+
+    @JsonIgnore
+    public void setlastUpdatedBy(User user) {
+        this.lastUpdatedBy = user;
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,7 @@
 package de.learnlib.alex.common.utils;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
-
-import javax.ws.rs.core.Response;
+import org.springframework.http.HttpStatus;
 
 /**
  * Entity class for the JSON error messages.
@@ -28,7 +27,7 @@ public class RESTError {
     /**
      * Status of the error.
      */
-    private Response.Status status;
+    private HttpStatus status;
 
     /**
      * The cause of the error.
@@ -43,7 +42,7 @@ public class RESTError {
      * @param exception
      *            The exception that caused the error, could be null.
      */
-    public RESTError(Response.Status status, Exception exception) {
+    public RESTError(HttpStatus status, Exception exception) {
         this.status = status;
         this.exception = exception;
     }
@@ -55,7 +54,7 @@ public class RESTError {
      */
     @JsonGetter
     public int getStatusCode() {
-        return status.getStatusCode();
+        return status.value();
     }
 
     /**

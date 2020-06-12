@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2015 - 2019 TU Dortmund
+  ~ Copyright 2015 - 2020 TU Dortmund
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@
     <parent>
         <groupId>de.learnlib.alex</groupId>
         <artifactId>alex-parent</artifactId>
-        <version>1.7.2</version>
+        <version>2.0.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -38,7 +38,7 @@
     <!--===== properties ======-->
     <properties>
         <!-- general -->
-        <start-class>de.learnlib.alex.App</start-class>
+        <start-class>de.learnlib.alex.AlexApp</start-class>
 
         <!-- plugin versions -->
         <javadoc-plugin.version>2.10.4</javadoc-plugin.version>
@@ -49,34 +49,28 @@
         <pmd.version>3.6</pmd.version>
 
         <!-- dependencies versions -->
-        <spring.version>5.1.2.RELEASE</spring.version>
-        <jersey.version>2.27</jersey.version>
-        <learnlib.version>0.14.0</learnlib.version>
-        <automatalib.version>0.8.0</automatalib.version>
+        <jersey.version>2.30.1</jersey.version>
+        <learnlib.version>0.15.0</learnlib.version>
+        <automatalib.version>0.9.0</automatalib.version>
         <selenium.version>3.141.59</selenium.version>
-        <htmlunitdriver.version>2.33.2</htmlunitdriver.version>
-        <jose4j.version>0.6.4</jose4j.version>
-        <shiro.version>1.4.0</shiro.version>
-        <xml-apis.version>2.0.2</xml-apis.version>
-        <jsoup.version>1.11.3</jsoup.version>
+        <htmlunitdriver.version>2.38.0</htmlunitdriver.version>
+        <jose4j.version>0.7.0</jose4j.version>
+        <shiro.version>1.5.2</shiro.version>
+        <xml-apis.version>1.4.01</xml-apis.version>
+        <jsoup.version>1.13.1</jsoup.version>
         <json-path.version>2.4.0</json-path.version>
-        <hsqldb.version>2.4.1</hsqldb.version>
-        <jackson-datatype.version>2.9.7</jackson-datatype.version>
-        <junit.version>4.12</junit.version>
+        <hsqldb.version>2.5.0</hsqldb.version>
+        <jackson-datatype.version>2.10.3</jackson-datatype.version>
+        <junit.version>4.13</junit.version>
         <mockito.version>2.23.0</mockito.version>
         <json-schema-validator.version>2.2.10</json-schema-validator.version>
-        <mysql-connector.version>8.0.13</mysql-connector.version>
+        <mysql-connector.version>8.0.19</mysql-connector.version>
         <jaxb.version>2.4.0-b180830.0359</jaxb.version>
+        <flyway.version>5.2.4</flyway.version>
     </properties>
 
     <!--===== dependencies ======-->
     <dependencies>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -85,6 +79,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
+            <version>${spring-boot.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
             <version>${spring-boot.version}</version>
         </dependency>
 
@@ -131,11 +130,6 @@
             <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-orm</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
             <version>${spring-boot.version}</version>
@@ -145,6 +139,13 @@
             <groupId>com.github.java-json-tools</groupId>
             <artifactId>json-schema-validator</artifactId>
             <version>${json-schema-validator.version}</version>
+        </dependency>
+
+        <!-- flyway -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>${flyway.version}</version>
         </dependency>
 
         <dependency>
@@ -198,6 +199,16 @@
         <dependency>
             <groupId>net.automatalib</groupId>
             <artifactId>automata-modelchecking-ltsmin</artifactId>
+            <version>${automatalib.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.automatalib</groupId>
+            <artifactId>automata-util</artifactId>
+            <version>${automatalib.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.automatalib</groupId>
+            <artifactId>automata-dot-visualizer</artifactId>
             <version>${automatalib.version}</version>
         </dependency>
 
@@ -364,7 +375,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
                 <configuration>
-                    <mainClass>de.learnlib.alex.App</mainClass>
+                    <mainClass>de.learnlib.alex.AlexApp</mainClass>
                     <addResources>false</addResources>
                 </configuration>
                 <executions>

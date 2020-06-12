@@ -1,0 +1,30 @@
+<h5>
+  <strong>Check attribute</strong>
+</h5>
+
+<p class="text-muted">
+  Checks the value of a nodes attribute.
+</p>
+<hr>
+
+<node-form-group [node]="action.node"></node-form-group>
+
+<div class="form-group">
+  <label class="control-label">Attribute</label>
+  <input [(ngModel)]="action.attribute" class="form-control" minlength="1" placeholder="The name of the attribute"
+         required
+         type="text">
+</div>
+
+<div class="form-group">
+  <label class="control-label">Value</label>
+  <input [(ngModel)]="action.value" class="form-control" placeholder="The expected value" type="text">
+</div>
+
+<div class="form-group">
+  <label class="control-label">Value check method</label>
+  <select [(ngModel)]="action.checkMethod" class="form-control" required>
+    <option *ngFor="let method of checkMethods" [value]="method">{{method | normalizeUpperCase}}</option>
+  </select>
+</div>
+

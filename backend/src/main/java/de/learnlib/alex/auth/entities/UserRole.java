@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ package de.learnlib.alex.auth.entities;
  * Enumeration for User roles.
  */
 public enum UserRole {
+
+    ANONYMOUS,
 
     /**
      * User is default registered user.

@@ -1,0 +1,56 @@
+<div class="view view-test-case-results">
+  <div class="view-body">
+    <div class="container-fluid">
+
+      <div>
+        <h4 class="m-0">
+          <i class="fas fa-fw fa-file-alt mr-1"></i>
+          <a [routerLink]="['/app', 'projects', project.id, 'tests', test?.id]">{{test?.name}}</a>
+        </h4>
+      </div>
+      <hr>
+
+      <div *ngIf="results.length > 0">
+        <table class="table table-striped">
+          <thead>
+          <tr>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Output</th>
+            <th>Message</th>
+            <th>Time</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let result of results">
+            <td width="150">
+              {{result.date | date : 'EEE, dd.MM.yyyy, HH:mm'}}
+            </td>
+            <td width="50">
+              <span *ngIf="result.passed" class="badge badge-success">Passed</span>
+              <span *ngIf="!result.passed" class="badge badge-danger">Failed</span>
+            </td>
+            <td>
+              <report-outputs-column [outputs]="result.outputs" [project]="project"></report-outputs-column>
+            </td>
+            <td>
+              <em *ngIf="result.failureMessage">{{result.failureMessage}}</em>
+            </td>
+            <td width="100">
+              {{result.time | formatMilliseconds}}
+            </td>
+          </tr>
+          </tbody>
+        </table>
+        <hr>
+
+        <pagination (next)="nextPage()" (previous)="previousPage()" [page]="page"></pagination>
+      </div>
+
+      <div *ngIf="results.length === 0" class="alert alert-info">
+        There are not results for this test yet.
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,53 +17,41 @@
 package de.learnlib.alex.testing.rest;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.auth.security.UserPrincipal;
-import de.learnlib.alex.data.dao.ProjectDAO;
-import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.testing.dao.TestExecutionConfigDAO;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
-import de.learnlib.alex.testing.entities.TestStatus;
-import de.learnlib.alex.testing.services.TestService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.security.RolesAllowed;
-import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import java.util.List;
 
 /** Endpoints for handling test configs. */
-@Path("/projects/{projectId}/testConfigs")
-@RolesAllowed({"REGISTERED"})
+@RestController
+@RequestMapping("/rest/projects/{projectId}/testConfigs")
 public class TestExecutionConfigResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    /** The injected DAO for test configs. */
-    @Inject
-    private TestExecutionConfigDAO testExecutionConfigDAO;
+    private final AuthContext authContext;
+    private final TestExecutionConfigDAO testExecutionConfigDAO;
 
-    /** The injected DAO for projects. */
-    @Inject
-    private ProjectDAO projectDAO;
-
-    /** The injected service for executing tests. */
-    @Inject
-    private TestService testService;
-
-    /** The security context containing the user of the request. */
-    @Context
-    private SecurityContext securityContext;
+    @Autowired
+    public TestExecutionConfigResource(AuthContext authContext, TestExecutionConfigDAO testExecutionConfigDAO) {
+        this.authContext = authContext;
+        this.testExecutionConfigDAO = testExecutionConfigDAO;
+    }
 
     /**
      * Get all test configs in a project.
@@ -72,16 +60,17 @@ public class TestExecutionConfigResource {
      *         The id of the project.
      * @return 200 and the created project on success.
      */
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@PathParam("projectId") Long projectId) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @GetMapping(
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity getAll(@PathVariable("projectId") Long projectId) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("getAll({}) for user {}.", projectId, user);
 
         final List<TestExecutionConfig> configs = testExecutionConfigDAO.getAll(user, projectId);
 
         LOGGER.traceExit(configs);
-        return Response.ok(configs).build();
+        return ResponseEntity.ok(configs);
     }
 
     /**
@@ -93,17 +82,36 @@ public class TestExecutionConfigResource {
      *         The config to create
      * @return 201 and the created test config on success.
      */
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response create(@PathParam("projectId") Long projectId, TestExecutionConfig config) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @PostMapping(
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    
+    public ResponseEntity create(@PathVariable("projectId") Long projectId, @RequestBody TestExecutionConfig config) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("create({}) for user {}.", projectId, user);
 
         final TestExecutionConfig createdConfig = testExecutionConfigDAO.create(user, projectId, config);
 
         LOGGER.traceExit(createdConfig);
-        return Response.status(Response.Status.CREATED).entity(createdConfig).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdConfig);
+    }
+
+    @PutMapping(
+            value = "/{configId}",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity update(@PathVariable("projectId") Long projectId,
+                                 @PathVariable("configId") Long configId,
+                                 @RequestBody TestExecutionConfig config) {
+        final User user = authContext.getUser();
+        LOGGER.traceEntry("update({}) for user {}.", projectId, user);
+
+        final TestExecutionConfig updatedConfig = testExecutionConfigDAO.update(user, projectId, configId, config);
+
+        LOGGER.traceExit(updatedConfig);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedConfig);
     }
 
     /**
@@ -115,40 +123,18 @@ public class TestExecutionConfigResource {
      *         The id of the test config to delete.
      * @return 204 on success.
      */
-    @DELETE
-    @Path("/{configId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("projectId") Long projectId, @PathParam("configId") Long configId) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @DeleteMapping(
+            value = "/{configId}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity delete(@PathVariable("projectId") Long projectId,
+                                 @PathVariable("configId") Long configId) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("delete({}) for user {}.", projectId, user);
 
         testExecutionConfigDAO.delete(user, projectId, configId);
 
         LOGGER.traceExit("Config with id " + configId + " deleted.");
-        return Response.noContent().build();
-    }
-
-    /**
-     * Execute the tests as defined in a test configuration.
-     *
-     * @param projectId
-     *         The ID of the project.
-     * @param configId
-     *         The ID of the config.
-     * @return The test status.
-     */
-    @POST
-    @Path("/{configId}/execute")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response execute(@PathParam("projectId") Long projectId, @PathParam("configId") Long configId) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("execute({}) for user {}.", projectId, user);
-
-        final TestExecutionConfig config = testExecutionConfigDAO.get(user, projectId, configId);
-        final Project project = projectDAO.getByID(user.getId(), projectId);
-        final TestStatus status = testService.start(user, project, config);
-
-        LOGGER.traceExit("Config with id " + configId + " deleted.");
-        return Response.ok(status).build();
+        return ResponseEntity.noContent().build();
     }
 }

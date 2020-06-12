@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,43 +17,45 @@
 package de.learnlib.alex.data.rest;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.auth.security.UserPrincipal;
 import de.learnlib.alex.data.dao.SymbolParameterDAO;
 import de.learnlib.alex.data.entities.SymbolParameter;
+import de.learnlib.alex.security.AuthContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.security.RolesAllowed;
-import javax.inject.Inject;
 import javax.validation.ValidationException;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 
 /**
  * The resource for symbol parameters.
  */
-@Path("/projects/{projectId}/symbols/{symbolId}/parameters")
-@RolesAllowed({"REGISTERED"})
+@RestController
+@RequestMapping("/rest/projects/{projectId}/symbols/{symbolId}/parameters")
 public class SymbolParameterResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
     /** The security context containing the user of the request. */
-    @Context
-    private SecurityContext securityContext;
+    private AuthContext authContext;
 
     /** The {@link SymbolParameterDAO} to use. */
-    @Inject
     private SymbolParameterDAO symbolParameterDAO;
+
+    @Autowired
+    public SymbolParameterResource(AuthContext authContext, SymbolParameterDAO symbolParameterDAO) {
+        this.authContext = authContext;
+        this.symbolParameterDAO = symbolParameterDAO;
+    }
 
     /**
      * Create a new parameter for a symbol.
@@ -66,19 +68,20 @@ public class SymbolParameterResource {
      *         The parameter to create.
      * @return 201 on success.
      */
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response create(@PathParam("projectId") Long projectId,
-                           @PathParam("symbolId") Long symbolId,
-                           SymbolParameter parameter) {
+    @PostMapping(
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity create(@PathVariable("projectId") Long projectId,
+                                 @PathVariable("symbolId") Long symbolId,
+                                 @RequestBody SymbolParameter parameter) {
 
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final User user = authContext.getUser();
         LOGGER.traceEntry("create({}, {}, {}) for user {}.", projectId, symbolId, parameter, user);
 
         final SymbolParameter createdParameter = symbolParameterDAO.create(user, projectId, symbolId, parameter);
         LOGGER.traceExit(createdParameter);
-        return Response.status(Response.Status.CREATED).entity(createdParameter).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdParameter);
     }
 
     /**
@@ -92,19 +95,20 @@ public class SymbolParameterResource {
      *         The id of the parameter to delete.
      * @return 204 on success.
      */
-    @DELETE
-    @Path("/{parameterId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("projectId") Long projectId,
-                           @PathParam("symbolId") Long symbolId,
-                           @PathParam("parameterId") Long parameterId) {
+    @DeleteMapping(
+            value = "/{parameterId}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity delete(@PathVariable("projectId") Long projectId,
+                                 @PathVariable("symbolId") Long symbolId,
+                                 @PathVariable("parameterId") Long parameterId) {
 
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final User user = authContext.getUser();
         LOGGER.traceEntry("delete({}, {}, {}) for user {}.", projectId, symbolId, parameterId, user);
 
         symbolParameterDAO.delete(user, projectId, symbolId, parameterId);
         LOGGER.traceExit("Parameter {} deleted.", parameterId);
-        return Response.noContent().build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -120,16 +124,17 @@ public class SymbolParameterResource {
      *         The parameter to update.
      * @return 200 on success.
      */
-    @PUT
-    @Path("/{parameterId}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("projectId") Long projectId,
-                           @PathParam("symbolId") Long symbolId,
-                           @PathParam("parameterId") Long parameterId,
-                           SymbolParameter parameter) {
+    @PutMapping(
+            value = "/{parameterId}",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity update(@PathVariable("projectId") Long projectId,
+                                 @PathVariable("symbolId") Long symbolId,
+                                 @PathVariable("parameterId") Long parameterId,
+                                 @RequestBody SymbolParameter parameter) {
 
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final User user = authContext.getUser();
         LOGGER.traceEntry("update({}, {}, {}, {}) for user {}.", projectId, symbolId, parameterId, parameter, user);
 
         if (!parameterId.equals(parameter.getId())) {
@@ -138,6 +143,6 @@ public class SymbolParameterResource {
 
         final SymbolParameter updatedParameter = symbolParameterDAO.update(user, projectId, symbolId, parameter);
         LOGGER.traceExit(updatedParameter);
-        return Response.ok(updatedParameter).build();
+        return ResponseEntity.ok(updatedParameter);
     }
 }

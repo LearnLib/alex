@@ -1,0 +1,63 @@
+<div class="modal-header">
+  <h4 class="modal-title">Create a new action</h4>
+  <a (click)="modal.dismiss()" class="btn btn-icon float-right">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<form (ngSubmit)="createAction()">
+
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-4">
+
+        <action-search-form
+          (selected)="selectNewActionType($event.type)"
+          [actions]="actions"
+        >
+        </action-search-form>
+
+        <div class="mt-3">
+          <ngb-accordion [closeOthers]="true" [activeIds]="['Web']">
+
+            <ngb-panel [title]="panel.text" *ngFor="let panel of panels" [id]="panel.text">
+              <ng-template ngbPanelContent>
+
+                <div class="list-group list-group-condensed list-group-flush border-top">
+                  <button
+                    class="list-group-item list-group-item-action"
+                    (click)="selectNewActionType(a.type); $event.preventDefault()"
+                    *ngFor="let a of panel.actions"
+                  >
+                    {{a.text}}
+                  </button>
+                </div>
+
+              </ng-template>
+            </ngb-panel>
+
+          </ngb-accordion>
+        </div>
+
+      </div>
+      <div class="col-8">
+
+        <div *ngIf="action == null" class="alert alert-info alert-condensed">
+          Select the action you want to create.
+        </div>
+
+        <action-form *ngIf="action != null" [action]="action" [symbols]="symbols"></action-form>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button (click)="createActionAndContinue(); $event.preventDefault()" class="btn btn-info btn-sm">
+      Create and continue
+    </button>
+    <button class="btn btn-primary btn-sm" type="submit">Create</button>
+    <button (click)="modal.dismiss(); $event.preventDefault()" class="btn btn-default btn-sm">Cancel</button>
+  </div>
+
+</form>

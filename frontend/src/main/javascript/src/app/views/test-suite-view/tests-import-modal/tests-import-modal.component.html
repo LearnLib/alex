@@ -1,0 +1,33 @@
+<div class="modal-header">
+  <h4 class="modal-title">Import tests</h4>
+  <a (click)="modal.dismiss()" class="btn btn-icon float-right">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+<div class="modal-body">
+  <div *ngIf="errorMessage != null" class="alert alert-danger">
+    {{errorMessage}}
+  </div>
+
+  <file-dropzone (loaded)="fileLoaded($event)" *ngIf="importData == null">
+    Drag and drop file here or click to select a file
+  </file-dropzone>
+
+  <div *ngIf="importData != null" class="alert alert-info mb-0">
+    <i (click)="importData = null" class="fas fa-fw fa-times float-right cursor-pointer"></i>
+    <span class="badge badge-primary">Tests</span> <br>
+    <span class="badge badge-secondary">{{importData.version}}</span>
+  </div>
+
+  <div *ngIf="importData != null && importData.tests.length" class="list-group mt-3">
+    <div *ngFor="let test of importData.tests; let i = index" class="list-group-item d-flex">
+      <i [ngClass]="{'fa-file': test.type === 'case', 'fa-folder': test.type === 'suite'}" class="fas fa-fw"></i>
+      <strong class="d-block flex-grow-1 ml-1 mr-1">{{test.name}}</strong>
+      <i (click)="importData.tests.splice(i, 1)" class="fas fa-fw fa-times float-right"></i>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button (click)="importTests()" class="btn btn-primary btn-sm">Import</button>
+  <button (click)="modal.dismiss()" class="btn btn-default btn-sm">Cancel</button>
+</div>

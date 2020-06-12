@@ -1,0 +1,11 @@
+<i
+  class="toggle-button cursor-pointer fas fa-fw"
+  [ngClass]="{
+    'fa-toggle-on': enabled,
+    'enabled': enabled,
+    'fa-toggle-off': !enabled,
+    'disabled': !enabled
+  }"
+  (click)="toggle.emit(!enabled)"
+>
+</i>

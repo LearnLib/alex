@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@
 
 package de.learnlib.alex.testing.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.data.entities.Project;
-import de.learnlib.alex.data.entities.ProjectUrl;
+import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.learning.entities.webdrivers.HtmlUnitDriverConfig;
 
@@ -32,7 +31,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -54,7 +52,6 @@ public class TestExecutionConfig implements Serializable {
     private Long id;
 
     /** The ids of the tests to execute. */
-    @NotEmpty
     @ManyToMany
     private List<Test> tests;
 
@@ -63,18 +60,20 @@ public class TestExecutionConfig implements Serializable {
     @OneToOne(cascade = CascadeType.ALL)
     private AbstractWebDriverConfig driverConfig;
 
-    /** If a report should be created. */
-    private boolean createReport;
-
     /** The id of the URL to use for testing. */
     @NotNull
     @OneToOne
-    private ProjectUrl url;
+    private ProjectEnvironment environment;
 
     /** The project where the config is saved. */
     @ManyToOne
     @JoinColumn(name = "projectId")
     private Project project;
+
+    private boolean isDefault;
+
+    /** The user defined description of the config. */
+    private String description;
 
     /** Constructor. */
     public TestExecutionConfig() {
@@ -92,7 +91,8 @@ public class TestExecutionConfig implements Serializable {
     public TestExecutionConfig(List<Long> testIds, AbstractWebDriverConfig driverConfig) {
         this.setTestIds(testIds);
         this.driverConfig = driverConfig;
-        this.createReport = true;
+        this.isDefault = false;
+        this.description = "";
     }
 
     public Long getId() {
@@ -124,30 +124,24 @@ public class TestExecutionConfig implements Serializable {
                 .collect(Collectors.toList());
     }
 
-    public ProjectUrl getUrl() {
-        return url;
+    public ProjectEnvironment getEnvironment() {
+        return environment;
     }
 
-    public void setUrl(ProjectUrl url) {
-        this.url = url;
+    public void setEnvironment(ProjectEnvironment environment) {
+        this.environment = environment;
     }
 
     @Transient
-    @JsonIgnore
-    public Long getUrlId() {
-        return url == null ? null : url.getId();
+    @JsonProperty("environment")
+    public Long getEnvironmentId() {
+        return environment.getId();
     }
 
-    /**
-     * The the URL by an URL ID.
-     *
-     * @param urlId
-     *         The ID of the URL.
-     */
-    @JsonProperty("url")
-    public void setUrlId(Long urlId) {
-        this.url = new ProjectUrl();
-        this.url.setId(urlId);
+    @JsonProperty("environment")
+    public void setEnvironmentId(Long environmentId) {
+        this.environment = new ProjectEnvironment();
+        this.environment.setId(environmentId);
     }
 
     public AbstractWebDriverConfig getDriverConfig() {
@@ -156,14 +150,6 @@ public class TestExecutionConfig implements Serializable {
 
     public void setDriverConfig(AbstractWebDriverConfig driverConfig) {
         this.driverConfig = driverConfig;
-    }
-
-    public boolean isCreateReport() {
-        return createReport;
-    }
-
-    public void setCreateReport(boolean createReport) {
-        this.createReport = createReport;
     }
 
     public Project getProject() {
@@ -183,6 +169,22 @@ public class TestExecutionConfig implements Serializable {
     @JsonProperty("project")
     public void setProjectId(Long projectId) {
         this.project = new Project(projectId);
+    }
+
+    public boolean isDefault() {
+        return isDefault;
+    }
+
+    public void setDefault(boolean aDefault) {
+        isDefault = aDefault;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

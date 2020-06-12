@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package de.learnlib.alex.common.utils;
 
+import de.learnlib.alex.data.entities.ProjectEnvironment;
+import de.learnlib.alex.data.entities.ProjectEnvironmentVariable;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import de.learnlib.alex.learning.services.connectors.FileStoreConnector;
@@ -31,7 +33,6 @@ public class SearchHelperTest {
 
     private static final Long PROJECT_ID = 10L;
     private static final int COUNTER_VALUE = 42;
-    private static final String PROJECT_URL = "http://localhost:8000";
 
     @Test
     public void shouldReplaceVariablesCorrectly() {
@@ -61,6 +62,21 @@ public class SearchHelperTest {
         String result = SearchHelper.insertVariableValues(connector, PROJECT_ID, "Hello Jon Doe, you are user no. 42!");
 
         assertEquals("Hello Jon Doe, you are user no. " + COUNTER_VALUE + "!", result);
+    }
+
+    @Test
+    public void shouldReplaceEnvironmentVariables() {
+        final ProjectEnvironmentVariable variable = new ProjectEnvironmentVariable();
+        variable.setName("TEST");
+        variable.setValue("muffin");
+
+        final ProjectEnvironment environment = new ProjectEnvironment();
+        environment.getVariables().add(variable);
+
+        final ConnectorManager connectors = new ConnectorManager(environment);
+
+        final String result = SearchHelper.insertVariableValues(connectors, PROJECT_ID, "env: {{:TEST}}");
+        assertEquals("env: muffin", result);
     }
 
     @Test

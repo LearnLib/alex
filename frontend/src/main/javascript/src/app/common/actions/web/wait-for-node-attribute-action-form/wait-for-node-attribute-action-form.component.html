@@ -1,0 +1,41 @@
+<h5><strong>Wait for the value of an attribute</strong></h5>
+
+<p class="text-muted">
+  Wait until the value of an elements attribute contains or equals a given value.
+</p>
+<hr>
+
+<node-form-group [node]="action.node"></node-form-group>
+
+<div class="form-group">
+  <label>Attribute</label>
+  <input [(ngModel)]="action.attribute" class="form-control" placeholder="The name of the attribute" type="text">
+</div>
+
+<div class="form-group">
+  <label>Value</label>
+  <input [(ngModel)]="action.value" class="form-control" placeholder="The value of the attribute" type="text">
+</div>
+
+<div class="form-group">
+  <div class="form-group form-check">
+    <label class="form-check-label">
+      <input [(ngModel)]="action.waitCriterion" [value]="'IS'" class="form-check-input" name="waitType" type="radio">
+      Wait until the attribute <strong>is</strong> the value
+    </label>
+  </div>
+  <div class="form-group form-check">
+    <label class="form-check-label">
+      <input [(ngModel)]="action.waitCriterion" [value]="'CONTAINS'" class="form-check-input" name="waitType"
+             type="radio">
+      Wait until the attribute <strong>contains</strong> the value
+    </label>
+  </div>
+</div>
+
+
+<div class="form-group">
+  <label>Max. wait time (seconds)</label>
+  <input [(ngModel)]="action.maxWaitTime" class="form-control" min="0" placeholder="The maximum time to wait for a change"
+         type="number">
+</div>

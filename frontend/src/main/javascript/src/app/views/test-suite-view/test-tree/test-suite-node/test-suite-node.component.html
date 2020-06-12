@@ -1,0 +1,28 @@
+<div class="test-suite-node">
+  <div class="header d-flex flex-row">
+    <div class="test-icon">
+      <i class="fas fa-fw fa-folder"></i>
+    </div>
+    <a
+      [routerLink]="['/app', 'projects', suite.project, 'tests', suite.id]"
+      class="name d-flex flex-row align-items-center w-100"
+    >
+      <div class="w-100">
+        <strong>{{suite.name}}</strong>
+      </div>
+      <div>
+        <span *ngIf="result" class="float-right">
+          <span *ngIf="result.passed" class="badge badge-success">
+            Passed
+          </span>
+          <span *ngIf="!result.passed && result.testCasesPassed === 0" class="badge badge-danger">
+            Failed
+          </span>
+          <span *ngIf="!result.passed && result.testCasesPassed > 0" class="badge badge-warning">
+            {{result.testCasesFailed}}/{{result.testCasesRun}} Failed
+          </span>
+        </span>
+      </div>
+    </a>
+  </div>
+</div>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,8 @@ package de.learnlib.alex.common.utils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 /**
  * Helper class to deal with errors/ that accrue in the REST resources.
@@ -48,8 +47,8 @@ public final class ResourceErrorHandler {
      *            The exception that cause the error, could be null.
      * @return A Response object containing a JSON error message and the proper status code.
      */
-    public static Response createRESTErrorMessage(String context, Status status, Exception e) {
+    public static ResponseEntity createRESTErrorMessage(String context, HttpStatus status, Exception e) {
         LOGGER.info(context + " send an error:", e);
-        return Response.status(status).entity(new RESTError(status, e)).build();
+        return ResponseEntity.status(status).body(new RESTError(status, e));
     }
 }

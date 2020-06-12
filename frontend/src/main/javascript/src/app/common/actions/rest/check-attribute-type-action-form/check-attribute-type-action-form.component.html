@@ -1,0 +1,21 @@
+<h5><strong>Check attribute type</strong></h5>
+
+<p class="text-muted">Check if a JSON attribute in the response body has a specific type.</p>
+<hr>
+
+<div class="form-group">
+  <label>Attribute</label>
+  <input
+    [(ngModel)]="action.attribute"
+    class="form-control"
+    placeholder="json attribute, e.g. myobj.attr[1].obj"
+    type="text"
+  >
+</div>
+<div class="form-group">
+  <label>Type</label>
+  <select [(ngModel)]="action.jsonType" class="form-control">
+    <option disabled [value]="null">Choose a JavaScript type</option>
+    <option *ngFor="let t of ['ARRAY', 'BOOLEAN', 'INTEGER', 'OBJECT', 'NULL', 'STRING']" [value]="t">{{t | normalizeUpperCase}}</option>
+  </select>
+</div>

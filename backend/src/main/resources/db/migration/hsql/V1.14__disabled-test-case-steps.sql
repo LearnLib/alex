@@ -1,0 +1,1 @@
+alter table PUBLIC.test_case_step add column disabled boolean default false;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -135,7 +135,6 @@ public class TestSuiteGeneratorMojo extends AbstractMojo {
         final ParameterizedSymbol input = step.getPSymbol();
 
         template.add("testName", input.getSymbol().getName());
-        template.add("shouldFail", step.isShouldFail());
         template.add("testMethodName", escape(input.getSymbol().getName()));
         template.add("testMethodIndex", idx);
 

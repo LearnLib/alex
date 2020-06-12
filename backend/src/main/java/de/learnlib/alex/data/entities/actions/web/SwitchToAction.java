@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.WebDriver;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -52,7 +53,13 @@ public class SwitchToAction extends WebSymbolAction {
         DEFAULT_CONTENT,
 
         /** The last frame that has been visited. */
-        LAST_FRAME
+        LAST_FRAME,
+
+        /** A new window that has been opened. */
+        WINDOW,
+
+        /** The default window. */
+        DEFAULT_WINDOW,
     }
 
     /**
@@ -64,15 +71,25 @@ public class SwitchToAction extends WebSymbolAction {
     @Override
     protected ExecuteResult execute(WebSiteConnector connector) {
         try {
+            final WebDriver wd = connector.getDriver();
             switch (target) {
                 case PARENT_FRAME:
-                    connector.getDriver().switchTo().parentFrame();
+                    wd.switchTo().parentFrame();
                     break;
                 case DEFAULT_CONTENT:
-                    connector.getDriver().switchTo().defaultContent();
+                    wd.switchTo().defaultContent();
                     break;
                 case LAST_FRAME:
-                    connector.getDriver().switchTo().frame(connector.getLastFrame());
+                    wd.switchTo().frame(connector.getLastFrame());
+                    break;
+                case WINDOW:
+                    for (final String handle: wd.getWindowHandles()) {
+                        wd.switchTo().window(handle);
+                    }
+                    break;
+                case DEFAULT_WINDOW:
+                    final String mainHandle = wd.getWindowHandles().iterator().next();
+                    wd.switchTo().window(mainHandle);
                     break;
                 default:
                     throw new Exception("Undefined target type.");

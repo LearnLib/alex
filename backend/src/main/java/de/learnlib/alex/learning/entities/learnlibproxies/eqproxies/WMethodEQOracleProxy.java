@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,6 +74,6 @@ public class WMethodEQOracleProxy extends AbstractEquivalenceOracleProxy impleme
     @Override
     public EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> createEqOracle(
             MembershipOracle<String, Word<String>> membershipOracle) {
-        return new WMethodEQOracle.MealyWMethodEQOracle<>(membershipOracle, this.maxDepth, batchSize);
+        return new WMethodEQOracle<>(membershipOracle, this.maxDepth, batchSize);
     }
 }

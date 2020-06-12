@@ -1,0 +1,85 @@
+<div class="symbol-io-panel card">
+  <div class="card-header">
+    <strong>Input & output parameters</strong>
+  </div>
+  <div class="px-3 py-2 border-bottom">
+    <button (click)="addInput()" class="btn btn-default btn-sm mr-2" type="button">
+      Add input
+    </button>
+    <button (click)="addOutput()" class="btn btn-default btn-sm" type="button">
+      Add output
+    </button>
+  </div>
+  <div class="card-body">
+
+    <div class="d-flex">
+      <div class="d-flex" style="margin: auto">
+
+        <div>
+          <ng-container *ngIf="symbol.inputs.length > 0">
+            <div *ngFor="let input of symbol.inputs; let i = index">
+              <div class="d-flex py-2 px-0">
+                <div class="input w-100">
+                  <span (click)="removeInput(i)" class="btn-close float-right ml-1">
+                    <i class="fas fa-times"></i>
+                  </span>
+                  <strong (click)="editInput(input, i)" class="cursor-pointer">{{input.name}}</strong>:
+                  <em>{{input.parameterType | normalizeUpperCase}}</em>
+                </div>
+                <div class="d-flex align-items-center">
+                  <svg height="14px" width="68px" xmlns="http://www.w3.org/2000/svg">
+                    <line stroke="#000" stroke-width="2" x1="0" x2="50" y1="7" y2="7"/>
+                    <polygon points="50,13 50,1 68,7" style="fill:#000"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+
+          <div *ngIf="symbol.inputs.length === 0" class="d-flex align-items-center h-100">
+            <div class="alert alert-info mr-1 mb-0">
+              There are no inputs defined.
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="symbol h-100 d-flex align-items-center">
+            <strong>{{symbol.name}}</strong>
+          </div>
+        </div>
+
+        <div>
+          <ng-container *ngIf="symbol.outputs.length > 0">
+            <div *ngFor="let output of symbol.outputs; let i = index">
+              <div class="d-flex py-2 px-0">
+                <div class="d-flex align-items-center">
+                  <svg height="14px" width="68px" xmlns="http://www.w3.org/2000/svg">
+                    <line stroke="#000" stroke-width="2" x1="0" x2="50" y1="7" y2="7"/>
+                    <polygon points="50,13 50,1 68,7" style="fill:#000"/>
+                  </svg>
+                </div>
+                <div class="output w-100">
+                  <span (click)="removeOutput(i)" class="btn-close float-right ml-1">
+                    <i class="fas fa-times"></i>
+                  </span>
+
+                  <strong (click)="editOutput(output, i)" class="cursor-pointer">{{output.name}}</strong>:
+                  <em>{{output.parameterType | normalizeUpperCase}}</em>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+
+          <div *ngIf="symbol.outputs.length === 0" class="d-flex align-items-center h-100">
+            <div class="alert alert-info ml-1 mb-0">
+              There are no outputs defined.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

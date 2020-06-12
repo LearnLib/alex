@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,35 +16,35 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
-import com.jayway.jsonpath.JsonPath;
+import de.learnlib.alex.data.entities.Counter;
+import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.integrationtests.SpringRestError;
 import de.learnlib.alex.integrationtests.resources.api.CounterApi;
 import de.learnlib.alex.integrationtests.resources.api.ProjectApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.http.HttpStatus;
 
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
 public class CounterResourceIT extends AbstractResourceIT {
 
     private String jwtUser1;
-
     private String jwtUser2;
 
-    private int projectId1;
-
-    private int projectId2;
+    private Project project1;
+    private Project project2;
 
     private UserApi userApi;
-
     private ProjectApi projectApi;
-
     private CounterApi counterApi;
 
     @Before
@@ -53,195 +53,231 @@ public class CounterResourceIT extends AbstractResourceIT {
         projectApi = new ProjectApi(client, port);
         counterApi = new CounterApi(client, port);
 
-        userApi.create("{\"email\":\"test1@test.de\",\"password\":\"test\"}");
-        userApi.create("{\"email\":\"test2@test.de\",\"password\":\"test\"}");
+        userApi.create("{\"email\":\"test1@test.de\",\"username\":\"test1\",\"password\":\"test\"}");
+        userApi.create("{\"email\":\"test2@test.de\",\"username\":\"test2\",\"password\":\"test\"}");
 
         jwtUser1 = userApi.login("test1@test.de", "test");
         jwtUser2 = userApi.login("test2@test.de", "test");
 
-        final Response res1 =
-                projectApi.create("{\"name\":\"test\",\"urls\":[{\"url\":\"http://localhost:8080\"}]}", jwtUser1);
-        final Response res2 =
-                projectApi.create("{\"name\":\"test\",\"urls\":[{\"url\":\"http://localhost:8080\"}]}", jwtUser2);
+        project1 = projectApi.create("{\"name\":\"test\",\"url\":\"http://localhost:8080\"}", jwtUser1)
+            .readEntity(Project.class);
 
-        projectId1 = JsonPath.read(res1.readEntity(String.class), "id");
-        projectId2 = JsonPath.read(res2.readEntity(String.class), "id");
+        project2 = projectApi.create("{\"name\":\"test\",\"url\":\"http://localhost:8080\"}", jwtUser2)
+                .readEntity(Project.class);
     }
 
     @Test
-    public void shouldCreateACounter() throws Exception {
-        final String counter = createCounterJson("counter", projectId1, 1);
-        final Response res1 = counterApi.create(projectId1, counter, jwtUser1);
+    public void shouldCreateACounter() {
+        final Counter counter = createCounter("counter", project1, 1);
+        final Response res1 = counterApi.create(project1.getId(), counter, jwtUser1);
 
-        assertEquals(HttpStatus.OK.value(), res1.getStatus());
-        assertEquals(1, getNumberOfCounters(projectId1, jwtUser1));
+        assertEquals(HttpStatus.CREATED.value(), res1.getStatus());
+        final Counter createdCounter = res1.readEntity(Counter.class);
+
+        assertCounter(createdCounter, "counter", 1);
+        assertEquals(1, getNumberOfCounters(project1.getId(), jwtUser1));
     }
 
     @Test
-    public void shouldNotCreateTheSameCounterTwice() throws Exception {
-        final String counter = createCounterJson("counter", projectId1, 1);
-        counterApi.create(projectId1, counter, jwtUser1);
-        final Response res1 = counterApi.create(projectId1, counter, jwtUser1);
+    public void shouldNotCreateTheSameCounterTwice() {
+        final Counter counter1 = createCounter("counter", project1, 1);
+        counterApi.create(project1.getId(), counter1, jwtUser1);
+
+        final Counter counter2 = createCounter("counter", project1, 1);
+        final Response res1 = counterApi.create(project1.getId(), counter2, jwtUser1);
 
         assertEquals(HttpStatus.BAD_REQUEST.value(), res1.getStatus());
-        assertEquals(1, getNumberOfCounters(projectId1, jwtUser1));
+        assertEquals(1, getNumberOfCounters(project1.getId(), jwtUser1));
     }
 
     @Test
-    public void shouldNotCreateCounterIfProjectCannotBeFound() throws Exception {
-        final String counter = createCounterJson("counter", -1, 1);
-        final Response res1 = counterApi.create(-1, counter, jwtUser1);
+    public void shouldNotCreateCounterIfProjectCannotBeFound() {
+        final Counter counter = createCounter("counter", new Project(-1L), 1);
+        final Response res1 = counterApi.create(-1L, counter, jwtUser1);
 
         Assert.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), res1.getStatus());
-        Assert.assertEquals(0, getNumberOfCounters(projectId1, jwtUser1));
+        Assert.assertEquals(0, getNumberOfCounters(project1.getId(), jwtUser1));
     }
 
     @Test
-    public void shouldNotCreateACounterInAnotherUsersProject() throws Exception {
-        final String counter = createCounterJson("counter1", projectId2, 1);
-        final Response res1 = counterApi.create(projectId2, counter, jwtUser1);
+    public void shouldNotCreateACounterInAnotherUsersProject() {
+        final Counter counter = createCounter("counter1", project2, 1);
+        final Response res1 = counterApi.create(project2.getId(), counter, jwtUser1);
 
         assertEquals(HttpStatus.UNAUTHORIZED.value(), res1.getStatus());
 
-        final Response res3 = counterApi.getAll(projectId1, jwtUser1);
-        JSONAssert.assertEquals("[]", res3.readEntity(String.class), true);
+        final Response res2 = counterApi.getAll(project1.getId(), jwtUser1);
+        assertEquals(0, res2.readEntity(new GenericType<List<Counter>>() {}).size());
 
-        final Response res2 = counterApi.getAll(projectId2, jwtUser2);
-        JSONAssert.assertEquals("[]", res2.readEntity(String.class), true);
+        final Response res3 = counterApi.getAll(project2.getId(), jwtUser2);
+        assertEquals(0, res3.readEntity(new GenericType<List<Counter>>() {}).size());
     }
 
     @Test
-    public void shouldGetAllCounters() throws Exception {
-        final String counter1 = createCounterJson("counter1", projectId1, 1);
-        final String counter2 = createCounterJson("counter2", projectId1, 1);
-        final String counter3 = createCounterJson("counter3", projectId1, 1);
+    public void shouldGetAllCounters() {
+        final Counter counter1 = createCounter("counter1", project1, 1);
+        final Counter counter2 = createCounter("counter2", project1, 1);
+        final Counter counter3 = createCounter("counter3", project1, 1);
 
-        counterApi.create(projectId1, counter1, jwtUser1);
-        counterApi.create(projectId1, counter2, jwtUser1);
-        counterApi.create(projectId1, counter3, jwtUser1);
+        counterApi.create(project1.getId(), counter1, jwtUser1);
+        counterApi.create(project1.getId(), counter2, jwtUser1);
+        counterApi.create(project1.getId(), counter3, jwtUser1);
 
-        final Response res = counterApi.getAll(projectId1, jwtUser1);
+        final Response res = counterApi.getAll(project1.getId(), jwtUser1);
 
         assertEquals(HttpStatus.OK.value(), res.getStatus());
-        assertEquals(3, getNumberOfCounters(projectId1, jwtUser1));
+        assertEquals(3, getNumberOfCounters(project1.getId(), jwtUser1));
     }
 
     @Test
     public void shouldNotGetCountersOfAnotherUsersProject() {
-        final String counter = createCounterJson("counter", projectId1, 1);
-        counterApi.create(projectId2, counter, jwtUser2);
+        final Counter counter = createCounter("counter", project1, 1);
+        counterApi.create(project2.getId(), counter, jwtUser2);
 
-        final Response res = counterApi.getAll(projectId2, jwtUser1);
+        final Response res = counterApi.getAll(project2.getId(), jwtUser1);
         assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());
+        res.readEntity(SpringRestError.class);
     }
 
     @Test
-    public void shouldUpdateValueOfACounter() throws Exception {
-        final String counter = createCounterJson("counter1", projectId1, 1);
-        final String updatedCounter = createCounterJson("counter1", projectId1, 5);
-        counterApi.create(projectId1, counter, jwtUser1);
+    public void shouldUpdateValueOfACounter() {
+        Counter counter = createCounter("counter1", project1, 1);
+        counter = counterApi.create(project1.getId(), counter, jwtUser1).readEntity(Counter.class);
 
-        final Response res1 = counterApi.update(projectId1, "counter1", updatedCounter, jwtUser1);
+        counter.setValue(5);
+
+        final Response res1 = counterApi.update(project1.getId(), counter.getId(), counter, jwtUser1);
         assertEquals(HttpStatus.OK.value(), res1.getStatus());
-        JSONAssert.assertEquals(res1.readEntity(String.class), updatedCounter, true);
 
-        final Response res2 = counterApi.getAll(projectId1, jwtUser1);
-        JSONAssert.assertEquals("[" + updatedCounter + "]", res2.readEntity(String.class), true);
+        final Counter updatedCounter = res1.readEntity(Counter.class);
+        assertCounter(updatedCounter, "counter1", 5);
     }
 
     @Test
-    public void shouldNotUpdateNameOfACounter() throws Exception {
-        final String counter = createCounterJson("counter1", projectId1, 1);
-        final String updatedCounter = createCounterJson("updatedName", projectId1, 1);
-        counterApi.create(projectId1, counter, jwtUser1);
+    public void shouldNotUpdateNameOfACounter() {
+        Counter counter = createCounter("counter1", project1, 1);
+        counter = counterApi.create(project1.getId(), counter, jwtUser1).readEntity(Counter.class);
 
-        final Response res1 = counterApi.update(projectId1, "counter1", updatedCounter, jwtUser1);
+        counter.setName("updatedName");
+
+        final Response res1 = counterApi.update(project1.getId(), counter.getId(), counter, jwtUser1);
         assertEquals(HttpStatus.BAD_REQUEST.value(), res1.getStatus());
+        res1.readEntity(SpringRestError.class);
 
-        final Response res2 = counterApi.getAll(projectId1, jwtUser1);
-        JSONAssert.assertEquals(res2.readEntity(String.class), "[" + counter + "]", true);
+        counter = getCounterById(project1.getId(), counter.getId(), jwtUser1);
+        assertCounter(counter, "counter1", 1);
     }
 
     @Test
-    public void shouldNotUpdateAnotherUsersCounter() throws Exception {
-        final String counter = createCounterJson("counter1", projectId1, 1);
-        counterApi.create(projectId1, counter, jwtUser1);
+    public void shouldNotUpdateAnotherUsersCounter() {
+        Counter counter = createCounter("counter1", project1, 1);
+        counter = counterApi.create(project1.getId(), counter, jwtUser1).readEntity(Counter.class);
 
-        final String updatedCounter = createCounterJson("counter1", projectId1, 5);
-        final Response res1 = counterApi.update(projectId1, "counter1", updatedCounter, jwtUser2);
+        counter.setValue(5);
 
+        final Response res1 = counterApi.update(project1.getId(), counter.getId(), counter, jwtUser2);
         assertEquals(HttpStatus.UNAUTHORIZED.value(), res1.getStatus());
+        res1.readEntity(SpringRestError.class);
 
-        final Response res2 = counterApi.getAll(projectId1, jwtUser1);
-        JSONAssert.assertEquals("[" + counter + "]", res2.readEntity(String.class), true);
+        counter = getCounterById(project1.getId(), counter.getId(), jwtUser1);
+        assertCounter(counter, "counter1", 1);
     }
 
     @Test
-    public void shouldDeleteCounter() throws Exception {
-        final String counter1 = createCounterJson("counter1", projectId1, 1);
-        final String counter2 = createCounterJson("counter2", projectId1, 1);
+    public void shouldDeleteCounter() {
+        Counter counter1 = createCounter("counter1", project1, 1);
+        counter1 = counterApi.create(project1.getId(), counter1, jwtUser1).readEntity(Counter.class);
 
-        counterApi.create(projectId1, counter1, jwtUser1);
-        counterApi.create(projectId1, counter2, jwtUser1);
+        Counter counter2 = createCounter("counter2", project1, 1);
+        counter2 = counterApi.create(project1.getId(), counter2, jwtUser1).readEntity(Counter.class);
 
-        final Response res = counterApi.delete(projectId1, "counter1", jwtUser1);
+        final Response res = counterApi.delete(project1.getId(), counter1, jwtUser1);
         assertEquals(HttpStatus.NO_CONTENT.value(), res.getStatus());
-        assertEquals(1, getNumberOfCounters(projectId1, jwtUser1));
+        assertEquals("", res.readEntity(String.class));
+        assertEquals(1, getNumberOfCounters(project1.getId(), jwtUser1));
     }
 
     @Test
-    public void shouldNotDeleteAnotherUsersCounter() throws Exception {
-        final String counter = createCounterJson("counter1", projectId2, 1);
-        counterApi.create(projectId2, counter, jwtUser2);
+    public void shouldNotDeleteAnotherUsersCounter() {
+        Counter counter = createCounter("counter1", project2, 1);
+        counter = counterApi.create(project2.getId(), counter, jwtUser2).readEntity(Counter.class);
 
-        final Response res = counterApi.delete(projectId2, "counter1", jwtUser1);
+        final Response res = counterApi.delete(project2.getId(), counter, jwtUser1);
         assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());
-        assertEquals(1, getNumberOfCounters(projectId2, jwtUser2));
+        res.readEntity(SpringRestError.class);
+        assertEquals(1, getNumberOfCounters(project2.getId(), jwtUser2));
     }
 
     @Test
-    public void shouldFailToDeleteCounterIfItDoesNotExist() throws Exception {
-        final Response res = counterApi.delete(projectId1, "counter", jwtUser1);
+    public void shouldFailToDeleteCounterIfItDoesNotExist() {
+        final Counter counter = new Counter();
+        counter.setProject(project1);
+        counter.setName("counter");
+        counter.setId(-1L);
+
+        final Response res = counterApi.delete(project1.getId(), counter, jwtUser1);
         assertEquals(HttpStatus.NOT_FOUND.value(), res.getStatus());
-        assertEquals(0, getNumberOfCounters(projectId1, jwtUser1));
+        res.readEntity(SpringRestError.class);
+        assertEquals(0, getNumberOfCounters(project1.getId(), jwtUser1));
     }
 
     @Test
-    public void shouldDeleteMultipleCountersAtOnce() throws Exception {
-        final String counter1 = createCounterJson("counter1", projectId1, 1);
-        final String counter2 = createCounterJson("counter2", projectId1, 1);
+    public void shouldDeleteMultipleCountersAtOnce() {
+        Counter counter1 = createCounter("counter1", project1, 1);
+        counter1 = counterApi.create(project1.getId(), counter1, jwtUser1).readEntity(Counter.class);
 
-        counterApi.create(projectId1, counter1, jwtUser1);
-        counterApi.create(projectId1, counter2, jwtUser1);
+        Counter counter2 = createCounter("counter2", project1, 1);
+        counter2 = counterApi.create(project1.getId(), counter2, jwtUser1).readEntity(Counter.class);
 
-        final Response res = counterApi.delete(projectId1, Arrays.asList("counter1", "counter2"), jwtUser1);
+        final Response res = counterApi.delete(project1.getId(), Arrays.asList(counter1, counter2), jwtUser1);
         assertEquals(HttpStatus.NO_CONTENT.value(), res.getStatus());
-        assertEquals(0, getNumberOfCounters(projectId1, jwtUser1));
+        assertEquals("", res.readEntity(String.class));
+        assertEquals(0, getNumberOfCounters(project1.getId(), jwtUser1));
     }
 
     @Test
-    public void shouldNotDeleteMultipleCountersIfOneDoesNotExist() throws Exception {
-        final String counter1 = createCounterJson("counter1", projectId1, 1);
-        final String counter2 = createCounterJson("counter2", projectId1, 1);
+    public void shouldNotDeleteMultipleCountersIfOneDoesNotExist() {
+        Counter counter1 = createCounter("counter1", project1, 1);
+        counter1 = counterApi.create(project1.getId(), counter1, jwtUser1).readEntity(Counter.class);
 
-        counterApi.create(projectId1, counter1, jwtUser1);
-        counterApi.create(projectId1, counter2, jwtUser1);
+        Counter counter2 = createCounter("counter2", project1, 1);
+        counter2 = counterApi.create(project1.getId(), counter2, jwtUser1).readEntity(Counter.class);
 
-        final Response res = counterApi.delete(projectId1, Arrays.asList("counter1", "counter2", "asdasd"), jwtUser1);
+        final Counter counter3 = createCounter("counter3", project1, 1);
+        counter3.setId(-1L);
+
+        final Response res = counterApi.delete(project1.getId(), Arrays.asList(counter1, counter2, counter3), jwtUser1);
         assertEquals(HttpStatus.NOT_FOUND.value(), res.getStatus());
-        assertEquals(2, getNumberOfCounters(projectId1, jwtUser1));
+        res.readEntity(SpringRestError.class);
+        assertEquals(2, getNumberOfCounters(project1.getId(), jwtUser1));
     }
 
-    private int getNumberOfCounters(int projectId, String jwt) throws Exception {
-        final Response res2 = counterApi.getAll(projectId, jwt);
-        return objectMapper.readTree(res2.readEntity(String.class)).size();
+    private int getNumberOfCounters(Long projectId, String jwt) {
+        return counterApi.getAll(projectId, jwt)
+                .readEntity(new GenericType<List<Counter>>(){})
+                .size();
     }
 
-    private String createCounterJson(String name, int projectId, int value) {
-        return "{"
-                + "\"name\":\"" + name + "\""
-                + ",\"project\":" + projectId
-                + ",\"value\":" + value
-                + "}";
+    private Counter getCounterById(Long projectId, Long counterId, String jwt) {
+        return counterApi.getAll(projectId, jwt)
+                .readEntity(new GenericType<List<Counter>>(){
+                })
+                .stream()
+                .filter(c -> c.getId().equals(counterId))
+                .findFirst()
+                .orElseThrow(NotFoundException::new);
+    }
+
+    private Counter createCounter(String name, Project project, Integer value) {
+        final Counter counter = new Counter();
+        counter.setName(name);
+        counter.setProject(project);
+        counter.setValue(value);
+        return counter;
+    }
+
+    private void assertCounter(Counter counter, String name, Integer value) {
+        assertEquals(name, counter.getName());
+        assertEquals(value, counter.getValue());
     }
 }

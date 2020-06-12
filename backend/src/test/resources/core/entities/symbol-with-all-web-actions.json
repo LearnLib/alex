@@ -341,7 +341,8 @@
         "credentials": {
           "name": "",
           "password": ""
-        }
+        },
+        "baseUrl": "Base"
       },
       "position": 22
     },
@@ -357,7 +358,8 @@
         "credentials": {
           "name": "test",
           "password": "test"
-        }
+        },
+        "baseUrl": "Base"
       },
       "position": 23
     },

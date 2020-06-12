@@ -1,0 +1,71 @@
+<div class="view">
+  <action-bar>
+    <div class="d-flex flex-row align-items-center">
+
+      <div class="mr-3">
+        <selectable-checkbox-multiple
+          [items]="(store.projects$ | async)"
+          [selectable]="store.projectsSelectable"
+        >
+        </selectable-checkbox-multiple>
+      </div>
+
+      <button (click)="store.createProject()" class="btn btn-primary btn-sm mr-2">Create</button>
+
+      <div class="btn-group btn-group-sm mr-2">
+        <button
+          (click)="store.editProject(store.projectsSelectable.getSelected()[0])"
+          [disabled]="store.projectsSelectable.getSelected().length !== 1"
+          class="btn btn-default"
+        >
+          Edit
+        </button>
+        <button
+          (click)="store.deleteSelectedProjects()"
+          [disabled]="store.projectsSelectable.getSelected().length === 0"
+          class="btn btn-default"
+        >
+          Delete
+        </button>
+      </div>
+      <div class="btn-group btn-group-sm mr-2">
+        <button
+          (click)="store.importProject()"
+          class="btn btn-default"
+          ngbTooltip="Import"
+          placement="left"
+        >
+          <i class="fas fa-upload fa-fw"></i>
+        </button>
+        <button
+          (click)="store.exportProject(store.projectsSelectable.getSelected()[0])"
+          [disabled]="store.projectsSelectable.getSelected().length !== 1"
+          class="btn btn-default"
+          ngbTooltip="Export"
+          placement="left"
+        >
+          <i class="fas fa-download fa-fw"></i>
+        </button>
+      </div>
+
+    </div>
+  </action-bar>
+
+  <div class="view-body">
+    <div class="container-fluid">
+
+      <div *ngIf="(store.orderedProjects$ | async).length == 0" class="alert alert-info">
+        You haven't created a project yet.
+      </div>
+
+      <project-list
+        class="d-block mb-4"
+        *ngIf="(store.orderedProjects$ | async).length > 0"
+        [projects]="store.orderedProjects$ | async"
+        [selectable]="store.projectsSelectable"
+      >
+      </project-list>
+
+    </div>
+  </div>
+</div>

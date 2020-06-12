@@ -1,0 +1,20 @@
+<div *ngFor="let f of folders">
+  <div class="cursor-pointer" (click)="selectFolder.emit(f)">
+    <i class="fas fa-fw fa-folder mr-1"></i> {{getFolderTextFn(f)}}
+  </div>
+  <div class="pl-3">
+    <tree-view
+      [folders]="getFoldersFn(f)"
+      [getFoldersFn]="getFoldersFn"
+      [getFolderTextFn]="getFolderTextFn"
+      [getFilesFn]="getFilesFn"
+      [getFileTextFn]="getFileTextFn"
+      (selectFile)="selectFile.emit($event)"
+      (selectFolder)="selectFolder.emit($event)"
+    >
+    </tree-view>
+    <div *ngFor="let file of getFilesFn(f)" class="cursor-pointer" (click)="selectFile.emit(file)">
+      <i class="fas fa-fw fa-file mr-1"></i> {{getFileTextFn(file)}}
+    </div>
+  </div>
+</div>

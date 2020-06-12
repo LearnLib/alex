@@ -2,60 +2,43 @@
 
 # TodoMVC
 
-In this section, we present all the necessary files and steps in order to learn the majority of all stable implementation of the [TodoMVC](http://todomvc.com/) project.
-The symbol sets that we used to learn implementation of TodoMVC can be downloaded from here: [todomvc-symbols.zip](./assets/todomvc-symbols.zip).
-In the archive, there is directory *"single"* and a directory *"stack"*.
-The first one contains symbol sets for learning TodoMVC with only one todo at a time.
-The latter directory contains symbol sets for learning TodoMVC with two todos at a time.
+In this section, we present the steps in order to learn the *ReactJS* implementation of the [TodoMVC](http://todomvc.com/) project.
 
 
 ## Requirements
 
-* A system with Node.js and NPM installed
-* Global access to gulp `npm install -g gulp gulp-cli`
-* The latest version of ALEX
-* Version 1.3 of [TodoMVC](http://todomvc.com/)
+* ALEX v2.0.0
+* [TodoMVC](http://todomvc.com/) v1.3
 
 
 ## Instructions
 
-Before we start, make sure that TodoMVC is running.
 Follow the instructions on the [homepage](http://todomvc.com/) of TodoMVC in order to start the application.
 In the following, we assume that TodoMVC runs on port 8080 and is accessible at *http://localhost:8080*.
-Further, we learn the *AngularJS* implementation.
 
-### Setup a project
+### 1) Import the project
 
-1. In the project overview, create a new project with the URL of a TodoMVC implementation as a base URL, e.g. *http://localhost:8080/examples/angularjs* if you want to learn AngularJS
-2. Click on the newly created project
+1. Download the exported project [here](/files/todomvc-react.project.json).
+2. In the project overview, click on the import icon in the action bar and select the project in the file *todomvc-react.project.json*
+3. Open the project by clicking on the corresponding item in the list.
 
-### Import symbols
+### 2) Learn TodoMVC
 
-3. In the sidebar, click on **Symbols > Manage**
-4. In the action bar, click on the *Import* button
-4. Drop the *angular-symbols.json* from the *single* or *stack* directory in the provided field and click on *Import*
+1. Click on *Learning* > *Setups* in the sidebar.
+2. Click on *New Setup*
+3. For the reset symbol, select the symbol *reset*.
+4. For the input alphabet, select all symbols except *reset* from the panel *Symbols* on the left.
+5. The symbols *create todo*, *delete todo* and *toggle completed* have parameter *text*.
+   Insert any value for each them, e.g. "bananas"
+6. In the configuration panel on the right, select the TTT algorithm.
+   Use a "Random Word" Equivalence Oracle with the parameters (Min length = 60, Max length = 60, Random words = 60, Batch size = 1).
+7. In the *WebDriver* tab, select the browser you have set up.
+8. Click on *Run* to run the experiment.
 
-### Learn TodoMVC
+Depending on the hardware specifications of the system that the process is running on, the execution time may vary.
+For this example, the process has been executed on a Laptop with an Intel Core i7 8th Gen, 32GB RAM and and SSD.
+The execution took 9min45s and the following model has been learned:
 
-1. In the left menu, under the group *Learn*, click on the item *Setup*
-2. Select all symbols except the one called *Reset*
-3. Mark the symbol *Reset* as reset symbol
-4. In the top right corner, click on the settings button
-5. As equivalence oracle, select *Random Word*. We executed all experiments with the parameters (min=30, max=80, words=60, seed=42)
-6. In the dialog, select the web driver that you have set up previously
-7. Click on *Save*
-8. Start the learning process and wait ...
+![TodoMVC](./assets/todomvc-react.model.png)
+Download the DOT file [here](/files/todomvc-react.model.json).
 
-*Note: On our setup with a Core i5 6600k, 16Gb RAM and an SSD the final hypothesis is computed after about one hour.
-Depending on your learn setup, e.g. higher parameters for the equivalence oracle, or your pc hardware, the execution time of the learning process may vary.*
-
-The final hypothesis should, in most cases, look like the following:
-
-![Hypothesis](./assets/todomvc-hypothesis-angular.png)
-
-### Increasing the number of parallel todos
-
-![increase-todos](./assets/todomvc-increase-todos.png)
-
-All symbol sets in the *stack* directory are designed to learn TodoMVC with a maximum of two parallel todo items.
-If you want to lean TodoMVC with *n* parallel todo items, open the *Create ToDo* symbol and edit the first action accordingly (see image above for *n = 5*).

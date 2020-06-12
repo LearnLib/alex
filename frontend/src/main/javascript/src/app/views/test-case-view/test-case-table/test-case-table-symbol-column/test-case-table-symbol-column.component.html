@@ -1,0 +1,19 @@
+<div>
+  <strong>
+    <a
+      class="text-black"
+      [routerLink]="['/app', 'projects', appStore.project.id, 'symbols', pSymbol.symbol.id]"
+    >
+      {{pSymbol.symbol.name}}
+    </a>
+  </strong>
+  <span
+    *ngIf="symbolMap[pSymbol.symbol.id]?.steps.length === 0"
+    class="badge badge-info"
+  >
+    Not implemented
+  </span>
+  <div>
+    <symbol-input-values [parameterizedSymbol]="pSymbol"></symbol-input-values>
+  </div>
+</div>

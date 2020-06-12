@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 package de.learnlib.alex.learning.events;
 
 import de.learnlib.alex.learning.entities.LearnerResult;
-import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
-import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
 import de.learnlib.alex.webhooks.entities.Event;
 import de.learnlib.alex.webhooks.entities.EventType;
 
@@ -26,28 +24,28 @@ import de.learnlib.alex.webhooks.entities.EventType;
 public class LearnerEvent {
 
     /** Event for when the learner started. */
-    public static class Started extends Event<LearnerStartConfiguration> {
+    public static class Started extends Event<LearnerResult> {
 
         /**
          * Constructor.
          *
-         * @param config The configuration used for starting the learner.
+         * @param result The configuration used for starting the learner.
          */
-        public Started(LearnerStartConfiguration config) {
-            super(config, EventType.LEARNER_STARTED);
+        public Started(LearnerResult result) {
+            super(result, EventType.LEARNER_STARTED);
         }
     }
 
     /** Event for when the learner is resumed. */
-    public static class Resumed extends Event<LearnerResumeConfiguration> {
+    public static class Resumed extends Event<LearnerResult> {
 
         /**
          * Constructor.
          *
-         * @param config The configuration used for resuming the learner.
+         * @param result The configuration used for resuming the learner.
          */
-        public Resumed(LearnerResumeConfiguration config) {
-            super(config, EventType.LEARNER_RESUMED);
+        public Resumed(LearnerResult result) {
+            super(result, EventType.LEARNER_RESUMED);
         }
     }
 

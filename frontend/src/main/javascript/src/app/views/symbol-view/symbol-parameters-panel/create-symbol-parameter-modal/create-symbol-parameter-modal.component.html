@@ -1,0 +1,25 @@
+<div class="modal-header">
+  <h4 class="modal-title">Add parameter</h4>
+  <a (click)="modal.dismiss()" class="btn btn-icon float-right">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<form (ngSubmit)="addParameter()" [formGroup]="form" name="form">
+  <div class="modal-body">
+    <div *ngIf="errorMessage != null" class="alert alert-danger">
+      {{errorMessage}}
+    </div>
+
+    <symbol-parameter-form-groups
+      [form]="form"
+      [parameter]="parameter"
+    >
+    </symbol-parameter-form-groups>
+  </div>
+
+  <div class="modal-footer">
+    <button [disabled]="form.invalid" class="btn btn-primary btn-sm" type="submit">Add</button>
+    <button (click)="modal.dismiss(); $event.stopPropagation()" class="btn btn-default btn-sm">Cancel</button>
+  </div>
+</form>

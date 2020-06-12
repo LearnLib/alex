@@ -1,0 +1,29 @@
+<div class="card">
+  <div class="card-header">
+    <strong>Project details</strong>
+  </div>
+  <div class="card-body">
+
+    <table class="table mb-0">
+      <tbody>
+      <tr>
+        <td><strong>Name</strong></td>
+        <td>{{project.name}}</td>
+      </tr>
+      <tr>
+        <td><strong>Default environment</strong></td>
+        <td>{{project.getDefaultEnvironment().name}}</td>
+      </tr>
+      <tr>
+        <td><strong>Default URL</strong></td>
+        <td class="text-break">
+          <a [href]="project.getDefaultEnvironment().getDefaultUrl().url">
+            {{project.getDefaultEnvironment().getDefaultUrl().url}}
+          </a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+  </div>
+</div>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.DefaultQueryProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
-import net.automatalib.automata.transducers.MealyMachine;
-import net.automatalib.words.impl.SimpleAlphabet;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -37,7 +35,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.Min;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -67,9 +64,6 @@ public class LearnerResultStep implements Serializable {
 
     /** The type of EQ oracle to find a counter example. */
     private AbstractEquivalenceOracleProxy eqOracle;
-
-    /** The amount of steps to learn without user interaction. */
-    private int stepsToLearn;
 
     /** The hypothesis of the result. */
     private CompactMealyMachineProxy hypothesis;
@@ -166,22 +160,6 @@ public class LearnerResultStep implements Serializable {
     }
 
     /**
-     * @return The max amount of steps to learn without user interaction.
-     */
-    @Min(-1)
-    public int getStepsToLearn() {
-        return stepsToLearn;
-    }
-
-    /**
-     * @param stepsToLearn
-     *         The new max amount of steps to learn without user interaction.
-     */
-    public void setStepsToLearn(int stepsToLearn) {
-        this.stepsToLearn = stepsToLearn;
-    }
-
-    /**
      * The hypothesis (as proxy) which is one of the core information of the result.
      *
      * @return The hypothesis (as proxy) of the result.
@@ -201,18 +179,6 @@ public class LearnerResultStep implements Serializable {
     @JsonProperty("hypothesis")
     public void setHypothesis(CompactMealyMachineProxy hypothesis) {
         this.hypothesis = hypothesis;
-    }
-
-    /**
-     * Set a new hypothesis (as proxy) for the result based on a MealyMachine from the LearnLib.
-     *
-     * @param mealyMachine
-     *         The new hypothesis as MealyMachine from the LearnLib.
-     */
-    @Transient
-    @JsonIgnore
-    public void createHypothesisFrom(MealyMachine<?, String, ?, String> mealyMachine) {
-        this.hypothesis = CompactMealyMachineProxy.createFrom(mealyMachine, new SimpleAlphabet<>(result.getSigma()));
     }
 
     /**

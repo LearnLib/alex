@@ -1,0 +1,985 @@
+{
+  "version": "2.0.0",
+  "type": "project",
+  "project": {
+    "name": "ALEX",
+    "environments": [
+      {
+        "name": "Production",
+        "urls": [
+          {
+            "name": "Base",
+            "url": "http://localhost:9090",
+            "default": false
+          },
+          {
+            "name": "REST",
+            "url": "http://localhost:9090/rest",
+            "default": true
+          }
+        ],
+        "variables": [],
+        "default": true
+      }
+    ]
+  },
+  "groups": [
+    {
+      "name": "Default group",
+      "symbols": [
+        {
+          "description": "",
+          "expectedResult": "",
+          "hidden": false,
+          "inputs": [
+            {
+              "type": "input",
+              "name": "jwt",
+              "parameterType": "STRING"
+            },
+            {
+              "type": "input",
+              "name": "userId",
+              "parameterType": "STRING"
+            }
+          ],
+          "name": "get profile",
+          "outputs": [],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "rest_call",
+                "method": "GET",
+                "url": "/users/{{$userId}}",
+                "baseUrl": "REST",
+                "timeout": 0,
+                "headers": {
+                  "Authorization": "Bearer {{$jwt}}"
+                },
+                "credentials": {
+                  "name": "",
+                  "password": ""
+                },
+                "cookies": {}
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "rest_checkStatus",
+                "status": 200
+              }
+            }
+          ],
+          "successOutput": null,
+          "updatedOn": "2019-12-19T11:47:33.276+01:00"
+        },
+        {
+          "description": "",
+          "expectedResult": "",
+          "hidden": false,
+          "inputs": [
+            {
+              "type": "input",
+              "name": "email",
+              "parameterType": "STRING"
+            },
+            {
+              "type": "input",
+              "name": "password",
+              "parameterType": "STRING"
+            },
+            {
+              "type": "input",
+              "name": "username",
+              "parameterType": "STRING"
+            }
+          ],
+          "name": "register",
+          "outputs": [
+            {
+              "type": "output",
+              "name": "userId",
+              "parameterType": "STRING"
+            }
+          ],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "rest_call",
+                "method": "POST",
+                "url": "/users",
+                "baseUrl": "REST",
+                "timeout": 0,
+                "headers": {},
+                "credentials": {
+                  "name": "",
+                  "password": ""
+                },
+                "cookies": {},
+                "data": "{\n    \"username\": \"{{$username}}\",\n    \"email\": \"{{$email}}\",\n    \"password\": \"{{$password}}\"\n}"
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "rest_checkStatus",
+                "status": 201
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "rest_checkAttributeExists",
+                "attribute": "id"
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "setVariableByJSON",
+                "name": "userId",
+                "value": "id"
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "rest_checkAttributeExists",
+                "attribute": "username"
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "rest_checkAttributeExists",
+                "attribute": "email"
+              }
+            }
+          ],
+          "successOutput": null,
+          "updatedOn": "2019-12-19T11:47:33.163+01:00"
+        },
+        {
+          "description": "",
+          "expectedResult": "",
+          "hidden": false,
+          "inputs": [
+            {
+              "type": "input",
+              "name": "jwt",
+              "parameterType": "STRING"
+            },
+            {
+              "type": "input",
+              "name": "userId",
+              "parameterType": "STRING"
+            }
+          ],
+          "name": "demote",
+          "outputs": [],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "rest_call",
+                "method": "PUT",
+                "url": "/users/{{$userId}}/demote",
+                "baseUrl": "REST",
+                "timeout": 0,
+                "headers": {
+                  "Authorization": "Bearer {{$jwt}}"
+                },
+                "credentials": {
+                  "name": "",
+                  "password": ""
+                },
+                "cookies": {}
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "rest_checkStatus",
+                "status": 200
+              }
+            }
+          ],
+          "successOutput": null,
+          "updatedOn": "2019-12-19T11:47:33.295+01:00"
+        },
+        {
+          "description": "",
+          "expectedResult": "",
+          "hidden": false,
+          "inputs": [],
+          "name": "logout",
+          "outputs": [
+            {
+              "type": "output",
+              "name": "jwt",
+              "parameterType": "STRING"
+            }
+          ],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "setVariable",
+                "name": "jwt",
+                "value": ""
+              }
+            }
+          ],
+          "successOutput": null,
+          "updatedOn": "2019-12-19T11:47:33.308+01:00"
+        },
+        {
+          "description": "",
+          "expectedResult": "",
+          "hidden": false,
+          "inputs": [
+            {
+              "type": "input",
+              "name": "email",
+              "parameterType": "STRING"
+            },
+            {
+              "type": "input",
+              "name": "password",
+              "parameterType": "STRING"
+            }
+          ],
+          "name": "auth",
+          "outputs": [
+            {
+              "type": "output",
+              "name": "jwt",
+              "parameterType": "STRING"
+            }
+          ],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "rest_call",
+                "method": "POST",
+                "url": "/users/login",
+                "baseUrl": "REST",
+                "timeout": 0,
+                "headers": {},
+                "credentials": {
+                  "name": "",
+                  "password": ""
+                },
+                "cookies": {},
+                "data": "{\"email\": \"{{$email}}\", \"password\": \"{{$password}}\"}"
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": "",
+              "action": {
+                "type": "rest_checkStatus",
+                "status": 200
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "rest_checkAttributeExists",
+                "attribute": "token"
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "setVariableByJSON",
+                "name": "jwt",
+                "value": "token"
+              }
+            }
+          ],
+          "successOutput": null,
+          "updatedOn": "2019-12-19T11:47:33.210+01:00"
+        },
+        {
+          "description": "",
+          "expectedResult": "",
+          "hidden": false,
+          "inputs": [
+            {
+              "type": "input",
+              "name": "jwt",
+              "parameterType": "STRING"
+            },
+            {
+              "type": "input",
+              "name": "userId",
+              "parameterType": "STRING"
+            }
+          ],
+          "name": "delete profile",
+          "outputs": [],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "rest_call",
+                "method": "DELETE",
+                "url": "/users/{{$userId}}",
+                "baseUrl": "REST",
+                "timeout": 0,
+                "headers": {
+                  "Authorization": "Bearer {{$jwt}}"
+                },
+                "credentials": {
+                  "name": "",
+                  "password": ""
+                },
+                "cookies": {}
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "rest_checkStatus",
+                "status": 204
+              }
+            }
+          ],
+          "successOutput": null,
+          "updatedOn": "2019-12-19T11:47:33.320+01:00"
+        },
+        {
+          "description": "",
+          "expectedResult": "",
+          "hidden": false,
+          "inputs": [],
+          "name": "reset",
+          "outputs": [
+            {
+              "type": "output",
+              "name": "adminId",
+              "parameterType": "STRING"
+            },
+            {
+              "type": "output",
+              "name": "jwt",
+              "parameterType": "STRING"
+            }
+          ],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_goto",
+                "url": "/",
+                "baseUrl": "Base",
+                "credentials": {
+                  "name": "",
+                  "password": ""
+                }
+              }
+            },
+            {
+              "type": "symbol",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "pSymbol": {
+                "parameterValues": [
+                  {
+                    "parameter": {
+                      "type": "input",
+                      "name": "email",
+                      "parameterType": "STRING"
+                    },
+                    "value": "admin@alex.example"
+                  },
+                  {
+                    "parameter": {
+                      "type": "input",
+                      "name": "password",
+                      "parameterType": "STRING"
+                    },
+                    "value": "admin"
+                  }
+                ],
+                "symbol": {
+                  "name": "auth"
+                }
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "rest_call",
+                "method": "GET",
+                "url": "/users/myself",
+                "baseUrl": "REST",
+                "timeout": 0,
+                "headers": {
+                  "Authorization": "Bearer {{$jwt}}"
+                },
+                "credentials": {
+                  "name": "",
+                  "password": ""
+                },
+                "cookies": {}
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "rest_checkStatus",
+                "status": 200
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "setVariableByJSON",
+                "name": "adminId",
+                "value": "id"
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "rest_call",
+                "method": "GET",
+                "url": "/users",
+                "baseUrl": "REST",
+                "timeout": 0,
+                "headers": {
+                  "Authorization": "Bearer {{$jwt}}"
+                },
+                "credentials": {
+                  "name": "",
+                  "password": ""
+                },
+                "cookies": {}
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "rest_checkStatus",
+                "status": 200
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "setVariableByHttpResponse",
+                "name": "users"
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_executeScript",
+                "script": "var users = arguments[0].variables.users;\nvar adminId = arguments[0].variables.adminId;\n\nusers = JSON.parse(users).map(u => u.id).filter(id => id.toString() !== adminId);\n\nreturn users.join(',');",
+                "async": false,
+                "timeout": 10,
+                "name": "userIds"
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "jumpToLabel",
+                "label": "noUsersExist",
+                "script": "return arguments[0].variables.userIds === '';",
+                "async": false,
+                "timeout": 10
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "rest_call",
+                "method": "DELETE",
+                "url": "/users/batch/{{$userIds}}",
+                "baseUrl": "REST",
+                "timeout": 0,
+                "headers": {
+                  "Authorization": "Bearer {{$jwt}}"
+                },
+                "credentials": {
+                  "name": "",
+                  "password": ""
+                },
+                "cookies": {}
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "rest_checkStatus",
+                "status": 204
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "createLabel",
+                "label": "noUsersExist"
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "setVariable",
+                "name": "jwt",
+                "value": ""
+              }
+            }
+          ],
+          "successOutput": null,
+          "updatedOn": "2019-12-19T11:47:33.236+01:00"
+        },
+        {
+          "description": "",
+          "expectedResult": "",
+          "hidden": false,
+          "inputs": [
+            {
+              "type": "input",
+              "name": "jwt",
+              "parameterType": "STRING"
+            },
+            {
+              "type": "input",
+              "name": "userId",
+              "parameterType": "STRING"
+            }
+          ],
+          "name": "promote",
+          "outputs": [],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "rest_call",
+                "method": "PUT",
+                "url": "/users/{{$userId}}/promote",
+                "baseUrl": "REST",
+                "timeout": 0,
+                "headers": {
+                  "Authorization": "Bearer {{$jwt}}"
+                },
+                "credentials": {
+                  "name": "",
+                  "password": ""
+                },
+                "cookies": {}
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "rest_checkStatus",
+                "status": 200
+              }
+            }
+          ],
+          "successOutput": null,
+          "updatedOn": "2019-12-19T11:47:33.336+01:00"
+        },
+        {
+          "description": "",
+          "expectedResult": "",
+          "hidden": false,
+          "inputs": [
+            {
+              "type": "input",
+              "name": "jwt",
+              "parameterType": "STRING"
+            }
+          ],
+          "name": "get myself",
+          "outputs": [],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "rest_call",
+                "method": "GET",
+                "url": "/users/myself",
+                "baseUrl": "REST",
+                "timeout": 0,
+                "headers": {
+                  "Authorization": "Bearer {{$jwt}}"
+                },
+                "credentials": {
+                  "name": "",
+                  "password": ""
+                },
+                "cookies": {}
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "rest_checkStatus",
+                "status": 200
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "rest_checkAttributeExists",
+                "attribute": "id"
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "rest_checkAttributeType",
+                "attribute": "id",
+                "jsonType": "INTEGER"
+              }
+            }
+          ],
+          "successOutput": null,
+          "updatedOn": "2019-12-19T11:47:33.259+01:00"
+        }
+      ],
+      "groups": []
+    }
+  ],
+  "tests": [
+    {
+      "name": "test",
+      "preSteps": [],
+      "steps": [
+        {
+          "disabled": false,
+          "expectedResult": "",
+          "expectedOutputSuccess": true,
+          "expectedOutputMessage": "",
+          "pSymbol": {
+            "parameterValues": [],
+            "symbol": {
+              "name": "reset"
+            }
+          }
+        },
+        {
+          "disabled": false,
+          "expectedResult": "",
+          "expectedOutputSuccess": true,
+          "expectedOutputMessage": "",
+          "pSymbol": {
+            "parameterValues": [
+              {
+                "parameter": {
+                  "type": "input",
+                  "name": "email",
+                  "parameterType": "STRING"
+                },
+                "value": "user1@alex.de"
+              },
+              {
+                "parameter": {
+                  "type": "input",
+                  "name": "password",
+                  "parameterType": "STRING"
+                },
+                "value": "password"
+              },
+              {
+                "parameter": {
+                  "type": "input",
+                  "name": "username",
+                  "parameterType": "STRING"
+                },
+                "value": "user1"
+              }
+            ],
+            "symbol": {
+              "name": "register"
+            }
+          }
+        },
+        {
+          "disabled": false,
+          "expectedResult": "",
+          "expectedOutputSuccess": true,
+          "expectedOutputMessage": "",
+          "pSymbol": {
+            "parameterValues": [
+              {
+                "parameter": {
+                  "type": "input",
+                  "name": "email",
+                  "parameterType": "STRING"
+                },
+                "value": "user2@alex.de"
+              },
+              {
+                "parameter": {
+                  "type": "input",
+                  "name": "password",
+                  "parameterType": "STRING"
+                },
+                "value": "password"
+              },
+              {
+                "parameter": {
+                  "type": "input",
+                  "name": "username",
+                  "parameterType": "STRING"
+                },
+                "value": "user2"
+              }
+            ],
+            "symbol": {
+              "name": "register"
+            }
+          }
+        },
+        {
+          "disabled": false,
+          "expectedResult": "",
+          "expectedOutputSuccess": true,
+          "expectedOutputMessage": "",
+          "pSymbol": {
+            "parameterValues": [
+              {
+                "parameter": {
+                  "type": "input",
+                  "name": "email",
+                  "parameterType": "STRING"
+                },
+                "value": "user1@alex.de"
+              },
+              {
+                "parameter": {
+                  "type": "input",
+                  "name": "password",
+                  "parameterType": "STRING"
+                },
+                "value": "password"
+              }
+            ],
+            "symbol": {
+              "name": "auth"
+            }
+          }
+        },
+        {
+          "disabled": false,
+          "expectedResult": "",
+          "expectedOutputSuccess": true,
+          "expectedOutputMessage": "",
+          "pSymbol": {
+            "parameterValues": [
+              {
+                "parameter": {
+                  "type": "input",
+                  "name": "jwt",
+                  "parameterType": "STRING"
+                },
+                "value": "{{$jwt}}"
+              },
+              {
+                "parameter": {
+                  "type": "input",
+                  "name": "userId",
+                  "parameterType": "STRING"
+                },
+                "value": "{{$user1Id}}"
+              }
+            ],
+            "symbol": {
+              "name": "get profile"
+            }
+          }
+        },
+        {
+          "disabled": false,
+          "expectedResult": "",
+          "expectedOutputSuccess": false,
+          "expectedOutputMessage": "",
+          "pSymbol": {
+            "parameterValues": [
+              {
+                "parameter": {
+                  "type": "input",
+                  "name": "jwt",
+                  "parameterType": "STRING"
+                },
+                "value": "{{$jwt}}"
+              },
+              {
+                "parameter": {
+                  "type": "input",
+                  "name": "userId",
+                  "parameterType": "STRING"
+                },
+                "value": "{{$user2Id}}"
+              }
+            ],
+            "symbol": {
+              "name": "get profile"
+            }
+          }
+        }
+      ],
+      "postSteps": [],
+      "generated": false,
+      "updatedOn": "2019-12-19T11:47:57.795+01:00",
+      "status": "DONE",
+      "type": "case"
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,6 +49,16 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     @Transactional(readOnly = true)
     User findOneByEmail(String email);
+
+    /**
+     * Find a User by its username.
+     *
+     * @param username
+     *         The username to look for.
+     * @return The users with that username or null.
+     */
+    @Transactional(readOnly = true)
+    User findOneByUsername(String username);
 
     /**
      * Find multiple users by IDs.

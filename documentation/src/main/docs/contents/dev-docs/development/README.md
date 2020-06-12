@@ -7,8 +7,8 @@ On this page, we present some information for developers and maintainers of ALEX
 
 Make sure you have the following software installed on your development machine:
 
-1. Java JDK 8 or greater
-2. Node.js v10 and NPM v6
+1. Java JDK 11
+2. Node.js v12 and NPM v6
 3. Git
 4. Maven 3.3.*
 
@@ -19,7 +19,7 @@ Make sure that you `mvn install`ed ALEX once before executing any of the followi
 
 | Command                                 | Description                                                          |
 |-----------------------------------------|----------------------------------------------------------------------|
-| `mvn test`                              | Execute all backend tests.                                           |
+| `mvn test -Pintegration-tests`          | Execute all backend tests.                                           |
 | `mvn checkstyle:check -Pcode-analysis`  | Check if the code style is according to the specifications.          |
 | `mvn spring-boot:run`                   | Start the REST API of ALEX.                                          |
 
@@ -29,31 +29,19 @@ In addition, the following parameters can be used for the build file or the `mvn
 |-------------------|-------------------------------------------------------------------------------------------------------|
 | `server.port`     | The path where ALEX should run `mvn spring-boot:run "-Dserver.port=8000"`                             |
 | `alex.dbpath`     | The path where the HSQLDB is stored. `mvn spring-boot:run "-Dalex.dbpath=mem:testdb"`                 |
-| `chromeDriver`    | The absolute path to the Chrome driver executable on your system                                      |
-| `edgeDriver`      | The absolute path to the Edge driver executable on your system                                        |
-| `firefoxDriver`   | The absolute path to the Gecko driver executable on your system                                       |
+| `chromeDriver`    | The absolute path to the Chrome driver executable                                                     |
+| `edgeDriver`      | The absolute path to the Edge driver executable                                                       |
+| `firefoxDriver`   | The absolute path to the Gecko driver executable                                                      |
 | `ieDriver`        | The absolute path to the Internet Explorer executable                                                 |
 | `remoteDriver`    | The URI to the remote Selenium server                                                                 |
-| `ltsmin.path`     | The path to the compiles binaries of the LTSmin library                                               |
+| `ltsmin.path`     | The path to the compiled binaries of the LTSmin library                                               |
 
 
 ## Frontend development
 
-The frontend is developed with [AngularJS][angular] and written in Typescript.
+The frontend is developed with [Angular][angular], relies on the Angular CLI and is written in Typescript.
 Styling in ALEX is done with [Bootstrap v4][bootstrap] and SASS stylesheets.
 All frontend files can be found in *frontend/src/main/javascript*.
-
-### NPM commands
-
-There are several NPM commands to automate the development workflow.
-In the *frontend/src/main/javascript* directory, use the following commands:
-
-| Command          | Description                                                                         |
-|------------------|-------------------------------------------------------------------------------------|
-| `npm run build`  | Build all the application files for production use                                  |
-| `npm run dev`    | Compile sass, html and js files every time their content changes                    |
-| `npm run serve`  | Serves the frontend at *http://localhost:8080*. For a custom port, add `-- -p XXXX` |
-
 
 ## Performing a release
 
@@ -72,8 +60,6 @@ In the developer branch, perform the following steps:
    Here, append the binary file generated from step 4.
 6. In the developer branch, increment the version in all files from 1. and append the *-SNAPSHOT* suffix.
   
-  
-
-[angular]: https://angularjs.org/
+[angular]: https://angular.io/
 [bootstrap]: https://getbootstrap.com/docs/4.3/
 [docker]: https://www.docker.com

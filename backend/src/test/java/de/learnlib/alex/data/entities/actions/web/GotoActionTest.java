@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class GotoActionTest extends WebActionTest {
 
+    private static final String BASE_URL = "Base";
     private static final String FAKE_URL = "http://example.com";
 
     private GotoAction g;
@@ -52,6 +53,7 @@ public class GotoActionTest extends WebActionTest {
         g = new GotoAction();
         g.setSymbol(symbol);
         g.setUrl(FAKE_URL);
+        g.setBaseUrl(BASE_URL);
     }
 
     @Test
@@ -78,13 +80,12 @@ public class GotoActionTest extends WebActionTest {
     @Test
     public void shouldReturnOKIfTheUrlCouldBeFound() throws Exception {
         assertTrue(g.executeAction(connectors).isSuccess());
-        verify(webSiteConnector).get(eq(FAKE_URL), any(Credentials.class));
+        verify(webSiteConnector).get(eq(BASE_URL), eq(FAKE_URL), any(Credentials.class));
     }
 
     @Test
     public void shouldReturnFailedIfTheUrlCouldNotBeFound() throws Exception {
-        willThrow(Exception.class).given(webSiteConnector).get(eq(FAKE_URL), any(Credentials.class));
-
+        willThrow(Exception.class).given(webSiteConnector).get(eq(BASE_URL), eq(FAKE_URL), any(Credentials.class));
         assertFalse(g.executeAction(connectors).isSuccess());
     }
 

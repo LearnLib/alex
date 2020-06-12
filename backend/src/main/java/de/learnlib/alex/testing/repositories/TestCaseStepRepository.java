@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,4 +50,8 @@ public interface TestCaseStepRepository extends JpaRepository<TestCaseStep, Long
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
     Long countAllByPSymbol_Symbol_Id(Long symbolId);
+
+    @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
+    List<TestCaseStep> findAllByPSymbol_Symbol_Id(Long symbolId);
 }

@@ -1,0 +1,1 @@
+alter table PUBLIC.actions add column label varchar(255);

@@ -1,0 +1,75 @@
+@import "../../../scss/bootstrap";
+
+.action-list {
+  user-select: none;
+
+  .action-list-item {
+    padding: .75rem 1rem;
+    user-select: none;
+    align-items: baseline;
+    border-bottom: 1px solid #e2e2e2;
+
+    .input-parameter-value {
+      position: relative;
+
+      &:hover i {
+        display: block;
+      }
+
+      i {
+        position: absolute;
+        right: 5px;
+        top: 5px;
+        cursor: pointer;
+        display: none;
+      }
+
+      input {
+        padding: 0;
+        border: 0;
+        font-style: italic;
+
+        &:focus {
+          outline: none;
+        }
+      }
+    }
+
+    &:last-of-type {
+      border-bottom: 0;
+    }
+
+    &.gu-transit {
+      opacity: .5;
+      border: 1px dashed #244061;
+    }
+
+    .action-output {
+      border-top: 1px dashed #ddd;
+      padding-top: 7px;
+      margin-top: 7px;
+
+      strong {
+        color: $danger;
+      }
+    }
+
+    &.disabled {
+      .action-description,
+      .symbol-description,
+      .step-output {
+        text-decoration: line-through;
+        opacity: 0.5;
+      }
+    }
+  }
+
+  .step-output {
+    border-top: 1px dashed #ddd;
+    padding-top: 6px;
+  }
+
+  .step-labels {
+    margin-bottom: 6px;
+  }
+}

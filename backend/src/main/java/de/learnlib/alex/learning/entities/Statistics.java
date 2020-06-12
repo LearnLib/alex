@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package de.learnlib.alex.learning.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import de.learnlib.alex.common.Constants;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -28,7 +29,6 @@ import javax.persistence.Embedded;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 /** Embeddable statistics object that contains statistics related to a learning experiment. */
@@ -37,9 +37,6 @@ import java.util.Objects;
 public class Statistics implements Serializable {
 
     private static final long serialVersionUID = -5221139436025380739L;
-
-    /** Standard DateTimeFormatter that will create a nice ISO 8160 string with milliseconds and a time zone. */
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
 
     /** Sub Statistics class to store information by Learner and EqOracle. */
     @Embeddable
@@ -127,14 +124,6 @@ public class Statistics implements Serializable {
     @JsonIgnore
     private ZonedDateTime startDate;
 
-    /**
-     * The 'time' the test started in nanoseconds.
-     * This is just internally user to calculate the duration and the Java value for the used 'nanoTime' has no
-     * real world meaning.
-     */
-    @JsonIgnore
-    private long startTime;
-
     /** The amount of equivalence queries. */
     private long eqsUsed;
 
@@ -152,7 +141,6 @@ public class Statistics implements Serializable {
      */
     public Statistics() {
         this.startDate = ZonedDateTime.now();
-        this.startTime = System.nanoTime();
         this.eqsUsed = 0L;
         this.duration = new DetailedStatistics();
         this.mqsUsed = new DetailedStatistics();
@@ -171,14 +159,6 @@ public class Statistics implements Serializable {
         symbolsUsed.updateBy(statistics.symbolsUsed);
     }
 
-    public long getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(long startTime) {
-        this.startTime = startTime;
-    }
-
     @JsonIgnore
     public ZonedDateTime getStartDate() {
         return startDate;
@@ -192,7 +172,7 @@ public class Statistics implements Serializable {
     @Transient
     @JsonProperty("startDate")
     public String getStartDateAsString() {
-        return startDate.format(DATE_TIME_FORMATTER);
+        return startDate.format(Constants.DATE_TIME_FORMATTER);
     }
 
     @JsonProperty("startDate")

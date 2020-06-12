@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2019 TU Dortmund
+ * Copyright 2015 - 2020 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,82 +17,93 @@
 package de.learnlib.alex.learning.rest;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.auth.security.UserPrincipal;
-import de.learnlib.alex.common.utils.IdsList;
-import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
+import de.learnlib.alex.learning.entities.ModelExportFormat;
 import de.learnlib.alex.learning.entities.TestSuiteGenerationConfig;
-import de.learnlib.alex.learning.services.Learner;
+import de.learnlib.alex.learning.services.ModelExporter;
 import de.learnlib.alex.learning.services.TestGenerator;
+import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.testing.entities.TestSuite;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.inject.Inject;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import java.io.IOException;
 import java.util.List;
 
 /**
  * REST API to fetch the test results.
  */
-@Path("/projects/{project_id}/results")
+@RestController
+@RequestMapping("/rest/projects/{projectId}/results")
 public class LearnerResultResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    /** The {@link LearnerResultDAO} to use. */
-    @Inject
+    private AuthContext authContext;
     private LearnerResultDAO learnerResultDAO;
-
-    /** The Learner to check if a result is not active before deletion. */
-    @Inject
-    private Learner learner;
-
-    /** The test generator service. */
-    @Inject
     private TestGenerator testGenerator;
+    private ModelExporter modelExporter;
 
-    /** The security context containing the user of the request. */
-    @Context
-    private SecurityContext securityContext;
+    @Autowired
+    public LearnerResultResource(AuthContext authContext,
+                                 LearnerResultDAO learnerResultDAO,
+                                 TestGenerator testGenerator,
+                                 ModelExporter modelExporter) {
+        this.authContext = authContext;
+        this.learnerResultDAO = learnerResultDAO;
+        this.testGenerator = testGenerator;
+        this.modelExporter = modelExporter;
+    }
 
     /**
      * Get all learn results one project.
      *
      * @param projectId
      *         The project of the learn results.
-     * @param embed
-     *         By default no steps are included in the response. However you can ask to include them with this parameter
-     *         set to 'steps'.
      * @return A List of all learn results within one project.
      */
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@PathParam("project_id") long projectId, @QueryParam("embed") String embed) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @GetMapping(
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity getAll(@PathVariable("projectId") Long projectId,
+                                 @RequestParam(name = "page", required = false) String page,
+                                 @RequestParam(name = "size", required = false) String size) {
+        final User user = authContext.getUser();
         LOGGER.trace("LearnerResultResource.getAllFinalResults(" + projectId + ") for user " + user + ".");
 
-        try {
-            boolean includeSteps = parseEmbeddableFields(embed);
+        if ((page == null && size != null) || (size == null && page != null)) {
+            throw new IllegalArgumentException("'page' and 'size' params have to be used in combination.");
+        }
 
-            List<LearnerResult> results = learnerResultDAO.getAll(user, projectId, includeSteps);
-            return Response.ok(results).build();
-        } catch (IllegalArgumentException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.getAllSteps",
-                    Response.Status.BAD_REQUEST, e);
+        if (page == null) {
+            final List<LearnerResult> results = learnerResultDAO.getAll(user, projectId);
+            LOGGER.traceExit();
+            return ResponseEntity.ok(results);
+        } else {
+            final PageRequest pr = PageRequest.of(
+                    Integer.parseInt(page),
+                    Integer.parseInt(size),
+                    Sort.by(Sort.Direction.DESC, "testNo")
+            );
+            final Page<LearnerResult> resultPage = learnerResultDAO.getAll(user, projectId, pr);
+            LOGGER.traceExit();
+            return ResponseEntity.ok(resultPage);
         }
     }
 
@@ -103,21 +114,16 @@ public class LearnerResultResource {
      *         The id of the project.
      * @return 200 with The latest learner result. 204 If there is not result.
      */
-    @GET
-    @Path("/latest")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getLatest(@PathParam("project_id") long projectId) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @GetMapping(
+            value = "/latest",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity<LearnerResult> getLatest(@PathVariable("projectId") Long projectId) {
+        final User user = authContext.getUser();
         LOGGER.trace("LearnerResultResource.getLatest(" + projectId + ") for user " + user + ".");
 
-        try {
-            final LearnerResult result = learnerResultDAO.getLatest(user, projectId);
-            return result == null ? Response.noContent().build() : Response.ok(result).build();
-        } catch (IllegalArgumentException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.getLatest",
-                    Response.Status.NOT_FOUND, e);
-        }
+        final LearnerResult result = learnerResultDAO.getLatest(user, projectId);
+        return result == null ? ResponseEntity.noContent().build() : ResponseEntity.ok(result);
     }
 
     /**
@@ -127,34 +133,25 @@ public class LearnerResultResource {
      *         The project of the learn result(s).
      * @param testNos
      *         The number(s) of the learn result(s).
-     * @param embed
-     *         By default no steps are included in the response. However you can ask to include them with this parameter
-     *         set to 'steps'.
      * @return A List of all step of possible multiple test runs.
      */
-    @GET
-    @Path("{test_nos}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@PathParam("project_id") Long projectId,
-                           @PathParam("test_nos") IdsList testNos,
-                           @QueryParam("embed") String embed) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @GetMapping(
+            value = "/{testNos}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity getAll(@PathVariable("projectId") Long projectId,
+                                 @PathVariable("testNos") List<Long> testNos) {
+        final User user = authContext.getUser();
         LOGGER.trace("LearnerResultResource.getAllSteps(" + projectId + ", " + testNos + ") for user " + user + ".");
 
-        try {
-            boolean includeSteps = parseEmbeddableFields(embed);
-
-            if (testNos.size() == 1) {
-                LearnerResult result = learnerResultDAO.get(user, projectId, testNos.get(0), includeSteps);
-                return Response.ok(result).build();
-            } else {
-                List<LearnerResult> results = learnerResultDAO.getAll(user, projectId, testNos, includeSteps);
-                return Response.ok(results).build();
-            }
-        } catch (IllegalArgumentException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.getAllSteps",
-                    Response.Status.BAD_REQUEST, e);
+        if (testNos.size() == 1) {
+            final LearnerResult result = learnerResultDAO.get(user, projectId, testNos.get(0));
+            LOGGER.traceExit();
+            return ResponseEntity.ok(result);
+        } else {
+            final List<LearnerResult> results = learnerResultDAO.getAll(user, projectId, testNos);
+            LOGGER.traceExit();
+            return ResponseEntity.ok(results);
         }
     }
 
@@ -167,20 +164,34 @@ public class LearnerResultResource {
      *         The test no of the learner result to clone.
      * @return The cloned learner result.
      */
-    @POST
-    @Path("{test_no}/clone")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response clone(@PathParam("project_id") Long projectId, @PathParam("test_no") Long testNo) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @PostMapping(
+            value = "/{testNo}/copy",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity<LearnerResult> copy(@PathVariable("projectId") Long projectId, @PathVariable("testNo") Long testNo) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("LearnerResultResource.clone(" + projectId + ", " + testNo + ") for user " + user + ".");
 
-        try {
-            final LearnerResult clonedResult = learnerResultDAO.clone(user, projectId, testNo);
-            return Response.status(Response.Status.CREATED).entity(clonedResult).build();
-        } catch (IllegalArgumentException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.clone",
-                    Response.Status.BAD_REQUEST, e);
+        final LearnerResult clonedResult = learnerResultDAO.copy(user, projectId, testNo);
+        LOGGER.traceExit();
+        return ResponseEntity.status(HttpStatus.CREATED).body(clonedResult);
+    }
+
+    @PostMapping(
+            value = "/{testNo}/steps/{stepNo}/export",
+            produces = MediaType.TEXT_PLAIN
+    )
+    public ResponseEntity export(@PathVariable("projectId") Long projectId,
+                                 @PathVariable("testNo") Long testNo,
+                                 @PathVariable("stepNo") Long stepNo,
+                                 @RequestParam(name = "format", defaultValue = "DOT") ModelExportFormat format) {
+        final User user = authContext.getUser();
+
+        switch (format) {
+            case DOT:
+                return ResponseEntity.ok(modelExporter.exportDot(user, projectId, testNo, stepNo));
+            default:
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
@@ -195,22 +206,24 @@ public class LearnerResultResource {
      *         The configuration object.
      * @return The generated test suite.
      */
-    @POST
-    @Path("{test_no}/generateTestSuite")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response generateTestSuite(@PathParam("project_id") Long projectId, @PathParam("test_no") Long testNo,
-                                      TestSuiteGenerationConfig config) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @PostMapping(
+            value = "/{testNo}/generateTestSuite",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity generateTestSuite(@PathVariable("projectId") Long projectId,
+                                            @PathVariable("testNo") Long testNo,
+                                            @RequestBody TestSuiteGenerationConfig config) {
+        User user = authContext.getUser();
         LOGGER.traceEntry("generateTestSuite(projectId: {}, testNo: {}, config: {}) for user {}", projectId, testNo, config, user);
 
         config.validate();
         try {
             final TestSuite testSuite = testGenerator.generate(user, projectId, testNo, config);
-            LOGGER.traceExit("generateTestSuite() with status {}", Response.Status.CREATED);
-            return Response.status(Response.Status.CREATED).entity(testSuite).build();
+            LOGGER.traceExit("generateTestSuite() with status {}", HttpStatus.CREATED);
+            return ResponseEntity.status(HttpStatus.CREATED).body(testSuite);
         } catch (IOException | ClassNotFoundException e) {
             LOGGER.traceExit("failed to generate test suite", e);
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
@@ -223,27 +236,18 @@ public class LearnerResultResource {
      *         The test numbers of the results to delete as a comma (',') separated list. E.g. 1,2,3
      * @return On success no content will be returned.
      */
-    @DELETE
-    @Path("{test_numbers}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteResultSet(@PathParam("project_id") Long projectId,
-                                    @PathParam("test_numbers") IdsList testNumbers) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @DeleteMapping(
+            value = "/{testNos}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity deleteResultSet(@PathVariable("projectId") Long projectId,
+                                          @PathVariable("testNos") List<Long> testNumbers) {
+        final User user = authContext.getUser();
         LOGGER.trace("LearnerResultResource.deleteResultSet(" + projectId + ", " + testNumbers + ") "
                 + "for user " + user + ".");
 
-        learnerResultDAO.delete(learner, projectId, testNumbers);
-        return Response.status(Response.Status.NO_CONTENT).build();
-    }
-
-    private boolean parseEmbeddableFields(String embed) throws IllegalArgumentException {
-        if (embed == null || embed.isEmpty()) {
-            return false;
-        } else if (embed.toLowerCase().equals("steps")) {
-            return true;
-        } else {
-            throw new IllegalArgumentException("Could not parse the embed value '" + embed + "'.");
-        }
+        learnerResultDAO.deleteAll(user, projectId, testNumbers);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }
