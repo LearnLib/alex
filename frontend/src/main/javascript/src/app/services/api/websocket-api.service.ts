@@ -1,3 +1,19 @@
+/*
+ * Copyright 2015 - 2020 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import * as StompJS from "@stomp/stompjs";
 import * as SockJS from 'sockjs-client';
 import { Injectable } from "@angular/core";
@@ -18,9 +34,6 @@ export class WebSocketAPIService {
   private errors = new Subject<WebSocketMessage>();
 
   constructor() {
-
-    const _this = this;
-
     this.client = new StompJS.Client({
       debug: function (str) {
         console.log(str);
@@ -31,26 +44,26 @@ export class WebSocketAPIService {
     });
 
     this.client.webSocketFactory = () => {
-      return new SockJS(`${env.apiUrl}/ws`);
+      return new SockJS(`${env.apiUrl}/ws/stomp`);
     };
 
     this.client.beforeConnect = () => {
       const jwt = localStorage.getItem('jwt');
       if (jwt !== null) {
-        _this.connectStatus.next(1);
-        _this.client.connectHeaders = {
+        this.connectStatus.next(1);
+        this.client.connectHeaders = {
           Authorization: `Bearer ${jwt}`
         }
       } else {
-        _this.client.deactivate();
-        _this.connectStatus.next(0);
+        this.client.deactivate();
+        this.connectStatus.next(0);
       }
     };
 
-    this.client.onConnect = () => {
-      _this.connectStatus.next(2);
-      _this.client.subscribe('/user/queue', (message) => _this.messages.next(WebSocketMessage.fromJson(message.body)));
-      _this.client.subscribe('/user/queue/error', (error) => _this.errors.next(WebSocketMessage.fromJson(error.body)));
+    this.client.onConnect = (frame) => {
+      this.client.subscribe('/user/queue', (message) => this.messages.next(WebSocketMessage.fromJson(message.body)));
+      this.client.subscribe('/user/queue/error', (error) => this.errors.next(WebSocketMessage.fromJson(error.body)));
+      this.connectStatus.next(2);
     };
 
     this.client.onStompError = (error) => {
@@ -59,15 +72,8 @@ export class WebSocketAPIService {
     };
 
     this.client.onWebSocketClose = () => {
-      _this.connectStatus.next(0);
-      console.log("CLOSED !!!!!!!");
+      this.connectStatus.next(0);
     };
-
-    window.addEventListener('beforeunload', evt => {
-      _this.client.deactivate();
-      _this.connectStatus.next(0);
-      console.log("fired")
-    })
   }
 
   connect() {
@@ -75,6 +81,21 @@ export class WebSocketAPIService {
       this.client.activate();
     }
   };
+
+  forceServerSideDisconnect(sessionId: string) {
+    const jwt = localStorage.getItem('jwt');
+    if (jwt != null && sessionId != null) {
+      fetch(`${env.apiUrl}/ws/disconnect`, {
+        method: 'POST',
+        keepalive: true,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`
+        },
+        body: `{ "sessionId": "${sessionId}" }`
+      })
+    }
+  }
 
   disconnect() {
     if (this.connectStatus.getValue() != 0) {
@@ -84,6 +105,7 @@ export class WebSocketAPIService {
   }
 
   send(message: WebSocketMessage) {
+    console.log(message);
     this.client.publish({destination: '/app/send/event', body: JSON.stringify(message)});
   }
 
@@ -99,3 +121,4 @@ export class WebSocketAPIService {
     return this.errors.asObservable();
   }
 }
+

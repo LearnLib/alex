@@ -34,6 +34,9 @@ import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.repositories.TestExecutionConfigRepository;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
 import de.learnlib.alex.testing.repositories.TestRepository;
+import de.learnlib.alex.websocket.services.ProjectPresenceService;
+import de.learnlib.alex.websocket.services.SymbolPresenceService;
+import de.learnlib.alex.websocket.services.TestPresenceService;
 import org.hamcrest.MatcherAssert;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +44,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import javax.persistence.EntityManager;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
@@ -116,6 +118,15 @@ public class ProjectDAOTest {
     @Mock
     private LearnerSetupRepository learnerSetupRepository;
 
+    @Mock
+    private SymbolPresenceService symbolPresenceService;
+
+    @Mock
+    private TestPresenceService testPresenceService;
+
+    @Mock
+    private ProjectPresenceService projectPresenceService;
+
     private ProjectDAO projectDAO;
 
     private User user;
@@ -125,7 +136,7 @@ public class ProjectDAOTest {
         projectDAO = new ProjectDAO(projectRepository, learnerResultRepository, testReportRepository, fileDAO,
                 parameterizedSymbolRepository, symbolStepRepository, symbolActionRepository, environmentDAO,
                 projectUrlRepository, testExecutionConfigRepository, testDAO, userDAO, environmentRepository, symbolGroupDAO,
-                testRepository, symbolParameterRepository, uploadableFileRepository, learnerSetupRepository);
+                testRepository, symbolParameterRepository, uploadableFileRepository, learnerSetupRepository, testPresenceService, symbolPresenceService, projectPresenceService);
         user = new User();
         user.setId(USER_ID);
     }

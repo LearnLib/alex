@@ -14,25 +14,8 @@
  * limitations under the License.
  */
 
-import { Component, Input } from '@angular/core';
+package de.learnlib.alex.websocket.services.enums;
 
-@Component({
-  selector: 'test-case-node',
-  templateUrl: './test-case-node.component.html',
-  styleUrls: ['../test-tree.component.scss']
-})
-export class TestCaseNodeComponent {
-
-  @Input()
-  public case: any;
-
-  @Input()
-  public results: any[];
-
-  @Input()
-  public lockInfo: any;
-
-  get result(): any {
-    return this.results[this.case.id];
-  }
+public enum TestPresenceServiceEnum {
+    TEST_PRESENCE_SERVICE, USER_ENTERED, USER_LEFT, STATUS, STATUS_REQUEST, ERROR
 }

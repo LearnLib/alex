@@ -29,6 +29,9 @@ export class TestSuiteNodeComponent {
   @Input()
   public results: any[];
 
+  @Input()
+  lockInfo = null;
+
   get result(): any {
     return this.results[this.suite.id];
   }

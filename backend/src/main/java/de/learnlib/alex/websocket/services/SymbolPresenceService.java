@@ -24,13 +24,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.learnlib.alex.auth.dao.UserDAO;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.ProjectDAO;
+import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.repositories.ProjectRepository;
-import de.learnlib.alex.testing.dao.TestDAO;
-import de.learnlib.alex.testing.entities.Test;
-import de.learnlib.alex.testing.entities.TestCase;
 import de.learnlib.alex.websocket.entities.WebSocketMessage;
-import de.learnlib.alex.websocket.services.enums.TestPresenceServiceEnum;
+import de.learnlib.alex.websocket.services.enums.SymbolPresenceServiceEnum;
 import de.learnlib.alex.websocket.services.enums.WebSocketServiceEnum;
 import io.reactivex.rxjava3.disposables.Disposable;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -57,7 +56,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Transactional
-public class TestPresenceService {
+public class SymbolPresenceService {
 
     /**
      * To ensure non concurrent access over multiple data structures an explicit lock is used.
@@ -67,7 +66,7 @@ public class TestPresenceService {
 
     private WebSocketService webSocketService;
 
-    private TestDAO testDAO;
+    private SymbolDAO symbolDAO;
 
     private ProjectDAO projectDAO;
 
@@ -75,49 +74,53 @@ public class TestPresenceService {
 
     private ProjectRepository projectRepository;
 
-    /** A map which stores the TestLock objects with the projectId and testId as the keys */
-    private Map<Long, Map<Long, TestLock>> testLocks;
+    /** A map which stores the SymbolLock objects with the projectId and symbolId as the keys */
+    private Map<Long, Map<Long, SymbolLock>> symbolLocks;
+
+    /** A map which stores the SymbolGroupLock objects with the projectId and symbolGroupId as the keys */
+    private Map<Long, Map<Long, SymbolGroupLock>> symbolGroupLocks;
 
     /** Shortcut mapping for easier access given the corresponding sessionId.*/
-    private Map<String, TestCaseLock> sessionMap;
+    private Map<String, SymbolLock> sessionMap;
 
-    /** Shortcut mapping for easier access given the corresponding userId.*/
-    private Map<Long, Set<TestCaseLock>> userMap;
+    /** Shortcut mapping for easier access given the corresponding userIdId.*/
+    private Map<Long, Set<SymbolLock>> userMap;
 
     private Set<Disposable> disposables;
 
-    public TestPresenceService(WebSocketService webSocketService,
-                               TestDAO testDAO,
-                               ProjectDAO projectDAO,
-                               UserDAO userDAO,
-                               ProjectRepository projectRepository) {
+    public SymbolPresenceService(WebSocketService webSocketService,
+                                 SymbolDAO symbolDAO,
+                                 ProjectDAO projectDAO,
+                                 UserDAO userDAO,
+                                 ProjectRepository projectRepository) {
         this.webSocketService = webSocketService;
-        this.testDAO = testDAO;
+        this.symbolDAO = symbolDAO;
         this.projectDAO = projectDAO;
         this.userDAO = userDAO;
         this.projectRepository = projectRepository;
 
         this.disposables = new HashSet<>();
-        this.testLocks = new HashMap<>();
+        this.symbolLocks = new HashMap<>();
+        this.symbolGroupLocks = new HashMap<>();
         this.sessionMap = new HashMap<>();
         this.userMap = new HashMap<>();
 
         disposables.add(
                 this.webSocketService.register(
-                        message -> message.getEntity().equals(TestPresenceServiceEnum.TEST_PRESENCE_SERVICE.name())
-                                && message.getType().equals(TestPresenceServiceEnum.USER_ENTERED.name()))
-                        .subscribe(this::userEnteredTest)
+                        message -> message.getEntity().equals(SymbolPresenceServiceEnum.SYMBOL_PRESENCE_SERVICE.name())
+                                && message.getType().equals(SymbolPresenceServiceEnum.USER_ENTERED.name()))
+                        .subscribe(this::userEnteredSymbol)
         );
         disposables.add(
                 this.webSocketService.register(
-                        message -> message.getEntity().equals(TestPresenceServiceEnum.TEST_PRESENCE_SERVICE.name())
-                                && message.getType().equals(TestPresenceServiceEnum.USER_LEFT.name()))
-                        .subscribe(this::userLeftTest)
+                        message -> message.getEntity().equals(SymbolPresenceServiceEnum.SYMBOL_PRESENCE_SERVICE.name())
+                                && message.getType().equals(SymbolPresenceServiceEnum.USER_LEFT.name()))
+                        .subscribe(this::userLeftSymbol)
         );
         disposables.add(
                 this.webSocketService.register(
-                        message -> message.getEntity().equals(TestPresenceServiceEnum.TEST_PRESENCE_SERVICE.name())
-                                && message.getType().equals(TestPresenceServiceEnum.STATUS_REQUEST.name()))
+                        message -> message.getEntity().equals(SymbolPresenceServiceEnum.SYMBOL_PRESENCE_SERVICE.name())
+                                && message.getType().equals(SymbolPresenceServiceEnum.STATUS_REQUEST.name()))
                         .subscribe(this::statusRequest)
         );
         disposables.add(
@@ -128,8 +131,7 @@ public class TestPresenceService {
         );
     }
 
-
-    public void userEnteredTest(WebSocketMessage message) {
+    public void userEnteredSymbol(WebSocketMessage message) {
         lock.lock();
 
         try {
@@ -138,21 +140,18 @@ public class TestPresenceService {
 
             long userId = message.getUser().getId();
             long projectId = content.get("projectId").asLong();
-            long testId = content.get("testId").asLong();
+            long symbolId = content.get("symbolId").asLong();
             String sessionId = message.getSessionId();
 
-            /* session already acquired another testLock */
+            /* session already acquired another symbolLock */
             Optional.ofNullable(sessionMap.get(sessionId))
-                    .ifPresent(testLock -> releaseTestLock(testLock.getProjectId(), testLock.getTestId(), userId, sessionId));
+                    .ifPresent(symbolLock -> releaseSymbolLock(symbolLock.projectId, symbolLock.symbolId, userId, sessionId));
 
             /* check access */
             Project project = projectRepository.findById(projectId).orElseThrow(() -> new NotFoundException("Project not found."));
             projectDAO.checkAccess(message.getUser(), project);
 
-            /* ignore TestSuites */
-            if (testDAO.get(userDAO.getById(userId), projectId, testId) instanceof TestCase) {
-                acquireTestLock(projectId, testId, userId, sessionId);
-            }
+            acquireSymbolLock(projectId, symbolId, userId, sessionId);
 
         } catch (IOException e) {
             this.webSocketService.sendError(message.getSessionId(), buildError("Received malformed content.", message));
@@ -163,7 +162,7 @@ public class TestPresenceService {
         }
     }
 
-    public void userLeftTest(WebSocketMessage message) {
+    public void userLeftSymbol(WebSocketMessage message) {
         lock.lock();
 
         try {
@@ -172,13 +171,10 @@ public class TestPresenceService {
 
             long userId = message.getUser().getId();
             long projectId = content.get("projectId").asLong();
-            long testId = content.get("testId").asLong();
+            long symbolId = content.get("symbolId").asLong();
             String sessionId = message.getSessionId();
 
-            /* Ignore TestSuites */
-            if (testDAO.get(userDAO.getById(userId), projectId, testId) instanceof TestCase) {
-                releaseTestLock(projectId, testId, userId, sessionId);
-            }
+            releaseSymbolLock(projectId, symbolId, userId, sessionId);
 
         } catch (IOException e) {
             this.webSocketService.sendError(message.getSessionId(), buildError("Received malformed content.", message));
@@ -197,8 +193,8 @@ public class TestPresenceService {
             String sessionId = message.getSessionId();
 
             Optional.ofNullable(sessionMap.get(sessionId))
-                    .ifPresent(testCaseLock -> {
-                        releaseTestLock(testCaseLock.getProjectId(), testCaseLock.getTestId(), userId, sessionId);
+                    .ifPresent(symbolLock -> {
+                        releaseSymbolLock(symbolLock.getProjectId(), symbolLock.getSymbolId(), userId, sessionId);
                     });
 
         } finally {
@@ -214,8 +210,8 @@ public class TestPresenceService {
             JsonNode projectIds = om.readTree(message.getContent()).get("projectIds");
 
             WebSocketMessage status = new WebSocketMessage();
-            status.setEntity(TestPresenceServiceEnum.TEST_PRESENCE_SERVICE.name());
-            status.setType(TestPresenceServiceEnum.STATUS.name());
+            status.setEntity(SymbolPresenceServiceEnum.SYMBOL_PRESENCE_SERVICE.name());
+            status.setType(SymbolPresenceServiceEnum.STATUS.name());
 
             ObjectNode projects = om.createObjectNode();
 
@@ -230,7 +226,6 @@ public class TestPresenceService {
             this.webSocketService.sendToSession(message.getSessionId(), status);
         } catch (IOException e) {
             this.webSocketService.sendError(message.getSessionId(), buildError("Received malformed content.", message));
-            e.printStackTrace();
         } catch (UnauthorizedException | NotFoundException e) {
             this.webSocketService.sendError(message.getSessionId(), buildError(e.getMessage(), message));
         } finally {
@@ -238,14 +233,28 @@ public class TestPresenceService {
         }
     }
 
-    public void checkLockStatus(long projectId, long testId) throws UnauthorizedException {
+    public void checkSymbolLockStatus(long projectId, long symbolId) {
         lock.lock();
 
         try {
-            Optional.ofNullable(testLocks.get(projectId))
-                    .map(projectMap -> projectMap.get(testId))
+            Optional.ofNullable(symbolLocks.get(projectId))
+                    .map(projectMap -> projectMap.get(symbolId))
                     .ifPresent(l -> {
-                        throw new UnauthorizedException("This test is currently locked.");
+                        throw new UnauthorizedException("This symbol is currently locked.");
+                    });
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void checkGroupLockStatus(long projectId, long groupId) {
+        lock.lock();
+
+        try {
+            Optional.ofNullable(symbolLocks.get(projectId))
+                    .map(projectMap -> projectMap.get(groupId))
+                    .ifPresent(l -> {
+                        throw new UnauthorizedException("This symbolgroup is currently locked.");
                     });
         } finally {
             lock.unlock();
@@ -257,11 +266,11 @@ public class TestPresenceService {
 
         try {
             Optional.ofNullable(userMap.get(userId))
-                    .map(testCaseLocks -> testCaseLocks.stream().filter(testCaseLock -> testCaseLock.getProjectId() == projectId).collect(Collectors.toSet()))
-                    .ifPresent(testCaseLocks -> {
-                        testCaseLocks.forEach(testCaseLock -> {
-                            Set<String> tmp = new HashSet<>(testCaseLock.lockSessions);
-                            tmp.forEach(testCaseLock::removeSession);
+                    .map(userSymbolLocks -> userSymbolLocks.stream().filter(symbolLock -> symbolLock.getProjectId() == projectId).collect(Collectors.toSet()))
+                    .ifPresent(userSymbolLocks -> {
+                        userSymbolLocks.forEach(symbolLock -> {
+                            Set<String> tmp = new HashSet<>(symbolLock.lockSessions);
+                            tmp.forEach(symbolLock::removeSession);
                         });
                     });
         } finally {
@@ -269,41 +278,41 @@ public class TestPresenceService {
         }
     }
 
-    public void releaseTestLocksByUser(long userId) {
+    public void releaseSymbolLocksByUser(long userId) {
         lock.lock();
 
         try {
             Optional.ofNullable(userMap.get(userId))
-                    .ifPresent(testCaseLocks -> {
-                        Set<TestCaseLock> tmpTestCaseLocks = new HashSet<>(testCaseLocks);
-                        tmpTestCaseLocks.forEach(testCaseLock -> {
-                            Set<String> tmpSessionSet = new HashSet<>(testCaseLock.lockSessions);
+                    .ifPresent(symbolLocks -> {
+                        Set<SymbolLock> tmpSymbolLocks = new HashSet<>(symbolLocks);
+                        tmpSymbolLocks.forEach(symbolLock -> {
+                            Set<String> tmpSessionSet = new HashSet<>(symbolLock.lockSessions);
                             tmpSessionSet.forEach(sessionId -> {
-                                releaseTestLock(testCaseLock.getProjectId(), testCaseLock.getTestId(), userId, sessionId);
+                                releaseSymbolLock(symbolLock.getProjectId(), symbolLock.getSymbolId(), userId, sessionId);
                             });
-                        } );
+                        });
                     });
         } finally {
             lock.unlock();
         }
     }
 
-    public void releaseTestLocksByProject(long projectId) {
+    public void releaseSymbolLocksByProject(long projectId) {
         lock.lock();
 
         try {
             AtomicReference<Iterator> it = new AtomicReference<>(sessionMap.entrySet().iterator());
             while (it.get().hasNext()) {
                 Map.Entry e = (Map.Entry) it.get().next();
-                if (((TestCaseLock) e.getValue()).getProjectId() == projectId) {
+                if (((SymbolLock) e.getValue()).getProjectId() == projectId) {
                     it.get().remove();
                 }
             }
 
-            userMap.forEach((userId, testCaseLocks) -> {
-                it.set(testCaseLocks.iterator());
+            userMap.forEach((userId, symbolLocks) -> {
+                it.set(symbolLocks.iterator());
                 while (it.get().hasNext()) {
-                    TestCaseLock l = (TestCaseLock) it.get().next();
+                    SymbolLock l = (SymbolLock) it.get().next();
                     if (l.getProjectId() == projectId) {
                         it.get().remove();
                     }
@@ -318,89 +327,105 @@ public class TestPresenceService {
                 }
             }
 
-            testLocks.remove(projectId);
+            symbolLocks.remove(projectId);
+            symbolGroupLocks.remove(projectId);
 
         } finally {
             lock.unlock();
         }
     }
 
-    private void acquireTestLock(long projectId, long testId, long userId, String sessionId) {
-        TestCaseLock testCaseLock = (TestCaseLock) testLocks.computeIfAbsent(projectId, k -> new HashMap<>())
-                .computeIfAbsent(testId, k -> new TestCaseLock(projectId, testId));
+    private void acquireSymbolLock(long projectId, long symbolId, long userId, String sessionId) {
+        SymbolLock symbolLock = symbolLocks.computeIfAbsent(projectId, k -> new HashMap<>())
+                .computeIfAbsent(symbolId, k -> new SymbolLock(projectId, symbolId));
 
-        if (testCaseLock.addSession(userId, sessionId)) {
-            sessionMap.put(sessionId, testCaseLock);
+        if (symbolLock.addSession(userId, sessionId)) {
+            sessionMap.put(sessionId, symbolLock);
             userMap.computeIfAbsent(userId, k -> new HashSet<>())
-                    .add(testCaseLock);
+                    .add(symbolLock);
 
-            Test test = testDAO.get(userDAO.getById(userId), projectId, testId);
-            while (test.getParent() != null) {
-                test = test.getParent();
+            SymbolGroup symbolGroup = symbolDAO.get(userDAO.getById(userId), projectId, symbolId).getGroup();
+            while (symbolGroup != null) {
+                symbolGroupLocks.computeIfAbsent(projectId, k -> new HashMap<>())
+                                .computeIfAbsent(symbolGroup.getId(), k -> new SymbolGroupLock(projectId, k))
+                                .addSession(userId, sessionId);
 
-                ((TestSuiteLock) testLocks.get(projectId).computeIfAbsent(test.getId(), k -> new TestSuiteLock(projectId, k)))
-                        .addSession(userId, sessionId);
+                symbolGroup = symbolGroup.getParent();
             }
-            broadcastTestStatus(projectId);
+            broadcastSymbolStatus(projectId);
         }
     }
 
-    private void releaseTestLock(long projectId, long testId, long userId, String sessionId) {
-        Optional.ofNullable(testLocks.get(projectId))
-                .map(m -> m.get(testId))
-                .ifPresent(testCaseLock -> {
-                    if (((TestCaseLock)testCaseLock).removeSession(sessionId)) {
+    private void releaseSymbolLock(long projectId, long symbolId, long userId, String sessionId) {
+        Optional.ofNullable(symbolLocks.get(projectId))
+                .map(m -> m.get(symbolId))
+                .ifPresent(symbolLock -> {
+                    if (symbolLock.removeSession(sessionId)) {
                         sessionMap.remove(sessionId);
 
-                        if (!((TestCaseLock) testCaseLock).isLocked()) {
-                            testLocks.get(projectId).remove(testId);
+                        if (!symbolLock.isLocked()) {
+                            symbolLocks.get(projectId).remove(symbolId);
 
-                            userMap.get(userId).remove(testCaseLock);
+                            userMap.get(userId).remove(symbolLock);
                             if (userMap.get(userId).isEmpty()) {
                                 userMap.remove(userId);
                             }
                         }
 
-                        Test test = testDAO.get(userDAO.getById(userId), projectId, testId);
-                        while (test.getParent() != null) {
+                        SymbolGroup symbolGroup = symbolDAO.get(userDAO.getById(userId), projectId, symbolId).getGroup();
+                        while (symbolGroup != null) {
 
-                            test = test.getParent();
+                            SymbolGroupLock symbolGroupLock = symbolGroupLocks.get(projectId).get(symbolGroup.getId());
+                            symbolGroupLock.removeSession(userId, sessionId);
 
-                            TestSuiteLock testSuiteLock = (TestSuiteLock) testLocks.get(projectId).get(test.getId());
-                            testSuiteLock.removeSession(userId, sessionId);
-
-                            if (!testSuiteLock.isLocked()) {
-                                testLocks.get(projectId).remove(testSuiteLock.getTestId());
+                            if (!symbolGroupLock.isLocked()) {
+                                symbolGroupLocks.get(projectId).remove(symbolGroupLock.getSymbolGroupId());
                             }
 
+                            symbolGroup = symbolGroup.getParent();
+
                         }
 
-                        if (testLocks.get(projectId).isEmpty()) {
-                            testLocks.remove(projectId);
+                        if (symbolLocks.get(projectId).isEmpty()) {
+                            symbolLocks.remove(projectId);
                         }
-                        broadcastTestStatus(projectId);
+
+                        if (symbolGroupLocks.get(projectId).isEmpty()) {
+                            symbolGroupLocks.remove(projectId);
+                        }
+                        broadcastSymbolStatus(projectId);
                     }
                 });
     }
 
     private ObjectNode getProjectStatus(long projectId) {
         ObjectMapper om = new ObjectMapper();
-        ObjectNode tests = om.createObjectNode();
+        ObjectNode status = om.createObjectNode();
+        ObjectNode symbolsNode = om.createObjectNode();
+        ObjectNode symbolGroupsNode = om.createObjectNode();
 
-        Optional.ofNullable(testLocks.get(projectId))
+        Optional.ofNullable(symbolLocks.get(projectId))
                 .ifPresent(m -> {
-                    m.forEach((testId, testLock) -> {
-                        tests.set(Long.toString(testId), om.valueToTree(testLock));
+                    m.forEach((symbolId, symbolLock) -> {
+                        symbolsNode.set(Long.toString(symbolId), om.valueToTree(symbolLock));
                     });
                 });
+        Optional.ofNullable(symbolGroupLocks.get(projectId))
+                .ifPresent(m -> {
+                    m.forEach((symbolGroupId, symbolGroupLock) -> {
+                        symbolGroupsNode.set(Long.toString(symbolGroupId), om.valueToTree(symbolGroupLock));
+                    });
+                });
+        status.set("symbols", symbolsNode);
+        status.set("groups", symbolGroupsNode);
 
-        return tests;
+        return status;
     }
 
-    private void broadcastTestStatus(long projectId) {
+    private void broadcastSymbolStatus(long projectId) {
         WebSocketMessage status = new WebSocketMessage();
-        status.setEntity(TestPresenceServiceEnum.TEST_PRESENCE_SERVICE.name());
-        status.setType(TestPresenceServiceEnum.STATUS.name());
+        status.setEntity(SymbolPresenceServiceEnum.SYMBOL_PRESENCE_SERVICE.name());
+        status.setType(SymbolPresenceServiceEnum.STATUS.name());
 
         ObjectMapper om = new ObjectMapper();
         ObjectNode projects = om.createObjectNode();
@@ -415,8 +440,8 @@ public class TestPresenceService {
         ObjectMapper om = new ObjectMapper();
 
         WebSocketMessage error = new WebSocketMessage();
-        error.setType(TestPresenceServiceEnum.ERROR.name());
-        error.setEntity(TestPresenceServiceEnum.TEST_PRESENCE_SERVICE.name());
+        error.setType(SymbolPresenceServiceEnum.ERROR.name());
+        error.setEntity(SymbolPresenceServiceEnum.SYMBOL_PRESENCE_SERVICE.name());
 
         ObjectNode errorNode = om.createObjectNode();
         errorNode.put("description", description);
@@ -432,30 +457,24 @@ public class TestPresenceService {
         disposables.forEach(Disposable::dispose);
     }
 
-    abstract class TestLock {
+    abstract class AbstractSymbolLock {
 
-        private final long testId;
-        private final long projectId;
+        final long projectId;
 
-        TestLock(long projectId, long testId) {
+        AbstractSymbolLock(long projectId) {
             this.projectId = projectId;
-            this.testId = testId;
         }
 
         public long getProjectId() {
             return projectId;
         }
-
-        public long getTestId() {
-            return testId;
-        }
-
-        abstract String getType();
     }
 
-    class TestCaseLock extends TestLock {
+    class SymbolLock extends AbstractSymbolLock {
 
-        private final String type = "case";
+        private final String type = "symbol";
+
+        private final long symbolId;
 
         @JsonIgnore
         private long lockOwner;
@@ -466,8 +485,9 @@ public class TestPresenceService {
         @JsonIgnore
         private Map<String, Date> timestamps;
 
-        TestCaseLock(long projectId, long testId) {
-            super(projectId, testId);
+        SymbolLock(long projectId, long symbolId) {
+            super(projectId);
+            this.symbolId = symbolId;
 
             this.lockSessions = new HashSet<>();
             this.timestamps = new HashMap<>();
@@ -482,11 +502,15 @@ public class TestPresenceService {
             return type;
         }
 
+        public long getSymbolId() {
+            return symbolId;
+        }
+
         public boolean addSession(long userId, String sessionId) {
             if (lockSessions.isEmpty()) {
                 lockOwner = userId;
             } else if (lockOwner != userId) {
-                throw new UnauthorizedException("Test is already locked.");
+                throw new UnauthorizedException("Symbol is already locked.");
             }
             if (lockSessions.add(sessionId)) {
                 timestamps.put(sessionId, new Date());
@@ -523,8 +547,9 @@ public class TestPresenceService {
         }
     }
 
-    class TestSuiteLock extends TestLock {
-        private final String type = "suite";
+    class SymbolGroupLock extends AbstractSymbolLock {
+
+        private final long symbolGroupId;
 
         @JsonIgnore
         Set<Long> lockOwners;
@@ -532,14 +557,20 @@ public class TestPresenceService {
         @JsonIgnore
         Map<Long, Set<String>> lockSessions;
 
-        TestSuiteLock(long projectId, long testId) {
-            super(projectId, testId);
+        SymbolGroupLock(long projectId, long symbolId) {
+            super(projectId);
+            this.symbolGroupId = symbolId;
+
             this.lockOwners = new HashSet<>();
             this.lockSessions = new HashMap<>();
         }
 
         public Set<Long> getLockOwners() {
             return lockOwners;
+        }
+
+        public long getSymbolGroupId() {
+            return symbolGroupId;
         }
 
         public boolean addSession(long userId, String sessionId) {
@@ -576,10 +607,5 @@ public class TestPresenceService {
         public List getLockOwnersNames() {
             return lockOwners.stream().map(userId -> userDAO.getById(userId).getUsername()).collect(Collectors.toList());
         }
-
-        @JsonProperty("type")
-        public String getType() {
-            return type;
-        }
     }
- }
+}

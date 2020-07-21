@@ -37,11 +37,13 @@ import de.learnlib.alex.testing.entities.TestSuite;
 import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
 import de.learnlib.alex.testing.repositories.TestRepository;
 import de.learnlib.alex.testing.repositories.TestResultRepository;
+import de.learnlib.alex.websocket.services.TestPresenceService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -84,6 +86,9 @@ public class TestDAO {
     /** The {@link TestResultRepository} to use. */
     private TestResultRepository testResultRepository;
 
+    /** The service for test locking. */
+    private TestPresenceService testPresenceService;
+
     /**
      * Constructor.
      *
@@ -105,7 +110,8 @@ public class TestDAO {
     @Autowired
     public TestDAO(ProjectDAO projectDAO, TestRepository testRepository, SymbolDAO symbolDAO,
                    TestCaseStepRepository testCaseStepRepository, ProjectRepository projectRepository,
-                   ParameterizedSymbolDAO parameterizedSymbolDAO, TestResultRepository testResultRepository) {
+                   ParameterizedSymbolDAO parameterizedSymbolDAO, TestResultRepository testResultRepository,
+                   @Lazy TestPresenceService testPresenceService) {
         this.projectDAO = projectDAO;
         this.testRepository = testRepository;
         this.symbolDAO = symbolDAO;
@@ -113,6 +119,7 @@ public class TestDAO {
         this.projectRepository = projectRepository;
         this.parameterizedSymbolDAO = parameterizedSymbolDAO;
         this.testResultRepository = testResultRepository;
+        this.testPresenceService = testPresenceService;
     }
 
     public Test createByGenerate(User user, Project project, Test test) {
@@ -267,6 +274,9 @@ public class TestDAO {
         final Project project = projectRepository.findById(projectId).orElse(null);
         checkAccess(user, project, test);
 
+        // check lock status
+        testPresenceService.checkLockStatus(projectId, test.getId());
+
         // make sure the name of the Test Case is unique
         Test testInDB = testRepository.findOneByParent_IdAndName(test.getParentId(), test.getName());
         if (testInDB != null && !testInDB.getId().equals(test.getId())) {
@@ -344,6 +354,9 @@ public class TestDAO {
         final Test test = testRepository.findById(testId).orElse(null);
         checkAccess(user, project, test);
 
+        // check lock status
+        testPresenceService.checkLockStatus(projectId, testId);
+
         final Test root = testRepository.findFirstByProject_IdOrderByIdAsc(projectId);
         if (root.getId().equals(testId)) {
             throw new ValidationException("The root test suite cannot be deleted");
@@ -381,6 +394,9 @@ public class TestDAO {
 
         for (Test test : tests) {
             checkAccess(user, project, test);
+
+            //check lock status
+            testPresenceService.checkLockStatus(projectId, test.getId());
 
             if (test.getId().equals(rootTestSuite.getId())) {
                 throw new ValidationException("Cannot move the root test suite.");

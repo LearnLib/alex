@@ -20,11 +20,8 @@ import { User } from '../entities/user';
 import { ClipboardService } from './clipboard.service';
 import { ProjectApiService } from './api/project-api.service';
 import { Router } from '@angular/router';
-import {WebSocketMessage} from "../entities/websocket-message";
-import {WebSocketService} from "./websocket.service";
-import {ProjectPresenceService} from "./project-presence.service";
-import {Subject} from "rxjs";
-import {share} from "rxjs/operators";
+import { WebSocketMessage } from "../entities/websocket-message";
+import { WebSocketService, WebSocketServiceEnum } from "./websocket.service";
 
 @Injectable()
 export class AppStoreService {
@@ -68,8 +65,8 @@ export class AppStoreService {
       this.user = User.fromData(JSON.parse(user));
     }
 
-    this.webSocketService.register(msg => msg.entity == "WebSocketService"
-                                                  && msg.type == "Logout")
+    this.webSocketService.register(msg => msg.entity == WebSocketServiceEnum.WEBSOCKET_SERVICE
+                                                  && msg.type == WebSocketServiceEnum.LOGOUT_CHECK)
       .subscribe(() => this.checkLogout());
   }
 
@@ -84,11 +81,10 @@ export class AppStoreService {
 
   /** Removes all user related data from the session. */
   logout(propagate: boolean): void {
-    console.log("PROPAGATE: " + propagate);
     if (propagate) {
       const msg = new WebSocketMessage();
-      msg.entity = "AppStoreService";
-      msg.type = "Logout";
+      msg.entity = WebSocketServiceEnum.WEBSOCKET_SERVICE;
+      msg.type = WebSocketServiceEnum.LOGOUT;
       this.webSocketService.send(msg);
     }
 

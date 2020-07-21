@@ -3,7 +3,7 @@
     'collapse': store.isGroupCollapsed(group),
     'has-parent': group.parent != null
   }"
-  class="symbol-group-header d-flex flex-row align-items-center"
+  class="symbol-group-header d-flex flex-row"
 >
   <i
     [ngClass]="{
@@ -12,6 +12,7 @@
     }"
     (click)="toggleCollapse()"
     class="far fa-fw cursor-pointer"
+    style="margin-top: 2px"
   >
   </i>
   <selectable-checkbox-multiple
@@ -20,8 +21,15 @@
     style="margin-left: .8rem"
   >
   </selectable-checkbox-multiple>
-  <div class="symbol-group-name pl-3 w-100 cursor-pointer" (click)="store.toggleCollapseGroup(group)">
-    {{group.name}}
+  <div class="pl-3 w-100">
+    <div class="symbol-group-name cursor-pointer" (click)="store.toggleCollapseGroup(group)">
+      {{group.name}}
+    </div>
+    <div *ngIf="lockInfo">
+      <i class="fas fa-cog">
+        <small class="pl-1">symbol(s) in use by:<strong *ngFor="let username of lockInfo.locks" class="pl-1">{{username}}</strong></small>
+      </i>
+    </div>
   </div>
   <div *ngIf="group.symbols.length === 0 && group.groups.length === 0" class="mr-3">
     <span class="badge badge-secondary">Empty</span>
@@ -32,16 +40,18 @@
         <i class="fas fa-bars"></i>
       </button>
       <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu role="menu">
-        <button (click)="store.updateGroup(group)" ngbDropdownItem>
+        <button (click)="store.updateGroup(group)" ngbDropdownItem [disabled]="store.isGroupLocked(group.id)">
           <i class="fas fa-edit fa-fw"></i> Edit
         </button>
-        <button (click)="store.moveGroup(group)" ngbDropdownItem>
+        <button (click)="store.moveGroup(group)" ngbDropdownItem [disabled]="store.isGroupLocked(group.id)">
           <i class="fas fa-exchange-alt fa-fw"></i> Move
         </button>
-        <button (click)="store.deleteGroup(group)" ngbDropdownItem>
+        <button (click)="store.deleteGroup(group)" ngbDropdownItem [disabled]="store.isGroupLocked(group.id)">
           <i class="fas fa-trash fa-fw"></i> Delete
         </button>
       </div>
     </div>
   </div>
 </div>
+
+

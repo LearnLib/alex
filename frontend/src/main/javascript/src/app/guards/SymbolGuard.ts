@@ -15,18 +15,18 @@
  */
 
 import { Injectable } from "@angular/core";
-import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, Router, RouterStateSnapshot } from "@angular/router";
-import { TestPresenceService } from "../services/test-presence.service";
-import { Observable, of } from "rxjs";
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from "@angular/router";
 import { ToastService } from "../services/toast.service";
 import { AppStoreService } from "../services/app-store.service";
+import { SymbolPresenceService } from "../services/symbol-presence.service";
+import { Observable, of } from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 
-export class TestGuard implements CanActivate, CanActivateChild {
-  constructor(private testPresenceService: TestPresenceService,
+export class SymbolGuard implements CanActivate {
+  constructor(private symbolPresenceService: SymbolPresenceService,
               private router: Router,
               private toastService: ToastService,
               private appStoreService: AppStoreService) {
@@ -34,18 +34,15 @@ export class TestGuard implements CanActivate, CanActivateChild {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     const projectId = route.paramMap.get('projectId');
-    const testId = route.paramMap.get('testId');
-    const accessedTests = this.testPresenceService.accessedTestsValue;
+    const symbolId = route.paramMap.get('symbolId');
+    const accessedSymbols = this.symbolPresenceService.accessedSymbolsValue;
 
-    const testObject = accessedTests.get(Number(projectId))?.get(Number(testId));
-    if (testObject && testObject.type == "case" && testObject.username != this.appStoreService.user.username) {
-      this.toastService.danger("Test is already in use by " + testObject.username);
+    const symbolObject = accessedSymbols.get(Number(projectId))?.get(Number(symbolId));
+    if (symbolObject && symbolObject.username != this.appStoreService.user.username) {
+      this.toastService.danger("Symbol is already in use by " +  symbolObject.username);
       return of(false);
     }
 
     return of(true);
-  }
-  canActivateChild(childRoute: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    return this.canActivate(childRoute, state);
   }
 }

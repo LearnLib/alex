@@ -44,6 +44,9 @@ import de.learnlib.alex.testing.entities.TestSuite;
 import de.learnlib.alex.testing.repositories.TestExecutionConfigRepository;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
 import de.learnlib.alex.testing.repositories.TestRepository;
+import de.learnlib.alex.websocket.services.ProjectPresenceService;
+import de.learnlib.alex.websocket.services.SymbolPresenceService;
+import de.learnlib.alex.websocket.services.TestPresenceService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -90,6 +93,9 @@ public class ProjectDAO {
     private SymbolParameterRepository symbolParameterRepository;
     private UploadableFileRepository uploadableFileRepository;
     private LearnerSetupRepository learnerSetupRepository;
+    private TestPresenceService testPresenceService;
+    private SymbolPresenceService symbolPresenceService;
+    private ProjectPresenceService projectPresenceService;
 
     @Autowired
     public ProjectDAO(ProjectRepository projectRepository,
@@ -109,7 +115,10 @@ public class ProjectDAO {
                       TestRepository testRepository,
                       SymbolParameterRepository symbolParameterRepository,
                       UploadableFileRepository uploadableFileRepository,
-                      LearnerSetupRepository learnerSetupRepository) {
+                      LearnerSetupRepository learnerSetupRepository,
+                      @Lazy TestPresenceService testPresenceService,
+                      @Lazy SymbolPresenceService symbolPresenceService,
+                      @Lazy ProjectPresenceService projectPresenceService) {
         this.projectRepository = projectRepository;
         this.learnerResultRepository = learnerResultRepository;
         this.fileDAO = fileDAO;
@@ -128,6 +137,9 @@ public class ProjectDAO {
         this.uploadableFileRepository = uploadableFileRepository;
         this.userDAO = userDAO;
         this.learnerSetupRepository = learnerSetupRepository;
+        this.testPresenceService = testPresenceService;
+        this.symbolPresenceService = symbolPresenceService;
+        this.projectPresenceService = projectPresenceService;
     }
 
     public Project create(final User user, final CreateProjectForm projectForm) throws ValidationException {
@@ -220,10 +232,15 @@ public class ProjectDAO {
         symbolParameterRepository.deleteAllBySymbol_Project_Id(projectId);
         uploadableFileRepository.deleteAllByProject_Id(projectId);
 
-        //clear relationships to members and owners first
+        // clear relationships to members and owners first
         project.getOwners().clear();
         project.getMembers().clear();
         projectRepository.save(project);
+
+        // release all project locks
+        this.symbolPresenceService.releaseSymbolLocksByProject(projectId);
+        this.testPresenceService.releaseTestLocksByProject(projectId);
+        this.projectPresenceService.removeProjectFromPresenceMap(projectId);
 
         // delete the project directory
         try {
@@ -425,6 +442,13 @@ public class ProjectDAO {
         final Project updatedProject = projectRepository.save(projectInDb);
         loadLazyRelations(updatedProject);
 
+        // remove owner presences from project and release locks
+        ownerIds.forEach(ownerId -> {
+            this.projectPresenceService.removeUserFromProjectPresence(ownerId, projectId);
+            this.testPresenceService.releaseUserLocksFromProject(ownerId, projectId);
+            this.symbolPresenceService.releaseUserLocksFromProject(ownerId, projectId);
+        });
+
         return updatedProject;
     }
 
@@ -444,6 +468,13 @@ public class ProjectDAO {
 
         final Project updatedProject = projectRepository.save(projectInDb);
         loadLazyRelations(updatedProject);
+
+        // remove member presences from project and release locks
+        memberIds.forEach(memberId -> {
+            this.projectPresenceService.removeUserFromProjectPresence(memberId, projectId);
+            this.testPresenceService.releaseUserLocksFromProject(memberId, projectId);
+            this.symbolPresenceService.releaseUserLocksFromProject(memberId, projectId);
+        });
 
         return updatedProject;
     }

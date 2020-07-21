@@ -19,4 +19,9 @@
       </div>
     </a>
   </div>
+  <div *ngIf="lockInfo" class="d-flex flex-row" style="margin-top: 2px">
+    <i class="fas fa-lock pl-1">
+      <small class="pl-1">locked: {{lockInfo.date | date : 'EEE, dd.MM.yyyy, HH:mm'}}, by<strong class="pl-1">{{lockInfo.username}}</strong></small>
+    </i>
+  </div>
 </div>

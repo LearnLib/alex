@@ -252,7 +252,8 @@ import { ModelCheckerApiService } from './services/api/model-checker-api.service
 import { WebSocketAPIService } from "./services/api/websocket-api.service";
 import { WebSocketService } from "./services/websocket.service";
 import { ProjectPresenceService } from "./services/project-presence.service";
-import {TestPresenceService} from "./services/test-presence.service";
+import { TestPresenceService } from "./services/test-presence.service";
+import { SymbolPresenceService } from "./services/symbol-presence.service";
 
 @NgModule({
   declarations: [
@@ -521,7 +522,8 @@ import {TestPresenceService} from "./services/test-presence.service";
     WebSocketAPIService,
     WebSocketService,
     ProjectPresenceService,
-    TestPresenceService
+    TestPresenceService,
+    SymbolPresenceService
   ],
   bootstrap: [AppComponent]
 })

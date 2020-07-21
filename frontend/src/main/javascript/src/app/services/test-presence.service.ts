@@ -1,11 +1,28 @@
-import {Injectable} from "@angular/core";
-import {BehaviorSubject} from "rxjs";
-import {WebSocketService} from "./websocket.service";
-import {WebSocketMessage} from "../entities/websocket-message";
-import {NavigationEnd, Router} from "@angular/router";
-import {TestApiService} from "./api/test-api.service";
-import {filter} from "rxjs/operators";
-import {ProjectApiService} from "./api/project-api.service";
+/*
+ * Copyright 2015 - 2020 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { Injectable } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
+import { WebSocketService } from "./websocket.service";
+import { WebSocketMessage } from "../entities/websocket-message";
+import { NavigationEnd, Router } from "@angular/router";
+import { filter } from "rxjs/operators";
+import { ProjectApiService } from "./api/project-api.service";
+import { AppStoreService } from "./app-store.service";
+import { ToastService } from "./toast.service";
 
 @Injectable()
 export class TestPresenceService {
@@ -16,9 +33,11 @@ export class TestPresenceService {
 
   constructor(private webSocketService: WebSocketService,
               private router: Router,
-              private projectApiService: ProjectApiService) {
-    this.webSocketService.register(msg => msg.entity == "TestPresenceService"
-                                                 && msg.type == "Status")
+              private projectApiService: ProjectApiService,
+              private appStoreService: AppStoreService,
+              private toastService: ToastService) {
+    this.webSocketService.register(msg => msg.entity == TestPresenceServiceEnum.TEST_PRESENCE_SERVICE
+                                                 && msg.type == TestPresenceServiceEnum.STATUS)
       .subscribe(msg => this.processStatus(msg));
 
     this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(r => this.routeChange(r));
@@ -31,15 +50,7 @@ export class TestPresenceService {
     const newProjectId = newRoute.split("/")[3];
     const newTestId = newRoute.split("/")[5];
 
-    console.log(this.oldRoute);
-    console.log(newRoute);
-    console.log(oldProjectId);
-    console.log(oldTestId);
-    console.log(newProjectId);
-    console.log(newTestId);
-
     if (/^\/app\/projects\/\d+\/tests/.test(newRoute) && !/^\/app\/projects\/\d+\/tests/.test(this.oldRoute)) {
-      console.log("Status Request Triggered!");
 
       this.projectApiService.getAll().subscribe(projects => {
         const projectIds = [];
@@ -51,12 +62,10 @@ export class TestPresenceService {
     }
 
     if (/^\/app\/projects\/\d+\/tests\/\d+/.test(newRoute)) {
-      console.log("New Route qualifies as test.");
       if(!/^\/app\/projects\/\d+\/tests\/\d+/.test(this.oldRoute) || oldProjectId != newProjectId || oldTestId != newTestId) {
         this.userEnteredTest(Number(newProjectId), Number(newTestId));
       }
     } else {
-      console.log("New Route NOT qualified as Test.");
       if (/^\/app\/projects\/\d+\/tests\/\d+/.test(this.oldRoute)) {
         this.userLeftTest(Number(oldProjectId), Number(oldTestId));
       }
@@ -66,8 +75,6 @@ export class TestPresenceService {
   }
 
   private processStatus(msg: WebSocketMessage) {
-    console.log(msg.content);
-
     const projects = msg.content;
 
     const update = this.accessedTests.getValue();
@@ -75,9 +82,9 @@ export class TestPresenceService {
       const tests = projects[projectId];
 
       if (!Object.keys(tests).length) {
-        update.delete(projectId);
+        update.delete(Number(projectId));
       } else {
-        let testsObject = update.get(projectId);
+        let testsObject = update.get(Number(projectId));
         if (!testsObject) {
           testsObject = new Map();
         } else {
@@ -96,21 +103,32 @@ export class TestPresenceService {
             testObject.locks = test.locks;
           }
 
-          testsObject.set(testId, testObject)
+          testsObject.set(Number(testId), testObject)
         }
 
-        update.set(projectId, testsObject);
+        update.set(Number(projectId), testsObject);
       }
     }
 
     this.accessedTests.next(update);
-    console.log(this.accessedTests.getValue());
+
+    const routeSegments = this.router.url.split("/");
+    const projectId = Number(routeSegments[3]);
+    const testId = Number(routeSegments[5]);
+
+    if (!isNaN(projectId) && !isNaN(testId)) {
+      const testLock = this.accessedTests.getValue().get(projectId)?.get(testId);
+      if (testLock && testLock.type == "case"  && testLock.username != this.appStoreService.user.username) {
+        this.router.navigate(['/app', 'projects', this.appStoreService.project.id, 'tests']);
+        this.toastService.danger("Test is already locked by " + testLock.username);
+      }
+    }
   }
 
   private userEnteredTest(projectId: number, testId: number) {
     const msg = new WebSocketMessage();
-    msg.entity = "TestPresenceService";
-    msg.type = "User Entered";
+    msg.entity = TestPresenceServiceEnum.TEST_PRESENCE_SERVICE;
+    msg.type = TestPresenceServiceEnum.USER_ENTERED;
     msg.content = '{"projectId":"' + projectId + '",' +
                   '"testId":"' + testId + '"}';
     this.webSocketService.send(msg);
@@ -118,8 +136,8 @@ export class TestPresenceService {
 
   private userLeftTest(projectId: number, testId: number) {
     const msg = new WebSocketMessage();
-    msg.entity = "TestPresenceService";
-    msg.type = "User Left";
+    msg.entity = TestPresenceServiceEnum.TEST_PRESENCE_SERVICE;
+    msg.type = TestPresenceServiceEnum.USER_LEFT;
     msg.content = '{"projectId":"' + projectId + '",' +
       '"testId":"' + testId + '"}';
     this.webSocketService.send(msg);
@@ -127,8 +145,8 @@ export class TestPresenceService {
 
   public requestStatus(projectIds: number[]) {
     const msg = new WebSocketMessage();
-    msg.entity = "TestPresenceService";
-    msg.type = "Status Request";
+    msg.entity = TestPresenceServiceEnum.TEST_PRESENCE_SERVICE;
+    msg.type = TestPresenceServiceEnum.STATUS_REQUEST;
     msg.content = '{"projectIds":[' + projectIds.toString() + ']}';
     this.webSocketService.send(msg);
   }
@@ -140,4 +158,12 @@ export class TestPresenceService {
   get accessedTestsValue() {
     return this.accessedTests.getValue();
   }
+}
+
+export enum TestPresenceServiceEnum {
+  TEST_PRESENCE_SERVICE = "TEST_PRESENCE_SERVICE",
+  USER_LEFT = "USER_LEFT",
+  USER_ENTERED = "USER_ENTERED",
+  STATUS_REQUEST = "STATUS_REQUEST",
+  STATUS = "STATUS"
 }

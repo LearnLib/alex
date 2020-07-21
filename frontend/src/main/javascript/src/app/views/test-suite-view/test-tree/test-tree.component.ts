@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, Input } from '@angular/core';
+import {Component, Input} from '@angular/core';
 
 @Component({
   selector: 'test-tree',
@@ -28,4 +28,7 @@ export class TestTreeComponent {
 
   @Input()
   public results: any[];
+
+  @Input()
+  public lockInfo: any;
 }

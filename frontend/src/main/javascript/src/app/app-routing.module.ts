@@ -33,7 +33,8 @@ import { ProjectOwnerGuard } from './guards/ProjectOwnerGuard';
 import { LearnerSetupsCreateViewComponent } from './views/learner-setups-create-view/learner-setups-create-view.component';
 import { LearnerSetupsEditViewComponent } from './views/learner-setups-edit-view/learner-setups-edit-view.component';
 import { LtsFormulaSuiteViewComponent } from './views/lts-formula-suite-view/lts-formula-suite-view.component';
-import {TestGuard} from "./guards/TestGuard";
+import { TestGuard } from "./guards/TestGuard";
+import { SymbolGuard } from "./guards/SymbolGuard";
 
 const routes: Routes = [
   {
@@ -194,6 +195,7 @@ const routes: Routes = [
                   },
                   {
                     path: ':symbolId',
+                    canActivate: [SymbolGuard],
                     component: SymbolViewComponent
                   }
                 ]

@@ -1,8 +1,25 @@
+/*
+ * Copyright 2015 - 2020 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.websocket.services;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.learnlib.alex.auth.dao.UserDAO;
 import de.learnlib.alex.common.exceptions.NotFoundException;
@@ -10,35 +27,42 @@ import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.websocket.entities.WebSocketMessage;
+import de.learnlib.alex.websocket.services.enums.ProjectPresenceServiceEnum;
+import de.learnlib.alex.websocket.services.enums.WebSocketServiceEnum;
 import io.reactivex.rxjava3.disposables.Disposable;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import javax.annotation.PreDestroy;
+import java.awt.*;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
+/**
+ * Service class which tracks user presences in projects.
+ */
 @Service
 @Transactional
 public class ProjectPresenceService {
 
+    /**
+     * To ensure non concurrent access over multiple data structures an explicit lock is used.
+     * This lock is 'fair' in a way that it respects the order of waiting threads when granting access.
+     */
     private final ReentrantLock lock = new ReentrantLock(true);
 
-    private final String serviceName = "ProjectPresenceService";
-
-    private WebSocketBaseService webSocketBaseService;
+    private WebSocketService webSocketService;
 
     private ProjectDAO projectDAO;
 
@@ -46,64 +70,57 @@ public class ProjectPresenceService {
 
     private final UserDAO userDAO;
 
-    /* projectId -> <userId, colorCode> */
-    private Map<Long, Map<Long, Integer>> userColors;
+    /** A map which stores the ProjectPresenceStatus objects with the projectId as the key */
+    private Map<Long, ProjectPresenceStatus> projectPresences;
 
-    private final String[] colorRange = { /* "F2F3F4", */ /* "222222", */ "F3C300", "875692", "F38400",
-                                "A1CAF1", "BE0032", "C2B280", "848482", "008856",
-                                "E68FAC", "0067A5", "F99379", "604E97", "F6A600",
-                                "B3446C", "DCD300", "882D17", "8DB600", "654522",
-                                "E25822", "2B3D26" };
+    /** Shortcut mapping for easier access given the corresponding sessionId.*/
+    private Map<String, ProjectPresenceStatus> sessionMap;
 
-    /* projectId -> colorCount */
-    private Map<Long, List<Integer>> colorCount;
-
-    /* projectId -> <userId, sessions> */
-    private Map<Long, Map<Long, Set<String>>> sessions;
+    /** Shortcut mapping for easier access given the corresponding userId.*/
+    private Map<Long, Set<ProjectPresenceStatus>> userMap;
 
     private Set<Disposable> disposables;
 
-    public ProjectPresenceService(WebSocketBaseService webSocketBaseService,
+    public ProjectPresenceService(WebSocketService webSocketService,
                                   ProjectDAO projectDAO,
                                   ProjectRepository projectRepository,
                                   UserDAO userDAO) {
-        this.webSocketBaseService = webSocketBaseService;
+        this.webSocketService = webSocketService;
         this.projectDAO = projectDAO;
         this.projectRepository = projectRepository;
         this.userDAO = userDAO;
 
-        this.userColors = new HashMap<>();
-        this.colorCount = new HashMap<>();
-        this.sessions = new HashMap<>();
         this.disposables = new HashSet<>();
+        this.projectPresences = new HashMap<>();
+        this.sessionMap = new HashMap<>();
+        this.userMap = new HashMap<>();
 
         disposables.add(
-                this.webSocketBaseService.register(
-                        message -> message.getEntity().equals("ProjectPresenceService")
-                                && message.getType().equals("User Entered"))
+                this.webSocketService.register(
+                        message -> message.getEntity().equals(ProjectPresenceServiceEnum.PROJECT_PRESENCE_SERVICE.name())
+                                && message.getType().equals(ProjectPresenceServiceEnum.USER_ENTERED.name()))
                         .subscribe(this::userEnteredProject)
         );
         disposables.add(
-                this.webSocketBaseService.register(
-                        message -> message.getEntity().equals("ProjectPresenceService")
-                                && message.getType().equals("User Left"))
+                this.webSocketService.register(
+                        message -> message.getEntity().equals(ProjectPresenceServiceEnum.PROJECT_PRESENCE_SERVICE.name())
+                                && message.getType().equals(ProjectPresenceServiceEnum.USER_LEFT.name()))
                         .subscribe(this::userLeftProject)
         );
         disposables.add(
-                this.webSocketBaseService.register(
-                        message -> message.getEntity().equals("System")
-                                && message.getType().equals("Session Disconnect"))
+                this.webSocketService.register(
+                        message -> message.getEntity().equals(WebSocketServiceEnum.WEBSOCKET_SERVICE_INTERNAL.name())
+                                && message.getType().equals(WebSocketServiceEnum.SESSION_DISCONNECT.name()))
                         .subscribe(this::sessionDisconnect)
         );
         disposables.add(
-                this.webSocketBaseService.register(
-                        message -> message.getEntity().equals("ProjectPresenceService")
-                                && message.getType().equals("Status Request"))
+                this.webSocketService.register(
+                        message -> message.getEntity().equals(ProjectPresenceServiceEnum.PROJECT_PRESENCE_SERVICE.name())
+                                && message.getType().equals(ProjectPresenceServiceEnum.STATUS_REQUEST.name()))
                         .subscribe(this::statusRequest)
         );
     }
 
-    @SuppressWarnings("Duplicates")
     public void userEnteredProject(WebSocketMessage message) {
         lock.lock();
 
@@ -115,49 +132,31 @@ public class ProjectPresenceService {
             long projectId = content.get("projectId").asLong();
             String sessionId = message.getSessionId();
 
-            AtomicLong oldProjectId = new AtomicLong(-1);
-            sessions.forEach((p, m) -> {
-                Optional.ofNullable(m.get(userId))
-                        .ifPresent(sessionSet -> {
-                            if (sessionSet.contains(sessionId) && p != projectId) {
-                                oldProjectId.set(p);
-                            }
-                        });
-            });
+            /* session already was used in another project */
+            Optional.ofNullable(sessionMap.get(sessionId))
+                    .ifPresent(projectPresenceStatus -> {
+                        if (projectPresenceStatus.getProjectId() != projectId) {
+                            removeSessionFromProject(projectPresenceStatus.getProjectId(), userId, sessionId);
+                        }
+                    });
 
-            if (oldProjectId.get() != -1) {
-                removeSessionFromProject(oldProjectId.get(), userId, sessionId);
-            }
-
+            /* check access */
             Project project = projectRepository.findById(projectId).orElseThrow(() -> new NotFoundException("Project not found."));
-
             projectDAO.checkAccess(message.getUser(), project);
 
-            userColors.computeIfAbsent(projectId, k -> new HashMap<>())
-                      .computeIfAbsent(userId, k -> this.nextColor(projectId));
+            addSessionToProject(projectId, userId, sessionId);
 
-            sessions.computeIfAbsent(projectId, k -> new HashMap<Long, Set<String>>())
-                    .computeIfAbsent(userId, k -> new HashSet<>())
-                    .add(sessionId);
-
-            broadcastProjectStatus(projectId);
-
-            /* DEBUG */
-            printUserColors();
-            printColorCount();
-            printSessions();
 
         } catch (IOException e) {
-            this.webSocketBaseService.sendError(message.getSessionId(), buildError("Received malformed content.", message));
+            this.webSocketService.sendError(message.getSessionId(), buildError("Received malformed content.", message));
             e.printStackTrace();
         } catch (UnauthorizedException | NotFoundException e) {
-            this.webSocketBaseService.sendError(message.getSessionId(), buildError(e.getMessage(), message));
+            this.webSocketService.sendError(message.getSessionId(), buildError(e.getMessage(), message));
         } finally {
             lock.unlock();
         }
     }
 
-    @SuppressWarnings("Duplicates")
     public void userLeftProject(WebSocketMessage message) {
         lock.lock();
 
@@ -169,26 +168,19 @@ public class ProjectPresenceService {
             long projectId = content.get("projectId").asLong();
             String sessionId = message.getSessionId();
 
-            if (removeSessionFromProject(projectId, userId,sessionId)) {
-                broadcastProjectStatus(projectId);
-            }
+            removeSessionFromProject(projectId, userId, sessionId);
 
-            /* DEBUG */
-            printUserColors();
-            printColorCount();
-            printSessions();
 
         } catch (IOException e) {
-            this.webSocketBaseService.sendError(message.getSessionId(), buildError("Received malformed content.", message));
+            this.webSocketService.sendError(message.getSessionId(), buildError("Received malformed content.", message));
             e.printStackTrace();
         } catch (UnauthorizedException | NotFoundException e) {
-            this.webSocketBaseService.sendError(message.getSessionId(), buildError(e.getMessage(), message));
+            this.webSocketService.sendError(message.getSessionId(), buildError(e.getMessage(), message));
         } finally {
             lock.unlock();
         }
     }
 
-    @SuppressWarnings("Duplicates")
     private void sessionDisconnect(WebSocketMessage message) {
         lock.lock();
 
@@ -196,42 +188,16 @@ public class ProjectPresenceService {
             long userId = message.getUser().getId();
             String sessionId = message.getSessionId();
 
-            for (Map.Entry<Long, Map<Long, Set<String>>> entry : new ArrayList<>(sessions.entrySet())) {
-                Long projectId = entry.getKey();
-                Map<Long, Set<String>> m = entry.getValue();
-                Optional.ofNullable(m.get(userId))
-                        .ifPresent(l -> {
-                            boolean removed = l.remove(sessionId);
-
-                            if (l.isEmpty()) {
-                                sessions.get(projectId).remove(userId);
-
-                                int colorCode = userColors.get(projectId).get(userId);
-                                colorCount.get(projectId).set(colorCode, colorCount.get(projectId).get(colorCode) - 1);
-
-                                userColors.get(projectId).remove(userId);
-
-                                if (sessions.get(projectId).isEmpty()) {
-                                    sessions.remove(projectId);
-                                    colorCount.remove(projectId);
-                                    userColors.remove(projectId);
-                                }
-                            }
-
-                            if (removed) broadcastProjectStatus(projectId);
-                        });
-            }
+            Optional.ofNullable(sessionMap.get(sessionId))
+                    .ifPresent(projectPresenceStatus -> {
+                        removeSessionFromProject(projectPresenceStatus.getProjectId(), userId, sessionId);
+                    });
         } finally {
             lock.unlock();
         }
 
-        /* DEBUG */
-        printUserColors();
-        printColorCount();
-        printSessions();
     }
 
-    @SuppressWarnings("Duplicates")
     public void statusRequest(WebSocketMessage message) {
         lock.lock();
 
@@ -240,110 +206,137 @@ public class ProjectPresenceService {
             JsonNode projectIds = mapper.readTree(message.getContent()).get("projectIds");
 
             WebSocketMessage status = new WebSocketMessage();
-            status.setEntity(serviceName);
-            status.setType("Status");
+            status.setEntity(ProjectPresenceServiceEnum.PROJECT_PRESENCE_SERVICE.name());
+            status.setType(ProjectPresenceServiceEnum.STATUS.name());
 
-            ArrayNode projects = mapper.createArrayNode();
+            ObjectNode projects = mapper.createObjectNode();
 
             projectIds.forEach(projectId -> {
                 Project project = projectRepository.findById(projectId.asLong()).orElseThrow(() -> new NotFoundException("Project with id " + projectId + " not found."));
                 projectDAO.checkAccess(message.getUser(), project);
 
-                projects.add(getProjectStatus(projectId.asLong()));
+                projects.set(projectId.asText(), getProjectStatus(projectId.asLong()));
             });
 
             status.setContent(projects.toString());
-            this.webSocketBaseService.sendToSession(message.getSessionId(), status);
+            this.webSocketService.sendToSession(message.getSessionId(), status);
 
-//            /* DEBUG */
-//            printUserColors();
-//            printColorCount();
-//            printSessions();
 
         } catch (IOException e) {
-            this.webSocketBaseService.sendError(message.getSessionId(), buildError("Received malformed content.", message));
-            e.printStackTrace();
+            this.webSocketService.sendError(message.getSessionId(), buildError("Received malformed content.", message));
         } catch (UnauthorizedException | NotFoundException e) {
-            this.webSocketBaseService.sendError(message.getSessionId(), buildError(e.getMessage(), message));
+            this.webSocketService.sendError(message.getSessionId(), buildError(e.getMessage(), message));
         } finally {
             lock.unlock();
         }
     }
 
-    @SuppressWarnings("Duplicates")
-    private boolean removeSessionFromProject(long projectId, long userId, String sessionId) {
-        AtomicBoolean removed = new AtomicBoolean(false);
-        Optional.ofNullable(sessions.get(projectId))
-                .map(m -> m.get(userId))
-                .ifPresent(l -> {
-                    removed.set(l.remove(sessionId));
+    private void addSessionToProject(long projectId, long userId, String sessionId) {
+        ProjectPresenceStatus projectPresenceStatus = projectPresences.computeIfAbsent(projectId, k -> new ProjectPresenceStatus(projectId));
 
-                    if (l.isEmpty()) {
-                        sessions.get(projectId).remove(userId);
+        if (projectPresenceStatus.addSession(userId, sessionId)) {
+            sessionMap.put(sessionId, projectPresenceStatus);
+            userMap.computeIfAbsent(userId, k -> new HashSet<>())
+                    .add(projectPresenceStatus);
 
-                        int colorCode = userColors.get(projectId).get(userId);
-                        colorCount.get(projectId).set(colorCode, colorCount.get(projectId).get(colorCode) - 1);
-
-                        userColors.get(projectId).remove(userId);
-
-                        if(sessions.get(projectId).isEmpty()) {
-                            sessions.remove(projectId);
-                            colorCount.remove(projectId);
-                            userColors.remove(projectId);
-                        }
-                    }
-                });
-        return removed.get();
+            broadcastProjectStatus(projectId);
+        }
     }
 
-    @SuppressWarnings("Duplicates")
+    private void removeSessionFromProject(long projectId, long userId, String sessionId) {
+        Optional.ofNullable(projectPresences.get(projectId))
+                .ifPresent(projectPresenceStatus -> {
+                    if (projectPresenceStatus.removeSession(userId, sessionId)) {
+                        sessionMap.remove(sessionId);
+
+                        if (!projectPresenceStatus.isInUse()) {
+                            projectPresences.remove(projectId);
+
+                            userMap.get(userId).remove(projectPresenceStatus);
+                            if (userMap.get(userId).isEmpty()) {
+                                userMap.remove(userId);
+                            }
+                        }
+
+                        broadcastProjectStatus(projectId);
+                    }
+                });
+    }
+
     private void broadcastProjectStatus(long projectId) {
         WebSocketMessage status = new WebSocketMessage();
-        status.setEntity(serviceName);
-        status.setType("Status");
+        status.setEntity(ProjectPresenceServiceEnum.PROJECT_PRESENCE_SERVICE.name());
+        status.setType(ProjectPresenceServiceEnum.STATUS.name());
 
         ObjectMapper mapper = new ObjectMapper();
-        ArrayNode projects = mapper.createArrayNode();
-        projects.add(getProjectStatus(projectId));
+        ObjectNode projects = mapper.createObjectNode();
+        projects.set(Long.toString(projectId), getProjectStatus(projectId));
         status.setContent(projects.toString());
 
-        this.webSocketBaseService.sendToProjectMembers(projectId, status);
-        this.webSocketBaseService.sendToProjectOwners(projectId, status);
+        this.webSocketService.sendToProjectMembers(projectId, status);
+        this.webSocketService.sendToProjectOwners(projectId, status);
     }
 
     private ObjectNode getProjectStatus(long projectId) {
         ObjectMapper mapper = new ObjectMapper();
 
-        ObjectNode status = mapper.createObjectNode();
-        status.put("projectId", projectId);
+        AtomicReference<ObjectNode> status = new AtomicReference<>(mapper.createObjectNode());
+        Optional.ofNullable(projectPresences.get(projectId))
+                .ifPresent(projectPresenceStatus -> {
+                    status.set(mapper.valueToTree(projectPresenceStatus));
+                });
 
-        ObjectNode colors = mapper.createObjectNode();
+        return status.get();
+    }
 
-        if (userColors.containsKey(projectId)) {
-            userColors.get(projectId).forEach((userId, colorCode) -> {
-                colors.put(userDAO.getById(userId).getUsername(), colorRange[colorCode]);
-            });
+    public void removeProjectFromPresenceMap(Long projectId) {
+        lock.lock();
+
+        try {
+            Optional.ofNullable(projectPresences.get(projectId))
+                    .ifPresent(projectPresenceStatus -> {
+                        // remove shortcuts
+                        projectPresenceStatus.userSessions.forEach((userId, sessionIds) -> {
+                            userMap.get(userId).remove(projectPresenceStatus);
+                            if (userMap.get(userId).isEmpty()) {
+                                userMap.remove(userId);
+                            }
+                            sessionIds.forEach(sessionId -> sessionMap.remove(sessionId));
+                        });
+                        // remove projectPresenceStatus
+                        projectPresences.remove(projectId);
+                    });
+        } finally {
+            lock.unlock();
         }
-
-        status.set("colors", colors);
-
-        return status;
     }
 
-    private int nextColor(long projectId) {
-        int colorCode = colorCount.computeIfAbsent(projectId, k -> new ArrayList<>(Collections.nCopies(colorRange.length, 0)))
-                                  .indexOf(Collections.min(colorCount.get(projectId)));
-        colorCount.get(projectId).set(colorCode, colorCount.get(projectId).get(colorCode) + 1);
-        return colorCode;
+    public void removeUserFromProjectPresence(Long userId, Long projectId) {
+        lock.lock();
+
+        try {
+            Optional.ofNullable(projectPresences.get(projectId))
+                    .map(projectPresenceStatus -> projectPresenceStatus.userSessions)
+                    .map(longSetMap -> longSetMap.get(userId))
+                    .ifPresent(sessionIds -> {
+                        Set<String> tmp = new HashSet<>(sessionIds);
+                        tmp.forEach(sessionId -> {
+                            projectPresences.get(projectId).removeSession(userId, sessionId);
+                        });
+                    });
+
+            broadcastProjectStatus(projectId);
+        } finally {
+            lock.unlock();
+        }
     }
 
-    @SuppressWarnings("Duplicates")
     private WebSocketMessage buildError(String description, WebSocketMessage message) {
         ObjectMapper om = new ObjectMapper();
 
         WebSocketMessage error = new WebSocketMessage();
-        error.setType("Error");
-        error.setEntity("ProjectPresenceService");
+        error.setType(ProjectPresenceServiceEnum.ERROR.name());
+        error.setEntity(ProjectPresenceServiceEnum.PROJECT_PRESENCE_SERVICE.name());
 
         ObjectNode errorNode = om.createObjectNode();
         errorNode.put("description", description);
@@ -359,40 +352,84 @@ public class ProjectPresenceService {
         disposables.forEach(Disposable::dispose);
     }
 
-    private void printUserColors() {
-        System.out.println("\n--- User Colors BEGIN ---");
-        userColors.forEach((aLong, longIntegerMap) -> {
-            System.out.println("ProjectID: " + aLong);
-            longIntegerMap.forEach((aLong1, integer) -> {
-                System.out.println("    " + "UserId: " + aLong1 + " Color: " + integer);
-            });
-        });
-        System.out.println("--- User Colors END ---\n");
-    }
+    class ProjectPresenceStatus {
 
-    private void printColorCount() {
-        System.out.println("\n--- Color Count BEGIN ---");
-        colorCount.forEach((aLong, integers) -> {
-            System.out.println("ProjectID: " + aLong);
-            integers.forEach(integer -> {
-                System.out.print(integer + "  ");
-            });
-        });
-        System.out.println("--- Color Count End ---\n");
-    }
+        private final long projectId;
 
-    private void printSessions() {
-        System.out.println("\n--- Sessions BEGIN ---");
-        sessions.forEach((aLong, longSetMap) -> {
-            System.out.println("ProjectID: " + aLong);
-            longSetMap.forEach((aLong1, strings) -> {
-                System.out.println("    UserID: " + aLong1);
-                strings.forEach(s -> {
-                    System.out.print(s + ", ");
-                });
-            });
-        });
-        System.out.println("--- Sessions END ---\n");
-    }
+        ProjectPresenceStatus(long projectId) {
+            this.projectId = projectId;
+            this.userColors = new HashMap<>();
+            this.userSessions = new HashMap<>();
+        }
 
+        public long getProjectId() {
+            return projectId;
+        }
+
+        @JsonIgnore
+        Map<Long, Integer> userColors;
+
+        @JsonIgnore
+        Map<Long, Set<String>> userSessions;
+
+        public boolean addSession(long userId, String sessionId) {
+            userSessions.computeIfAbsent(userId, k -> {
+                userColors.put(userId, nextColor());
+                return new HashSet<>();
+            });
+
+            return userSessions.get(userId).add(sessionId);
+        }
+
+        public boolean removeSession(long userId, String sessionId) {
+            AtomicBoolean result = new AtomicBoolean(false);
+            Optional.ofNullable(userSessions.get(userId))
+                    .ifPresent(sessionSet -> {
+                        if (sessionSet.remove(sessionId)) {
+                            if (sessionSet.isEmpty()) {
+                                userColors.remove(userId);
+                                userSessions.remove(userId);
+                            }
+                            result.set(true);
+                        }
+                    });
+            return result.get();
+        }
+
+        @JsonIgnore
+        public boolean isInUse() {
+            return !userColors.isEmpty();
+        }
+
+        @JsonProperty("userColors")
+        public Map<String, String> getUserColors() {
+            return userColors.entrySet().stream().collect(Collectors.toMap(k -> userDAO.getById(k.getKey()).getUsername(), v -> computeRGBColor(v.getValue())));
+        }
+
+        private int nextColor() {
+            Set<Integer> colorsInUse = new HashSet<>(userColors.values());
+            colorsInUse.add(0);
+
+            Set<Integer> missingColors = IntStream.rangeClosed(Collections.min(colorsInUse), Collections.max(colorsInUse)).boxed().collect(Collectors.toSet());
+            missingColors.removeAll(colorsInUse);
+            int next = missingColors.stream().findFirst().orElse(Collections.max(colorsInUse) + 1);
+
+            return next;
+        }
+
+        private String computeRGBColor(int colorCode) {
+            float h = 0.5f;
+            float golden_ratio_a = 0.618033988749895f;
+
+            for(int i = 1; i < colorCode; i++) {
+                h += golden_ratio_a;
+                h %= 1;
+            }
+
+            Color color = Color.getHSBColor(h, 0.5f, 0.99f);
+            String rgbColor = Integer.toHexString(color.getRed()) + Integer.toHexString(color.getGreen()) + Integer.toHexString(color.getBlue());
+
+            return rgbColor.toUpperCase();
+        }
+    }
 }

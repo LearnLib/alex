@@ -24,6 +24,7 @@ import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
+import de.learnlib.alex.websocket.services.SymbolPresenceService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -69,11 +70,14 @@ public class SymbolGroupDAOTest {
     @Mock
     private ObjectMapper objectMapper;
 
+    @Mock
+    private SymbolPresenceService symbolPresenceService;
+
     private SymbolGroupDAO symbolGroupDAO;
 
     @Before
     public void setUp() {
-        symbolGroupDAO = new SymbolGroupDAO(projectRepository, projectDAO, symbolGroupRepository, symbolRepository, symbolDAO, objectMapper);
+        symbolGroupDAO = new SymbolGroupDAO(projectRepository, projectDAO, symbolGroupRepository, symbolRepository, symbolDAO, objectMapper, symbolPresenceService);
     }
 
     @Test

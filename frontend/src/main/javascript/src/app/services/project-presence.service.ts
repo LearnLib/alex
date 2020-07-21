@@ -1,10 +1,25 @@
-import {Injectable} from "@angular/core";
-import {WebSocketService} from "./websocket.service";
-import {BehaviorSubject} from "rxjs";
-import {WebSocketMessage} from "../entities/websocket-message";
-import {AppStoreService} from "./app-store.service";
-import {ProjectApiService} from "./api/project-api.service";
-import {NavigationEnd, NavigationStart, Router} from "@angular/router";
+/*
+ * Copyright 2015 - 2020 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { Injectable } from "@angular/core";
+import { WebSocketService } from "./websocket.service";
+import { BehaviorSubject } from "rxjs";
+import { WebSocketMessage } from "../entities/websocket-message";
+import { ProjectApiService } from "./api/project-api.service";
+import { NavigationEnd, Router } from "@angular/router";
 import { filter } from 'rxjs/operators';
 
 @Injectable()
@@ -17,8 +32,8 @@ export class ProjectPresenceService {
   constructor(private webSocketService: WebSocketService,
               private router: Router,
               private projectApiService: ProjectApiService) {
-    this.webSocketService.register(msg => msg.entity == "ProjectPresenceService"
-                                                 && msg.type == "Status")
+    this.webSocketService.register(msg => msg.entity == ProjectPresenceServiceEnum.PROJECT_PRESENCE_SERVICE
+                                                 && msg.type == ProjectPresenceServiceEnum.STATUS)
       .subscribe(msg => this.processStatus(msg));
 
     this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(r => this.routeChange(r));
@@ -59,47 +74,46 @@ export class ProjectPresenceService {
     for (let projectKey in projects) {
       const project = projects[projectKey];
 
-      if (!Object.keys(project.colors).length) {
-        update.delete(project.projectId);
+      if (!Object.keys(project).length) {
+        update.delete(Number(projectKey));
       } else {
-        let projectUser = update.get(project.projectId);
+        let projectUser = update.get(Number(project.projectId));
         if (!projectUser) {
           projectUser = new Map();
         } else {
           projectUser.clear();
         }
 
-        for (let userId in project.colors) {
-          projectUser.set(userId, project.colors[userId]);
+        for (let userName in project.userColors) {
+          projectUser.set(userName, project.userColors[userName]);
         }
 
-        update.set(project.projectId, projectUser);
+        update.set(Number(project.projectId), projectUser);
       }
     }
     this.activeUsers.next(update);
-    console.log(this.activeUsers.getValue());
   }
 
   public requestStatus(projectIds: number[]) {
     const msg = new WebSocketMessage();
-    msg.entity = "ProjectPresenceService";
-    msg.type = "Status Request";
+    msg.entity = ProjectPresenceServiceEnum.PROJECT_PRESENCE_SERVICE;
+    msg.type = ProjectPresenceServiceEnum.STATUS_REQUEST;
     msg.content = '{"projectIds":[' + projectIds.toString() + ']}';
     this.webSocketService.send(msg);
   }
 
   public userEnteredProject(projectId: number) {
     const msg = new WebSocketMessage();
-    msg.entity = "ProjectPresenceService";
-    msg.type = "User Entered";
+    msg.entity = ProjectPresenceServiceEnum.PROJECT_PRESENCE_SERVICE;
+    msg.type = ProjectPresenceServiceEnum.USER_ENTERED;
     msg.content = '{"projectId":"' + projectId + '"}';
     this.webSocketService.send(msg);
   }
 
   public userLeftProject(projectId: number) {
     const msg = new WebSocketMessage();
-    msg.entity = "ProjectPresenceService";
-    msg.type = "User Left";
+    msg.entity = ProjectPresenceServiceEnum.PROJECT_PRESENCE_SERVICE;
+    msg.type = ProjectPresenceServiceEnum.USER_LEFT;
     msg.content = '{"projectId":"' + projectId + '"}';
     this.webSocketService.send(msg);
   }
@@ -107,4 +121,12 @@ export class ProjectPresenceService {
   get activeUsers$() {
     return this.activeUsers.asObservable();
   }
+}
+
+export enum ProjectPresenceServiceEnum {
+  PROJECT_PRESENCE_SERVICE = "PROJECT_PRESENCE_SERVICE",
+  USER_LEFT = "USER_LEFT",
+  USER_ENTERED = "USER_ENTERED",
+  STATUS_REQUEST = "STATUS_REQUEST",
+  STATUS = "STATUS"
 }
