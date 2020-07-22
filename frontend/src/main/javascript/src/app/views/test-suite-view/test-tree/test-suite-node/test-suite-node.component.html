@@ -25,9 +25,5 @@
       </div>
     </a>
   </div>
-  <div *ngIf="lockInfo" class="d-flex flex-row" style="margin-top: 2px">
-    <i class="fas fa-cog">
-      <small class="pl-1">test-case(s) in use by:<strong *ngFor="let username of lockInfo.locks" class="pl-1">{{username}}</strong></small>
-    </i>
-  </div>
+  <lock-info-list class="mt-1" *ngIf="lockInfo != null" [lockInfo]="lockInfo"></lock-info-list>
 </div>

@@ -21,6 +21,7 @@ import { environment as env } from '../../../environments/environment';
 import { BehaviorSubject, Subject } from "rxjs";
 import { WebSocketMessage } from "../../entities/websocket-message";
 import { Client } from "@stomp/stompjs";
+import { environment } from '../../../environments/environment';
 
 @Injectable()
 export class WebSocketAPIService {
@@ -36,7 +37,9 @@ export class WebSocketAPIService {
   constructor() {
     this.client = new StompJS.Client({
       debug: function (str) {
-        console.log(str);
+        if (!environment.production) {
+          console.log(str);
+        }
       },
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
@@ -105,7 +108,6 @@ export class WebSocketAPIService {
   }
 
   send(message: WebSocketMessage) {
-    console.log(message);
     this.client.publish({destination: '/app/send/event', body: JSON.stringify(message)});
   }
 

@@ -3,15 +3,11 @@
     <selectable-checkbox [item]="symbol" [selectable]="store.symbolsSelectable"></selectable-checkbox>
   </div>
   <div class="w-100 pl-3">
-      <a [routerLink]="[symbol.id]">
-        <strong>{{symbol.name}}</strong>
-      </a>
-      <i *ngIf="symbol.containsSymbolSteps()" class="text-muted fa fa-cubes fa-fw ml-2"></i>
-      <div *ngIf="lockInfo">
-        <i class="fas fa-lock">
-          <small class="pl-1">locked: {{lockInfo.date | date : 'EEE, dd.MM.yyyy, HH:mm'}}, by<strong class="pl-1">{{lockInfo.username}}</strong></small>
-        </i>
-      </div>
+    <a [routerLink]="[symbol.id]" [class.disabled]="lockInfo != null">
+      <strong>{{symbol.name}}</strong>
+    </a>
+    <i *ngIf="symbol.containsSymbolSteps()" class="text-muted fa fa-cubes fa-fw ml-2"></i>
+    <lock-info-badge class="ml-2" *ngIf="lockInfo != null" [lockInfo]="lockInfo"></lock-info-badge>
   </div>
   <div *ngIf="symbol.steps.length === 0" class="pl-3">
     <span class="badge badge-info">Not implemented</span>

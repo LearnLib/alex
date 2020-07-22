@@ -8,10 +8,23 @@ nav {
 }
 
 .color-box {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   display: inline-block;
   margin-right: 8px;
   border-radius: 3px;
   vertical-align: middle;
+}
+
+.dropdown-users {
+  overflow: auto;
+  max-height: 140px;
+}
+
+.users-badge {
+  .badge-pill {
+    position: absolute;
+    top: 2px;
+    right: 8px;
+  }
 }

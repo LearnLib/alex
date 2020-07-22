@@ -29,7 +29,7 @@ export class AppViewComponent {
 
   // The presence services getting injected to force their creation at exactly this point.
   constructor(public appStore: AppStoreService,
-              private projectPresenceService: ProjectPresenceService,
+              public projectPresenceService: ProjectPresenceService,
               private testPresenceService: TestPresenceService,
               private symbolPresenceService: SymbolPresenceService) { }
 

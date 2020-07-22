@@ -254,6 +254,8 @@ import { WebSocketService } from "./services/websocket.service";
 import { ProjectPresenceService } from "./services/project-presence.service";
 import { TestPresenceService } from "./services/test-presence.service";
 import { SymbolPresenceService } from "./services/symbol-presence.service";
+import { LockInfoBadgeComponent } from './common/lock-info-badge/lock-info-badge.component';
+import { LockInfoListComponent } from './common/lock-info-list/lock-info-list.component';
 
 @NgModule({
   declarations: [
@@ -459,7 +461,9 @@ import { SymbolPresenceService } from "./services/symbol-presence.service";
     ProjectListComponent,
     LtsFormulaSuiteViewComponent,
     TreeViewComponent,
-    MoveLtsFormulaModalComponent
+    MoveLtsFormulaModalComponent,
+    LockInfoBadgeComponent,
+    LockInfoListComponent
   ],
   imports: [
     BrowserModule,

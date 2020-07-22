@@ -25,11 +25,7 @@
     <div class="symbol-group-name cursor-pointer" (click)="store.toggleCollapseGroup(group)">
       {{group.name}}
     </div>
-    <div *ngIf="lockInfo">
-      <i class="fas fa-cog">
-        <small class="pl-1">symbol(s) in use by:<strong *ngFor="let username of lockInfo.locks" class="pl-1">{{username}}</strong></small>
-      </i>
-    </div>
+    <lock-info-list *ngIf="lockInfo != null" [lockInfo]="lockInfo"></lock-info-list>
   </div>
   <div *ngIf="group.symbols.length === 0 && group.groups.length === 0" class="mr-3">
     <span class="badge badge-secondary">Empty</span>

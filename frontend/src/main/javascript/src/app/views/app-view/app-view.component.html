@@ -5,13 +5,12 @@
     </a>
 
     <ul class="navbar-nav ml-auto">
-      <ng-container *ngIf="appStore.project != null">
-      <li *ngIf="(projectPresenceService.activeUsers$ | async).get(appStore.project.id) as users"
-          class="nav-item dropdown" ngbDropdown>
-        <a class="nav-link dropdown-toggle cursor-pointer" ngbDropdownToggle>
-            Users Online: {{users.size}}
+      <ng-container *ngIf="appStore.project != null && (projectPresenceService.activeUsers$ | async).get(appStore.project.id) as users">
+      <li *ngIf="users.size > 1" class="nav-item dropdown" ngbDropdown>
+        <a class="nav-link dropdown-toggle cursor-pointer no-caret users-badge" ngbDropdownToggle>
+          <i class="fas fa-fw fa-users mr-3"></i> <span class="ml-2 badge badge-pill badge-info">{{users.size}}</span>
         </a>
-        <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu>
+        <div class="dropdown-menu dropdown-menu-right dropdown-users" ngbDropdownMenu>
           <div *ngFor="let activeUser of users | keyvalue" ngbDropdownItem>
             <span class="color-box" [style.background-color]="'#'+activeUser.value"></span>
             <span class="user-name">{{activeUser.key}}</span>

@@ -96,16 +96,26 @@
       </div>
 
       <div class="d-flex flex-row align-items-center">
-        <a
-          class="btn btn-sm btn-default mr-2"
-          *ngIf="testSuite.parent != null"
-          [routerLink]="['/app', 'projects', project.id, 'tests', testSuite.parent]"
-        >
-          <i class="fas fa-fw fa-level-up-alt mr-1"></i>
-        </a>
-        <h4 *ngIf="testSuite.name" class="m-0">
-          <i class="fas fa-fw fa-folder mr-2"></i> <strong>{{testSuite.name}}</strong>
-        </h4>
+        <div>
+          <a
+            class="btn btn-sm btn-default"
+            *ngIf="testSuite.parent != null"
+            [routerLink]="['/app', 'projects', project.id, 'tests', testSuite.parent]"
+          >
+            <i class="fas fa-fw fa-level-up-alt mr-1"></i>
+          </a>
+        </div>
+        <div class="w-100 ml-3">
+          <h4 *ngIf="testSuite.name" class="m-0">
+            <i class="fas fa-fw fa-folder mr-2"></i> <strong>{{testSuite.name}}</strong>
+          </h4>
+          <lock-info-list
+            class="d-block mt-1"
+            *ngIf="testSuite.parent != null && lockInfo.get(project.id)?.get(testSuite.id) as locks"
+            [lockInfo]="locks"
+          >
+          </lock-info-list>
+        </div>
       </div>
 
       <hr>
