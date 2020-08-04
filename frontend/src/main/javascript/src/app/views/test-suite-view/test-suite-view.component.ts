@@ -39,7 +39,7 @@ import { TestsImportModalComponent } from './tests-import-modal/tests-import-mod
 import { TestConfigModalComponent } from '../tests-view/test-config-modal/test-config-modal.component';
 import { TestsMoveModalComponent } from './tests-move-modal/tests-move-modal.component';
 import { TestReportStatus, TestStatus } from '../../entities/test-status';
-import { TestPresenceService } from "../../services/test-presence.service";
+import {TestLockInfo, TestPresenceService} from "../../services/test-presence.service";
 
 @Component({
   selector: 'test-suite-view',
@@ -67,7 +67,7 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
 
   private pollHandle: number;
 
-  lockInfo: any;
+  lockInfo: Map<number, Map<number, TestLockInfo>>;
 
   constructor(private symbolGroupApi: SymbolGroupApiService,
               private appStore: AppStoreService,

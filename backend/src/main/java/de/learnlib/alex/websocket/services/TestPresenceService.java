@@ -18,6 +18,9 @@ package de.learnlib.alex.websocket.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -65,6 +68,8 @@ public class TestPresenceService {
      */
     private final ReentrantLock lock = new ReentrantLock(true);
 
+    private ObjectMapper objectMapper;
+
     private WebSocketService webSocketService;
 
     private TestDAO testDAO;
@@ -90,12 +95,15 @@ public class TestPresenceService {
                                TestDAO testDAO,
                                ProjectDAO projectDAO,
                                UserDAO userDAO,
-                               ProjectRepository projectRepository) {
+                               ProjectRepository projectRepository,
+                               ObjectMapper objectMapper) {
         this.webSocketService = webSocketService;
         this.testDAO = testDAO;
         this.projectDAO = projectDAO;
         this.userDAO = userDAO;
         this.projectRepository = projectRepository;
+        this.objectMapper = objectMapper;
+
 
         this.disposables = new HashSet<>();
         this.testLocks = new HashMap<>();
@@ -133,8 +141,7 @@ public class TestPresenceService {
         lock.lock();
 
         try {
-            ObjectMapper om = new ObjectMapper();
-            ObjectNode content = (ObjectNode) om.readTree(message.getContent());
+            ObjectNode content = (ObjectNode) objectMapper.readTree(message.getContent());
 
             long userId = message.getUser().getId();
             long projectId = content.get("projectId").asLong();
@@ -167,8 +174,7 @@ public class TestPresenceService {
         lock.lock();
 
         try {
-            ObjectMapper om = new ObjectMapper();
-            ObjectNode content = (ObjectNode) om.readTree(message.getContent());
+            ObjectNode content = (ObjectNode) objectMapper.readTree(message.getContent());
 
             long userId = message.getUser().getId();
             long projectId = content.get("projectId").asLong();
@@ -210,14 +216,13 @@ public class TestPresenceService {
         lock.lock();
 
         try {
-            ObjectMapper om = new ObjectMapper();
-            JsonNode projectIds = om.readTree(message.getContent()).get("projectIds");
+            JsonNode projectIds = objectMapper.readTree(message.getContent()).get("projectIds");
 
             WebSocketMessage status = new WebSocketMessage();
             status.setEntity(TestPresenceServiceEnum.TEST_PRESENCE_SERVICE.name());
             status.setType(TestPresenceServiceEnum.STATUS.name());
 
-            ObjectNode projects = om.createObjectNode();
+            ObjectNode projects = objectMapper.createObjectNode();
 
             projectIds.forEach(projectId -> {
                 Project project = projectRepository.findById(projectId.asLong()).orElseThrow(() -> new NotFoundException("Project not found."));
@@ -238,14 +243,16 @@ public class TestPresenceService {
         }
     }
 
-    public void checkLockStatus(long projectId, long testId) throws UnauthorizedException {
+    public void checkLockStatus(long projectId, long testId, long userId) throws UnauthorizedException {
         lock.lock();
 
         try {
             Optional.ofNullable(testLocks.get(projectId))
                     .map(projectMap -> projectMap.get(testId))
-                    .ifPresent(l -> {
-                        throw new UnauthorizedException("This test is currently locked.");
+                    .ifPresent(testLock -> {
+                        if (!(testLock instanceof TestCaseLock) || ((TestCaseLock) testLock).lockOwner != userId) {
+                            throw new UnauthorizedException("This test is currently locked.");
+                        }
                     });
         } finally {
             lock.unlock();
@@ -384,13 +391,12 @@ public class TestPresenceService {
     }
 
     private ObjectNode getProjectStatus(long projectId) {
-        ObjectMapper om = new ObjectMapper();
-        ObjectNode tests = om.createObjectNode();
+        ObjectNode tests = objectMapper.createObjectNode();
 
         Optional.ofNullable(testLocks.get(projectId))
                 .ifPresent(m -> {
                     m.forEach((testId, testLock) -> {
-                        tests.set(Long.toString(testId), om.valueToTree(testLock));
+                        tests.set(Long.toString(testId), objectMapper.valueToTree(testLock));
                     });
                 });
 
@@ -402,8 +408,7 @@ public class TestPresenceService {
         status.setEntity(TestPresenceServiceEnum.TEST_PRESENCE_SERVICE.name());
         status.setType(TestPresenceServiceEnum.STATUS.name());
 
-        ObjectMapper om = new ObjectMapper();
-        ObjectNode projects = om.createObjectNode();
+        ObjectNode projects = objectMapper.createObjectNode();
         projects.set(Long.toString(projectId), getProjectStatus(projectId));
         status.setContent(projects.toString());
 
@@ -412,13 +417,11 @@ public class TestPresenceService {
     }
 
     private WebSocketMessage buildError(String description, WebSocketMessage message) {
-        ObjectMapper om = new ObjectMapper();
-
         WebSocketMessage error = new WebSocketMessage();
         error.setType(TestPresenceServiceEnum.ERROR.name());
         error.setEntity(TestPresenceServiceEnum.TEST_PRESENCE_SERVICE.name());
 
-        ObjectNode errorNode = om.createObjectNode();
+        ObjectNode errorNode = objectMapper.createObjectNode();
         errorNode.put("description", description);
         errorNode.put("message", message.getContent());
 
@@ -432,6 +435,11 @@ public class TestPresenceService {
         disposables.forEach(Disposable::dispose);
     }
 
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+    @JsonSubTypes({
+            @JsonSubTypes.Type(name = "case", value = TestCaseLock.class),
+            @JsonSubTypes.Type(name = "suite", value = TestSuiteLock.class),
+    })
     abstract class TestLock {
 
         private final long testId;
@@ -449,13 +457,10 @@ public class TestPresenceService {
         public long getTestId() {
             return testId;
         }
-
-        abstract String getType();
     }
 
+    @JsonTypeName("case")
     class TestCaseLock extends TestLock {
-
-        private final String type = "case";
 
         @JsonIgnore
         private long lockOwner;
@@ -475,11 +480,6 @@ public class TestPresenceService {
 
         public long getLockOwner() {
             return lockOwner;
-        }
-
-        @JsonProperty("type")
-        public String getType() {
-            return type;
         }
 
         public boolean addSession(long userId, String sessionId) {
@@ -523,8 +523,8 @@ public class TestPresenceService {
         }
     }
 
+    @JsonTypeName("suite")
     class TestSuiteLock extends TestLock {
-        private final String type = "suite";
 
         @JsonIgnore
         Set<Long> lockOwners;
@@ -575,11 +575,6 @@ public class TestPresenceService {
         @JsonProperty("locks")
         public List getLockOwnersNames() {
             return lockOwners.stream().map(userId -> userDAO.getById(userId).getUsername()).collect(Collectors.toList());
-        }
-
-        @JsonProperty("type")
-        public String getType() {
-            return type;
         }
     }
  }

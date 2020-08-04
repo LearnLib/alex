@@ -51,7 +51,7 @@ public class WebSocketAuthChannelInterceptor implements ChannelInterceptor {
                 String jwt = accessor.getFirstNativeHeader("Authorization");
                 UsernamePasswordAuthenticationToken usernamePasswordAuthToken = (UsernamePasswordAuthenticationToken) authenticationProvider.getAuthentication(jwt);
 
-                if (usernamePasswordAuthToken.getAuthorities().contains(new SimpleGrantedAuthority("GUEST"))) {
+                if (usernamePasswordAuthToken.getAuthorities().contains(new SimpleGrantedAuthority("ANONYMOUS"))) {
                     throw new UnauthorizedException("Cannot get authorized.");
                 }
 

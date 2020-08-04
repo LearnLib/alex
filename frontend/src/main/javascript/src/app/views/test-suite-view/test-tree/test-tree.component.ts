@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import {Component, Input} from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { TestCaseLockInfo, TestSuiteLockInfo } from "../../../services/test-presence.service";
 
 @Component({
   selector: 'test-tree',
@@ -30,5 +31,5 @@ export class TestTreeComponent {
   public results: any[];
 
   @Input()
-  public lockInfo: any;
+  public lockInfo: TestCaseLockInfo | TestSuiteLockInfo;
 }

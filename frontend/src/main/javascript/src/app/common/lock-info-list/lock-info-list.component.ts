@@ -16,6 +16,8 @@
 
 import { Component, Input } from '@angular/core';
 import { take, takeRight } from 'lodash';
+import { TestSuiteLockInfo } from "../../services/test-presence.service";
+import { SymbolGroupLockInfo } from "../../services/symbol-presence.service";
 
 @Component({
   selector: 'lock-info-list',
@@ -25,7 +27,7 @@ import { take, takeRight } from 'lodash';
 export class LockInfoListComponent {
 
   @Input()
-  lockInfo: any;
+  lockInfo: TestSuiteLockInfo | SymbolGroupLockInfo;
 
   @Input("visibleLocks")
   n: number = 1;

@@ -33,6 +33,8 @@ export class SymbolPresenceService {
 
   private oldRoute = "";
 
+  private routeRegEx = /^\/app\/projects\/\d+\/symbols\/\d+/;
+
   constructor(private webSocketService: WebSocketService,
               private router: Router,
               private projectApiService: ProjectApiService,
@@ -43,6 +45,14 @@ export class SymbolPresenceService {
       .subscribe(msg => this.processStatus(msg));
 
     this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(r => this.routeChange(r));
+
+    this.projectApiService.getAll().subscribe(projects => {
+      const projectIds = [];
+      projects.forEach(project => {
+        projectIds.push(project.id);
+      });
+      this.requestStatus(projectIds);
+    })
   }
 
   private routeChange(r: any) {
@@ -52,23 +62,12 @@ export class SymbolPresenceService {
     const newProjectId = newRoute.split("/")[3];
     const newSymbolId = newRoute.split("/")[5];
 
-    if (/^\/app\/projects\/\d+\/symbols/.test(newRoute) && !/^\/app\/projects\/\d+\/symbols/.test(this.oldRoute)) {
-
-      this.projectApiService.getAll().subscribe(projects => {
-        const projectIds = [];
-        projects.forEach(project => {
-          projectIds.push(project.id);
-        });
-        this.requestStatus(projectIds);
-      })
-    }
-
-    if (/^\/app\/projects\/\d+\/symbols\/\d+/.test(newRoute)) {
-      if(!/^\/app\/projects\/\d+\/symbols\/\d+/.test(this.oldRoute) || oldProjectId != newProjectId || oldSymbolId != newSymbolId) {
+    if (this.routeRegEx.test(newRoute)) {
+      if(!this.routeRegEx.test(this.oldRoute) || oldProjectId != newProjectId || oldSymbolId != newSymbolId) {
         this.userEnteredSymbol(Number(newProjectId), Number(newSymbolId));
       }
     } else {
-      if (/^\/app\/projects\/\d+\/symbols\/\d+/.test(this.oldRoute)) {
+      if (this.routeRegEx.test(this.oldRoute)) {
         this.userLeftSymbol(Number(oldProjectId), Number(oldSymbolId));
       }
     }
@@ -77,6 +76,7 @@ export class SymbolPresenceService {
   }
 
   private processStatus(msg: WebSocketMessage) {
+    console.log(msg);
     const projects = msg.content;
 
     const symbolsUpdate = this.accessedSymbols.getValue();
@@ -97,7 +97,8 @@ export class SymbolPresenceService {
 
         for (let symbolId in symbols) {
           const symbol = symbols[symbolId];
-          const symbolObject: {[key: string]: any} = {};
+          const symbolObject= {} as SymbolLockInfo;
+          symbolObject.type = symbol.type;
           symbolObject.username = symbol.username;
           symbolObject.date = new Date(symbol.timestamp);
 
@@ -121,7 +122,8 @@ export class SymbolPresenceService {
 
         for (let groupId in groups) {
           const group = groups[groupId];
-          const groupObject: {[key: string]: any} = {};
+          const groupObject = {} as SymbolGroupLockInfo;
+          groupObject.type = group.type;
           groupObject.locks = group.locks;
 
           groupsObject.set(Number(groupId), groupObject);
@@ -196,4 +198,17 @@ export enum SymbolPresenceServiceEnum {
   USER_ENTERED = "USER_ENTERED",
   STATUS_REQUEST = "STATUS_REQUEST",
   STATUS = "STATUS"
+}
+
+interface AbstractSymbolLockInfo {
+  type: string;
+}
+
+export interface SymbolLockInfo extends AbstractSymbolLockInfo {
+  username: string;
+  date: Date;
+}
+
+export interface SymbolGroupLockInfo extends AbstractSymbolLockInfo {
+  locks: string[];
 }

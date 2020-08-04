@@ -36,6 +36,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import javax.validation.ValidationException;
 import java.io.IOException;
 import java.util.List;
@@ -65,6 +66,7 @@ public class UserDAO {
 
     /** The WebSocketService to use. */
     private final WebSocketService webSocketService;
+    private EntityManager em;
 
     /**
      * Creates a new UserDAO.
@@ -80,12 +82,13 @@ public class UserDAO {
      */
     @Autowired
     public UserDAO(UserRepository userRepository, FileDAO fileDAO, ProjectDAO projectDAO,
-                   ProjectRepository projectRepository, @Lazy WebSocketService webSocketService) {
+                   ProjectRepository projectRepository, @Lazy WebSocketService webSocketService, EntityManager em) {
         this.userRepository = userRepository;
         this.fileDAO = fileDAO;
         this.projectDAO = projectDAO;
         this.projectRepository = projectRepository;
         this.webSocketService = webSocketService;
+        this.em = em;
     }
 
     public void create(User newUser) throws ValidationException, UnauthorizedException {
@@ -160,7 +163,9 @@ public class UserDAO {
         }
 
         for (User user : users) {
+//            user = userRepository.getOne(user.getId());
             delete(authUser, user);
+            em.flush();
         }
     }
 
@@ -196,7 +201,6 @@ public class UserDAO {
                 }
             }
         }
-
 
         userRepository.delete(user);
 

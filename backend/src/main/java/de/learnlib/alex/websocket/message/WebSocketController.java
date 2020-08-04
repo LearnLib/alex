@@ -43,23 +43,26 @@ public class WebSocketController {
 
     private final AuthContext authContext;
 
+    private ObjectMapper objectMapper;
+
     @Autowired
-    public WebSocketController(WebSocketService webSocketService, AuthContext authContext) {
+    public WebSocketController(WebSocketService webSocketService, AuthContext authContext, ObjectMapper objectMapper) {
         this.webSocketService = webSocketService;
         this.authContext = authContext;
+        this.objectMapper = objectMapper;
     }
 
     @MessageMapping("/send/event")
     public void onIncomingEvent(@Payload String event, Principal userPrincipal) {
-        ObjectMapper om = new ObjectMapper();
         WebSocketMessage msg;
 
         try {
-            msg = om.readValue(event, WebSocketMessage.class);
+            msg = objectMapper.readValue(event, WebSocketMessage.class);
+            if (msg.getEntity() == null || msg.getType() == null) {
+                throw new IOException();
+            }
             webSocketService.processIncomingMessage(msg, userPrincipal);
         } catch (IOException e) {
-            e.printStackTrace();
-
             WebSocketMessage error = new WebSocketMessage();
             error.setEntity(WebSocketServiceEnum.WEBSOCKET_SERVICE.name());
             error.setType(WebSocketServiceEnum.ERROR.name());

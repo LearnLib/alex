@@ -15,6 +15,7 @@
  */
 
 import { Component, Input } from '@angular/core';
+import { TestCaseLockInfo } from "../../../../services/test-presence.service";
 
 @Component({
   selector: 'test-case-node',
@@ -30,7 +31,7 @@ export class TestCaseNodeComponent {
   public results: any[];
 
   @Input()
-  public lockInfo: any;
+  public lockInfo: TestCaseLockInfo;
 
   get result(): any {
     return this.results[this.case.id];

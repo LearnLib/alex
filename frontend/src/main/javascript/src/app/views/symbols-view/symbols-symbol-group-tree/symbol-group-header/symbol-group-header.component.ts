@@ -15,8 +15,9 @@
  */
 
 import { SymbolGroup } from '../../../../entities/symbol-group';
-import {Component, Input, OnInit} from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { SymbolsViewStoreService } from '../../symbols-view-store.service';
+import { SymbolGroupLockInfo } from "../../../../services/symbol-presence.service";
 
 @Component({
   selector: 'symbol-group-header',
@@ -29,7 +30,7 @@ export class SymbolGroupHeaderComponent implements OnInit {
   @Input()
   group: SymbolGroup;
 
-  lockInfo: any;
+  lockInfo: SymbolGroupLockInfo;
 
   /** Constructor. */
   constructor(public store: SymbolsViewStoreService) {

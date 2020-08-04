@@ -275,7 +275,7 @@ public class TestDAO {
         checkAccess(user, project, test);
 
         // check lock status
-        testPresenceService.checkLockStatus(projectId, test.getId());
+        testPresenceService.checkLockStatus(projectId, test.getId(), user.getId());
 
         // make sure the name of the Test Case is unique
         Test testInDB = testRepository.findOneByParent_IdAndName(test.getParentId(), test.getName());
@@ -355,7 +355,7 @@ public class TestDAO {
         checkAccess(user, project, test);
 
         // check lock status
-        testPresenceService.checkLockStatus(projectId, testId);
+        testPresenceService.checkLockStatus(projectId, testId, user.getId());
 
         final Test root = testRepository.findFirstByProject_IdOrderByIdAsc(projectId);
         if (root.getId().equals(testId)) {
@@ -396,7 +396,7 @@ public class TestDAO {
             checkAccess(user, project, test);
 
             //check lock status
-            testPresenceService.checkLockStatus(projectId, test.getId());
+            testPresenceService.checkLockStatus(projectId, test.getId(), user.getId());
 
             if (test.getId().equals(rootTestSuite.getId())) {
                 throw new ValidationException("Cannot move the root test suite.");

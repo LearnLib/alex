@@ -66,6 +66,7 @@ public abstract class AbstractResourceIT {
 
     @After
     public void post() throws Exception {
+        System.out.println("TTTTTTTTTTTEEEEEEEEEEEEEEEEEEEEEESSSSSSSSSSSSSSSSSSSSSSSTTTTTTT");
         final Response res1 = client.target(baseUrl() + "/users/login").request()
                 .post(Entity.json("{\"email\":\"" + ADMIN_EMAIL + "\",\"password\":\"" + ADMIN_PASSWORD + "\"}"));
 
@@ -105,6 +106,8 @@ public abstract class AbstractResourceIT {
                 userIds.add(userId);
             }
         });
+
+        System.out.println(userIds);
 
         if (!userIds.isEmpty()) {
             final Response res3 = client.target(baseUrl() + "/users/batch/" + String.join(",", userIds)).request()

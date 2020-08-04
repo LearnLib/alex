@@ -32,6 +32,7 @@ import de.learnlib.alex.data.repositories.SymbolOutputMappingRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterValueRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
+import de.learnlib.alex.websocket.services.SymbolPresenceService;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.stereotype.Service;
 
@@ -63,6 +64,8 @@ public class SymbolParameterDAO {
 
     private SymbolOutputMappingRepository outputMappingRepository;
 
+    private SymbolPresenceService symbolPresenceService;
+
     /** The symbol DAO to use. */
     private SymbolDAO symbolDAO;
 
@@ -89,7 +92,8 @@ public class SymbolParameterDAO {
                               SymbolParameterValueRepository symbolParameterValueRepository,
                               ParameterizedSymbolRepository parameterizedSymbolRepository,
                               SymbolDAO symbolDAO,
-                              SymbolOutputMappingRepository outputMappingRepository) {
+                              SymbolOutputMappingRepository outputMappingRepository,
+                              SymbolPresenceService symbolPresenceService) {
         this.projectRepository = projectRepository;
         this.symbolRepository = symbolRepository;
         this.symbolParameterRepository = symbolParameterRepository;
@@ -97,6 +101,7 @@ public class SymbolParameterDAO {
         this.parameterizedSymbolRepository = parameterizedSymbolRepository;
         this.symbolDAO = symbolDAO;
         this.outputMappingRepository = outputMappingRepository;
+        this.symbolPresenceService = symbolPresenceService;
     }
 
     public SymbolParameter create(User user, Long projectId, Long symbolId, SymbolParameter parameter)
@@ -115,6 +120,9 @@ public class SymbolParameterDAO {
         checkAccess(user, project, symbol, parameter);
         checkIfTypeWithNameExists(symbol, parameter);
 
+        // check symbol lock status
+        symbolPresenceService.checkSymbolLockStatus(project.getId(), symbol.getId(), user.getId());
+
         symbol.setUpdatedOn(ZonedDateTime.now());
         symbolRepository.save(symbol);
 
@@ -128,6 +136,9 @@ public class SymbolParameterDAO {
         final SymbolParameter parameter = symbolParameterRepository.findById(parameterId).orElse(null);
 
         checkAccess(user, project, symbol, parameter);
+
+        // check symbol lock status
+        symbolPresenceService.checkSymbolLockStatus(project.getId(), symbol.getId(), user.getId());
 
         final List<ParameterizedSymbol> pSymbols = parameterizedSymbolRepository.findAllBySymbol_Id(symbolId);
         for (ParameterizedSymbol pSymbol : pSymbols) {
@@ -165,6 +176,9 @@ public class SymbolParameterDAO {
 
         symbolDAO.checkAccess(user, project, symbol);
         checkIfTypeWithNameExists(symbol, parameter);
+
+        // check symbol lock status
+        symbolPresenceService.checkSymbolLockStatus(project.getId(), symbol.getId(), user.getId());
 
         parameter.setSymbol(symbol);
         symbol.addParameter(parameter);

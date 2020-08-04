@@ -105,14 +105,11 @@ public class WebSocketService {
     @EventListener
     public void onSessionConnectEvent(SessionConnectEvent event) {
         lock.lock();
-        System.out.println("SESSION CONNECT !!!!!!!!!!!!!!!!!!!! OUTSIDE");
 
         try {
             UsernamePasswordAuthenticationToken authToken = (UsernamePasswordAuthenticationToken) event.getUser();
             if (((User) authToken.getPrincipal()).getId() != null) {
                 long userId = ((User) authToken.getPrincipal()).getId();
-
-                System.out.println("SESSION CONNECT !!!!!!!!!!!!!!!!!!!! INSIDE");
 
                 WebSocketMessage msg;
 
@@ -203,6 +200,8 @@ public class WebSocketService {
         headerAccessor.setLeaveMutable(true);
 
         simpMessagingTemplate.convertAndSendToUser(sessionId, "/queue", message, headerAccessor.getMessageHeaders());
+        System.out.println(message.getType() + " " + message.getEntity() + " " + message.getContent());
+        System.out.println(sessionId);
     }
 
     public void addWebSocketSession(WebSocketSession session) {
@@ -290,7 +289,6 @@ public class WebSocketService {
         Optional.ofNullable(this.webSocketSessions.get(sessionId))
                 .ifPresent(webSocketSession -> {
                     try {
-                        System.out.println(webSocketSession.getPrincipal());
                         webSocketSession.close();
                     } catch (IOException e) {
                         // Ignore

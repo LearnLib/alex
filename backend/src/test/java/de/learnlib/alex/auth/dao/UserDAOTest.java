@@ -35,6 +35,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.TransactionSystemException;
 
+import javax.persistence.EntityManager;
 import javax.persistence.RollbackException;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
@@ -69,6 +70,9 @@ public class UserDAOTest {
     @Mock
     private WebSocketService webSocketService;
 
+    @Mock
+    private EntityManager em;
+
     private UserDAO userDAO;
 
     private User dummyAdmin;
@@ -76,7 +80,7 @@ public class UserDAOTest {
     @Before
     public void setUp() throws NotFoundException {
         userDAO = new UserDAO(userRepository, fileDAO, projectDAO, projectRepository,
-                              webSocketService);
+                              webSocketService, em);
         dummyAdmin = new User();
         dummyAdmin.setRole(UserRole.ADMIN);
         dummyAdmin.setId(-1L);

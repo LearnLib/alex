@@ -505,7 +505,7 @@ public class SymbolDAO {
         checkAccess(user, project, symbol);
 
         // check lock status
-        this.symbolPresenceService.checkSymbolLockStatus(projectId, symbol.getId());
+        this.symbolPresenceService.checkSymbolLockStatus(projectId, symbol.getId(), user.getId());
 
         // make sure the name of the symbol is unique
         final Symbol symbolWithSameName = symbolRepository.findOneByProject_IdAndName(projectId, symbol.getName());
@@ -582,7 +582,7 @@ public class SymbolDAO {
             checkAccess(user, project, symbol);
 
             // check symbol lock status
-            this.symbolPresenceService.checkSymbolLockStatus(projectId, symbol.getId());
+            this.symbolPresenceService.checkSymbolLockStatus(projectId, symbol.getId(), user.getId());
         }
 
         for (Symbol symbol : symbols) {
@@ -655,7 +655,7 @@ public class SymbolDAO {
             checkAccess(user, project, symbol);
 
             // check symbol lock status
-            this.symbolPresenceService.checkSymbolLockStatus(projectId, symbol.getId());
+            this.symbolPresenceService.checkSymbolLockStatus(projectId, symbol.getId(), user.getId());
         }
 
         for (Symbol symbol : symbols) {
@@ -676,7 +676,7 @@ public class SymbolDAO {
 
         // check symbol lock status
         for (Long symbolId : ids) {
-            this.symbolPresenceService.checkSymbolLockStatus(projectId, symbolId);
+            this.symbolPresenceService.checkSymbolLockStatus(projectId, symbolId, user.getId());
         }
 
         for (Long id : ids) {
@@ -690,7 +690,7 @@ public class SymbolDAO {
         final Symbol symbol = get(user, projectId, symbolId);
 
         // check symbol lock status
-        this.symbolPresenceService.checkSymbolLockStatus(projectId, symbolId);
+        this.symbolPresenceService.checkSymbolLockStatus(projectId, symbolId, user.getId());
 
         if (!symbol.isHidden()) {
             throw new ValidationException("Symbol has to be archived first.");

@@ -28,7 +28,7 @@ export class WebSocketAPIService {
 
   private client: Client;
 
-  private connectStatus = new BehaviorSubject<number>(0);
+  private connectStatus = new BehaviorSubject<WebSocketConnectStatus>(WebSocketConnectStatus.DISCONNECTED);
 
   private messages = new Subject<WebSocketMessage>();
 
@@ -53,20 +53,20 @@ export class WebSocketAPIService {
     this.client.beforeConnect = () => {
       const jwt = localStorage.getItem('jwt');
       if (jwt !== null) {
-        this.connectStatus.next(1);
+        this.connectStatus.next(WebSocketConnectStatus.CONNECTING);
         this.client.connectHeaders = {
           Authorization: `Bearer ${jwt}`
         }
       } else {
         this.client.deactivate();
-        this.connectStatus.next(0);
+        this.connectStatus.next(WebSocketConnectStatus.DISCONNECTED);
       }
     };
 
     this.client.onConnect = (frame) => {
       this.client.subscribe('/user/queue', (message) => this.messages.next(WebSocketMessage.fromJson(message.body)));
       this.client.subscribe('/user/queue/error', (error) => this.errors.next(WebSocketMessage.fromJson(error.body)));
-      this.connectStatus.next(2);
+      this.connectStatus.next(WebSocketConnectStatus.CONNECTED);
     };
 
     this.client.onStompError = (error) => {
@@ -75,12 +75,12 @@ export class WebSocketAPIService {
     };
 
     this.client.onWebSocketClose = () => {
-      this.connectStatus.next(0);
+      this.connectStatus.next(WebSocketConnectStatus.DISCONNECTED);
     };
   }
 
   connect() {
-    if (this.connectStatus.getValue() == 0) {
+    if (this.connectStatus.getValue() == WebSocketConnectStatus.DISCONNECTED) {
       this.client.activate();
     }
   };
@@ -101,9 +101,9 @@ export class WebSocketAPIService {
   }
 
   disconnect() {
-    if (this.connectStatus.getValue() != 0) {
+    if (this.connectStatus.getValue() != WebSocketConnectStatus.DISCONNECTED) {
       this.client.deactivate();
-      this.connectStatus.next(0);
+      this.connectStatus.next(WebSocketConnectStatus.DISCONNECTED);
     }
   }
 
@@ -122,5 +122,11 @@ export class WebSocketAPIService {
   get errors$() {
     return this.errors.asObservable();
   }
+}
+
+export enum WebSocketConnectStatus {
+  DISCONNECTED = "DISCONNECTED",
+  CONNECTING = "CONNECTING",
+  CONNECTED = "CONNECTED"
 }
 

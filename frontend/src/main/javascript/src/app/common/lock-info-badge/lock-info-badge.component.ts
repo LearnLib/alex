@@ -15,6 +15,8 @@
  */
 
 import { Component, Input } from '@angular/core';
+import { TestCaseLockInfo } from "../../services/test-presence.service";
+import { SymbolLockInfo } from "../../services/symbol-presence.service";
 
 @Component({
   selector: 'lock-info-badge',
@@ -24,5 +26,5 @@ import { Component, Input } from '@angular/core';
 export class LockInfoBadgeComponent {
 
   @Input()
-  lockInfo: any;
+  lockInfo: TestCaseLockInfo | SymbolLockInfo;
 }

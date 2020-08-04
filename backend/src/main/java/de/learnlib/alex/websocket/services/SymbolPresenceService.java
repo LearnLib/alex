@@ -18,6 +18,9 @@ package de.learnlib.alex.websocket.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -28,6 +31,8 @@ import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.repositories.ProjectRepository;
+import de.learnlib.alex.testing.entities.TestCase;
+import de.learnlib.alex.testing.entities.TestSuite;
 import de.learnlib.alex.websocket.entities.WebSocketMessage;
 import de.learnlib.alex.websocket.services.enums.SymbolPresenceServiceEnum;
 import de.learnlib.alex.websocket.services.enums.WebSocketServiceEnum;
@@ -64,40 +69,44 @@ public class SymbolPresenceService {
      */
     private final ReentrantLock lock = new ReentrantLock(true);
 
-    private WebSocketService webSocketService;
+    private final ObjectMapper objectMapper;
 
-    private SymbolDAO symbolDAO;
+    private final WebSocketService webSocketService;
 
-    private ProjectDAO projectDAO;
+    private final SymbolDAO symbolDAO;
 
-    private UserDAO userDAO;
+    private final ProjectDAO projectDAO;
 
-    private ProjectRepository projectRepository;
+    private final UserDAO userDAO;
+
+    private final ProjectRepository projectRepository;
 
     /** A map which stores the SymbolLock objects with the projectId and symbolId as the keys */
-    private Map<Long, Map<Long, SymbolLock>> symbolLocks;
+    private final Map<Long, Map<Long, SymbolLock>> symbolLocks;
 
     /** A map which stores the SymbolGroupLock objects with the projectId and symbolGroupId as the keys */
-    private Map<Long, Map<Long, SymbolGroupLock>> symbolGroupLocks;
+    private final Map<Long, Map<Long, SymbolGroupLock>> symbolGroupLocks;
 
     /** Shortcut mapping for easier access given the corresponding sessionId.*/
-    private Map<String, SymbolLock> sessionMap;
+    private final Map<String, SymbolLock> sessionMap;
 
-    /** Shortcut mapping for easier access given the corresponding userIdId.*/
-    private Map<Long, Set<SymbolLock>> userMap;
+    /** Shortcut mapping for easier access given the corresponding userId.*/
+    private final Map<Long, Set<SymbolLock>> userMap;
 
-    private Set<Disposable> disposables;
+    private final Set<Disposable> disposables;
 
     public SymbolPresenceService(WebSocketService webSocketService,
                                  SymbolDAO symbolDAO,
                                  ProjectDAO projectDAO,
                                  UserDAO userDAO,
-                                 ProjectRepository projectRepository) {
+                                 ProjectRepository projectRepository,
+                                 ObjectMapper objectMapper) {
         this.webSocketService = webSocketService;
         this.symbolDAO = symbolDAO;
         this.projectDAO = projectDAO;
         this.userDAO = userDAO;
         this.projectRepository = projectRepository;
+        this.objectMapper = objectMapper;
 
         this.disposables = new HashSet<>();
         this.symbolLocks = new HashMap<>();
@@ -135,20 +144,19 @@ public class SymbolPresenceService {
         lock.lock();
 
         try {
-            ObjectMapper om = new ObjectMapper();
-            ObjectNode content = (ObjectNode) om.readTree(message.getContent());
+            ObjectNode content = (ObjectNode) objectMapper.readTree(message.getContent());
 
-            long userId = message.getUser().getId();
-            long projectId = content.get("projectId").asLong();
-            long symbolId = content.get("symbolId").asLong();
-            String sessionId = message.getSessionId();
+            final long userId = message.getUser().getId();
+            final long projectId = content.get("projectId").asLong();
+            final long symbolId = content.get("symbolId").asLong();
+            final String sessionId = message.getSessionId();
 
             /* session already acquired another symbolLock */
             Optional.ofNullable(sessionMap.get(sessionId))
-                    .ifPresent(symbolLock -> releaseSymbolLock(symbolLock.projectId, symbolLock.symbolId, userId, sessionId));
+                    .ifPresent(symbolLock -> releaseSymbolLock(symbolLock.getProjectId(), symbolLock.getSymbolId(), userId, sessionId));
 
             /* check access */
-            Project project = projectRepository.findById(projectId).orElseThrow(() -> new NotFoundException("Project not found."));
+            final Project project = projectRepository.findById(projectId).orElseThrow(() -> new NotFoundException("Project not found."));
             projectDAO.checkAccess(message.getUser(), project);
 
             acquireSymbolLock(projectId, symbolId, userId, sessionId);
@@ -166,13 +174,12 @@ public class SymbolPresenceService {
         lock.lock();
 
         try {
-            ObjectMapper om = new ObjectMapper();
-            ObjectNode content = (ObjectNode) om.readTree(message.getContent());
+            ObjectNode content = (ObjectNode) objectMapper.readTree(message.getContent());
 
-            long userId = message.getUser().getId();
-            long projectId = content.get("projectId").asLong();
-            long symbolId = content.get("symbolId").asLong();
-            String sessionId = message.getSessionId();
+            final long userId = message.getUser().getId();
+            final long projectId = content.get("projectId").asLong();
+            final long symbolId = content.get("symbolId").asLong();
+            final String sessionId = message.getSessionId();
 
             releaseSymbolLock(projectId, symbolId, userId, sessionId);
 
@@ -189,8 +196,8 @@ public class SymbolPresenceService {
         lock.lock();
 
         try {
-            long userId = message.getUser().getId();
-            String sessionId = message.getSessionId();
+            final long userId = message.getUser().getId();
+            final String sessionId = message.getSessionId();
 
             Optional.ofNullable(sessionMap.get(sessionId))
                     .ifPresent(symbolLock -> {
@@ -206,17 +213,16 @@ public class SymbolPresenceService {
         lock.lock();
 
         try {
-            ObjectMapper om = new ObjectMapper();
-            JsonNode projectIds = om.readTree(message.getContent()).get("projectIds");
+            final JsonNode projectIds = objectMapper.readTree(message.getContent()).get("projectIds");
 
-            WebSocketMessage status = new WebSocketMessage();
+            final WebSocketMessage status = new WebSocketMessage();
             status.setEntity(SymbolPresenceServiceEnum.SYMBOL_PRESENCE_SERVICE.name());
             status.setType(SymbolPresenceServiceEnum.STATUS.name());
 
-            ObjectNode projects = om.createObjectNode();
+            final ObjectNode projects = objectMapper.createObjectNode();
 
             projectIds.forEach(projectId -> {
-                Project project = projectRepository.findById(projectId.asLong()).orElseThrow(() -> new NotFoundException("Project not found."));
+                final Project project = projectRepository.findById(projectId.asLong()).orElseThrow(() -> new NotFoundException("Project not found."));
                 projectDAO.checkAccess(message.getUser(), project);
 
                 projects.set(projectId.asText(), getProjectStatus(projectId.asLong()));
@@ -233,14 +239,16 @@ public class SymbolPresenceService {
         }
     }
 
-    public void checkSymbolLockStatus(long projectId, long symbolId) {
+    public void checkSymbolLockStatus(long projectId, long symbolId, long userId) {
         lock.lock();
 
         try {
             Optional.ofNullable(symbolLocks.get(projectId))
                     .map(projectMap -> projectMap.get(symbolId))
-                    .ifPresent(l -> {
-                        throw new UnauthorizedException("This symbol is currently locked.");
+                    .ifPresent(symbolLock -> {
+                        if (symbolLock.lockOwner != userId) {
+                            throw new UnauthorizedException("This symbol is currently locked.");
+                        }
                     });
         } finally {
             lock.unlock();
@@ -284,9 +292,9 @@ public class SymbolPresenceService {
         try {
             Optional.ofNullable(userMap.get(userId))
                     .ifPresent(symbolLocks -> {
-                        Set<SymbolLock> tmpSymbolLocks = new HashSet<>(symbolLocks);
+                        final Set<SymbolLock> tmpSymbolLocks = new HashSet<>(symbolLocks);
                         tmpSymbolLocks.forEach(symbolLock -> {
-                            Set<String> tmpSessionSet = new HashSet<>(symbolLock.lockSessions);
+                            final Set<String> tmpSessionSet = new HashSet<>(symbolLock.lockSessions);
                             tmpSessionSet.forEach(sessionId -> {
                                 releaseSymbolLock(symbolLock.getProjectId(), symbolLock.getSymbolId(), userId, sessionId);
                             });
@@ -301,9 +309,9 @@ public class SymbolPresenceService {
         lock.lock();
 
         try {
-            AtomicReference<Iterator> it = new AtomicReference<>(sessionMap.entrySet().iterator());
+            final AtomicReference<Iterator> it = new AtomicReference<>(sessionMap.entrySet().iterator());
             while (it.get().hasNext()) {
-                Map.Entry e = (Map.Entry) it.get().next();
+                final Map.Entry e = (Map.Entry) it.get().next();
                 if (((SymbolLock) e.getValue()).getProjectId() == projectId) {
                     it.get().remove();
                 }
@@ -321,7 +329,7 @@ public class SymbolPresenceService {
 
             it.set(userMap.entrySet().iterator());
             while (it.get().hasNext()) {
-                Map.Entry e = (Map.Entry) it.get().next();
+                final Map.Entry e = (Map.Entry) it.get().next();
                 if (((HashSet) e.getValue()).isEmpty()) {
                     it.get().remove();
                 }
@@ -375,7 +383,7 @@ public class SymbolPresenceService {
                         SymbolGroup symbolGroup = symbolDAO.get(userDAO.getById(userId), projectId, symbolId).getGroup();
                         while (symbolGroup != null) {
 
-                            SymbolGroupLock symbolGroupLock = symbolGroupLocks.get(projectId).get(symbolGroup.getId());
+                            final SymbolGroupLock symbolGroupLock = symbolGroupLocks.get(projectId).get(symbolGroup.getId());
                             symbolGroupLock.removeSession(userId, sessionId);
 
                             if (!symbolGroupLock.isLocked()) {
@@ -399,21 +407,20 @@ public class SymbolPresenceService {
     }
 
     private ObjectNode getProjectStatus(long projectId) {
-        ObjectMapper om = new ObjectMapper();
-        ObjectNode status = om.createObjectNode();
-        ObjectNode symbolsNode = om.createObjectNode();
-        ObjectNode symbolGroupsNode = om.createObjectNode();
+        final ObjectNode status = objectMapper.createObjectNode();
+        final ObjectNode symbolsNode = objectMapper.createObjectNode();
+        final ObjectNode symbolGroupsNode = objectMapper.createObjectNode();
 
         Optional.ofNullable(symbolLocks.get(projectId))
                 .ifPresent(m -> {
                     m.forEach((symbolId, symbolLock) -> {
-                        symbolsNode.set(Long.toString(symbolId), om.valueToTree(symbolLock));
+                        symbolsNode.set(Long.toString(symbolId), objectMapper.valueToTree(symbolLock));
                     });
                 });
         Optional.ofNullable(symbolGroupLocks.get(projectId))
                 .ifPresent(m -> {
                     m.forEach((symbolGroupId, symbolGroupLock) -> {
-                        symbolGroupsNode.set(Long.toString(symbolGroupId), om.valueToTree(symbolGroupLock));
+                        symbolGroupsNode.set(Long.toString(symbolGroupId), objectMapper.valueToTree(symbolGroupLock));
                     });
                 });
         status.set("symbols", symbolsNode);
@@ -423,12 +430,11 @@ public class SymbolPresenceService {
     }
 
     private void broadcastSymbolStatus(long projectId) {
-        WebSocketMessage status = new WebSocketMessage();
+        final WebSocketMessage status = new WebSocketMessage();
         status.setEntity(SymbolPresenceServiceEnum.SYMBOL_PRESENCE_SERVICE.name());
         status.setType(SymbolPresenceServiceEnum.STATUS.name());
 
-        ObjectMapper om = new ObjectMapper();
-        ObjectNode projects = om.createObjectNode();
+        final ObjectNode projects = objectMapper.createObjectNode();
         projects.set(Long.toString(projectId), getProjectStatus(projectId));
         status.setContent(projects.toString());
 
@@ -437,13 +443,11 @@ public class SymbolPresenceService {
     }
 
     private WebSocketMessage buildError(String description, WebSocketMessage message) {
-        ObjectMapper om = new ObjectMapper();
-
-        WebSocketMessage error = new WebSocketMessage();
+        final WebSocketMessage error = new WebSocketMessage();
         error.setType(SymbolPresenceServiceEnum.ERROR.name());
         error.setEntity(SymbolPresenceServiceEnum.SYMBOL_PRESENCE_SERVICE.name());
 
-        ObjectNode errorNode = om.createObjectNode();
+        final ObjectNode errorNode = objectMapper.createObjectNode();
         errorNode.put("description", description);
         errorNode.put("message", message.getContent());
 
@@ -457,9 +461,14 @@ public class SymbolPresenceService {
         disposables.forEach(Disposable::dispose);
     }
 
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+    @JsonSubTypes({
+            @JsonSubTypes.Type(name = "symbol", value = SymbolLock.class),
+            @JsonSubTypes.Type(name = "group", value = SymbolGroupLock.class),
+    })
     abstract class AbstractSymbolLock {
 
-        final long projectId;
+        private final long projectId;
 
         AbstractSymbolLock(long projectId) {
             this.projectId = projectId;
@@ -470,9 +479,8 @@ public class SymbolPresenceService {
         }
     }
 
+    @JsonTypeName("symbol")
     class SymbolLock extends AbstractSymbolLock {
-
-        private final String type = "symbol";
 
         private final long symbolId;
 
@@ -480,10 +488,10 @@ public class SymbolPresenceService {
         private long lockOwner;
 
         @JsonIgnore
-        private Set<String> lockSessions;
+        private final Set<String> lockSessions;
 
         @JsonIgnore
-        private Map<String, Date> timestamps;
+        private final Map<String, Date> timestamps;
 
         SymbolLock(long projectId, long symbolId) {
             super(projectId);
@@ -495,11 +503,6 @@ public class SymbolPresenceService {
 
         public long getLockOwner() {
             return lockOwner;
-        }
-
-        @JsonProperty("type")
-        public String getType() {
-            return type;
         }
 
         public long getSymbolId() {
@@ -547,15 +550,16 @@ public class SymbolPresenceService {
         }
     }
 
+    @JsonTypeName("group")
     class SymbolGroupLock extends AbstractSymbolLock {
 
         private final long symbolGroupId;
 
         @JsonIgnore
-        Set<Long> lockOwners;
+        private final Set<Long> lockOwners;
 
         @JsonIgnore
-        Map<Long, Set<String>> lockSessions;
+        private final Map<Long, Set<String>> lockSessions;
 
         SymbolGroupLock(long projectId, long symbolId) {
             super(projectId);

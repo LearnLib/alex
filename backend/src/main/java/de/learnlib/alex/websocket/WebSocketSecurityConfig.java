@@ -23,6 +23,10 @@ import org.springframework.core.annotation.Order;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+/**
+ * To ensure that this authentication configuration is ordered ahead of Spring's Security,
+ * it is marked with @Order(Ordered.HIGHEST_PRECEDENCE + 99) as suggested by the spring boot documentation.
+ */
 @Configuration
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
 public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer {

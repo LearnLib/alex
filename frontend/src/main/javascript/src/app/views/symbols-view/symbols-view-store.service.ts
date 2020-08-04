@@ -36,7 +36,7 @@ import { ImportSymbolsModalComponent } from './import-symbols-modal/import-symbo
 import { Selectable } from '../../utils/selectable';
 import { ExportSymbolsModalComponent } from './export-symbols-modal/export-symbols-modal.component';
 import { map } from 'rxjs/operators';
-import { SymbolPresenceService } from "../../services/symbol-presence.service";
+import {SymbolGroupLockInfo, SymbolLockInfo, SymbolPresenceService} from "../../services/symbol-presence.service";
 
 @Injectable()
 export class SymbolsViewStoreService {
@@ -49,9 +49,9 @@ export class SymbolsViewStoreService {
 
   readonly groupsCollapsedMap = new Map<number, boolean>();
 
-  private groupLocks = new BehaviorSubject<Map<number, any>>(null);
+  private groupLocks = new BehaviorSubject<Map<number, SymbolGroupLockInfo>>(null);
 
-  private symbolLocks = new BehaviorSubject<Map<number, any>>(null);
+  private symbolLocks = new BehaviorSubject<Map<number, SymbolLockInfo>>(null);
 
   constructor(private appStore: AppStoreService,
               private symbolGroupApi: SymbolGroupApiService,

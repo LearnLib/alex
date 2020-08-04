@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { Injectable, Predicate } from "@angular/core";
-import { WebSocketAPIService } from "./api/websocket-api.service";
-import { WebSocketMessage } from "../entities/websocket-message";
-import { Subject } from "rxjs";
-import { NavigationEnd, Router } from "@angular/router";
-import { filter } from "rxjs/operators";
+import {Injectable, Predicate} from "@angular/core";
+import {WebSocketAPIService, WebSocketConnectStatus} from "./api/websocket-api.service";
+import {WebSocketMessage} from "../entities/websocket-message";
+import {Subject} from "rxjs";
+import {NavigationEnd, Router} from "@angular/router";
+import {filter} from "rxjs/operators";
 
 @Injectable()
 export class WebSocketService {
@@ -35,7 +35,7 @@ export class WebSocketService {
   constructor(private websocketAPIService: WebSocketAPIService,
               private router: Router) {
     this.websocketAPIService.connectStatus$.subscribe(value => {
-      this.connected = value == 2;
+      this.connected = value == WebSocketConnectStatus.CONNECTED;
       if (this.connected) {
         if (this.sessionId == null) {
           this.requestSessionId();

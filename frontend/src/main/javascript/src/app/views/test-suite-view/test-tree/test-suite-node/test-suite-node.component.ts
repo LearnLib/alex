@@ -15,6 +15,7 @@
  */
 
 import { Component, Input } from '@angular/core';
+import { TestSuiteLockInfo } from "../../../../services/test-presence.service";
 
 @Component({
   selector: 'test-suite-node',
@@ -30,7 +31,7 @@ export class TestSuiteNodeComponent {
   public results: any[];
 
   @Input()
-  lockInfo = null;
+  lockInfo: TestSuiteLockInfo;
 
   get result(): any {
     return this.results[this.suite.id];
