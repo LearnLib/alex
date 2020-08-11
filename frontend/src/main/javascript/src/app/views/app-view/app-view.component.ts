@@ -40,9 +40,9 @@ export class AppViewComponent {
     this.activeUsers$ = this.projectPresenceService.activeUsers$.pipe(
       filter(m => {
         return this.appStore.project != null
-          && m.get(this.appStore.project) != null
+          && m.get(this.appStore.project.id) != null
       }),
-      map(m => m.get(this.appStore.project.id)),
+      map(m => m.get(this.appStore.project.id))
     );
   }
 
