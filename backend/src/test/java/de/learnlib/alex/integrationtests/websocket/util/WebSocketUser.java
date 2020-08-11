@@ -54,7 +54,7 @@ import java.util.concurrent.TimeoutException;
 public class WebSocketUser {
 
     /** Default poll time in seconds */
-    private final int DEFAULT_POLL_TIME = 1;
+    private final int DEFAULT_POLL_TIME = 3;
 
     private String wsUrl() {
         return "ws://localhost:" + port + "/rest/ws/stomp";
