@@ -39,7 +39,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-public class TestPresenceServiceIT extends AbstractResourceIT {
+public class ATestPresenceServiceIT extends AbstractResourceIT {
 
     private WebSocketUser user1;
 
