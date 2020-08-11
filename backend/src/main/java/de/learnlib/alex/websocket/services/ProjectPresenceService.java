@@ -73,15 +73,15 @@ public class ProjectPresenceService {
     private final UserDAO userDAO;
 
     /** A map which stores the ProjectPresenceStatus objects with the projectId as the key */
-    private Map<Long, ProjectPresenceStatus> projectPresences;
+    private final Map<Long, ProjectPresenceStatus> projectPresences;
 
     /** Shortcut mapping for easier access given the corresponding sessionId.*/
-    private Map<String, ProjectPresenceStatus> sessionMap;
+    private final Map<String, ProjectPresenceStatus> sessionMap;
 
     /** Shortcut mapping for easier access given the corresponding userId.*/
-    private Map<Long, Set<ProjectPresenceStatus>> userMap;
+    private final Map<Long, Set<ProjectPresenceStatus>> userMap;
 
-    private Set<Disposable> disposables;
+    private final Set<Disposable> disposables;
 
     public ProjectPresenceService(WebSocketService webSocketService,
                                   ProjectDAO projectDAO,
@@ -129,11 +129,11 @@ public class ProjectPresenceService {
         lock.lock();
 
         try {
-            ObjectNode content = (ObjectNode) objectMapper.readTree(message.getContent());
+            final ObjectNode content = (ObjectNode) objectMapper.readTree(message.getContent());
 
-            long userId = message.getUser().getId();
-            long projectId = content.get("projectId").asLong();
-            String sessionId = message.getSessionId();
+            final long userId = message.getUser().getId();
+            final long projectId = content.get("projectId").asLong();
+            final String sessionId = message.getSessionId();
 
             /* session already was used in another project */
             Optional.ofNullable(sessionMap.get(sessionId))
@@ -144,8 +144,7 @@ public class ProjectPresenceService {
                     });
 
             /* check access */
-            Project project = projectRepository.findById(projectId).orElseThrow(() -> new NotFoundException("Project not found."));
-            System.out.println("TTTT - " + project.getOwners());
+            final Project project = projectRepository.findById(projectId).orElseThrow(() -> new NotFoundException("Project not found."));
             projectDAO.checkAccess(message.getUser(), project);
 
             addSessionToProject(projectId, userId, sessionId);
@@ -153,7 +152,6 @@ public class ProjectPresenceService {
 
         } catch (IOException e) {
             this.webSocketService.sendError(message.getSessionId(), buildError("Received malformed content.", message));
-            e.printStackTrace();
         } catch (UnauthorizedException | NotFoundException e) {
             this.webSocketService.sendError(message.getSessionId(), buildError(e.getMessage(), message));
         } finally {
@@ -165,18 +163,17 @@ public class ProjectPresenceService {
         lock.lock();
 
         try {
-            ObjectNode content = (ObjectNode) objectMapper.readTree(message.getContent());
+            final ObjectNode content = (ObjectNode) objectMapper.readTree(message.getContent());
 
-            long userId = message.getUser().getId();
-            long projectId = content.get("projectId").asLong();
-            String sessionId = message.getSessionId();
+            final long userId = message.getUser().getId();
+            final long projectId = content.get("projectId").asLong();
+            final String sessionId = message.getSessionId();
 
             removeSessionFromProject(projectId, userId, sessionId);
 
 
         } catch (IOException e) {
             this.webSocketService.sendError(message.getSessionId(), buildError("Received malformed content.", message));
-            e.printStackTrace();
         } catch (UnauthorizedException | NotFoundException e) {
             this.webSocketService.sendError(message.getSessionId(), buildError(e.getMessage(), message));
         } finally {
@@ -188,8 +185,8 @@ public class ProjectPresenceService {
         lock.lock();
 
         try {
-            long userId = message.getUser().getId();
-            String sessionId = message.getSessionId();
+            final long userId = message.getUser().getId();
+            final String sessionId = message.getSessionId();
 
             Optional.ofNullable(sessionMap.get(sessionId))
                     .ifPresent(projectPresenceStatus -> {
@@ -205,16 +202,16 @@ public class ProjectPresenceService {
         lock.lock();
 
         try {
-            JsonNode projectIds = objectMapper.readTree(message.getContent()).get("projectIds");
+            final JsonNode projectIds = objectMapper.readTree(message.getContent()).get("projectIds");
 
-            WebSocketMessage status = new WebSocketMessage();
+            final WebSocketMessage status = new WebSocketMessage();
             status.setEntity(ProjectPresenceServiceEnum.PROJECT_PRESENCE_SERVICE.name());
             status.setType(ProjectPresenceServiceEnum.STATUS.name());
 
-            ObjectNode projects = objectMapper.createObjectNode();
+            final ObjectNode projects = objectMapper.createObjectNode();
 
             projectIds.forEach(projectId -> {
-                Project project = projectRepository.findById(projectId.asLong()).orElseThrow(() -> new NotFoundException("Project with id " + projectId + " not found."));
+                final Project project = projectRepository.findById(projectId.asLong()).orElseThrow(() -> new NotFoundException("Project with id " + projectId + " not found."));
                 projectDAO.checkAccess(message.getUser(), project);
 
                 projects.set(projectId.asText(), getProjectStatus(projectId.asLong()));
@@ -233,7 +230,7 @@ public class ProjectPresenceService {
     }
 
     private void addSessionToProject(long projectId, long userId, String sessionId) {
-        ProjectPresenceStatus projectPresenceStatus = projectPresences.computeIfAbsent(projectId, k -> new ProjectPresenceStatus(projectId));
+        final ProjectPresenceStatus projectPresenceStatus = projectPresences.computeIfAbsent(projectId, k -> new ProjectPresenceStatus(projectId));
 
         if (projectPresenceStatus.addSession(userId, sessionId)) {
             sessionMap.put(sessionId, projectPresenceStatus);
@@ -265,11 +262,11 @@ public class ProjectPresenceService {
     }
 
     private void broadcastProjectStatus(long projectId) {
-        WebSocketMessage status = new WebSocketMessage();
+        final WebSocketMessage status = new WebSocketMessage();
         status.setEntity(ProjectPresenceServiceEnum.PROJECT_PRESENCE_SERVICE.name());
         status.setType(ProjectPresenceServiceEnum.STATUS.name());
 
-        ObjectNode projects = objectMapper.createObjectNode();
+        final ObjectNode projects = objectMapper.createObjectNode();
         projects.set(Long.toString(projectId), getProjectStatus(projectId));
         status.setContent(projects.toString());
 
@@ -278,7 +275,7 @@ public class ProjectPresenceService {
     }
 
     private ObjectNode getProjectStatus(long projectId) {
-        AtomicReference<ObjectNode> status = new AtomicReference<>(objectMapper.createObjectNode());
+        final AtomicReference<ObjectNode> status = new AtomicReference<>(objectMapper.createObjectNode());
         Optional.ofNullable(projectPresences.get(projectId))
                 .ifPresent(projectPresenceStatus -> {
                     status.set(objectMapper.valueToTree(projectPresenceStatus));
@@ -317,7 +314,7 @@ public class ProjectPresenceService {
                     .map(projectPresenceStatus -> projectPresenceStatus.userSessions)
                     .map(longSetMap -> longSetMap.get(userId))
                     .ifPresent(sessionIds -> {
-                        Set<String> tmp = new HashSet<>(sessionIds);
+                        final Set<String> tmp = new HashSet<>(sessionIds);
                         tmp.forEach(sessionId -> {
                             projectPresences.get(projectId).removeSession(userId, sessionId);
                         });
@@ -330,11 +327,11 @@ public class ProjectPresenceService {
     }
 
     private WebSocketMessage buildError(String description, WebSocketMessage message) {
-        WebSocketMessage error = new WebSocketMessage();
+        final WebSocketMessage error = new WebSocketMessage();
         error.setType(ProjectPresenceServiceEnum.ERROR.name());
         error.setEntity(ProjectPresenceServiceEnum.PROJECT_PRESENCE_SERVICE.name());
 
-        ObjectNode errorNode = objectMapper.createObjectNode();
+        final ObjectNode errorNode = objectMapper.createObjectNode();
         errorNode.put("description", description);
         errorNode.put("message", message.getContent());
 

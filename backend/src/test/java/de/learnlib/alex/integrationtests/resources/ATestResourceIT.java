@@ -24,6 +24,8 @@ import de.learnlib.alex.integrationtests.resources.api.ProjectApi;
 import de.learnlib.alex.integrationtests.resources.api.SymbolApi;
 import de.learnlib.alex.integrationtests.resources.api.TestApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
+import de.learnlib.alex.integrationtests.websocket.util.TestPresenceServiceWSMessages;
+import de.learnlib.alex.integrationtests.websocket.util.WebSocketUser;
 import de.learnlib.alex.testing.entities.TestCase;
 import de.learnlib.alex.testing.entities.TestSuite;
 import org.junit.Before;
@@ -55,9 +57,12 @@ public class ATestResourceIT extends AbstractResourceIT {
 
     private ProjectApi projectApi;
 
+    private TestPresenceServiceWSMessages testPresenceServiceWSMessages;
+
     @Before
     public void pre() {
         this.testApi = new TestApi(client, port);
+        this.testPresenceServiceWSMessages = new TestPresenceServiceWSMessages();
 
         final UserApi userApi = new UserApi(client, port);
         final Response res1 = userApi.create("{\"email\":\"test1@test.de\", \"username\":\"test1\", \"password\":\"test\"}");
@@ -236,6 +241,57 @@ public class ATestResourceIT extends AbstractResourceIT {
     }
 
     @Test
+    public void shouldUpdateTestLockedByUser() throws Exception {
+        WebSocketUser webSocketUser = new WebSocketUser("webSocketUser", client, port);
+        projectApi.addMembers(Integer.toUnsignedLong(projectId), Collections.singletonList(webSocketUser.getUserId()), jwtUser1);
+
+        final String tc = "{\"name\": \"tc\", \"type\": \"case\"}";
+        final Response res1 = testApi.create(projectId, tc, jwtUser1);
+
+        final TestCase testCase = res1.readEntity(TestCase.class);
+
+        // lock testcase
+        webSocketUser.send("default", testPresenceServiceWSMessages.userEnteredTest(projectId, testCase.getId()));
+
+        testCase.setName("abc");
+
+        final Response res2 = testApi.update(testCase.getProjectId(), testCase.getId(), objectMapper.writeValueAsString(testCase), webSocketUser.getJwt());
+        assertEquals(Response.Status.OK.getStatusCode(), res2.getStatus());
+
+        webSocketUser.forceDisconnectAll();
+    }
+
+    @Test
+    public void shouldFailToUpdateTestLockedByOtherUser() throws Exception {
+        WebSocketUser webSocketUser = new WebSocketUser("webSocketUser", client, port);
+        projectApi.addMembers(Integer.toUnsignedLong(projectId), Collections.singletonList(webSocketUser.getUserId()), jwtUser1);
+
+        final String tc = "{\"name\": \"tc\", \"type\": \"case\"}";
+        final Response res1 = testApi.create(projectId, tc, jwtUser1);
+
+        final TestCase testCase = res1.readEntity(TestCase.class);
+
+        // lock testcase
+        webSocketUser.send("default", testPresenceServiceWSMessages.userEnteredTest(projectId, testCase.getId()));
+
+        testCase.setName("abc");
+
+        final Response res2 = testApi.update(testCase.getProjectId(), testCase.getId(), objectMapper.writeValueAsString(testCase), webSocketUser.getJwt());
+        assertEquals(Response.Status.OK.getStatusCode(), res2.getStatus());
+
+        // get updated test case
+        final TestCase updatedTestCase = res2.readEntity(TestCase.class);
+        assertEquals(testCase.getName(), updatedTestCase.getName());
+
+        // updated test case is in db
+        final TestCase testCaseIdDb = testApi.get(projectId, testCase.getId().intValue(), jwtUser1)
+                .readEntity(TestCase.class);
+        assertEquals(testCase.getName(), testCaseIdDb.getName());
+
+        webSocketUser.forceDisconnectAll();
+    }
+
+    @Test
     public void shouldUpdateLastUpdatedByOnUpdate() throws JsonProcessingException {
         projectApi.addOwners((long)projectId, Collections.singletonList((long)userId2), jwtUser1);
 
@@ -379,6 +435,42 @@ public class ATestResourceIT extends AbstractResourceIT {
     }
 
     @Test
+    public void shouldNotMoveLockedTestCase() throws Exception {
+        WebSocketUser webSocketUser = new WebSocketUser("webSocketUser", client, port);
+        projectApi.addMembers(Integer.toUnsignedLong(projectId), Collections.singletonList(webSocketUser.getUserId()), jwtUser1);
+
+        TestSuite ts1 = createTestSuite((long) projectId, "ts1", null, jwtUser1);
+        TestSuite ts2 = createTestSuite((long) projectId, "ts2", null, jwtUser1);
+        TestCase tc1 = createTestCase((long) projectId, "tc1", ts1.getId(), jwtUser1);
+
+        // lock testcase
+        webSocketUser.send("default", testPresenceServiceWSMessages.userEnteredTest(projectId, tc1.getId()));
+
+        final Response res = testApi.move(projectId, tc1.getId().intValue(), ts2.getId().intValue(), webSocketUser.getJwt());
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());
+
+        webSocketUser.forceDisconnectAll();
+    }
+
+    @Test
+    public void shouldNotMoveLockedTestSuite() throws Exception {
+        WebSocketUser webSocketUser = new WebSocketUser("webSocketUser", client, port);
+        projectApi.addMembers(Integer.toUnsignedLong(projectId), Collections.singletonList(webSocketUser.getUserId()), jwtUser1);
+
+        TestSuite ts1 = createTestSuite((long) projectId, "ts1", null, jwtUser1);
+        TestSuite ts2 = createTestSuite((long) projectId, "ts2", null, jwtUser1);
+        TestCase tc1 = createTestCase((long) projectId, "tc1", ts1.getId(), jwtUser1);
+
+        // lock testcase
+        webSocketUser.send("default", testPresenceServiceWSMessages.userEnteredTest(projectId, tc1.getId()));
+
+        final Response res = testApi.move(projectId, ts1.getId().intValue(), ts2.getId().intValue(), webSocketUser.getJwt());
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());
+
+        webSocketUser.forceDisconnectAll();
+    }
+
+    @Test
     public void shouldDeleteTestCase() throws Exception {
         final String tc1 = "{\"name\": \"tc1\", \"type\": \"case\"}";
         final Response res1 = testApi.create(projectId, tc1, jwtUser1);
@@ -422,6 +514,39 @@ public class ATestResourceIT extends AbstractResourceIT {
         final Response res2 = testApi.deleteMany(projectId, Arrays.asList(tc1Id, -1), jwtUser1);
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), res2.getStatus());
         assertEquals(1, getNumberOfTestsInRoot());
+    }
+
+    @Test
+    public void shouldNotDeleteLockedTestCase() throws Exception {
+        WebSocketUser webSocketUser = new WebSocketUser("webSocketUser", client, port);
+        projectApi.addMembers(Integer.toUnsignedLong(projectId), Collections.singletonList(webSocketUser.getUserId()), jwtUser1);
+
+        TestCase tc1 = createTestCase((long) projectId, "tc1", null, jwtUser1);
+
+        // lock testcase
+        webSocketUser.send("default", testPresenceServiceWSMessages.userEnteredTest(projectId, tc1.getId()));
+
+        final Response res = testApi.delete(projectId, tc1.getId().intValue(), webSocketUser.getJwt());
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());
+
+        webSocketUser.forceDisconnectAll();
+    }
+
+    @Test
+    public void shouldNotDeleteLockedTestSuite() throws Exception {
+        WebSocketUser webSocketUser = new WebSocketUser("webSocketUser", client, port);
+        projectApi.addMembers(Integer.toUnsignedLong(projectId), Collections.singletonList(webSocketUser.getUserId()), jwtUser1);
+
+        TestSuite ts1 = createTestSuite((long) projectId, "ts1", null, jwtUser1);
+        TestCase tc1 = createTestCase((long) projectId, "tc1", ts1.getId(), jwtUser1);
+
+        // lock testcase
+        webSocketUser.send("default", testPresenceServiceWSMessages.userEnteredTest(projectId, tc1.getId()));
+
+        final Response res = testApi.delete(projectId, ts1.getId().intValue(), webSocketUser.getJwt());
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());
+
+        webSocketUser.forceDisconnectAll();
     }
 
     private int getNumberOfTestsInRoot() throws Exception {

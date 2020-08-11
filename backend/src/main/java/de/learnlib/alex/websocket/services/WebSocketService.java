@@ -1,5 +1,24 @@
+/*
+ * Copyright 2015 - 2020 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.websocket.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.repositories.ProjectRepository;
@@ -12,13 +31,11 @@ import org.springframework.messaging.simp.SimpAttributesContextHolder;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
-import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import java.io.IOException;
@@ -38,41 +55,45 @@ public class WebSocketService {
 
     private final ReentrantLock lock = new ReentrantLock(true);
 
-    private ProjectRepository projectRepository;
+    private final ProjectRepository projectRepository;
 
-    private SimpMessagingTemplate simpMessagingTemplate;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
-    private Map<Predicate<WebSocketMessage>, PublishSubject<WebSocketMessage>> serviceSubjects;
+    private final ObjectMapper objectMapper;
+
+    private final Map<Predicate<WebSocketMessage>, PublishSubject<WebSocketMessage>> serviceSubjects;
 
     /* userId -> WebSocketSessions Username */
-    private Map<Long, String> activeUsers;
+    private final Map<Long, String> activeUsers;
 
     /* Stores the sessionIds of active connections per user */
-    private Map<Long, Set<String>> userSessionIds;
+    private final Map<Long, Set<String>> userSessionIds;
 
     /* sessionId -> WebSocketSession */
-    private Map<String, WebSocketSession> webSocketSessions;
+    private final Map<String, WebSocketSession> webSocketSessions;
 
     @Autowired
     public WebSocketService(SimpMessagingTemplate simpMessagingTemplate,
-                            ProjectRepository projectRepository) {
+                            ProjectRepository projectRepository, ObjectMapper objectMapper) {
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.projectRepository = projectRepository;
+        this.objectMapper = objectMapper;
 
-        activeUsers = new HashMap<>();
-        userSessionIds = new HashMap<>();
-        serviceSubjects = new HashMap<>();
+        this.activeUsers = new HashMap<>();
+        this.userSessionIds = new HashMap<>();
+        this.serviceSubjects = new HashMap<>();
         this.webSocketSessions = new HashMap<>();
     }
 
     public void processIncomingMessage(WebSocketMessage msg, Principal userPrincipal) {
         lock.lock();
+
         try {
             msg.setUser((User) ((UsernamePasswordAuthenticationToken) userPrincipal).getPrincipal());
             msg.setSessionId(SimpAttributesContextHolder.currentAttributes().getSessionId());
 
             if (msg.getEntity().equals(WebSocketServiceEnum.WEBSOCKET_SERVICE.name()) && msg.getType().equals(WebSocketServiceEnum.LOGOUT.name())) {
-                WebSocketMessage message = new WebSocketMessage();
+                final WebSocketMessage message = new WebSocketMessage();
                 message.setEntity(WebSocketServiceEnum.WEBSOCKET_SERVICE.name());
                 message.setType(WebSocketServiceEnum.LOGOUT_CHECK.name());
 
@@ -81,22 +102,33 @@ public class WebSocketService {
             }
 
             if (msg.getEntity().equals(WebSocketServiceEnum.WEBSOCKET_SERVICE.name()) && msg.getType().equals(WebSocketServiceEnum.REQUEST_SESSION_ID.name())) {
-                WebSocketMessage message = new WebSocketMessage();
+                final WebSocketMessage message = new WebSocketMessage();
                 message.setEntity(WebSocketServiceEnum.WEBSOCKET_SERVICE.name());
                 message.setType(WebSocketServiceEnum.SESSION_ID.name());
-                message.setContent("{ \"sessionId\": \"" + msg.getSessionId() + "\" }");
+
+                final ObjectNode content = objectMapper.createObjectNode();
+                content.put("sessionId", msg.getSessionId());
+                message.setContent(content.toString());
+
                 this.sendToSession(msg.getSessionId(), message);
             }
 
             if (!msg.getEntity().equals(WebSocketServiceEnum.WEBSOCKET_SERVICE_INTERNAL.name())) {
                 publishMessage(msg);
             } else {
-                WebSocketMessage message = new WebSocketMessage();
+                final WebSocketMessage message = new WebSocketMessage();
                 message.setEntity(WebSocketServiceEnum.WEBSOCKET_SERVICE.name());
                 message.setType(WebSocketServiceEnum.ERROR.name());
-                message.setContent("Received system reserved entity type.");
+
+                final ObjectNode content = objectMapper.createObjectNode();
+                content.put("description", "Received system reserved entity type.");
+                content.put("message", objectMapper.writeValueAsString(msg));
+                message.setContent(content.toString());
+
                 this.sendError(msg.getSessionId(), message);
             }
+        } catch (JsonProcessingException e) {
+            //Ignore
         } finally {
             lock.unlock();
         }
@@ -131,13 +163,9 @@ public class WebSocketService {
                     publishMessage(msg);
                 }
 
-                printUserSessionIds();
                 activeUsers.putIfAbsent(userId, authToken.getName());
                 userSessionIds.putIfAbsent(userId, new HashSet<>());
                 userSessionIds.get(userId).add(SimpAttributesContextHolder.currentAttributes().getSessionId());
-                printUserSessionIds();
-
-                printActiveUsers();
             }
         } finally {
             lock.unlock();
@@ -151,12 +179,8 @@ public class WebSocketService {
         try {
             User user = (User) ((UsernamePasswordAuthenticationToken) event.getUser()).getPrincipal();
             if (user.getId() != null) {
-                System.out.println("\n\nDISCONNECT\n\n<");
                 long userId = user.getId();
 
-                System.out.println(userId);
-                System.out.println(SimpAttributesContextHolder.currentAttributes().getSessionId());
-                printUserSessionIds();
                 WebSocketMessage msg;
 
                 if (userSessionIds.get(userId) != null && userSessionIds.get(userId).contains(SimpAttributesContextHolder.currentAttributes().getSessionId())) {
@@ -166,7 +190,6 @@ public class WebSocketService {
                     msg.setUser(user);
                     msg.setSessionId(SimpAttributesContextHolder.currentAttributes().getSessionId());
                     publishMessage(msg);
-                    System.out.println("SESSION DC PUBLISHED!");
 
                     if (userSessionIds.get(userId).size() == 1) {
                         msg = new WebSocketMessage();
@@ -175,7 +198,6 @@ public class WebSocketService {
                         msg.setUser(user);
                         msg.setSessionId(SimpAttributesContextHolder.currentAttributes().getSessionId());
                         publishMessage(msg);
-                        System.out.println("USER DC PUBLISHED!");
 
                         activeUsers.remove(userId);
                         userSessionIds.remove(userId);
@@ -186,8 +208,6 @@ public class WebSocketService {
                                 sessionSet.remove(SimpAttributesContextHolder.currentAttributes().getSessionId());
                             });
                 }
-
-                printActiveUsers();
             }
         } finally {
             lock.unlock();
@@ -195,47 +215,46 @@ public class WebSocketService {
     }
 
     public void sendToSession(String sessionId, WebSocketMessage message) {
-        SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
+        final SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
         headerAccessor.setSessionId(sessionId);
         headerAccessor.setLeaveMutable(true);
 
         simpMessagingTemplate.convertAndSendToUser(sessionId, "/queue", message, headerAccessor.getMessageHeaders());
-        System.out.println(message.getType() + " " + message.getEntity() + " " + message.getContent());
-        System.out.println(sessionId);
     }
 
     public void addWebSocketSession(WebSocketSession session) {
         lock.lock();
+
         try {
             webSocketSessions.put(session.getId(), session);
         } finally {
             lock.unlock();
         }
-        printWebSocketSessions();
     }
 
     public void removeWebSocketSession(String sessionId) {
         lock.lock();
+
         try {
             webSocketSessions.remove(sessionId);
         } finally {
             lock.unlock();
         }
-        printWebSocketSessions();
     }
 
     public void sendToUser(Long userId, WebSocketMessage message) {
         Optional.ofNullable(activeUsers.get(userId))
-                .ifPresent(userString -> simpMessagingTemplate.convertAndSendToUser(userString, "/queue", message));
+                .ifPresent(userString -> {
+                    this.userSessionIds.get(userId).forEach(sessionId -> this.sendToSession(sessionId, message));
+                });
     }
 
     public void sendToAll(WebSocketMessage message) {
         simpMessagingTemplate.convertAndSend(message);
     }
 
-    @SuppressWarnings("Duplicates")
     public void sendToProjectMembers(Long projectId, WebSocketMessage message) {
-        Optional<Project> optProject = projectRepository.findById(projectId);
+        final Optional<Project> optProject = projectRepository.findById(projectId);
 
         final Project project;
         if (optProject.isPresent()) {
@@ -245,14 +264,12 @@ public class WebSocketService {
         }
 
         project.getMembers().forEach(member -> {
-            Optional.ofNullable(activeUsers.get(member.getId()))
-                    .ifPresent(userName -> simpMessagingTemplate.convertAndSendToUser(userName, "/queue", message));
+            this.sendToUser(member.getId(), message);
         });
     }
 
-    @SuppressWarnings("Duplicates")
     public void sendToProjectOwners(Long projectId, WebSocketMessage message) {
-        Optional<Project> optProject = projectRepository.findById(projectId);
+        final Optional<Project> optProject = projectRepository.findById(projectId);
 
         final Project project;
         if (optProject.isPresent()) {
@@ -262,14 +279,12 @@ public class WebSocketService {
         }
 
         project.getOwners().forEach(owner -> {
-            if (activeUsers.containsKey(owner.getId())) {
-                simpMessagingTemplate.convertAndSendToUser(activeUsers.get(owner.getId()), "/queue", message);
-            }
+            this.sendToUser(owner.getId(), message);
         });
     }
 
     public void sendError(String sessionId, WebSocketMessage error) {
-        SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
+        final SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
         headerAccessor.setSessionId(sessionId);
         headerAccessor.setLeaveMutable(true);
 
@@ -278,7 +293,7 @@ public class WebSocketService {
     }
 
     public PublishSubject<WebSocketMessage> register(Predicate<WebSocketMessage> filter) {
-        PublishSubject<WebSocketMessage> subject = PublishSubject.create();
+        final PublishSubject<WebSocketMessage> subject = PublishSubject.create();
 
         serviceSubjects.put(filter, subject);
 
@@ -312,7 +327,7 @@ public class WebSocketService {
     }
 
     public long getUserIdBySessionId(String sessionId) {
-        AtomicLong result = new AtomicLong(-1L);
+        final AtomicLong result = new AtomicLong(-1L);
         userSessionIds.forEach((userId, sessionSet) -> {
             if (sessionSet.contains(sessionId)) {
                 result.set(userId);
@@ -327,32 +342,5 @@ public class WebSocketService {
                 s.onNext(msg);
             }
         });
-    }
-
-    /* DEBUG */
-    private void printActiveUsers() {
-        System.out.println("\n--- ACTIVE USERS BEGIN ---");
-        activeUsers.forEach((aLong, s) -> {
-            System.out.println(aLong + " --> " + s);
-        });
-
-        System.out.println("--- ACTIVE USERS END ---\n");
-    }
-
-    private void printWebSocketSessions() {
-        System.out.println("\n--- WebSocketSessions BEGIN ---");
-        webSocketSessions.forEach((s, session) -> {
-            System.out.println("    " + s);
-        });
-        System.out.println("\n--- WebSocketSessions END ---");
-    }
-
-    private void printUserSessionIds() {
-        System.out.println("\n--- UserSessionIds BEGIN ---");
-        userSessionIds.forEach((aLong, strings) -> {
-            System.out.println(aLong + " -> ");
-            strings.forEach(s -> System.out.println("    " +s));
-        });
-        System.out.println("\n--- UserSessionIds END ---");
     }
 }

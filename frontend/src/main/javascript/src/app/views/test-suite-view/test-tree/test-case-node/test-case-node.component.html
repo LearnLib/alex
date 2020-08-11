@@ -3,7 +3,7 @@
     <div class="test-icon">
       <i class="fas fa-fw fa-file"></i>
     </div>
-    <a [routerLink]="['/app', 'projects', case.project, 'tests', case.id]" class="test-name w-100">
+    <a [routerLink]="['/app', 'projects', case.project, 'tests', case.id]" [class.disabled]="lockInfo != null && lockInfo.username !== this.appStore.getUsername()" class="test-name w-100">
       <span>
         <strong>{{case.name}}</strong>
         <em class="text-muted ml-1" *ngIf="case.generated">(generated)</em>

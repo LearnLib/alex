@@ -3,7 +3,7 @@
     <selectable-checkbox [item]="symbol" [selectable]="store.symbolsSelectable"></selectable-checkbox>
   </div>
   <div class="w-100 pl-3">
-    <a [routerLink]="[symbol.id]" [class.disabled]="lockInfo != null">
+    <a [routerLink]="[symbol.id]" [class.disabled]="this.store.isSymbolLocked(symbol.id) && !this.store.isSymbolOwner(symbol.id)">
       <strong>{{symbol.name}}</strong>
     </a>
     <i *ngIf="symbol.containsSymbolSteps()" class="text-muted fa fa-cubes fa-fw ml-2"></i>

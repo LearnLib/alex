@@ -283,6 +283,10 @@ export class SymbolsViewStoreService {
     return this.symbolLocks.getValue()?.has(symbolId);
   }
 
+  isSymbolOwner(symbolId: number): boolean {
+    return this.symbolLocks.getValue()?.get(symbolId)?.username === this.appStore.getUsername();
+  }
+
   isGroupLocked(groupId: number): boolean {
     return this.groupLocks.getValue()?.has(groupId);
   }

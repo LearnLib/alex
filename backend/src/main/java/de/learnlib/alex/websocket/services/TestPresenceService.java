@@ -32,6 +32,7 @@ import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestCase;
+import de.learnlib.alex.testing.entities.TestSuite;
 import de.learnlib.alex.websocket.entities.WebSocketMessage;
 import de.learnlib.alex.websocket.services.enums.TestPresenceServiceEnum;
 import de.learnlib.alex.websocket.services.enums.WebSocketServiceEnum;
@@ -68,28 +69,28 @@ public class TestPresenceService {
      */
     private final ReentrantLock lock = new ReentrantLock(true);
 
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
-    private WebSocketService webSocketService;
+    private final WebSocketService webSocketService;
 
-    private TestDAO testDAO;
+    private final TestDAO testDAO;
 
-    private ProjectDAO projectDAO;
+    private final ProjectDAO projectDAO;
 
-    private UserDAO userDAO;
+    private final UserDAO userDAO;
 
-    private ProjectRepository projectRepository;
+    private final ProjectRepository projectRepository;
 
     /** A map which stores the TestLock objects with the projectId and testId as the keys */
-    private Map<Long, Map<Long, TestLock>> testLocks;
+    private final Map<Long, Map<Long, TestLock>> testLocks;
 
     /** Shortcut mapping for easier access given the corresponding sessionId.*/
-    private Map<String, TestCaseLock> sessionMap;
+    private final Map<String, TestCaseLock> sessionMap;
 
     /** Shortcut mapping for easier access given the corresponding userId.*/
-    private Map<Long, Set<TestCaseLock>> userMap;
+    private final Map<Long, Set<TestCaseLock>> userMap;
 
-    private Set<Disposable> disposables;
+    private final Set<Disposable> disposables;
 
     public TestPresenceService(WebSocketService webSocketService,
                                TestDAO testDAO,
@@ -141,19 +142,23 @@ public class TestPresenceService {
         lock.lock();
 
         try {
-            ObjectNode content = (ObjectNode) objectMapper.readTree(message.getContent());
+            final ObjectNode content = (ObjectNode) objectMapper.readTree(message.getContent());
 
-            long userId = message.getUser().getId();
-            long projectId = content.get("projectId").asLong();
-            long testId = content.get("testId").asLong();
-            String sessionId = message.getSessionId();
+            final long userId = message.getUser().getId();
+            final long projectId = content.get("projectId").asLong();
+            final long testId = content.get("testId").asLong();
+            final String sessionId = message.getSessionId();
 
             /* session already acquired another testLock */
             Optional.ofNullable(sessionMap.get(sessionId))
-                    .ifPresent(testLock -> releaseTestLock(testLock.getProjectId(), testLock.getTestId(), userId, sessionId));
+                    .ifPresent(testLock -> {
+                        if (testLock.getTestId() != testId) {
+                            releaseTestLock(testLock.getProjectId(), testLock.getTestId(), userId, sessionId);
+                        }
+                    });
 
             /* check access */
-            Project project = projectRepository.findById(projectId).orElseThrow(() -> new NotFoundException("Project not found."));
+            final Project project = projectRepository.findById(projectId).orElseThrow(() -> new NotFoundException("Project with id " + projectId + " not found."));
             projectDAO.checkAccess(message.getUser(), project);
 
             /* ignore TestSuites */
@@ -174,12 +179,12 @@ public class TestPresenceService {
         lock.lock();
 
         try {
-            ObjectNode content = (ObjectNode) objectMapper.readTree(message.getContent());
+            final ObjectNode content = (ObjectNode) objectMapper.readTree(message.getContent());
 
-            long userId = message.getUser().getId();
-            long projectId = content.get("projectId").asLong();
-            long testId = content.get("testId").asLong();
-            String sessionId = message.getSessionId();
+            final long userId = message.getUser().getId();
+            final long projectId = content.get("projectId").asLong();
+            final long testId = content.get("testId").asLong();
+            final String sessionId = message.getSessionId();
 
             /* Ignore TestSuites */
             if (testDAO.get(userDAO.getById(userId), projectId, testId) instanceof TestCase) {
@@ -199,8 +204,8 @@ public class TestPresenceService {
         lock.lock();
 
         try {
-            long userId = message.getUser().getId();
-            String sessionId = message.getSessionId();
+            final long userId = message.getUser().getId();
+            final String sessionId = message.getSessionId();
 
             Optional.ofNullable(sessionMap.get(sessionId))
                     .ifPresent(testCaseLock -> {
@@ -216,16 +221,16 @@ public class TestPresenceService {
         lock.lock();
 
         try {
-            JsonNode projectIds = objectMapper.readTree(message.getContent()).get("projectIds");
+            final JsonNode projectIds = objectMapper.readTree(message.getContent()).get("projectIds");
 
-            WebSocketMessage status = new WebSocketMessage();
+            final WebSocketMessage status = new WebSocketMessage();
             status.setEntity(TestPresenceServiceEnum.TEST_PRESENCE_SERVICE.name());
             status.setType(TestPresenceServiceEnum.STATUS.name());
 
-            ObjectNode projects = objectMapper.createObjectNode();
+            final ObjectNode projects = objectMapper.createObjectNode();
 
             projectIds.forEach(projectId -> {
-                Project project = projectRepository.findById(projectId.asLong()).orElseThrow(() -> new NotFoundException("Project not found."));
+                final Project project = projectRepository.findById(projectId.asLong()).orElseThrow(() -> new NotFoundException("Project with id " + projectId + " not found."));
                 projectDAO.checkAccess(message.getUser(), project);
 
                 projects.set(projectId.asText(), getProjectStatus(projectId.asLong()));
@@ -235,7 +240,6 @@ public class TestPresenceService {
             this.webSocketService.sendToSession(message.getSessionId(), status);
         } catch (IOException e) {
             this.webSocketService.sendError(message.getSessionId(), buildError("Received malformed content.", message));
-            e.printStackTrace();
         } catch (UnauthorizedException | NotFoundException e) {
             this.webSocketService.sendError(message.getSessionId(), buildError(e.getMessage(), message));
         } finally {
@@ -250,9 +254,23 @@ public class TestPresenceService {
             Optional.ofNullable(testLocks.get(projectId))
                     .map(projectMap -> projectMap.get(testId))
                     .ifPresent(testLock -> {
-                        if (!(testLock instanceof TestCaseLock) || ((TestCaseLock) testLock).lockOwner != userId) {
+                        if ((testLock instanceof TestSuiteLock) || ((TestCaseLock) testLock).lockOwner != userId) {
                             throw new UnauthorizedException("This test is currently locked.");
                         }
+                    });
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void checkLockStatusStrict(long projectId, long testId, long userId) throws UnauthorizedException {
+        lock.lock();
+
+        try {
+            Optional.ofNullable(testLocks.get(projectId))
+                    .map(projectMap -> projectMap.get(testId))
+                    .ifPresent(testLock -> {
+                        throw new UnauthorizedException("This test is currently locked.");
                     });
         } finally {
             lock.unlock();
@@ -267,7 +285,7 @@ public class TestPresenceService {
                     .map(testCaseLocks -> testCaseLocks.stream().filter(testCaseLock -> testCaseLock.getProjectId() == projectId).collect(Collectors.toSet()))
                     .ifPresent(testCaseLocks -> {
                         testCaseLocks.forEach(testCaseLock -> {
-                            Set<String> tmp = new HashSet<>(testCaseLock.lockSessions);
+                            final Set<String> tmp = new HashSet<>(testCaseLock.lockSessions);
                             tmp.forEach(testCaseLock::removeSession);
                         });
                     });
@@ -282,9 +300,9 @@ public class TestPresenceService {
         try {
             Optional.ofNullable(userMap.get(userId))
                     .ifPresent(testCaseLocks -> {
-                        Set<TestCaseLock> tmpTestCaseLocks = new HashSet<>(testCaseLocks);
+                        final Set<TestCaseLock> tmpTestCaseLocks = new HashSet<>(testCaseLocks);
                         tmpTestCaseLocks.forEach(testCaseLock -> {
-                            Set<String> tmpSessionSet = new HashSet<>(testCaseLock.lockSessions);
+                            final Set<String> tmpSessionSet = new HashSet<>(testCaseLock.lockSessions);
                             tmpSessionSet.forEach(sessionId -> {
                                 releaseTestLock(testCaseLock.getProjectId(), testCaseLock.getTestId(), userId, sessionId);
                             });
@@ -299,9 +317,9 @@ public class TestPresenceService {
         lock.lock();
 
         try {
-            AtomicReference<Iterator> it = new AtomicReference<>(sessionMap.entrySet().iterator());
+            final AtomicReference<Iterator> it = new AtomicReference<>(sessionMap.entrySet().iterator());
             while (it.get().hasNext()) {
-                Map.Entry e = (Map.Entry) it.get().next();
+                final Map.Entry e = (Map.Entry) it.get().next();
                 if (((TestCaseLock) e.getValue()).getProjectId() == projectId) {
                     it.get().remove();
                 }
@@ -310,7 +328,7 @@ public class TestPresenceService {
             userMap.forEach((userId, testCaseLocks) -> {
                 it.set(testCaseLocks.iterator());
                 while (it.get().hasNext()) {
-                    TestCaseLock l = (TestCaseLock) it.get().next();
+                    final TestCaseLock l = (TestCaseLock) it.get().next();
                     if (l.getProjectId() == projectId) {
                         it.get().remove();
                     }
@@ -319,7 +337,7 @@ public class TestPresenceService {
 
             it.set(userMap.entrySet().iterator());
             while (it.get().hasNext()) {
-                Map.Entry e = (Map.Entry) it.get().next();
+                final Map.Entry e = (Map.Entry) it.get().next();
                 if (((HashSet) e.getValue()).isEmpty()) {
                     it.get().remove();
                 }
@@ -333,7 +351,7 @@ public class TestPresenceService {
     }
 
     private void acquireTestLock(long projectId, long testId, long userId, String sessionId) {
-        TestCaseLock testCaseLock = (TestCaseLock) testLocks.computeIfAbsent(projectId, k -> new HashMap<>())
+        final TestCaseLock testCaseLock = (TestCaseLock) testLocks.computeIfAbsent(projectId, k -> new HashMap<>())
                 .computeIfAbsent(testId, k -> new TestCaseLock(projectId, testId));
 
         if (testCaseLock.addSession(userId, sessionId)) {
@@ -373,13 +391,12 @@ public class TestPresenceService {
 
                             test = test.getParent();
 
-                            TestSuiteLock testSuiteLock = (TestSuiteLock) testLocks.get(projectId).get(test.getId());
+                            final TestSuiteLock testSuiteLock = (TestSuiteLock) testLocks.get(projectId).get(test.getId());
                             testSuiteLock.removeSession(userId, sessionId);
 
                             if (!testSuiteLock.isLocked()) {
                                 testLocks.get(projectId).remove(testSuiteLock.getTestId());
                             }
-
                         }
 
                         if (testLocks.get(projectId).isEmpty()) {
@@ -391,7 +408,7 @@ public class TestPresenceService {
     }
 
     private ObjectNode getProjectStatus(long projectId) {
-        ObjectNode tests = objectMapper.createObjectNode();
+        final ObjectNode tests = objectMapper.createObjectNode();
 
         Optional.ofNullable(testLocks.get(projectId))
                 .ifPresent(m -> {
@@ -404,11 +421,11 @@ public class TestPresenceService {
     }
 
     private void broadcastTestStatus(long projectId) {
-        WebSocketMessage status = new WebSocketMessage();
+        final WebSocketMessage status = new WebSocketMessage();
         status.setEntity(TestPresenceServiceEnum.TEST_PRESENCE_SERVICE.name());
         status.setType(TestPresenceServiceEnum.STATUS.name());
 
-        ObjectNode projects = objectMapper.createObjectNode();
+        final ObjectNode projects = objectMapper.createObjectNode();
         projects.set(Long.toString(projectId), getProjectStatus(projectId));
         status.setContent(projects.toString());
 
@@ -417,11 +434,11 @@ public class TestPresenceService {
     }
 
     private WebSocketMessage buildError(String description, WebSocketMessage message) {
-        WebSocketMessage error = new WebSocketMessage();
+        final WebSocketMessage error = new WebSocketMessage();
         error.setType(TestPresenceServiceEnum.ERROR.name());
         error.setEntity(TestPresenceServiceEnum.TEST_PRESENCE_SERVICE.name());
 
-        ObjectNode errorNode = objectMapper.createObjectNode();
+        final ObjectNode errorNode = objectMapper.createObjectNode();
         errorNode.put("description", description);
         errorNode.put("message", message.getContent());
 
@@ -466,10 +483,10 @@ public class TestPresenceService {
         private long lockOwner;
 
         @JsonIgnore
-        private Set<String> lockSessions;
+        private final Set<String> lockSessions;
 
         @JsonIgnore
-        private Map<String, Date> timestamps;
+        private final Map<String, Date> timestamps;
 
         TestCaseLock(long projectId, long testId) {
             super(projectId, testId);

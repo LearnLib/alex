@@ -582,7 +582,7 @@ public class SymbolDAO {
             checkAccess(user, project, symbol);
 
             // check symbol lock status
-            this.symbolPresenceService.checkSymbolLockStatus(projectId, symbol.getId(), user.getId());
+            this.symbolPresenceService.checkSymbolLockStatusStrict(projectId, symbol.getId(), user.getId());
         }
 
         for (Symbol symbol : symbols) {
@@ -690,7 +690,7 @@ public class SymbolDAO {
         final Symbol symbol = get(user, projectId, symbolId);
 
         // check symbol lock status
-        this.symbolPresenceService.checkSymbolLockStatus(projectId, symbolId, user.getId());
+        this.symbolPresenceService.checkSymbolLockStatusStrict(projectId, symbolId, user.getId());
 
         if (!symbol.isHidden()) {
             throw new ValidationException("Symbol has to be archived first.");

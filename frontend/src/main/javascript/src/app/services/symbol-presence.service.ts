@@ -40,8 +40,8 @@ export class SymbolPresenceService {
               private projectApiService: ProjectApiService,
               private appStoreService: AppStoreService,
               private toastService: ToastService) {
-    this.webSocketService.register(msg => msg.entity == SymbolPresenceServiceEnum.SYMBOL_PRESENCE_SERVICE
-                                                 && msg.type == SymbolPresenceServiceEnum.STATUS)
+    this.webSocketService.register(msg => msg.entity === SymbolPresenceServiceEnum.SYMBOL_PRESENCE_SERVICE
+                                                 && msg.type === SymbolPresenceServiceEnum.STATUS)
       .subscribe(msg => this.processStatus(msg));
 
     this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(r => this.routeChange(r));
@@ -63,7 +63,7 @@ export class SymbolPresenceService {
     const newSymbolId = newRoute.split("/")[5];
 
     if (this.routeRegEx.test(newRoute)) {
-      if(!this.routeRegEx.test(this.oldRoute) || oldProjectId != newProjectId || oldSymbolId != newSymbolId) {
+      if(!this.routeRegEx.test(this.oldRoute) || oldProjectId !== newProjectId || oldSymbolId !== newSymbolId) {
         this.userEnteredSymbol(Number(newProjectId), Number(newSymbolId));
       }
     } else {
@@ -76,7 +76,6 @@ export class SymbolPresenceService {
   }
 
   private processStatus(msg: WebSocketMessage) {
-    console.log(msg);
     const projects = msg.content;
 
     const symbolsUpdate = this.accessedSymbols.getValue();
@@ -142,7 +141,7 @@ export class SymbolPresenceService {
 
     if (!isNaN(projectId) && !isNaN(symbolId)) {
       const symbolLock = this.accessedSymbols.getValue().get(projectId)?.get(symbolId);
-      if (symbolLock && symbolLock.username != this.appStoreService.user.username) {
+      if (symbolLock && symbolLock.username !== this.appStoreService.user.username) {
         this.router.navigate(['/app', 'projects', this.appStoreService.project.id, 'symbols']);
         this.toastService.danger("Symbol is already locked by " + symbolLock.username);
       }

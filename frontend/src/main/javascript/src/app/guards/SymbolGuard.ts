@@ -38,8 +38,8 @@ export class SymbolGuard implements CanActivate {
     const accessedSymbols = this.symbolPresenceService.accessedSymbolsValue;
 
     const symbolObject = accessedSymbols.get(Number(projectId))?.get(Number(symbolId));
-    if (symbolObject && symbolObject.username != this.appStoreService.user.username) {
-      this.toastService.danger("Symbol is already in use by " +  symbolObject.username);
+    if (symbolObject && symbolObject.username !== this.appStoreService.user.username) {
+      this.toastService.danger('Symbol is already in use by ' +  symbolObject.username);
       return of(false);
     }
 

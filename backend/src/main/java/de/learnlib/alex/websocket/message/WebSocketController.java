@@ -17,6 +17,7 @@
 package de.learnlib.alex.websocket.message;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
 import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.websocket.entities.WebSocketMessage;
@@ -43,7 +44,7 @@ public class WebSocketController {
 
     private final AuthContext authContext;
 
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     @Autowired
     public WebSocketController(WebSocketService webSocketService, AuthContext authContext, ObjectMapper objectMapper) {
@@ -63,10 +64,14 @@ public class WebSocketController {
             }
             webSocketService.processIncomingMessage(msg, userPrincipal);
         } catch (IOException e) {
-            WebSocketMessage error = new WebSocketMessage();
+            final WebSocketMessage error = new WebSocketMessage();
             error.setEntity(WebSocketServiceEnum.WEBSOCKET_SERVICE.name());
             error.setType(WebSocketServiceEnum.ERROR.name());
-            error.setContent("Error - Received malformed WebSocketMessage.");
+
+            final ObjectNode content = objectMapper.createObjectNode();
+            content.put("description", "Received malformed WebSocketMessage.");
+            content.put("message", event);
+            error.setContent(content.toString());
 
             this.webSocketService.sendError(SimpAttributesContextHolder.currentAttributes().getSessionId(), error);
         }
@@ -78,8 +83,8 @@ public class WebSocketController {
             consumes = MediaType.APPLICATION_JSON
     )
     public void onDisconnect(@RequestBody String data) {
-        String sessionId = JsonPath.read(data, "$.sessionId");
-        long userId = this.webSocketService.getUserIdBySessionId(sessionId);
+        final String sessionId = JsonPath.read(data, "$.sessionId");
+        final long userId = this.webSocketService.getUserIdBySessionId(sessionId);
 
         if (authContext.getUser().getId() == userId) {
             this.webSocketService.closeSession(sessionId);

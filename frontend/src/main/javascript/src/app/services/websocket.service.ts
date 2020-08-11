@@ -35,7 +35,7 @@ export class WebSocketService {
   constructor(private websocketAPIService: WebSocketAPIService,
               private router: Router) {
     this.websocketAPIService.connectStatus$.subscribe(value => {
-      this.connected = value == WebSocketConnectStatus.CONNECTED;
+      this.connected = value === WebSocketConnectStatus.CONNECTED;
       if (this.connected) {
         if (this.sessionId == null) {
           this.requestSessionId();
@@ -65,7 +65,7 @@ export class WebSocketService {
   }
 
   private routeChange(r: any) {
-    if (r.urlAfterRedirects.startsWith("/app")) {
+    if (r.urlAfterRedirects.startsWith('/app')) {
       this.connect();
     }
   }
@@ -77,7 +77,7 @@ export class WebSocketService {
   disconnect() {
     this.websocketAPIService.disconnect();
   }
-  
+
   send(message: WebSocketMessage) {
     if (this.connected) {
       this.websocketAPIService.send(message);
@@ -88,7 +88,7 @@ export class WebSocketService {
 
   processIncomingMessage(message: WebSocketMessage) {
 
-    if (message.entity == WebSocketServiceEnum.WEBSOCKET_SERVICE && message.type == WebSocketServiceEnum.SESSION_ID) {
+    if (message.entity === WebSocketServiceEnum.WEBSOCKET_SERVICE && message.type === WebSocketServiceEnum.SESSION_ID) {
       this.sessionId = message.content.sessionId;
     }
 
@@ -118,9 +118,9 @@ export class WebSocketService {
 }
 
 export enum WebSocketServiceEnum {
-  WEBSOCKET_SERVICE = "WEBSOCKET_SERVICE",
-  LOGOUT_CHECK = "LOGOUT_CHECK",
-  LOGOUT = "LOGOUT",
-  REQUEST_SESSION_ID = "REQUEST_SESSION_ID",
-  SESSION_ID = "SESSION_ID"
+  WEBSOCKET_SERVICE = 'WEBSOCKET_SERVICE',
+  LOGOUT_CHECK = 'LOGOUT_CHECK',
+  LOGOUT = 'LOGOUT',
+  REQUEST_SESSION_ID = 'REQUEST_SESSION_ID',
+  SESSION_ID = 'SESSION_ID'
 }

@@ -66,28 +66,28 @@ public class TestDAO {
     private static final Logger LOGGER = LogManager.getLogger();
 
     /** The ProjectDAO to use. Will be injected. */
-    private ProjectDAO projectDAO;
+    private final ProjectDAO projectDAO;
 
     /** The SymbolDAO to use. Will be injected. */
-    private SymbolDAO symbolDAO;
+    private final SymbolDAO symbolDAO;
 
     /** The TestCaseRepository to use. Will be injected. */
-    private TestRepository testRepository;
+    private final TestRepository testRepository;
 
     /** The repository for projects. */
-    private ProjectRepository projectRepository;
+    private final ProjectRepository projectRepository;
 
     /** The repository for test case steps. */
-    private TestCaseStepRepository testCaseStepRepository;
+    private final TestCaseStepRepository testCaseStepRepository;
 
     /** The injected DAP for parameterized symbols. */
-    private ParameterizedSymbolDAO parameterizedSymbolDAO;
+    private final ParameterizedSymbolDAO parameterizedSymbolDAO;
 
     /** The {@link TestResultRepository} to use. */
-    private TestResultRepository testResultRepository;
+    private final TestResultRepository testResultRepository;
 
     /** The service for test locking. */
-    private TestPresenceService testPresenceService;
+    private final TestPresenceService testPresenceService;
 
     /**
      * Constructor.
@@ -355,7 +355,7 @@ public class TestDAO {
         checkAccess(user, project, test);
 
         // check lock status
-        testPresenceService.checkLockStatus(projectId, testId, user.getId());
+        testPresenceService.checkLockStatusStrict(projectId, testId, user.getId());
 
         final Test root = testRepository.findFirstByProject_IdOrderByIdAsc(projectId);
         if (root.getId().equals(testId)) {
@@ -396,7 +396,7 @@ public class TestDAO {
             checkAccess(user, project, test);
 
             //check lock status
-            testPresenceService.checkLockStatus(projectId, test.getId(), user.getId());
+            testPresenceService.checkLockStatusStrict(projectId, test.getId(), user.getId());
 
             if (test.getId().equals(rootTestSuite.getId())) {
                 throw new ValidationException("Cannot move the root test suite.");

@@ -33,7 +33,6 @@ import de.learnlib.alex.integrationtests.resources.api.SymbolGroupApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
 import de.learnlib.alex.integrationtests.websocket.util.SymbolPresenceServiceWSMessages;
 import de.learnlib.alex.integrationtests.websocket.util.WebSocketUser;
-import de.learnlib.alex.websocket.entities.WebSocketMessage;
 import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -42,14 +41,10 @@ import org.springframework.http.HttpStatus;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
@@ -84,7 +79,7 @@ public class SymbolResourceIT extends AbstractResourceIT {
     private SymbolPresenceServiceWSMessages symbolPresenceServiceWSMessages;
 
     @Before
-    public void pre() {
+    public void pre() throws Exception {
         symbolGroupApi = new SymbolGroupApi(client, port);
         symbolApi = new SymbolApi(client, port);
         final UserApi userApi = new UserApi(client, port);
@@ -154,6 +149,40 @@ public class SymbolResourceIT extends AbstractResourceIT {
         symbolApi.create(projectId1, symbol2, jwtUser1);
         symbolApi.create(projectId1, symbol3, jwtUser1);
         assertEquals(3, getNumberOfSymbols(projectId1, jwtUser1));
+    }
+
+    @Test
+    public void shouldUpdateSymbolLockedByUser() throws Exception {
+        WebSocketUser webSocketUser = new WebSocketUser("webSocketUser", client, port);
+        projectApi.addMembers(Integer.toUnsignedLong(projectId1), Collections.singletonList(webSocketUser.getUserId()), jwtUser1);
+
+        final Symbol s = createSymbol("s", (long) projectId1, jwtUser1);
+
+        webSocketUser.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId1, s.getId()));
+
+        s.setName("s2");
+
+        Response res = symbolApi.update(Math.toIntExact(s.getProjectId()), s.getId(), objectMapper.writeValueAsString(s), webSocketUser.getJwt());
+        assertEquals(Response.Status.OK.getStatusCode(), res.getStatus());
+
+        webSocketUser.forceDisconnectAll();
+    }
+
+    @Test
+    public void shouldFailToUpdateSymbolLockedByUser() throws Exception {
+        WebSocketUser webSocketUser = new WebSocketUser("webSocketUser", client, port);
+        projectApi.addMembers(Integer.toUnsignedLong(projectId1), Collections.singletonList(webSocketUser.getUserId()), jwtUser1);
+
+        final Symbol s = createSymbol("s", (long) projectId1, jwtUser1);
+
+        webSocketUser.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId1, s.getId()));
+
+        s.setName("s2");
+
+        Response res = symbolApi.update(Math.toIntExact(s.getProjectId()), s.getId(), objectMapper.writeValueAsString(s), webSocketUser.getJwt());
+        assertEquals(Response.Status.OK.getStatusCode(), res.getStatus());
+
+        webSocketUser.forceDisconnectAll();
     }
 
     @Test
@@ -418,6 +447,21 @@ public class SymbolResourceIT extends AbstractResourceIT {
     }
 
     @Test
+    public void shouldNotMoveLockedSymbol() throws Exception {
+        WebSocketUser webSocketUser = new WebSocketUser("webSocketUser", client, port);
+        projectApi.addMembers(Integer.toUnsignedLong(projectId1), Collections.singletonList(webSocketUser.getUserId()), jwtUser1);
+
+        final SymbolGroup g = createGroup("g", (long) projectId1, jwtUser1);
+        Symbol s1 = createSymbol("s1", (long) projectId1, jwtUser1);
+
+        webSocketUser.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId1, s1.getId()));
+
+        final Response res = symbolApi.move(projectId1, s1.getId(), g.getId(), webSocketUser.getJwt());
+
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());
+    }
+
+    @Test
     public void shouldNotDeleteSymbolThatIsNotArchived() throws Exception {
         final Symbol s = createSymbol("s", (long) projectId1, jwtUser1);
 
@@ -451,26 +495,10 @@ public class SymbolResourceIT extends AbstractResourceIT {
         final Symbol s = createSymbol("s", (long) projectId1, jwtUser1);
         symbolApi.archive(projectId1, s.getId().intValue(), jwtUser1);
 
-        webSocketUser.getMessages("default").clear();
-        webSocketUser.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId1, s.getId()));
-
-        final Response res = symbolApi.delete(projectId1, s.getId(), jwtUser1);
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());
-    }
-
-    @Test
-    public void shouldDeleteLockedSymbolByLockOwner() throws Exception {
-        WebSocketUser webSocketUser = new WebSocketUser("webSocketUser", client, port);
-        projectApi.addMembers(Integer.toUnsignedLong(projectId1), Collections.singletonList(webSocketUser.getUserId()), jwtUser1);
-
-        final Symbol s = createSymbol("s", (long) projectId1, jwtUser1);
-        symbolApi.archive(projectId1, s.getId().intValue(), jwtUser1);
-
-        webSocketUser.getMessages("default").clear();
         webSocketUser.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId1, s.getId()));
 
         final Response res = symbolApi.delete(projectId1, s.getId(), webSocketUser.getJwt());
-        assertEquals(HttpStatus.NO_CONTENT.value(), res.getStatus());
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());
     }
 
     @Test

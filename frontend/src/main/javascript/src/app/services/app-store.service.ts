@@ -120,6 +120,10 @@ export class AppStoreService {
     localStorage.setItem('sidebarCollapsed', JSON.stringify(this.sidebarCollapsed));
   }
 
+  getUsername(): string {
+    return this.user.username;
+  }
+
   private checkLogout() {
     if (localStorage.getItem('jwt') == null) {
       this.logout(false);

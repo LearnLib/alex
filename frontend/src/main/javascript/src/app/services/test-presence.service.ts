@@ -29,7 +29,7 @@ export class TestPresenceService {
 
   private accessedTests = new BehaviorSubject(new Map());
 
-  private oldRoute = "";
+  private oldRoute = '';
 
   private routeRegEx = /^\/app\/projects\/\d+\/tests\/\d+/;
 
@@ -38,8 +38,8 @@ export class TestPresenceService {
               private projectApiService: ProjectApiService,
               private appStoreService: AppStoreService,
               private toastService: ToastService) {
-    this.webSocketService.register(msg => msg.entity == TestPresenceServiceEnum.TEST_PRESENCE_SERVICE
-                                                 && msg.type == TestPresenceServiceEnum.STATUS)
+    this.webSocketService.register(msg => msg.entity === TestPresenceServiceEnum.TEST_PRESENCE_SERVICE
+                                                 && msg.type === TestPresenceServiceEnum.STATUS)
       .subscribe(msg => this.processStatus(msg));
 
     this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(r => this.routeChange(r));
@@ -55,13 +55,13 @@ export class TestPresenceService {
 
   private routeChange(r: any) {
     const newRoute = r.urlAfterRedirects;
-    const oldProjectId = this.oldRoute.split("/")[3];
-    const oldTestId = this.oldRoute.split("/")[5];
-    const newProjectId = newRoute.split("/")[3];
-    const newTestId = newRoute.split("/")[5];
+    const oldProjectId = this.oldRoute.split('/')[3];
+    const oldTestId = this.oldRoute.split('/')[5];
+    const newProjectId = newRoute.split('/')[3];
+    const newTestId = newRoute.split('/')[5];
 
     if (this.routeRegEx.test(newRoute)) {
-      if(!this.routeRegEx.test(this.oldRoute) || oldProjectId != newProjectId || oldTestId != newTestId) {
+      if(!this.routeRegEx.test(this.oldRoute) || oldProjectId !== newProjectId || oldTestId != newTestId) {
         this.userEnteredTest(Number(newProjectId), Number(newTestId));
       }
     } else {
@@ -74,7 +74,6 @@ export class TestPresenceService {
   }
 
   private processStatus(msg: WebSocketMessage) {
-    console.log(msg);
     const projects = msg.content;
 
     const update = this.accessedTests.getValue();
@@ -95,7 +94,7 @@ export class TestPresenceService {
           const test = tests[testId];
 
           let testObject;
-          if (test.type == "case") {
+          if (test.type === 'case') {
             testObject = {} as TestCaseLockInfo;
             testObject.username = test.username;
             testObject.date = new Date(test.timestamp);
@@ -120,9 +119,9 @@ export class TestPresenceService {
 
     if (!isNaN(projectId) && !isNaN(testId)) {
       const testLock = this.accessedTests.getValue().get(projectId)?.get(testId);
-      if (testLock && testLock.type == "case"  && testLock.username != this.appStoreService.user.username) {
+      if (testLock && testLock.type === "case"  && testLock.username !== this.appStoreService.user.username) {
         this.router.navigate(['/app', 'projects', this.appStoreService.project.id, 'tests']);
-        this.toastService.danger("Test is already locked by " + testLock.username);
+        this.toastService.danger('Test is already locked by ' + testLock.username);
       }
     }
   }
@@ -163,11 +162,11 @@ export class TestPresenceService {
 }
 
 export enum TestPresenceServiceEnum {
-  TEST_PRESENCE_SERVICE = "TEST_PRESENCE_SERVICE",
-  USER_LEFT = "USER_LEFT",
-  USER_ENTERED = "USER_ENTERED",
-  STATUS_REQUEST = "STATUS_REQUEST",
-  STATUS = "STATUS"
+  TEST_PRESENCE_SERVICE = 'TEST_PRESENCE_SERVICE',
+  USER_LEFT = 'USER_LEFT',
+  USER_ENTERED = 'USER_ENTERED',
+  STATUS_REQUEST = 'STATUS_REQUEST',
+  STATUS = 'STATUS'
 }
 
 export interface TestLockInfo {

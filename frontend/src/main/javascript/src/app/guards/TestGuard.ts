@@ -38,8 +38,8 @@ export class TestGuard implements CanActivate, CanActivateChild {
     const accessedTests = this.testPresenceService.accessedTestsValue;
 
     const testObject = accessedTests.get(Number(projectId))?.get(Number(testId));
-    if (testObject && testObject.type == "case" && testObject.username != this.appStoreService.user.username) {
-      this.toastService.danger("Test is already in use by " + testObject.username);
+    if (testObject && testObject.type == "case" && testObject.username !== this.appStoreService.user.username) {
+      this.toastService.danger('Test is already in use by ' + testObject.username);
       return of(false);
     }
 

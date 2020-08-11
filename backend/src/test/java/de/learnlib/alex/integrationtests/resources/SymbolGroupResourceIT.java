@@ -19,10 +19,15 @@ package de.learnlib.alex.integrationtests.resources;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
+import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.integrationtests.resources.api.ProjectApi;
+import de.learnlib.alex.integrationtests.resources.api.SymbolApi;
 import de.learnlib.alex.integrationtests.resources.api.SymbolGroupApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
+import de.learnlib.alex.integrationtests.websocket.util.SymbolPresenceServiceWSMessages;
+import de.learnlib.alex.integrationtests.websocket.util.WebSocketUser;
 import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -31,6 +36,7 @@ import org.springframework.http.HttpStatus;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -52,7 +58,7 @@ public class SymbolGroupResourceIT extends AbstractResourceIT {
     @Before
     public void pre() {
         final UserApi userApi = new UserApi(client, port);
-        final ProjectApi projectApi = new ProjectApi(client, port);
+        ProjectApi projectApi = new ProjectApi(client, port);
         symbolGroupApi = new SymbolGroupApi(client, port);
 
         userApi.create("{\"email\":\"test1@test.de\",\"username\":\"test1\",\"password\":\"test\"}");

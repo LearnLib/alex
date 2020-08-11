@@ -52,7 +52,7 @@ export class WebSocketAPIService {
 
     this.client.beforeConnect = () => {
       const jwt = localStorage.getItem('jwt');
-      if (jwt !== null) {
+      if (jwt != null) {
         this.connectStatus.next(WebSocketConnectStatus.CONNECTING);
         this.client.connectHeaders = {
           Authorization: `Bearer ${jwt}`
@@ -80,7 +80,7 @@ export class WebSocketAPIService {
   }
 
   connect() {
-    if (this.connectStatus.getValue() == WebSocketConnectStatus.DISCONNECTED) {
+    if (this.connectStatus.getValue() === WebSocketConnectStatus.DISCONNECTED) {
       this.client.activate();
     }
   };
@@ -92,7 +92,7 @@ export class WebSocketAPIService {
         method: 'POST',
         keepalive: true,
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${jwt}`
         },
         body: `{ "sessionId": "${sessionId}" }`
@@ -101,7 +101,7 @@ export class WebSocketAPIService {
   }
 
   disconnect() {
-    if (this.connectStatus.getValue() != WebSocketConnectStatus.DISCONNECTED) {
+    if (this.connectStatus.getValue() !== WebSocketConnectStatus.DISCONNECTED) {
       this.client.deactivate();
       this.connectStatus.next(WebSocketConnectStatus.DISCONNECTED);
     }
@@ -125,8 +125,8 @@ export class WebSocketAPIService {
 }
 
 export enum WebSocketConnectStatus {
-  DISCONNECTED = "DISCONNECTED",
-  CONNECTING = "CONNECTING",
-  CONNECTED = "CONNECTED"
+  DISCONNECTED = 'DISCONNECTED',
+  CONNECTING = 'CONNECTING',
+  CONNECTED = 'CONNECTED'
 }
 

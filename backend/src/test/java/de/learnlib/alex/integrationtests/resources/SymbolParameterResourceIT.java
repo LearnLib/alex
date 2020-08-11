@@ -24,12 +24,15 @@ import de.learnlib.alex.integrationtests.resources.api.ProjectApi;
 import de.learnlib.alex.integrationtests.resources.api.SymbolApi;
 import de.learnlib.alex.integrationtests.resources.api.SymbolParameterApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
+import de.learnlib.alex.integrationtests.websocket.util.SymbolPresenceServiceWSMessages;
+import de.learnlib.alex.integrationtests.websocket.util.WebSocketUser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import javax.ws.rs.core.Response;
+import java.util.Collections;
 
 public class SymbolParameterResourceIT extends AbstractResourceIT {
 
@@ -45,15 +48,20 @@ public class SymbolParameterResourceIT extends AbstractResourceIT {
 
     private int symbolId;
 
+    private SymbolPresenceServiceWSMessages symbolPresenceServiceWSMessages;
+
+    private ProjectApi projectApi;
+
     @Before
     public void pre() {
         this.symbolParameterApi = new SymbolParameterApi(client, port);
+        this.symbolPresenceServiceWSMessages = new SymbolPresenceServiceWSMessages();
 
         final UserApi userApi = new UserApi(client, port);
         userApi.create("{\"email\":\"test1@test.de\",\"username\":\"test1\",\"password\":\"test\"}");
         jwtUser1 = userApi.login("test1@test.de", "test");
 
-        final ProjectApi projectApi = new ProjectApi(client, port);
+        projectApi = new ProjectApi(client, port);
         final Response res1 = projectApi.create("{\"name\":\"test\",\"url\":\"http://test\"}", jwtUser1);
         Assert.assertEquals(res1.getStatus(), Response.Status.CREATED.getStatusCode());
         this.projectId = JsonPath.read(res1.readEntity(String.class), "$.id");
@@ -143,6 +151,32 @@ public class SymbolParameterResourceIT extends AbstractResourceIT {
     }
 
     @Test
+    public void shouldCreateParameterOnSymbolLockedByUser() throws Exception {
+        WebSocketUser webSocketUser = new WebSocketUser("webSocketUser", client, port);
+        projectApi.addMembers(Integer.toUnsignedLong(projectId), Collections.singletonList(webSocketUser.getUserId()), jwtUser1);
+
+        webSocketUser.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId, symbolId));
+
+        final Response res = symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test"), webSocketUser.getJwt());
+        Assert.assertEquals(res.getStatus(), Response.Status.CREATED.getStatusCode());
+
+        webSocketUser.forceDisconnectAll();
+    }
+
+    @Test
+    public void shouldNotCreateParameterOnSymbolLockedByOtherUser() throws Exception {
+        WebSocketUser webSocketUser = new WebSocketUser("webSocketUser", client, port);
+        projectApi.addMembers(Integer.toUnsignedLong(projectId), Collections.singletonList(webSocketUser.getUserId()), jwtUser1);
+
+        webSocketUser.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId, symbolId));
+
+        final Response res = symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test"), jwtUser1);
+        Assert.assertEquals(res.getStatus(), Response.Status.UNAUTHORIZED.getStatusCode());
+
+        webSocketUser.forceDisconnectAll();
+    }
+
+    @Test
     public void shouldUpdateInputParameter() throws Exception {
         final Response res1 = symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test"), jwtUser1);
         final JsonNode paramNode = objectMapper.readTree(res1.readEntity(String.class));
@@ -199,6 +233,42 @@ public class SymbolParameterResourceIT extends AbstractResourceIT {
     }
 
     @Test
+    public void shouldUpdateParameterOnSymbolLockedByUser() throws Exception {
+        WebSocketUser webSocketUser = new WebSocketUser("webSocketUser", client, port);
+        projectApi.addMembers(Integer.toUnsignedLong(projectId), Collections.singletonList(webSocketUser.getUserId()), jwtUser1);
+
+        symbolParameterApi.create(projectId, symbolId, createOutputStringParam(symbolId, "test"), jwtUser1);
+        final Response res1 = symbolParameterApi.create(projectId, symbolId, createOutputStringParam(symbolId, "test2"), jwtUser1);
+        final JsonNode paramNode = objectMapper.readTree(res1.readEntity(String.class));
+        ((ObjectNode) paramNode).put("name", "newName");
+
+        webSocketUser.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId, symbolId));
+
+        final Response res2 = symbolParameterApi.update(projectId, symbolId, paramNode.get("id").asInt(), paramNode.toString(), webSocketUser.getJwt());
+        Assert.assertEquals(Response.Status.OK.getStatusCode(), res2.getStatus());
+
+        webSocketUser.forceDisconnectAll();
+    }
+
+    @Test
+    public void shouldNotUpdateParameterOnSymbolLockedByOtherUser() throws Exception {
+        WebSocketUser webSocketUser = new WebSocketUser("webSocketUser", client, port);
+        projectApi.addMembers(Integer.toUnsignedLong(projectId), Collections.singletonList(webSocketUser.getUserId()), jwtUser1);
+
+        symbolParameterApi.create(projectId, symbolId, createOutputStringParam(symbolId, "test"), jwtUser1);
+        final Response res1 = symbolParameterApi.create(projectId, symbolId, createOutputStringParam(symbolId, "test2"), jwtUser1);
+        final JsonNode paramNode = objectMapper.readTree(res1.readEntity(String.class));
+        ((ObjectNode) paramNode).put("name", "newName");
+
+        webSocketUser.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId, symbolId));
+
+        final Response res2 = symbolParameterApi.update(projectId, symbolId, paramNode.get("id").asInt(), paramNode.toString(), jwtUser1);
+        Assert.assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), res2.getStatus());
+
+        webSocketUser.forceDisconnectAll();
+    }
+
+    @Test
     public void shouldDeleteInputParameter() throws Exception {
         final Response res1 = symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test"), jwtUser1);
         final int id = JsonPath.read(res1.readEntity(String.class), "$.id");
@@ -220,6 +290,38 @@ public class SymbolParameterResourceIT extends AbstractResourceIT {
 
         final JsonNode symbols = objectMapper.readTree(symbolApi.getAll(projectId, jwtUser1).readEntity(String.class));
         Assert.assertEquals("[]", symbols.get(0).get("outputs").toString());
+    }
+
+    @Test
+    public void shouldDeleteParameterOnSymbolLockedByUser() throws Exception {
+        WebSocketUser webSocketUser = new WebSocketUser("webSocketUser", client, port);
+        projectApi.addMembers(Integer.toUnsignedLong(projectId), Collections.singletonList(webSocketUser.getUserId()), jwtUser1);
+
+        final Response res1 = symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test"), jwtUser1);
+        final int id = JsonPath.read(res1.readEntity(String.class), "$.id");
+
+        webSocketUser.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId, symbolId));
+
+        final Response res2 = symbolParameterApi.delete(projectId, symbolId, id, webSocketUser.getJwt());
+        Assert.assertEquals(Response.Status.NO_CONTENT.getStatusCode(), res2.getStatus());
+
+        webSocketUser.forceDisconnectAll();
+    }
+
+    @Test
+    public void shouldNotDeleteParameterOnSymbolLockedByOtherUser() throws Exception {
+        WebSocketUser webSocketUser = new WebSocketUser("webSocketUser", client, port);
+        projectApi.addMembers(Integer.toUnsignedLong(projectId), Collections.singletonList(webSocketUser.getUserId()), jwtUser1);
+
+        final Response res1 = symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test"), jwtUser1);
+        final int id = JsonPath.read(res1.readEntity(String.class), "$.id");
+
+        webSocketUser.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId, symbolId));
+
+        final Response res2 = symbolParameterApi.delete(projectId, symbolId, id, jwtUser1);
+        Assert.assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), res2.getStatus());
+
+        webSocketUser.forceDisconnectAll();
     }
 
     private JsonNode getSymbol() throws Exception {

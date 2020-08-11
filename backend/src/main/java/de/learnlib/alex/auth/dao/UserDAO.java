@@ -163,7 +163,6 @@ public class UserDAO {
         }
 
         for (User user : users) {
-//            user = userRepository.getOne(user.getId());
             delete(authUser, user);
             em.flush();
         }
