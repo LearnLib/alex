@@ -37,6 +37,7 @@ import de.learnlib.alex.data.repositories.SymbolStepRepository;
 import de.learnlib.alex.data.repositories.SymbolSymbolStepRepository;
 import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
 import de.learnlib.alex.testing.repositories.TestExecutionResultRepository;
+import de.learnlib.alex.websocket.services.SymbolPresenceService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -123,6 +124,9 @@ public class SymbolDAOTest {
     @Mock
     private SymbolParameterDAO symbolParameterDAO;
 
+    @Mock
+    private SymbolPresenceService symbolPresenceService;
+
     private SymbolDAO symbolDAO;
 
     @Before
@@ -131,7 +135,7 @@ public class SymbolDAOTest {
                 symbolActionRepository, symbolGroupDAO, symbolParameterRepository, symbolStepRepository,
                 parameterizedSymbolDAO, parameterizedSymbolRepository, symbolSymbolStepRepository,
                 testCaseStepRepository, testExecutionResultRepository, projectEnvironmentRepository,
-                objectMapper, symbolParameterDAO);
+                objectMapper, symbolParameterDAO, symbolPresenceService);
     }
 
     @Test
@@ -362,6 +366,7 @@ public class SymbolDAOTest {
         Symbol symbol = new Symbol();
         symbol.setProject(project);
         symbol.setGroup(group);
+        symbol.setId(42L);
 
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
         given(symbolRepository.findById(symbol.getId())).willReturn(Optional.of(symbol));
@@ -417,6 +422,7 @@ public class SymbolDAOTest {
         Symbol symbol = new Symbol();
         symbol.setProject(project);
         symbol.setGroup(group);
+        symbol.setId(42L);
 
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
         given(symbolRepository.findById(symbol.getId())).willReturn(Optional.of(symbol));
@@ -440,6 +446,7 @@ public class SymbolDAOTest {
         Symbol symbol = new Symbol();
         symbol.setProject(project);
         symbol.setGroup(group);
+        symbol.setId(42L);
 
         ConstraintViolationException constraintViolationException;
         constraintViolationException = new ConstraintViolationException("Project is not valid!", new HashSet<>());
@@ -558,6 +565,7 @@ public class SymbolDAOTest {
         Symbol symbol = new Symbol();
         symbol.setProject(project);
         symbol.setGroup(group);
+        symbol.setId(42L);
 
         List<Symbol> symbols = Collections.singletonList(symbol);
 

@@ -36,6 +36,7 @@ import { ImportSymbolsModalComponent } from './import-symbols-modal/import-symbo
 import { Selectable } from '../../utils/selectable';
 import { ExportSymbolsModalComponent } from './export-symbols-modal/export-symbols-modal.component';
 import { map } from 'rxjs/operators';
+import {SymbolGroupLockInfo, SymbolLockInfo, SymbolPresenceService} from "../../services/symbol-presence.service";
 
 @Injectable()
 export class SymbolsViewStoreService {
@@ -48,12 +49,17 @@ export class SymbolsViewStoreService {
 
   readonly groupsCollapsedMap = new Map<number, boolean>();
 
+  private groupLocks = new BehaviorSubject<Map<number, SymbolGroupLockInfo>>(null);
+
+  private symbolLocks = new BehaviorSubject<Map<number, SymbolLockInfo>>(null);
+
   constructor(private appStore: AppStoreService,
               private symbolGroupApi: SymbolGroupApiService,
               private symbolApi: SymbolApiService,
               private modalService: NgbModal,
               private toastService: ToastService,
-              private promptService: PromptService) {
+              private promptService: PromptService,
+              private symbolPresenceService: SymbolPresenceService) {
   }
 
   load(): void {
@@ -69,7 +75,15 @@ export class SymbolsViewStoreService {
           })
         });
       }
-    )
+    );
+
+    this.symbolPresenceService.accessedSymbolGroups$.subscribe(groupLocks => {
+      this.groupLocks.next(groupLocks.get(this.appStore.project.id));
+      });
+
+    this.symbolPresenceService.accessedSymbols$.subscribe(symbolLocks => {
+      this.symbolLocks.next(symbolLocks.get(this.appStore.project.id));
+    })
   }
 
   createSymbol(): void {
@@ -259,6 +273,24 @@ export class SymbolsViewStoreService {
     });
   }
 
+  selectedContainsLockedItem(): boolean {
+    return this.symbolsSelectable.getSelected().some(value => {
+      return this.symbolLocks.getValue()?.has(value.id);
+    })
+  }
+
+  isSymbolLocked(symbolId: number): boolean {
+    return this.symbolLocks.getValue()?.has(symbolId);
+  }
+
+  isSymbolOwner(symbolId: number): boolean {
+    return this.symbolLocks.getValue()?.get(symbolId)?.username === this.appStore.getUsername();
+  }
+
+  isGroupLocked(groupId: number): boolean {
+    return this.groupLocks.getValue()?.has(groupId);
+  }
+
   private _addGroup(group: SymbolGroup): void {
     if (group.parent == null) {
       this.groups.next([...this.groups.value, group]);
@@ -287,5 +319,13 @@ export class SymbolsViewStoreService {
     return this.groups.pipe(
       map(groups => orderBy(groups, ['name']))
     );
+  }
+
+  get symbolLocks$(): Observable<any> {
+    return this.symbolLocks.asObservable();
+  }
+
+  get groupLocks$(): Observable<any> {
+    return this.groupLocks.asObservable();
   }
 }

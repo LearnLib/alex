@@ -16,6 +16,11 @@
 
 import { Component } from '@angular/core';
 import { AppStoreService } from '../../services/app-store.service';
+import { ProjectPresenceService } from "../../services/project-presence.service";
+import { TestPresenceService } from "../../services/test-presence.service";
+import { SymbolPresenceService } from "../../services/symbol-presence.service";
+import { Observable } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-view',
@@ -24,7 +29,22 @@ import { AppStoreService } from '../../services/app-store.service';
 })
 export class AppViewComponent {
 
-  constructor(public appStore: AppStoreService) { }
+  activeUsers$: Observable<Map<string, string>>;
+
+  // The presence services getting injected to force their creation at exactly this point.
+  constructor(public appStore: AppStoreService,
+              public projectPresenceService: ProjectPresenceService,
+              private testPresenceService: TestPresenceService,
+              private symbolPresenceService: SymbolPresenceService) {
+
+    this.activeUsers$ = this.projectPresenceService.activeUsers$.pipe(
+      filter(m => {
+        return this.appStore.project != null
+          && m.get(this.appStore.project.id) != null
+      }),
+      map(m => m.get(this.appStore.project.id))
+    );
+  }
 
   get username(): string {
     return this.appStore.user.username;

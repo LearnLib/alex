@@ -23,12 +23,11 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.FileDAO;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.repositories.ProjectRepository;
-import de.learnlib.alex.settings.dao.SettingsDAO;
+import de.learnlib.alex.websocket.services.WebSocketService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Answers;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -37,7 +36,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.TransactionSystemException;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.persistence.RollbackException;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
@@ -69,16 +67,20 @@ public class UserDAOTest {
     @Mock
     private ProjectRepository projectRepository;
 
+    @Mock
+    private WebSocketService webSocketService;
+
+    @Mock
+    private EntityManager em;
+
     private UserDAO userDAO;
 
     private User dummyAdmin;
 
-    @Mock
-    private EntityManager entityManager;
-
     @Before
     public void setUp() throws NotFoundException {
-        userDAO = new UserDAO(userRepository, fileDAO, projectDAO, projectRepository);
+        userDAO = new UserDAO(userRepository, fileDAO, projectDAO, projectRepository,
+                              webSocketService, em);
         dummyAdmin = new User();
         dummyAdmin.setRole(UserRole.ADMIN);
         dummyAdmin.setId(-1L);
@@ -256,6 +258,7 @@ public class UserDAOTest {
     @Test
     public void shouldDeleteARegisteredUser() throws NotFoundException {
         User user = createUser();
+        user.setId(42L);
         BDDMockito.given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
 
         userDAO.delete(dummyAdmin, user.getId());
@@ -268,6 +271,7 @@ public class UserDAOTest {
         List<User> admins = createUsersList();
         admins.forEach(u -> u.setRole(UserRole.ADMIN));
         User adminToDelete = admins.get(0);
+        adminToDelete.setId(42L);
         BDDMockito.given(userRepository.findById(adminToDelete.getId())).willReturn(Optional.of(adminToDelete));
         BDDMockito.given(userRepository.findByRole(UserRole.ADMIN)).willReturn(admins);
 

@@ -3,10 +3,12 @@
     *ngIf="root.type === 'suite'"
     [results]="results"
     [suite]="root"
+    [lockInfo]="lockInfo"
   ></test-suite-node>
   <test-case-node
     *ngIf="root.type === 'case'"
     [case]="root"
     [results]="results"
+    [lockInfo]="lockInfo"
   ></test-case-node>
 </div>

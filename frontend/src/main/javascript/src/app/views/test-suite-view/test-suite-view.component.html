@@ -20,14 +20,14 @@
         <div class="btn-group btn-group-sm mr-2">
           <button
             (click)="moveSelected()"
-            [disabled]="!selectedTests.isAnySelected()"
+            [disabled]="!selectedTests.isAnySelected() || selectedContainsLockedItem()"
             class="btn btn-default"
           >
             Move
           </button>
           <button
             (click)="deleteSelected()"
-            [disabled]="!selectedTests.isAnySelected()"
+            [disabled]="!selectedTests.isAnySelected() || selectedContainsLockedItem()"
             class="btn btn-default"
           >
             Delete
@@ -96,16 +96,26 @@
       </div>
 
       <div class="d-flex flex-row align-items-center">
-        <a
-          class="btn btn-sm btn-default mr-2"
-          *ngIf="testSuite.parent != null"
-          [routerLink]="['/app', 'projects', project.id, 'tests', testSuite.parent]"
-        >
-          <i class="fas fa-fw fa-level-up-alt mr-1"></i>
-        </a>
-        <h4 *ngIf="testSuite.name" class="m-0">
-          <i class="fas fa-fw fa-folder mr-2"></i> <strong>{{testSuite.name}}</strong>
-        </h4>
+        <div>
+          <a
+            class="btn btn-sm btn-default"
+            *ngIf="testSuite.parent != null"
+            [routerLink]="['/app', 'projects', project.id, 'tests', testSuite.parent]"
+          >
+            <i class="fas fa-fw fa-level-up-alt mr-1"></i>
+          </a>
+        </div>
+        <div class="w-100 ml-3">
+          <h4 *ngIf="testSuite.name" class="m-0">
+            <i class="fas fa-fw fa-folder mr-2"></i> <strong>{{testSuite.name}}</strong>
+          </h4>
+          <lock-info-list
+            class="d-block mt-1"
+            *ngIf="testSuite.parent != null && lockInfo.get(project.id)?.get(testSuite.id) as locks"
+            [lockInfo]="locks"
+          >
+          </lock-info-list>
+        </div>
       </div>
 
       <hr>
@@ -121,7 +131,7 @@
                   <selectable-checkbox [item]="test" [selectable]="selectedTests"></selectable-checkbox>
                 </div>
                 <div class="test-list-item-content flex-grow-1">
-                  <test-tree [results]="results" [root]="test"></test-tree>
+                  <test-tree [results]="results" [root]="test" [lockInfo]="lockInfo.get(project.id)?.get(test.id)"></test-tree>
                 </div>
                 <div *ngIf="showInProgressLabel(test)" class="pl-2">
                   <span class="badge badge-info">
@@ -134,10 +144,10 @@
                       <i class="fas fa-fw fa-bars"></i>
                     </button>
                     <div class="dropdown-menu" ngbDropdownMenu role="menu">
-                      <button (click)="editTest(test)" ngbDropdownItem>
+                      <button (click)="editTest(test)" ngbDropdownItem [disabled]="isLocked(test.id)">
                         <i class="fas fa-fw fa-edit"></i> Edit
                       </button>
-                      <button (click)="deleteTest(test)" ngbDropdownItem>
+                      <button (click)="deleteTest(test)" ngbDropdownItem [disabled]="isLocked(test.id)">
                         <i class="fas fa-fw fa-trash"></i> Delete
                       </button>
                       <div *ngIf="test.type === 'case'" class="dropdown-divider"></div>

@@ -49,6 +49,7 @@ import de.learnlib.alex.data.repositories.SymbolSymbolStepRepository;
 import de.learnlib.alex.data.utils.SymbolOutputMappingUtils;
 import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
 import de.learnlib.alex.testing.repositories.TestExecutionResultRepository;
+import de.learnlib.alex.websocket.services.SymbolPresenceService;
 import net.automatalib.graphs.base.compact.CompactSimpleGraph;
 import net.automatalib.util.graphs.scc.SCCs;
 import org.apache.logging.log4j.LogManager;
@@ -105,6 +106,7 @@ public class SymbolDAO {
     private ProjectEnvironmentRepository projectEnvironmentRepository;
     private ObjectMapper objectMapper;
     private SymbolParameterDAO symbolParameterDAO;
+    private SymbolPresenceService symbolPresenceService;
 
     @Autowired
     public SymbolDAO(ProjectRepository projectRepository, ProjectDAO projectDAO,
@@ -118,7 +120,8 @@ public class SymbolDAO {
                      TestExecutionResultRepository testExecutionResultRepository,
                      ProjectEnvironmentRepository projectEnvironmentRepository,
                      ObjectMapper objectMapper,
-                     @Lazy SymbolParameterDAO symbolParameterDAO) {
+                     @Lazy SymbolParameterDAO symbolParameterDAO,
+                     @Lazy SymbolPresenceService symbolPresenceService) {
         this.projectRepository = projectRepository;
         this.projectDAO = projectDAO;
         this.symbolGroupRepository = symbolGroupRepository;
@@ -135,6 +138,7 @@ public class SymbolDAO {
         this.projectEnvironmentRepository = projectEnvironmentRepository;
         this.objectMapper = objectMapper;
         this.symbolParameterDAO = symbolParameterDAO;
+        this.symbolPresenceService = symbolPresenceService;
     }
 
     public List<Symbol> importSymbols(User user, Project project, List<Symbol> symbols, Map<String, SymbolImportConflictResolutionStrategy> conflictResolutions) {
@@ -500,6 +504,9 @@ public class SymbolDAO {
         final Project project = projectRepository.findById(projectId).orElse(null);
         checkAccess(user, project, symbol);
 
+        // check lock status
+        this.symbolPresenceService.checkSymbolLockStatus(projectId, symbol.getId(), user.getId());
+
         // make sure the name of the symbol is unique
         final Symbol symbolWithSameName = symbolRepository.findOneByProject_IdAndName(projectId, symbol.getName());
         if (symbolWithSameName != null && !symbolWithSameName.getId().equals(symbol.getId())) {
@@ -573,6 +580,9 @@ public class SymbolDAO {
         final List<Symbol> symbols = symbolRepository.findAllByIdIn(symbolIds);
         for (Symbol symbol : symbols) {
             checkAccess(user, project, symbol);
+
+            // check symbol lock status
+            this.symbolPresenceService.checkSymbolLockStatusStrict(projectId, symbol.getId(), user.getId());
         }
 
         for (Symbol symbol : symbols) {
@@ -643,6 +653,9 @@ public class SymbolDAO {
         final List<Symbol> symbols = symbolRepository.findAllByIdIn(ids);
         for (Symbol symbol : symbols) {
             checkAccess(user, project, symbol);
+
+            // check symbol lock status
+            this.symbolPresenceService.checkSymbolLockStatus(projectId, symbol.getId(), user.getId());
         }
 
         for (Symbol symbol : symbols) {
@@ -661,6 +674,11 @@ public class SymbolDAO {
     public void show(User user, Long projectId, List<Long> ids) throws NotFoundException {
         Project project = projectDAO.getByID(user, projectId); // access check
 
+        // check symbol lock status
+        for (Long symbolId : ids) {
+            this.symbolPresenceService.checkSymbolLockStatus(projectId, symbolId, user.getId());
+        }
+
         for (Long id : ids) {
             Symbol symbol = get(user, project, id);
             symbol.setHidden(false);
@@ -670,6 +688,9 @@ public class SymbolDAO {
 
     public void delete(User user, Long projectId, Long symbolId) throws NotFoundException {
         final Symbol symbol = get(user, projectId, symbolId);
+
+        // check symbol lock status
+        this.symbolPresenceService.checkSymbolLockStatusStrict(projectId, symbolId, user.getId());
 
         if (!symbol.isHidden()) {
             throw new ValidationException("Symbol has to be archived first.");

@@ -53,6 +53,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .antMatchers(HttpMethod.POST, "/rest/users").permitAll()
                     .antMatchers(HttpMethod.PUT, "/rest/users/{\\d+}/role").hasAuthority(adminAuthority)
                     .antMatchers(HttpMethod.DELETE, "/rest/users/batch/**").hasAuthority(adminAuthority)
+                    .antMatchers("/rest/ws/stomp/**").permitAll()
+                    .antMatchers("/rest/ws/disconnect").hasAnyAuthority(new String[]{registeredAuthority, adminAuthority})
                     .antMatchers("/rest/**").hasAnyAuthority(new String[]{registeredAuthority, adminAuthority}).and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()

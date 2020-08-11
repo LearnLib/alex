@@ -20,6 +20,8 @@ import { User } from '../entities/user';
 import { ClipboardService } from './clipboard.service';
 import { ProjectApiService } from './api/project-api.service';
 import { Router } from '@angular/router';
+import { WebSocketMessage } from "../entities/websocket-message";
+import { WebSocketService, WebSocketServiceEnum } from "./websocket.service";
 
 @Injectable()
 export class AppStoreService {
@@ -44,7 +46,8 @@ export class AppStoreService {
 
   constructor(private clipboard: ClipboardService,
               private projectApi: ProjectApiService,
-              private router: Router) {
+              private router: Router,
+              private webSocketService: WebSocketService) {
     this.sidebarCollapsed = false;
 
     const sidebarCollapsed = localStorage.getItem('sidebarCollapsed');
@@ -61,6 +64,10 @@ export class AppStoreService {
     if (user != null) {
       this.user = User.fromData(JSON.parse(user));
     }
+
+    this.webSocketService.register(msg => msg.entity == WebSocketServiceEnum.WEBSOCKET_SERVICE
+                                                  && msg.type == WebSocketServiceEnum.LOGOUT_CHECK)
+      .subscribe(() => this.checkLogout());
   }
 
   login(user: User, jwt: string = null): void {
@@ -73,13 +80,21 @@ export class AppStoreService {
   }
 
   /** Removes all user related data from the session. */
-  logout(): void {
+  logout(propagate: boolean): void {
+    if (propagate) {
+      const msg = new WebSocketMessage();
+      msg.entity = WebSocketServiceEnum.WEBSOCKET_SERVICE;
+      msg.type = WebSocketServiceEnum.LOGOUT;
+      this.webSocketService.send(msg);
+    }
+
     localStorage.removeItem('user');
     localStorage.removeItem('jwt');
     this.user = null;
     this.closeProject();
     this.clipboard.clear();
     this.router.navigate(['/login']);
+    this.webSocketService.disconnect();
   }
 
   openProject(project: Project): void {
@@ -103,5 +118,15 @@ export class AppStoreService {
   toggleSidebar(): void {
     this.sidebarCollapsed = !this.sidebarCollapsed;
     localStorage.setItem('sidebarCollapsed', JSON.stringify(this.sidebarCollapsed));
+  }
+
+  getUsername(): string {
+    return this.user.username;
+  }
+
+  private checkLogout() {
+    if (localStorage.getItem('jwt') == null) {
+      this.logout(false);
+    }
   }
 }

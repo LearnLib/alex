@@ -28,6 +28,7 @@ import de.learnlib.alex.data.entities.export.SymbolImportConflictResolutionStrat
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
+import de.learnlib.alex.websocket.services.SymbolPresenceService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -68,17 +69,19 @@ public class SymbolGroupDAO {
     private SymbolRepository symbolRepository;
     private SymbolDAO symbolDAO;
     private ObjectMapper objectMapper;
+    private SymbolPresenceService symbolPresenceService;
 
     @Autowired
     public SymbolGroupDAO(ProjectRepository projectRepository, ProjectDAO projectDAO,
                           SymbolGroupRepository symbolGroupRepository, SymbolRepository symbolRepository,
-                          @Lazy SymbolDAO symbolDAO, ObjectMapper objectMapper) {
+                          @Lazy SymbolDAO symbolDAO, ObjectMapper objectMapper, @Lazy SymbolPresenceService symbolPresenceService) {
         this.projectRepository = projectRepository;
         this.projectDAO = projectDAO;
         this.symbolGroupRepository = symbolGroupRepository;
         this.symbolRepository = symbolRepository;
         this.symbolDAO = symbolDAO;
         this.objectMapper = objectMapper;
+        this.symbolPresenceService = symbolPresenceService;
     }
 
     public List<SymbolGroup> importGroups(User user, Long projectId, SymbolGroupsImportableEntity importableEntity) {
@@ -253,6 +256,9 @@ public class SymbolGroupDAO {
         final SymbolGroup groupInDB = symbolGroupRepository.findById(group.getId()).orElse(null);
         checkAccess(user, project, groupInDB);
 
+        // check symbolgroup lock status
+        this.symbolPresenceService.checkGroupLockStatus(project.getId(), group.getId());
+
         if (!group.getName().equals(groupInDB.getName())) {
             group.setName(createGroupName(project, group));
         }
@@ -275,6 +281,9 @@ public class SymbolGroupDAO {
         final Project project = projectRepository.findById(group.getProjectId()).orElse(null);
         final SymbolGroup groupInDB = symbolGroupRepository.findById(group.getId()).orElse(null);
         checkAccess(user, project, groupInDB);
+
+        // check symbolgroup lock status
+        this.symbolPresenceService.checkGroupLockStatus(project.getId(), group.getId());
 
         final SymbolGroup defaultGroup = symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(project.getId());
         if (defaultGroup.equals(groupInDB)) {
@@ -321,6 +330,9 @@ public class SymbolGroupDAO {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final SymbolGroup group = symbolGroupRepository.findById(groupId).orElse(null);
         checkAccess(user, project, group);
+
+        // check symbolgroup lock status
+        this.symbolPresenceService.checkGroupLockStatus(projectId, groupId);
 
         final SymbolGroup defaultGroup = symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(projectId);
         if (defaultGroup.equals(group)) {

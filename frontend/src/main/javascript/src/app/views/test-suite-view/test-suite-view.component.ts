@@ -39,6 +39,7 @@ import { TestsImportModalComponent } from './tests-import-modal/tests-import-mod
 import { TestConfigModalComponent } from '../tests-view/test-config-modal/test-config-modal.component';
 import { TestsMoveModalComponent } from './tests-move-modal/tests-move-modal.component';
 import { TestReportStatus, TestStatus } from '../../entities/test-status';
+import {TestLockInfo, TestPresenceService} from "../../services/test-presence.service";
 
 @Component({
   selector: 'test-suite-view',
@@ -66,6 +67,8 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
 
   private pollHandle: number;
 
+  lockInfo: Map<number, Map<number, TestLockInfo>>;
+
   constructor(private symbolGroupApi: SymbolGroupApiService,
               private appStore: AppStoreService,
               private toastService: ToastService,
@@ -77,7 +80,8 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
               public clipboardService: ClipboardService,
               private testReportApi: TestReportApiService,
               private notificationService: NotificationService,
-              private testConfigApi: TestConfigApiService) {
+              private testConfigApi: TestConfigApiService,
+              private testPresenceService: TestPresenceService) {
     this.testConfigs = [];
     this.selectedTests = new Selectable<any, any>(t => t.id);
     this.groups = [];
@@ -118,6 +122,10 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
       groups => this.groups = groups,
       console.error
     );
+
+    this.testPresenceService.accessedTests$.subscribe(tests => {
+      this.lockInfo = tests;
+    })
   }
 
   ngOnDestroy(): void {
@@ -399,6 +407,15 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
     }
   }
 
+  selectedContainsLockedItem(): boolean {
+    if (this.lockInfo.get(this.appStore.project.id)) {
+      return this.selectedTests.getSelected().some(value => {
+        return this.lockInfo.get(this.appStore.project.id).has(value.id);
+      });
+    }
+    return false;
+  }
+
   get orderedTests(): any[] {
     return orderBy(this.testSuite.tests, ['type', 'name'], ['desc', 'asc']);
   }
@@ -415,5 +432,9 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
     const map = {};
     this.report.testResults.forEach(r => map[r.test.id] = r);
     return map;
+  }
+
+  isLocked(testId: number): boolean {
+    return this.lockInfo?.get(this.project.id)?.has(testId);
   }
 }

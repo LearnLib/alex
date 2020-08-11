@@ -31,7 +31,7 @@ export class LogoutViewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.appStore.logout();
+    this.appStore.logout(true);
     this.toastService.success('You have been logged out.');
     this.router.navigate(['login']);
   }

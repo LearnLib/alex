@@ -24,16 +24,19 @@ import de.learnlib.alex.data.dao.FileDAO;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.repositories.ProjectRepository;
+import de.learnlib.alex.websocket.services.WebSocketService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import javax.validation.ValidationException;
 import java.io.IOException;
 import java.util.List;
@@ -61,6 +64,10 @@ public class UserDAO {
     /** The repository for projects. */
     private final ProjectRepository projectRepository;
 
+    /** The WebSocketService to use. */
+    private final WebSocketService webSocketService;
+    private EntityManager em;
+
     /**
      * Creates a new UserDAO.
      *
@@ -75,11 +82,13 @@ public class UserDAO {
      */
     @Autowired
     public UserDAO(UserRepository userRepository, FileDAO fileDAO, ProjectDAO projectDAO,
-                   ProjectRepository projectRepository) {
+                   ProjectRepository projectRepository, @Lazy WebSocketService webSocketService, EntityManager em) {
         this.userRepository = userRepository;
         this.fileDAO = fileDAO;
         this.projectDAO = projectDAO;
         this.projectRepository = projectRepository;
+        this.webSocketService = webSocketService;
+        this.em = em;
     }
 
     public void create(User newUser) throws ValidationException, UnauthorizedException {
@@ -155,6 +164,7 @@ public class UserDAO {
 
         for (User user : users) {
             delete(authUser, user);
+            em.flush();
         }
     }
 
@@ -181,6 +191,7 @@ public class UserDAO {
 
             //remove the project if there is none owner left
             if (project.getOwners().isEmpty()) {
+
                 projectDAO.delete(authUser, project.getId());
                 try {
                     fileDAO.deleteProjectDirectory(user, project.getId());
@@ -191,6 +202,9 @@ public class UserDAO {
         }
 
         userRepository.delete(user);
+
+        //close all active webSocketSessions of user and lift all corresponding locks
+        webSocketService.closeAllUserSessions(user.getId());
 
         // delete the user directory
         try {

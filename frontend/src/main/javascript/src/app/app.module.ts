@@ -249,6 +249,13 @@ import { LtsFormulaSuiteViewComponent } from './views/lts-formula-suite-view/lts
 import { TreeViewComponent } from './common/tree-view/tree-view.component';
 import { MoveLtsFormulaModalComponent } from './views/lts-formula-suite-view/move-lts-formula-modal/move-lts-formula-modal.component';
 import { ModelCheckerApiService } from './services/api/model-checker-api.service';
+import { WebSocketAPIService } from "./services/api/websocket-api.service";
+import { WebSocketService } from "./services/websocket.service";
+import { ProjectPresenceService } from "./services/project-presence.service";
+import { TestPresenceService } from "./services/test-presence.service";
+import { SymbolPresenceService } from "./services/symbol-presence.service";
+import { LockInfoBadgeComponent } from './common/lock-info-badge/lock-info-badge.component';
+import { LockInfoListComponent } from './common/lock-info-list/lock-info-list.component';
 
 @NgModule({
   declarations: [
@@ -454,7 +461,9 @@ import { ModelCheckerApiService } from './services/api/model-checker-api.service
     ProjectListComponent,
     LtsFormulaSuiteViewComponent,
     TreeViewComponent,
-    MoveLtsFormulaModalComponent
+    MoveLtsFormulaModalComponent,
+    LockInfoBadgeComponent,
+    LockInfoListComponent
   ],
   imports: [
     BrowserModule,
@@ -513,7 +522,12 @@ import { ModelCheckerApiService } from './services/api/model-checker-api.service
     ErrorViewStoreService,
     FormUtilsService,
     LtsFormulaSuiteApiService,
-    ModelCheckerApiService
+    ModelCheckerApiService,
+    WebSocketAPIService,
+    WebSocketService,
+    ProjectPresenceService,
+    TestPresenceService,
+    SymbolPresenceService
   ],
   bootstrap: [AppComponent]
 })

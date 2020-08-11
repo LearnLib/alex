@@ -139,7 +139,7 @@ export class EditUserModalComponent implements OnInit {
     this.userApi.changeRole(this.user, UserRole.REGISTERED).subscribe(
       user => {
         if (this.currentUser.id === this.user.id) {
-          this.appStore.logout();
+          this.appStore.logout(true);
         } else {
           this.updated.emit(user);
         }

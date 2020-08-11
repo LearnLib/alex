@@ -15,24 +15,33 @@
  */
 
 import { AlphabetSymbol } from '../../../../entities/alphabet-symbol';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { SymbolsViewStoreService } from '../../symbols-view-store.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SymbolUsagesModalComponent } from '../../../../common/modals/symbol-usages-modal/symbol-usages-modal.component';
+import { SymbolLockInfo } from "../../../../services/symbol-presence.service";
 
 @Component({
   selector: 'symbol-item',
   templateUrl: './symbol-item.component.html',
   styleUrls: ['./symbol-item.component.scss']
 })
-export class SymbolItemComponent {
+export class SymbolItemComponent implements OnInit {
 
   /** The symbol that is displayed. */
   @Input()
   symbol: AlphabetSymbol;
 
+  lockInfo: SymbolLockInfo;
+
   constructor(public store: SymbolsViewStoreService,
               private modal: NgbModal) {
+  }
+
+  ngOnInit() {
+    this.store.symbolLocks$.subscribe(value => {
+      this.lockInfo = value?.get(this.symbol.id);
+    })
   }
 
   showSymbolUsages() {

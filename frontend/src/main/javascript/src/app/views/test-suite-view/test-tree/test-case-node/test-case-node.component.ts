@@ -15,6 +15,8 @@
  */
 
 import { Component, Input } from '@angular/core';
+import { TestCaseLockInfo } from "../../../../services/test-presence.service";
+import { AppStoreService } from "../../../../services/app-store.service";
 
 @Component({
   selector: 'test-case-node',
@@ -23,11 +25,17 @@ import { Component, Input } from '@angular/core';
 })
 export class TestCaseNodeComponent {
 
+  constructor(public appStore: AppStoreService) {
+  }
+
   @Input()
   public case: any;
 
   @Input()
   public results: any[];
+
+  @Input()
+  public lockInfo: TestCaseLockInfo;
 
   get result(): any {
     return this.results[this.case.id];

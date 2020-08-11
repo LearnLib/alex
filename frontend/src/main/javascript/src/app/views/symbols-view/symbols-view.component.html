@@ -18,21 +18,21 @@
           <button
             class="btn btn-default"
             (click)="store.updateSymbol(store.symbolsSelectable.getSelected()[0])"
-            [disabled]="store.symbolsSelectable.getSelected().length !== 1"
+            [disabled]="store.symbolsSelectable.getSelected().length !== 1 || store.selectedContainsLockedItem()"
           >
             Edit
           </button>
           <button
             class="btn btn-default"
             (click)="store.moveSelectedSymbols()"
-            [disabled]="store.symbolsSelectable.getSelected().length === 0"
+            [disabled]="store.symbolsSelectable.getSelected().length === 0 || store.selectedContainsLockedItem()"
           >
             Move
           </button>
           <button
             class="btn btn-default"
             (click)="store.deleteSelectedSymbols()"
-            [disabled]="store.symbolsSelectable.getSelected().length === 0"
+            [disabled]="store.symbolsSelectable.getSelected().length === 0 || store.selectedContainsLockedItem()"
           >
             Delete
           </button>

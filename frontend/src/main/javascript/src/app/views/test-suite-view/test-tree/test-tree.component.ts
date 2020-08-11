@@ -15,6 +15,7 @@
  */
 
 import { Component, Input } from '@angular/core';
+import { TestCaseLockInfo, TestSuiteLockInfo } from "../../../services/test-presence.service";
 
 @Component({
   selector: 'test-tree',
@@ -28,4 +29,7 @@ export class TestTreeComponent {
 
   @Input()
   public results: any[];
+
+  @Input()
+  public lockInfo: TestCaseLockInfo | TestSuiteLockInfo;
 }

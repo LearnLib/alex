@@ -185,3 +185,9 @@ learner-results-compare-view ngb-tabset {
     height: 100%;
   }
 }
+
+a.disabled {
+  pointer-events: none;
+  cursor: default;
+  color: #757575;
+}

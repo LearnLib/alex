@@ -15,22 +15,31 @@
  */
 
 import { SymbolGroup } from '../../../../entities/symbol-group';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { SymbolsViewStoreService } from '../../symbols-view-store.service';
+import { SymbolGroupLockInfo } from "../../../../services/symbol-presence.service";
 
 @Component({
   selector: 'symbol-group-header',
   templateUrl: './symbol-group-header.component.html',
   styleUrls: ['./symbol-group-header.component.scss']
 })
-export class SymbolGroupHeaderComponent {
+export class SymbolGroupHeaderComponent implements OnInit {
 
   /** The symbol group to display. */
   @Input()
   group: SymbolGroup;
 
+  lockInfo: SymbolGroupLockInfo;
+
   /** Constructor. */
   constructor(public store: SymbolsViewStoreService) {
+  }
+
+  ngOnInit() {
+    this.store.groupLocks$.subscribe(value => {
+      this.lockInfo = value?.get(this.group.id);
+    })
   }
 
   toggleCollapse(): void {

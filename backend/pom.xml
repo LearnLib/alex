@@ -67,6 +67,7 @@
         <mysql-connector.version>8.0.19</mysql-connector.version>
         <jaxb.version>2.4.0-b180830.0359</jaxb.version>
         <flyway.version>5.2.4</flyway.version>
+        <rxjava.version>3.0.3</rxjava.version>
     </properties>
 
     <!--===== dependencies ======-->
@@ -141,6 +142,12 @@
             <version>${json-schema-validator.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+            <version>${spring-boot.version}</version>
+        </dependency>
+
         <!-- flyway -->
         <dependency>
             <groupId>org.flywaydb</groupId>
@@ -188,6 +195,13 @@
             <groupId>com.jayway.jsonpath</groupId>
             <artifactId>json-path</artifactId>
             <version>${json-path.version}</version>
+        </dependency>
+
+        <!-- RxJava -->
+        <dependency>
+            <groupId>io.reactivex.rxjava3</groupId>
+            <artifactId>rxjava</artifactId>
+            <version>${rxjava.version}</version>
         </dependency>
 
         <dependency>
