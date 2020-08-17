@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.learning.entities;
 
+import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 
 /**
@@ -23,30 +24,27 @@ import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
  */
 public class ReadOutputConfig {
 
-    /**
-     * The sequence of symbols that should be tested.
-     */
     private SymbolSet symbols;
-
-    /**
-     * The web browser the word should be executed in.
-     */
     private AbstractWebDriverConfig driverConfig;
+    private ProjectEnvironment environment;
 
-    /**
-     * Constructor.
-     */
     public ReadOutputConfig() {
     }
 
-    /**
-     * Constructor.
-     * @param symbols The symbols.
-     * @param driverConfig The driver config.
-     */
-    public ReadOutputConfig(SymbolSet symbols, AbstractWebDriverConfig driverConfig) {
+    public ReadOutputConfig(SymbolSet symbols,
+                            AbstractWebDriverConfig driverConfig,
+                            ProjectEnvironment environment) {
         this.symbols = symbols;
         this.driverConfig = driverConfig;
+        this.environment = environment;
+    }
+
+    public ProjectEnvironment getEnvironment() {
+        return environment;
+    }
+
+    public void setEnvironment(ProjectEnvironment environment) {
+        this.environment = environment;
     }
 
     public SymbolSet getSymbols() {

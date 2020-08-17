@@ -277,9 +277,11 @@ public class LearnerResourceIT extends AbstractResourceIT {
         symbolSet.setSymbols(startConfiguration.getSetup().getSymbols());
         symbolSet.setResetSymbol(startConfiguration.getSetup().getPreSymbol());
 
-        final ReadOutputConfig config = new ReadOutputConfig();
-        config.setSymbols(symbolSet);
-        config.setDriverConfig(startConfiguration.getSetup().getWebDriver());
+        final ReadOutputConfig config = new ReadOutputConfig(
+                symbolSet,
+                startConfiguration.getSetup().getWebDriver(),
+                startConfiguration.getSetup().getEnvironments().get(0)
+        );
 
         final Response res = learnerApi.readOutput(project.getId(), config, jwt);
         assertEquals(HttpStatus.OK.value(), res.getStatus());

@@ -22,6 +22,7 @@ import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.dao.LearnerSetupDAO;
 import de.learnlib.alex.learning.entities.LearnerOptions;
@@ -233,14 +234,16 @@ public class LearnerService {
                 }
             }
 
-            // finally check if the given sample matches the behavior of the SUL
-            List<String> results = readOutputs(user,
+            // check if the given sample matches the behavior of the SUL
+            final List<String> results = readOutputs(
+                    user,
                     result.getProject(),
+                    result.getSetup().getEnvironments().get(0),
                     result.getSetup().getPreSymbol(),
                     symbolsFromCounterexample,
                     result.getSetup().getPostSymbol(),
-                    result.getSetup().getWebDriver())
-                    .stream()
+                    result.getSetup().getWebDriver()
+            ).stream()
                     .map(ExecuteResult::getOutput)
                     .collect(Collectors.toList());
 
@@ -319,14 +322,18 @@ public class LearnerService {
      * @throws LearnerException
      *         If something went wrong while testing the symbols.
      */
-    public List<ExecuteResult> readOutputs(User user, Project project, ParameterizedSymbol resetSymbol,
+    public List<ExecuteResult> readOutputs(User user, Project project, ProjectEnvironment environment, ParameterizedSymbol resetSymbol,
                                            List<ParameterizedSymbol> symbols, ParameterizedSymbol postSymbol, AbstractWebDriverConfig driverConfig)
             throws LearnerException {
         logger.traceEntry();
         logger.info(LoggerMarkers.LEARNER, "Learner.readOutputs({}, {}, {}, {}, {})", user, project, resetSymbol, symbols, driverConfig);
 
-        SymbolSet symbolSet = new SymbolSet(resetSymbol, symbols, postSymbol);
-        ReadOutputConfig config = new ReadOutputConfig(symbolSet, driverConfig);
+        final SymbolSet symbolSet = new SymbolSet(resetSymbol, symbols, postSymbol);
+        final ReadOutputConfig config = new ReadOutputConfig(
+                symbolSet,
+                driverConfig,
+                environment
+        );
 
         logger.traceExit();
         return readOutputs(user, project, config);
@@ -345,7 +352,7 @@ public class LearnerService {
      */
     public List<ExecuteResult> readOutputs(User user, Project project, ReadOutputConfig readOutputConfig) {
         PreparedContextHandler ctxHandler = contextHandlerFactory.createPreparedContextHandler(user, project, readOutputConfig.getDriverConfig(), readOutputConfig.getSymbols().getResetSymbol(), readOutputConfig.getSymbols().getPostSymbol());
-        ConnectorManager connectors = ctxHandler.create(project.getDefaultEnvironment()).createContext();
+        ConnectorManager connectors = ctxHandler.create(readOutputConfig.getEnvironment()).createContext();
 
         try {
             List<ExecuteResult> outputs = readOutputConfig.getSymbols().getSymbols().stream()

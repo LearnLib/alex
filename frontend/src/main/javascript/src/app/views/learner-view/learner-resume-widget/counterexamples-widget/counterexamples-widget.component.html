@@ -13,6 +13,12 @@
             <span class="badge badge-secondary">{{io.output}}</span>
           </div>
         </div>
+        <div class="form-group">
+          <label>Environment</label>
+          <select class="form-control" [(ngModel)]="selectedEnvironmentId" [ngModelOptions]="{standalone: true}">
+            <option *ngFor="let env of result.setup.environments" [value]="env.id">{{env.name}}</option>
+          </select>
+        </div>
         <button class="btn btn-default btn-sm btn-block" [disabled]="loading">
           <span *ngIf="!loading">Add counterexample</span>
           <span *ngIf="loading"><i class="fas fa-fw fa-circle-notch fa-spin"></i> Testing counterexample</span>

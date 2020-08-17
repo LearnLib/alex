@@ -50,7 +50,6 @@ public class LearnerResult implements Serializable {
 
     private static final long serialVersionUID = 4619722174562257862L;
 
-
     public enum Status {
         PENDING,
         IN_PROGRESS,

@@ -21,6 +21,7 @@ import { LearnerResult } from '../../../../entities/learner-result';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { DragulaService } from 'ng2-dragula';
 import { LearnerViewStoreService } from '../../learner-view-store.service';
+import set = Reflect.set;
 
 interface IOPair {
   input: string;
@@ -44,6 +45,7 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
 
   @Input()
   result: LearnerResult;
+  selectedEnvironmentId: number;
 
   /** The array of input output pairs of the shared counterexample. */
   counterexample: Counterexample = [];
@@ -74,6 +76,8 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
       },
       removeOnSpill: false
     });
+
+    this.selectedEnvironmentId = this.result.setup.environments[0].id;
   }
 
   ngOnDestroy(): void {
@@ -160,7 +164,8 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
 
       this.learnerApi.readOutputs(this.result.project, {
         symbols: {resetSymbol, symbols, postSymbol},
-        driverConfig: setup.webDriver
+        driverConfig: setup.webDriver,
+        environment: setup.environments.filter(e => e.id === this.selectedEnvironmentId)[0]
       }).subscribe(
         ce => {
           let ceFound = false;
