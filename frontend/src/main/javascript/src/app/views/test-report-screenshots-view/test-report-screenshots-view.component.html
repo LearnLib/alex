@@ -1,0 +1,78 @@
+<div class="view">
+
+  <div class="view-body">
+    <div class="container-fluid">
+
+      <h4 class="d-flex">
+        <strong>{{testResult?.test.name}}</strong>
+      </h4>
+
+      <table *ngIf="testResult" class="table table-striped vertical-aligned">
+        <thead>
+        <tr>
+          <th>#</th>
+          <th>Symbol</th>
+          <th>Result</th>
+          <th>
+            Screenshot after execution
+            &nbsp;
+            <i
+              class="fa fa-download screenshot-download-icon"
+              aria-hidden="true"
+              ngbTooltip="Download all screenshots"
+              (click)="downloadScreenshots()"
+            >
+            </i>
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>0</td>
+          <td>---</td>
+          <td>---</td>
+          <td>
+            <img
+              *ngIf="testResult.beforeScreenshot"
+              height="200px"
+              [src]="'/projects/' + testResult.project + '/tests/reports/' + testResult.report + '/results/' + testResult.id + '/screenshots/' + testResult.beforeScreenshot.filename | fetchImgSecure | async"
+              alt=""
+              (click)="viewScreenshot('/projects/' + testResult.project + '/tests/reports/' + testResult.report + '/results/' + testResult.id + '/screenshots/' + testResult.beforeScreenshot.filename, '0) Screenshot before first symbol execution')"
+            >
+          </td>
+        </tr>
+        <tr *ngFor="let output of testResult.outputs; index as i">
+          <td width="1%">{{i+1}}</td>
+          <td>
+            <a
+              [routerLink]="['/app', 'projects', testResult.project, 'symbols', output.symbol.id]"
+              class="badge badge-secondary cursor-pointer"
+            >
+              {{output.symbol.name}}
+            </a>
+          </td>
+          <td>
+            <span
+              [ngClass]="{'badge-success': output.success,'badge-danger':!output.success}"
+              class="badge"
+            >
+              {{output.output}}
+            </span>
+          </td>
+          <td>
+            <img
+              *ngIf="output.testScreenshot"
+              height="200px"
+              [src]="'/projects/' + testResult.project + '/tests/reports/' + testResult.report + '/results/' + testResult.id + '/screenshots/' + output.testScreenshot.filename | fetchImgSecure | async"
+              alt=""
+              (click)="viewScreenshot('/projects/' + testResult.project + '/tests/reports/' + testResult.report + '/results/' + testResult.id + '/screenshots/' + output.testScreenshot.filename, (i+1) + ')' + '  ' + output.symbol.name + ' => ' + output.output)"
+            >
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+
+</div>

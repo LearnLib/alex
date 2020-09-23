@@ -23,7 +23,10 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +49,12 @@ public class TestCaseResult extends TestResult {
     private List<TestExecutionResult> outputs;
 
     private Long failedStep;
+
+    @OneToOne(
+            cascade = {CascadeType.ALL}
+    )
+    @JoinColumn(name = "beforeTestScreenshotId")
+    private TestScreenshot beforeScreenshot;
 
     /**
      * Constructor.
@@ -73,7 +82,9 @@ public class TestCaseResult extends TestResult {
         this.time = time;
         this.failedStep = failedStep;
 
-        this.outputs.forEach(out -> out.setResult(this));
+        this.outputs.forEach(out -> {
+            out.setResult(this);
+        });
     }
 
     public List<TestExecutionResult> getOutputs() {
@@ -116,5 +127,13 @@ public class TestCaseResult extends TestResult {
     @JsonIgnore
     @JsonProperty("failureMessage")
     public void setFailureMessage(String failureMessage) {
+    }
+
+    public TestScreenshot getBeforeScreenshot() {
+        return beforeScreenshot;
+    }
+
+    public void setBeforeScreenshot(TestScreenshot beforeScreenshot) {
+        this.beforeScreenshot = beforeScreenshot;
     }
 }

@@ -46,6 +46,14 @@
         <output-error-trace [output]="result" [showFirst]="true"></output-error-trace>
       </td>
     </tr>
+    <tr *ngIf="result.testScreenshot != null">
+      <td>
+        <strong>Screenshot after execution</strong>
+      </td>
+      <td>
+        <img [src]="'/projects/' + result.testScreenshot.project + '/tests/reports/' + result.testScreenshot.report + '/screenshots/' + result.testScreenshot.filename | fetchImgSecure | async" [alt]=''>
+      </td>
+    </tr>
     </tbody>
   </table>
 </div>

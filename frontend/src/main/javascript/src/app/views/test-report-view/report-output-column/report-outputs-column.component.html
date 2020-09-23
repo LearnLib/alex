@@ -1,7 +1,7 @@
 <div class="d-flex flex-row">
   <div *ngIf="collapse" class="w-100">
     <span
-      *ngFor="let output of outputs"
+      *ngFor="let output of testResult.outputs"
       [ngClass]="{'badge-success': output.success,'badge-danger':!output.success}"
       class="badge d-inline-block"
       style="margin-left: 3px"
@@ -12,7 +12,7 @@
   <div *ngIf="!collapse" class="w-100">
     <table class="table table-hollow">
       <tbody>
-      <tr *ngFor="let output of outputs">
+      <tr *ngFor="let output of testResult.outputs">
         <td class="text-right" style="width: 1px">
           <a
             [routerLink]="['/app', 'projects', project.id, 'symbols', output.symbol.id]"
@@ -52,5 +52,14 @@
       placement="left"
     >
     </i>
+  </div>
+  <div>
+    <a [routerLink]="['/app', 'projects', project.id, 'tests', 'reports', testResult.report, 'results', testResult.id]">
+     <i
+       class="fas fa-fw fa-image"
+       style="color: black"
+       ngbTooltip="Test-Screenshots"
+     ></i>
+    </a>
   </div>
 </div>

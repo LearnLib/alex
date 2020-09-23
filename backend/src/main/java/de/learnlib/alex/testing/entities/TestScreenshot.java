@@ -14,20 +14,32 @@
  * limitations under the License.
  */
 
-import { Component, Input } from '@angular/core';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { TestReportApiService } from "../../../services/api/test-report-api.service";
+package de.learnlib.alex.testing.entities;
 
-@Component({
-  selector: 'execution-result-modal',
-  templateUrl: './execution-result-modal.component.html'
-})
-export class ExecutionResultModalComponent {
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
-  @Input()
-  result: any;
+@Entity
+public class TestScreenshot {
 
-  constructor(public modal: NgbActiveModal,
-              public testReportServiceApi: TestReportApiService) {
-  }
+    @Id
+    @GeneratedValue
+    private long id;
+
+    private String filename;
+
+    public TestScreenshot() {};
+
+    public TestScreenshot(String filename) {
+        this.filename = filename;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
 }

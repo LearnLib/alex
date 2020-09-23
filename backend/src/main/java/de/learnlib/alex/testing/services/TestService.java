@@ -29,12 +29,12 @@ import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.entities.TestStatus;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 /** The service that executes tests. */
 @Service
@@ -59,6 +59,9 @@ public class TestService {
     private final ProjectDAO projectDAO;
 
     private final ProjectEnvironmentDAO environmentDAO;
+
+    @Value("${alex.filesRootDir}")
+    private String filesRootDir;
 
     @Inject
     public TestService(PreparedConnectorContextHandlerFactory contextHandlerFactory, WebhookService webhookService,
@@ -142,6 +145,6 @@ public class TestService {
     }
 
     public TestExecutor createTestExecutor() {
-        return new TestExecutor(contextHandlerFactory, environmentDAO);
+        return new TestExecutor(contextHandlerFactory, environmentDAO, filesRootDir);
     }
 }

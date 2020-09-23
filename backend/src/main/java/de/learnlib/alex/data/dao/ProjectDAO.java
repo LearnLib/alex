@@ -39,6 +39,7 @@ import de.learnlib.alex.data.repositories.UploadableFileRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.repositories.LearnerSetupRepository;
 import de.learnlib.alex.testing.dao.TestDAO;
+import de.learnlib.alex.testing.dao.TestReportDAO;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestSuite;
 import de.learnlib.alex.testing.repositories.TestExecutionConfigRepository;
@@ -96,6 +97,7 @@ public class ProjectDAO {
     private TestPresenceService testPresenceService;
     private SymbolPresenceService symbolPresenceService;
     private ProjectPresenceService projectPresenceService;
+    private TestReportDAO testReportDAO;
 
     @Autowired
     public ProjectDAO(ProjectRepository projectRepository,
@@ -118,7 +120,8 @@ public class ProjectDAO {
                       LearnerSetupRepository learnerSetupRepository,
                       @Lazy TestPresenceService testPresenceService,
                       @Lazy SymbolPresenceService symbolPresenceService,
-                      @Lazy ProjectPresenceService projectPresenceService) {
+                      @Lazy ProjectPresenceService projectPresenceService,
+                      @Lazy TestReportDAO testReportDAO) {
         this.projectRepository = projectRepository;
         this.learnerResultRepository = learnerResultRepository;
         this.fileDAO = fileDAO;
@@ -140,6 +143,7 @@ public class ProjectDAO {
         this.testPresenceService = testPresenceService;
         this.symbolPresenceService = symbolPresenceService;
         this.projectPresenceService = projectPresenceService;
+        this.testReportDAO = testReportDAO;
     }
 
     public Project create(final User user, final CreateProjectForm projectForm) throws ValidationException {
@@ -242,6 +246,13 @@ public class ProjectDAO {
         this.testPresenceService.releaseTestLocksByProject(projectId);
         this.projectPresenceService.removeProjectFromPresenceMap(projectId);
 
+        // delete the screenshot directory
+        try {
+            testReportDAO.deleteScreenshotDirectory(user, projectId);
+        } catch (IOException e) {
+            LOGGER.info("The screenshot directory may not have been deleted.");
+        }
+
         // delete the project directory
         try {
             fileDAO.deleteProjectDirectory(user, projectId);
@@ -249,6 +260,7 @@ public class ProjectDAO {
         } catch (IOException e) {
             LOGGER.info("The project has been deleted, the directory, however, not.");
         }
+
     }
 
     public void delete(User user, List<Long> projectIds) throws NotFoundException {

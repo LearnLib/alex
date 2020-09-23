@@ -69,7 +69,7 @@
                 <a [title]="['/app', 'projects', result.project, 'tests', result.test.id]">{{result.test.name}}</a>
               </td>
               <td>
-                <report-outputs-column [outputs]="result.outputs" [project]="project"></report-outputs-column>
+                <report-outputs-column [testResult]="result" [project]="project"></report-outputs-column>
               </td>
               <td>
                 <em *ngIf="result.failureMessage">{{result.failureMessage}}</em>
