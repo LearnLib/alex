@@ -78,11 +78,15 @@ export class SymbolsViewStoreService {
     );
 
     this.symbolPresenceService.accessedSymbolGroups$.subscribe(groupLocks => {
-      this.groupLocks.next(groupLocks.get(this.appStore.project.id));
-      });
+      if (this.appStore.project) {
+        this.groupLocks.next(groupLocks.get(this.appStore.project.id));
+      }
+    });
 
     this.symbolPresenceService.accessedSymbols$.subscribe(symbolLocks => {
-      this.symbolLocks.next(symbolLocks.get(this.appStore.project.id));
+      if (this.appStore.project) {
+        this.symbolLocks.next(symbolLocks.get(this.appStore.project.id));
+      }
     })
   }
 
