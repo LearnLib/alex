@@ -38,6 +38,10 @@ import de.learnlib.alex.data.repositories.SymbolStepRepository;
 import de.learnlib.alex.data.repositories.UploadableFileRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.repositories.LearnerSetupRepository;
+import de.learnlib.alex.modelchecking.dao.LtsFormulaDAO;
+import de.learnlib.alex.modelchecking.dao.LtsFormulaSuiteDAO;
+import de.learnlib.alex.modelchecking.entities.LtsFormula;
+import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestSuite;
@@ -96,6 +100,8 @@ public class ProjectDAO {
     private TestPresenceService testPresenceService;
     private SymbolPresenceService symbolPresenceService;
     private ProjectPresenceService projectPresenceService;
+    private LtsFormulaSuiteDAO ltsFormulaSuiteDAO;
+    private LtsFormulaDAO ltsFormulaDAO;
 
     @Autowired
     public ProjectDAO(ProjectRepository projectRepository,
@@ -118,7 +124,9 @@ public class ProjectDAO {
                       LearnerSetupRepository learnerSetupRepository,
                       @Lazy TestPresenceService testPresenceService,
                       @Lazy SymbolPresenceService symbolPresenceService,
-                      @Lazy ProjectPresenceService projectPresenceService) {
+                      @Lazy ProjectPresenceService projectPresenceService,
+                      @Lazy LtsFormulaSuiteDAO ltsFormulaSuiteDAO,
+                      @Lazy LtsFormulaDAO ltsFormulaDAO) {
         this.projectRepository = projectRepository;
         this.learnerResultRepository = learnerResultRepository;
         this.fileDAO = fileDAO;
@@ -140,6 +148,8 @@ public class ProjectDAO {
         this.testPresenceService = testPresenceService;
         this.symbolPresenceService = symbolPresenceService;
         this.projectPresenceService = projectPresenceService;
+        this.ltsFormulaSuiteDAO = ltsFormulaSuiteDAO;
+        this.ltsFormulaDAO = ltsFormulaDAO;
     }
 
     public Project create(final User user, final CreateProjectForm projectForm) throws ValidationException {
@@ -263,10 +273,12 @@ public class ProjectDAO {
         final Project project;
         final List<SymbolGroup> groups;
         final List<Test> tests;
+        final List<LtsFormulaSuite> formulaSuites;
         try {
             project = om.readValue(projectExportableEntity.getProject().toString(), Project.class);
             groups = new ArrayList<>(Arrays.asList(om.readValue(projectExportableEntity.getGroups().toString(), SymbolGroup[].class)));
             tests = new ArrayList<>(Arrays.asList(om.readValue(projectExportableEntity.getTests().toString(), Test[].class)));
+            formulaSuites = new ArrayList<>(Arrays.asList(om.readValue(projectExportableEntity.getFormulaSuites().toString(), LtsFormulaSuite[].class)));
         } catch (IOException e) {
             e.printStackTrace();
             throw new ValidationException("The input is not formatted correctly");
@@ -300,6 +312,13 @@ public class ProjectDAO {
         symbolGroupDAO.importGroups(user, createdProject, groups, new HashMap<>());
         if (!tests.isEmpty()) {
             testDAO.importTests(user, createdProject.getId(), tests);
+        }
+
+        for (LtsFormulaSuite suite: formulaSuites) {
+            final LtsFormulaSuite createdSuite = ltsFormulaSuiteDAO.create(user, createdProject.getId(), suite);
+            for (LtsFormula formula: suite.getFormulas()) {
+                ltsFormulaDAO.create(user, createdProject.getId(), createdSuite.getId(), formula);
+            }
         }
 
         return createdProject;

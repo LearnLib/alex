@@ -28,11 +28,15 @@ import de.learnlib.alex.data.entities.export.ExportableEntity;
 import de.learnlib.alex.data.entities.export.ProjectExportableEntity;
 import de.learnlib.alex.data.entities.export.SymbolGroupsExportableEntity;
 import de.learnlib.alex.data.repositories.ProjectRepository;
+import de.learnlib.alex.modelchecking.entities.export.LtsFormulaSuitesExportableEntity;
+import de.learnlib.alex.modelchecking.services.export.LtsFormulaSuitesExporter;
 import de.learnlib.alex.testing.entities.export.TestsExportableEntity;
 import de.learnlib.alex.testing.services.export.TestsExporter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class ProjectExporter extends EntityExporter {
@@ -49,6 +53,9 @@ public class ProjectExporter extends EntityExporter {
     @Autowired
     private TestsExporter testsExporter;
 
+    @Autowired
+    private LtsFormulaSuitesExporter formulaSuitesExporter;
+
     @Transactional
     public ExportableEntity export(User user, Long projectId) throws Exception {
         om.addMixIn(Project.class, IgnoreFieldsForProjectMixin.class);
@@ -63,12 +70,15 @@ public class ProjectExporter extends EntityExporter {
         final ProjectExportableEntity exportableEntity = new ProjectExportableEntity(version, om.readTree(om.writeValueAsString(project)));
         exportableEntity.setGroups(((SymbolGroupsExportableEntity) symbolsExporter.exportAll(user, projectId)).getSymbolGroups());
         exportableEntity.setTests(((TestsExportableEntity) testsExporter.exportAll(user, projectId)).getTests());
+        exportableEntity.setFormulaSuites(((LtsFormulaSuitesExportableEntity) formulaSuitesExporter.export(user, projectId)).getFormulaSuites());
 
         return exportableEntity;
     }
 
     private static abstract class IgnoreFieldsForProjectMixin extends IgnoreIdFieldMixin {
         @JsonIgnore abstract Long getUserId();
+        @JsonIgnore abstract List<Long> getMemberIds();
+        @JsonIgnore abstract List<Long> getOwnerIds();
     }
 
     private static abstract class IgnoreFieldsForProjectEnvironmentMixin extends IgnoreIdFieldMixin {

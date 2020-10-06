@@ -30,6 +30,8 @@ import de.learnlib.alex.data.repositories.SymbolStepRepository;
 import de.learnlib.alex.data.repositories.UploadableFileRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.repositories.LearnerSetupRepository;
+import de.learnlib.alex.modelchecking.dao.LtsFormulaDAO;
+import de.learnlib.alex.modelchecking.dao.LtsFormulaSuiteDAO;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.repositories.TestExecutionConfigRepository;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
@@ -127,6 +129,12 @@ public class ProjectDAOTest {
     @Mock
     private ProjectPresenceService projectPresenceService;
 
+    @Mock
+    private LtsFormulaSuiteDAO ltsFormulaSuiteDAO;
+
+    @Mock
+    private LtsFormulaDAO ltsFormulaDAO;
+
     private ProjectDAO projectDAO;
 
     private User user;
@@ -136,7 +144,8 @@ public class ProjectDAOTest {
         projectDAO = new ProjectDAO(projectRepository, learnerResultRepository, testReportRepository, fileDAO,
                 parameterizedSymbolRepository, symbolStepRepository, symbolActionRepository, environmentDAO,
                 projectUrlRepository, testExecutionConfigRepository, testDAO, userDAO, environmentRepository, symbolGroupDAO,
-                testRepository, symbolParameterRepository, uploadableFileRepository, learnerSetupRepository, testPresenceService, symbolPresenceService, projectPresenceService);
+                testRepository, symbolParameterRepository, uploadableFileRepository, learnerSetupRepository, testPresenceService,
+                symbolPresenceService, projectPresenceService, ltsFormulaSuiteDAO, ltsFormulaDAO);
         user = new User();
         user.setId(USER_ID);
     }

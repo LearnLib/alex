@@ -14,51 +14,18 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.data.entities.export;
+package de.learnlib.alex.modelchecking.entities.export;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import de.learnlib.alex.data.entities.export.ExportableEntity;
 
-public class ProjectExportableEntity extends ExportableEntity {
-
-    private JsonNode project;
-
-    private JsonNode groups;
-
-    private JsonNode tests;
+public class LtsFormulaSuitesExportableEntity extends ExportableEntity {
 
     private JsonNode formulaSuites;
 
-    public ProjectExportableEntity() {
-        super("-1", "project");
-    }
-
-    public ProjectExportableEntity(String version, JsonNode project) {
-        super(version, "project");
-        this.project = project;
-    }
-
-    public JsonNode getProject() {
-        return project;
-    }
-
-    public void setProject(JsonNode project) {
-        this.project = project;
-    }
-
-    public JsonNode getGroups() {
-        return groups;
-    }
-
-    public void setGroups(JsonNode groups) {
-        this.groups = groups;
-    }
-
-    public JsonNode getTests() {
-        return tests;
-    }
-
-    public void setTests(JsonNode tests) {
-        this.tests = tests;
+    public LtsFormulaSuitesExportableEntity(String version, JsonNode formulaSuites) {
+        super(version, "formulaSuites");
+        this.formulaSuites = formulaSuites;
     }
 
     public JsonNode getFormulaSuites() {
@@ -68,4 +35,5 @@ public class ProjectExportableEntity extends ExportableEntity {
     public void setFormulaSuites(JsonNode formulaSuites) {
         this.formulaSuites = formulaSuites;
     }
+
 }

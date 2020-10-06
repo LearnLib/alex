@@ -117,7 +117,7 @@ public class SymbolsExporter extends EntityExporter {
 
     public static class ParameterizedSymbolSerializer extends StdSerializer<ParameterizedSymbol> {
 
-        private ObjectMapper om;
+        private final ObjectMapper om;
 
         public ParameterizedSymbolSerializer(ObjectMapper om, Class<ParameterizedSymbol> t) {
             super(t);
@@ -144,6 +144,7 @@ public class SymbolsExporter extends EntityExporter {
     private static abstract class IgnoreFieldsForSymbolMixin extends IgnoreIdFieldMixin {
         @JsonIgnore abstract Long getProjectId();
         @JsonIgnore abstract Long getGroupId();
+        @JsonIgnore abstract User getlastUpdatedBy();
     }
 
     private static abstract class IgnoreFieldsForSymbolStepMixin extends IgnoreIdFieldMixin {
