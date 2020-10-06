@@ -20,6 +20,8 @@ import { ActivatedRoute } from "@angular/router";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { ViewScreenshotModalComponent } from "./view-screenshot-modal/view-screenshot-modal.component";
 import { DownloadService } from "../../services/download.service";
+import { environment as env } from '../../../environments/environment';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'test-report-screenshots-view',
@@ -33,6 +35,7 @@ export class TestReportScreenshotsViewComponent {
   constructor(private testResultApi: TestResultApiService,
               private route: ActivatedRoute,
               private modalService: NgbModal,
+              private toastService: ToastService,
               private downloadService: DownloadService) {
   }
   ngOnInit(): void {
@@ -49,8 +52,18 @@ export class TestReportScreenshotsViewComponent {
   }
 
   downloadScreenshots() {
-    this.testResultApi.getScreenshots(this.testResult.project, this.testResult.report, this.testResult.id).subscribe(zip => {
-      this.downloadService.downloadZipFromBlob(zip['body'], "screenshots")
-    })
+    this.testResultApi.getScreenshots(this.testResult.project, this.testResult.report, this.testResult.id)
+      .subscribe(
+        res => this.downloadService.downloadZipFromBlob(res.body, "screenshots"),
+        () => this.toastService.danger('Failed to download ZIP archive')
+      );
+  }
+
+  getBeforeScreenshotImageUrl() {
+    return this.getScreenshotImageUrl(this.testResult.beforeScreenshot.filename);
+  }
+
+  getScreenshotImageUrl(filename: string) {
+    return `/projects/${this.testResult.project}/tests/reports/${this.testResult.report}/results/${this.testResult.id}/screenshots/${filename}`;
   }
 }

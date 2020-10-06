@@ -111,16 +111,17 @@ public class TestResultResource {
     @GetMapping(
             value = "/{resultId}/screenshots/batch"
     )
-    public ResponseEntity getAllScreenshots(@PathVariable("projectId") Long projectId,
-                                            @PathVariable("reportId") Long reportId,
-                                            @PathVariable("resultId") Long resultId) {
+    public ResponseEntity<?> getAllScreenshots(@PathVariable("projectId") Long projectId,
+                                               @PathVariable("reportId") Long reportId,
+                                               @PathVariable("resultId") Long resultId) {
         final User user = authContext.getUser();
 
         try {
-            ByteArrayInputStream is = new ByteArrayInputStream(testReportDAO.getScreenshotsAsZip(user, projectId, reportId, resultId));
+            final ByteArrayInputStream is = new ByteArrayInputStream(testReportDAO.getScreenshotsAsZip(user, projectId, reportId, resultId));
             final Resource resource = new InputStreamResource(is);
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"screenshots.zip").body(resource);
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"screenshots.zip\"")
+                    .body(resource);
         } catch (IOException e) {
             Exception ex = new InternalServerErrorException("There was a problem generation the zip file.");
             return ResourceErrorHandler.createRESTErrorMessage("TestResultResource.getScreenshotsAsZip", HttpStatus.INTERNAL_SERVER_ERROR, ex);

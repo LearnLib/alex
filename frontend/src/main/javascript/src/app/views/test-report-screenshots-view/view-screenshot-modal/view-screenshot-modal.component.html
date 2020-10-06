@@ -10,6 +10,6 @@
   <img
     *ngIf="src"
     [src]="src | fetchImgSecure | async"
-    alt=""
+    [alt]="title"
   >
 </div>
