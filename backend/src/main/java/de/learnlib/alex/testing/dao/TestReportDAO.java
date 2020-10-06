@@ -226,10 +226,11 @@ public class TestReportDAO {
         }
 
         List<TestExecutionResult> outputs = ((TestCaseResult) testResult).getOutputs();
-        for (int i = 1; i < outputs.size(); i++) {
+
+        for (int i = 0; i < outputs.size(); i++) {
             if (outputs.get(i).getTestScreenshot() != null) {
                 File screenshot = this.getScreenshot(user, projectId, testReportId, outputs.get(i).getTestScreenshot().getFilename());
-                writeToZipFile(screenshot, String.format("%03d" , i) + "__" + outputs.get(i).getSymbol().getName().replaceAll("\\s", "_") + "__" + outputs.get(i).getOutput().replaceAll("\\s", "_") + ".png", zos);
+                writeToZipFile(screenshot, String.format("%03d" , i+1) + "__" + outputs.get(i).getSymbol().getName().replaceAll("\\s", "_") + "__" + outputs.get(i).getOutput().replaceAll("\\s", "_") + ".png", zos);
             }
         }
 
