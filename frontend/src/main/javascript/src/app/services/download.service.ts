@@ -166,4 +166,9 @@ export class DownloadService {
     const svgSaver = new SvgSaver();
     svgSaver.asSvg(svg, filename + '.svg');
   }
+
+  downloadZipFromBlob(data: Blob, filename: string) {
+    const href = URL.createObjectURL(data);
+    this.download(filename, 'zip', href);
+  }
 }

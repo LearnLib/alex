@@ -43,6 +43,7 @@ import de.learnlib.alex.modelchecking.dao.LtsFormulaSuiteDAO;
 import de.learnlib.alex.modelchecking.entities.LtsFormula;
 import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import de.learnlib.alex.testing.dao.TestDAO;
+import de.learnlib.alex.testing.dao.TestReportDAO;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestSuite;
 import de.learnlib.alex.testing.repositories.TestExecutionConfigRepository;
@@ -100,6 +101,7 @@ public class ProjectDAO {
     private TestPresenceService testPresenceService;
     private SymbolPresenceService symbolPresenceService;
     private ProjectPresenceService projectPresenceService;
+    private TestReportDAO testReportDAO;
     private LtsFormulaSuiteDAO ltsFormulaSuiteDAO;
     private LtsFormulaDAO ltsFormulaDAO;
 
@@ -125,6 +127,7 @@ public class ProjectDAO {
                       @Lazy TestPresenceService testPresenceService,
                       @Lazy SymbolPresenceService symbolPresenceService,
                       @Lazy ProjectPresenceService projectPresenceService,
+                      @Lazy TestReportDAO testReportDAO,
                       @Lazy LtsFormulaSuiteDAO ltsFormulaSuiteDAO,
                       @Lazy LtsFormulaDAO ltsFormulaDAO) {
         this.projectRepository = projectRepository;
@@ -148,6 +151,7 @@ public class ProjectDAO {
         this.testPresenceService = testPresenceService;
         this.symbolPresenceService = symbolPresenceService;
         this.projectPresenceService = projectPresenceService;
+        this.testReportDAO = testReportDAO;
         this.ltsFormulaSuiteDAO = ltsFormulaSuiteDAO;
         this.ltsFormulaDAO = ltsFormulaDAO;
     }
@@ -252,6 +256,13 @@ public class ProjectDAO {
         this.testPresenceService.releaseTestLocksByProject(projectId);
         this.projectPresenceService.removeProjectFromPresenceMap(projectId);
 
+        // delete the screenshot directory
+        try {
+            testReportDAO.deleteScreenshotDirectory(user, projectId);
+        } catch (IOException e) {
+            LOGGER.info("The screenshot directory may not have been deleted.");
+        }
+
         // delete the project directory
         try {
             fileDAO.deleteProjectDirectory(user, projectId);
@@ -259,6 +270,7 @@ public class ProjectDAO {
         } catch (IOException e) {
             LOGGER.info("The project has been deleted, the directory, however, not.");
         }
+
     }
 
     public void delete(User user, List<Long> projectIds) throws NotFoundException {

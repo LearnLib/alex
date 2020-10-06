@@ -18,7 +18,6 @@ package de.learnlib.alex.data.services.export;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
@@ -27,7 +26,6 @@ import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.export.ExportableEntity;
 import de.learnlib.alex.data.entities.export.ProjectExportableEntity;
 import de.learnlib.alex.data.entities.export.SymbolGroupsExportableEntity;
-import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.modelchecking.entities.export.LtsFormulaSuitesExportableEntity;
 import de.learnlib.alex.modelchecking.services.export.LtsFormulaSuitesExporter;
 import de.learnlib.alex.testing.entities.export.TestsExportableEntity;
@@ -40,9 +38,6 @@ import java.util.List;
 
 @Service
 public class ProjectExporter extends EntityExporter {
-
-    @Autowired
-    private ProjectRepository projectRepository;
 
     @Autowired
     private ProjectDAO projectDAO;
@@ -63,9 +58,7 @@ public class ProjectExporter extends EntityExporter {
         om.addMixIn(ProjectUrl.class, IgnoreFieldsForProjectUrlMixin.class);
         om.addMixIn(ProjectEnvironmentVariable.class, IgnoreFieldsForProjectVariableMixin.class);
 
-        final Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new NotFoundException("The project could not be found"));
-        projectDAO.checkAccess(user, project);
+        final Project project = projectDAO.getByID(user, projectId);
 
         final ProjectExportableEntity exportableEntity = new ProjectExportableEntity(version, om.readTree(om.writeValueAsString(project)));
         exportableEntity.setGroups(((SymbolGroupsExportableEntity) symbolsExporter.exportAll(user, projectId)).getSymbolGroups());

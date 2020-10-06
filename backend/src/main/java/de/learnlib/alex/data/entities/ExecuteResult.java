@@ -18,11 +18,14 @@ package de.learnlib.alex.data.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.learnlib.alex.testing.entities.TestScreenshot;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.StringJoiner;
@@ -57,6 +60,11 @@ public class ExecuteResult implements Serializable {
     /** The time in ms it took to execute the step. */
     private Long time;
 
+    @OneToOne(
+            cascade = {CascadeType.ALL}
+    )
+    private TestScreenshot testScreenshot;
+
     /** Constructor. */
     public ExecuteResult() {
         this(true);
@@ -71,14 +79,15 @@ public class ExecuteResult implements Serializable {
     }
 
     public ExecuteResult(boolean success, String message, Long time) {
-        this(success, message, "", time);
+        this(success, message, "", time, null);
     }
 
-    public ExecuteResult(boolean success, String message, String trace, Long time) {
+    public ExecuteResult(boolean success, String message, String trace, Long time, TestScreenshot testScreenshot) {
         this.success = success;
         this.message = message;
         this.time = time;
         this.trace = trace;
+        this.testScreenshot = testScreenshot;
     }
 
     public void addTrace(Symbol symbol, ExecuteResult result) {
@@ -149,5 +158,13 @@ public class ExecuteResult implements Serializable {
                 .add("success = " + success)
                 .add("output = " + getOutput())
                 .toString();
+    }
+
+    public TestScreenshot getTestScreenshot() {
+        return testScreenshot;
+    }
+
+    public void setTestScreenshot(TestScreenshot testScreenshot) {
+        this.testScreenshot = testScreenshot;
     }
 }

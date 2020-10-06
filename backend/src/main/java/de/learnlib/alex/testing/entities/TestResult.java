@@ -55,7 +55,6 @@ public abstract class TestResult implements Serializable {
     /** The ID of the test result in the database. */
     @Id
     @GeneratedValue
-    @JsonIgnore
     private Long id;
 
     /** The test that has been executed. */
@@ -159,6 +158,11 @@ public abstract class TestResult implements Serializable {
     @JsonProperty("project")
     public void setProjectId(Long projectId) {
         this.project = new Project(projectId);
+    }
+
+    @JsonProperty("report")
+    public Long getReportId() {
+        return this.testReport.getId();
     }
 
     /**

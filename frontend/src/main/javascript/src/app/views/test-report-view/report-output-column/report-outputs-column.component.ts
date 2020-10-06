@@ -29,7 +29,7 @@ export class ReportOutputsColumnComponent {
   public project: Project;
 
   @Input()
-  public outputs: any[];
+  public testResult: any;
 
   /** If the table is collapsed and only the outputs are displayed. */
   public collapse: boolean;

@@ -33,6 +33,7 @@ import de.learnlib.alex.learning.repositories.LearnerSetupRepository;
 import de.learnlib.alex.modelchecking.dao.LtsFormulaDAO;
 import de.learnlib.alex.modelchecking.dao.LtsFormulaSuiteDAO;
 import de.learnlib.alex.testing.dao.TestDAO;
+import de.learnlib.alex.testing.dao.TestReportDAO;
 import de.learnlib.alex.testing.repositories.TestExecutionConfigRepository;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
 import de.learnlib.alex.testing.repositories.TestRepository;
@@ -54,6 +55,7 @@ import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
@@ -130,6 +132,9 @@ public class ProjectDAOTest {
     private ProjectPresenceService projectPresenceService;
 
     @Mock
+    private TestReportDAO testReportDAO;
+
+    @Mock
     private LtsFormulaSuiteDAO ltsFormulaSuiteDAO;
 
     @Mock
@@ -145,7 +150,7 @@ public class ProjectDAOTest {
                 parameterizedSymbolRepository, symbolStepRepository, symbolActionRepository, environmentDAO,
                 projectUrlRepository, testExecutionConfigRepository, testDAO, userDAO, environmentRepository, symbolGroupDAO,
                 testRepository, symbolParameterRepository, uploadableFileRepository, learnerSetupRepository, testPresenceService,
-                symbolPresenceService, projectPresenceService, ltsFormulaSuiteDAO, ltsFormulaDAO);
+                symbolPresenceService, projectPresenceService, testReportDAO, ltsFormulaSuiteDAO, ltsFormulaDAO);
         user = new User();
         user.setId(USER_ID);
     }
@@ -176,7 +181,7 @@ public class ProjectDAOTest {
 
         Project p = projectDAO.getByID(user, PROJECT_ID);
 
-        assertThat(p, is(equalTo(project)));
+        assertEquals(project, p);
     }
 
     @Test(expected = NotFoundException.class)

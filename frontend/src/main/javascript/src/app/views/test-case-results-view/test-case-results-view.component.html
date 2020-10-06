@@ -31,7 +31,7 @@
               <span *ngIf="!result.passed" class="badge badge-danger">Failed</span>
             </td>
             <td>
-              <report-outputs-column [outputs]="result.outputs" [project]="project"></report-outputs-column>
+              <report-outputs-column [testResult]="result" [project]="project"></report-outputs-column>
             </td>
             <td>
               <em *ngIf="result.failureMessage">{{result.failureMessage}}</em>

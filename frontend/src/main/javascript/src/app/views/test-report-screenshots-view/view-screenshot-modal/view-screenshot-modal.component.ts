@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,23 @@
  * limitations under the License.
  */
 
-import { Component, Input } from '@angular/core';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { TestReportApiService } from "../../../services/api/test-report-api.service";
+import { Component, Input, ViewEncapsulation } from "@angular/core";
+import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
-  selector: 'execution-result-modal',
-  templateUrl: './execution-result-modal.component.html'
+  selector: 'view-screenshot-modal',
+  templateUrl: './view-screenshot-modal.component.html',
+  styleUrls: ['./view-screenshot-modal.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
-export class ExecutionResultModalComponent {
+export class ViewScreenshotModalComponent {
 
   @Input()
-  result: any;
+  src: string;
 
-  constructor(public modal: NgbActiveModal,
-              public testReportServiceApi: TestReportApiService) {
+  @Input()
+  title: string;
+
+  constructor(public modal: NgbActiveModal) {
   }
 }

@@ -21,12 +21,14 @@ import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.dao.ProjectEnvironmentDAO;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
+import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolStep;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.PreparedConnectorContextHandlerFactory;
+import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestCase;
 import de.learnlib.alex.testing.entities.TestCaseResult;
@@ -34,11 +36,16 @@ import de.learnlib.alex.testing.entities.TestCaseStep;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
 import de.learnlib.alex.testing.entities.TestExecutionResult;
 import de.learnlib.alex.testing.entities.TestResult;
+import de.learnlib.alex.testing.entities.TestScreenshot;
 import de.learnlib.alex.testing.entities.TestSuite;
 import de.learnlib.alex.testing.entities.TestSuiteResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.util.FileCopyUtils;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -54,10 +61,14 @@ public class TestExecutor {
     private Test currentTest;
     private boolean aborted;
 
+    private final String filesRootDir;
+
     public TestExecutor(PreparedConnectorContextHandlerFactory contextHandlerFactory,
-                        ProjectEnvironmentDAO projectEnvironmentDAO) {
+                        ProjectEnvironmentDAO projectEnvironmentDAO,
+                        String filesRootDir) {
         this.contextHandlerFactory = contextHandlerFactory;
         this.projectEnvironmentDAO = projectEnvironmentDAO;
+        this.filesRootDir = filesRootDir;
         this.aborted = false;
     }
 
@@ -159,7 +170,12 @@ public class TestExecutor {
         // execute the steps as long as they do not fail
         long failedStep = -1L;
 
+        TestScreenshot beforeScreenshot = null;
+
         if (preSuccess) {
+
+            beforeScreenshot = takeAndStoreScreenshot(testCase.getProject(), connectors.getConnector(WebSiteConnector.class), "pre");
+
             for (int i = 0; i < testCase.getSteps().size(); i++) {
                 if (aborted) break;
 
@@ -171,6 +187,9 @@ public class TestExecutor {
 
                 final ExecuteResult result = executeStep(connectors, step);
                 outputs.add(result);
+
+                final TestScreenshot stepScreenshot = takeAndStoreScreenshot(testCase.getProject(), connectors.getConnector(WebSiteConnector.class), step.getId().toString());
+                result.setTestScreenshot(stepScreenshot);
 
                 if (step.getExpectedOutputMessage().equals("")) {
                     if (result.isSuccess() != step.isExpectedOutputSuccess()) {
@@ -208,13 +227,43 @@ public class TestExecutor {
         for (int i = 0; i < outputs.size(); i++) {
             final TestCaseStep step = testCase.getSteps().get(i);
             sulOutputs.get(i).setSymbol(step.getPSymbol().getSymbol());
+            sulOutputs.get(i).setTestScreenshot(outputs.get(i).getTestScreenshot());
         }
 
         final TestCaseResult result = new TestCaseResult(testCase, sulOutputs, failedStep, time);
+        result.setBeforeScreenshot(beforeScreenshot);
         results.put(testCase.getId(), result);
 
         LOGGER.info(LoggerMarkers.LEARNER, "Finished executing test[id={}], passed=" + result.isPassed(), testCase.getId());
         return result;
+    }
+
+    private TestScreenshot takeAndStoreScreenshot(Project project, WebSiteConnector webSiteConnector, String fileNameSuffix) {
+
+        String directoryPath = filesRootDir + "/test_screenshots/" + project.getId().toString();
+
+        // check files structure
+        File testScreenshotBaseDirectory = Paths.get(directoryPath).toFile();
+        if (!testScreenshotBaseDirectory.exists()) {
+            testScreenshotBaseDirectory.mkdirs();
+        }
+
+        final File screenshot = webSiteConnector.takeScreenshot();
+        TestScreenshot testScreenshot = null;
+        if (screenshot != null) {
+            String filename = System.currentTimeMillis() + "_" + fileNameSuffix;
+            try {
+                FileCopyUtils.copy(screenshot, new File(directoryPath + "/" + filename + ".png"));
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+
+            testScreenshot = new TestScreenshot();
+            testScreenshot.setFilename(filename);
+        }
+
+        return testScreenshot;
     }
 
     private boolean executePreSteps(ConnectorManager connectors, List<TestCaseStep> preSteps) {

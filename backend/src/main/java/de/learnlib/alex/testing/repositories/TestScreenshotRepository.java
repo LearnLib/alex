@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
-import { Component, Input } from '@angular/core';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { TestReportApiService } from "../../../services/api/test-report-api.service";
+package de.learnlib.alex.testing.repositories;
 
-@Component({
-  selector: 'execution-result-modal',
-  templateUrl: './execution-result-modal.component.html'
-})
-export class ExecutionResultModalComponent {
+import de.learnlib.alex.testing.entities.TestScreenshot;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-  @Input()
-  result: any;
-
-  constructor(public modal: NgbActiveModal,
-              public testReportServiceApi: TestReportApiService) {
-  }
+/** The repository for test screenshots. */
+@Repository
+public interface TestScreenshotRepository extends JpaRepository<TestScreenshot, Long> {
 }
