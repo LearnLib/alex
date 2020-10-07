@@ -1,0 +1,113 @@
+{
+  "version": "1.8.0",
+  "type": "symbols",
+  "symbols": [
+    {
+      "name": "reset",
+      "description": "",
+      "expectedResult": "",
+      "successOutput": null,
+      "inputs": [],
+      "outputs": [],
+      "steps": [
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "web_goto",
+            "url": "/",
+            "credentials": {
+              "name": "",
+              "password": ""
+            },
+            "baseUrl": "Base"
+          },
+          "position": 0
+        },
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "web_waitForNode",
+            "waitCriterion": "CLICKABLE",
+            "node": {
+              "selector": "input[name=\"q\"]",
+              "type": "CSS"
+            },
+            "maxWaitTime": 5
+          },
+          "position": 1
+        }
+      ]
+    },
+    {
+      "name": "search",
+      "description": "",
+      "expectedResult": "",
+      "successOutput": null,
+      "inputs": [
+        {
+          "type": "input",
+          "name": "term",
+          "parameterType": "STRING"
+        }
+      ],
+      "outputs": [],
+      "steps": [
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "web_clear",
+            "node": {
+              "selector": "input[name=\"q\"]",
+              "type": "CSS"
+            }
+          },
+          "position": 0
+        },
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "web_fill",
+            "node": {
+              "selector": "input[name=\"q\"]",
+              "type": "CSS"
+            },
+            "value": "{{$term}}"
+          },
+          "position": 1
+        },
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "web_pressKey",
+            "node": {
+              "selector": "input[name=\"q\"]",
+              "type": "CSS"
+            },
+            "key": "\\ue007"
+          },
+          "position": 2
+        }
+      ]
+    }
+  ]
+}

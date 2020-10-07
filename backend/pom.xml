@@ -20,27 +20,73 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>de.learnlib.alex</groupId>
-        <artifactId>alex-parent</artifactId>
-        <version>2.0.0</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
+    <prerequisites>
+        <maven>3.2.1</maven>
+    </prerequisites>
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <name>Maven Repository Switchboard</name>
+            <layout>default</layout>
+            <url>https://repo.maven.apache.org/maven2/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
+        <repository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <scm>
+        <developerConnection>https://github.com/LearnLib/alex.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/LearnLib/alex/issues</url>
+    </issueManagement>
 
     <artifactId>alex-backend</artifactId>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
-    <name>ALEX :: Backend</name>
+    <name>Automata Learning Experience (ALEX)</name>
+    <version>2.0.0</version>
+    <groupId>de.learnlib.alex</groupId>
+
     <description>
-        The RESTful backend for ALEX.
+        A web application for interring Mealy machines of Web applications via active automata learning.
     </description>
 
-    <!--===== properties ======-->
     <properties>
         <!-- general -->
         <start-class>de.learnlib.alex.AlexApp</start-class>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
 
         <!-- plugin versions -->
+        <compiler-plugin.version>3.8.0</compiler-plugin.version>
+        <dependency-plugin.version>3.1.1</dependency-plugin.version>
+        <surefire-plugin.version>3.0.0-M1</surefire-plugin.version>
+        <surefire-report.version>3.0.0-M1</surefire-report.version>
+        <war-plugin.version>3.2.2</war-plugin.version>
+        <clean-plugin.version>3.0.0</clean-plugin.version>
+        <exec-plugin.version>1.6.0</exec-plugin.version>
+        <versions-plugin.version>2.7</versions-plugin.version>
+        <coveralls-plugin.version>4.3.0</coveralls-plugin.version>
+        <assembly-plugin.version>3.1.0</assembly-plugin.version>
         <javadoc-plugin.version>2.10.4</javadoc-plugin.version>
         <failsafe-plugin.version>2.19.1</failsafe-plugin.version>
         <jacoco-plugin.version>0.8.2</jacoco-plugin.version>
@@ -49,6 +95,7 @@
         <pmd.version>3.6</pmd.version>
 
         <!-- dependencies versions -->
+        <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
         <jersey.version>2.30.1</jersey.version>
         <learnlib.version>0.15.0</learnlib.version>
         <automatalib.version>0.9.0</automatalib.version>
@@ -70,8 +117,59 @@
         <rxjava.version>3.0.3</rxjava.version>
     </properties>
 
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>manual</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Alexander Bainczyk</name>
+            <email>alexander.bainczyk@tu-dortmund.de</email>
+        </developer>
+        <developer>
+            <name>Marco Krumrey</name>
+            <email>marco.krumrey@tu-dortmund.de</email>
+        </developer>
+    </developers>
+    <contributors>
+        <contributor>
+            <name>Oliver Bauer</name>
+            <email>oliver.bauer@tu-dortmund.de</email>
+        </contributor>
+        <contributor>
+            <name>Dr. Johannes Neubauer</name>
+            <email>johannes.neubauer@tu-dortmund.de</email>
+        </contributor>
+        <contributor>
+            <name>Malte Isberner</name>
+            <email>malte.isberner@tu-dortmund.de</email>
+        </contributor>
+        <contributor>
+            <name>Prof. Dr. Bernhard Steffen</name>
+            <email>bernhard.steffen@tu-dortmund.de</email>
+        </contributor>
+        <contributor>
+            <name>Philipp Koch</name>
+            <email>philipp.koch@tu-dortmund.de</email>
+        </contributor>
+        <contributor>
+            <name>Alexander Schieweck</name>
+            <email>alexander.schieweck@tu-dortmund.de</email>
+        </contributor>
+    </contributors>
+    <organization>
+        <name>Chair for Programming Systems at TU Dortmund University, Germany</name>
+        <url>http://ls5-www.cs.tu-dortmund.de/</url>
+    </organization>
+
     <!--===== dependencies ======-->
     <dependencies>
+
+        <!-- spring -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -87,7 +185,27 @@
             <artifactId>spring-boot-starter-security</artifactId>
             <version>${spring-boot.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <version>${spring-boot.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <version>${spring-boot.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+            <version>${spring-boot.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+            <version>${spring-boot.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jersey</artifactId>
@@ -104,6 +222,13 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>${spring-boot.version}</version>
+        </dependency>
+
+        <!-- jersey / jackson -->
+        <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-multipart</artifactId>
             <version>${jersey.version}</version>
@@ -118,48 +243,30 @@
             <artifactId>jackson-module-jaxb-annotations</artifactId>
             <version>${jackson-datatype.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-tomcat</artifactId>
-            <version>${spring-boot.version}</version>
-            <scope>provided</scope>
-        </dependency>
 
+        <!-- database -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-            <version>${spring-boot.version}</version>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>${hsqldb.version}</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
-            <version>${spring-boot.version}</version>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql-connector.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.github.java-json-tools</groupId>
-            <artifactId>json-schema-validator</artifactId>
-            <version>${json-schema-validator.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-websocket</artifactId>
-            <version>${spring-boot.version}</version>
-        </dependency>
-
-        <!-- flyway -->
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
             <version>${flyway.version}</version>
         </dependency>
 
+        <!-- utils -->
         <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>${hsqldb.version}</version>
-            <scope>runtime</scope>
+            <groupId>com.github.java-json-tools</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <version>${json-schema-validator.version}</version>
         </dependency>
 
         <!-- include this dependency so that ALEX is compatible with Java > 8 -->
@@ -204,97 +311,24 @@
             <version>${rxjava.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>${mysql-connector.version}</version>
-        </dependency>
 
+        <!-- AutomataLib -->
         <dependency>
-            <groupId>net.automatalib</groupId>
-            <artifactId>automata-modelchecking-ltsmin</artifactId>
+            <groupId>net.automatalib.distribution</groupId>
+            <artifactId>automata-distribution</artifactId>
             <version>${automatalib.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.automatalib</groupId>
-            <artifactId>automata-util</artifactId>
-            <version>${automatalib.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.automatalib</groupId>
-            <artifactId>automata-dot-visualizer</artifactId>
-            <version>${automatalib.version}</version>
+            <type>pom</type>
         </dependency>
 
         <!-- LearnLib -->
         <dependency>
-            <groupId>de.learnlib</groupId>
-            <artifactId>learnlib-membership-oracles</artifactId>
+            <groupId>de.learnlib.distribution</groupId>
+            <artifactId>learnlib-distribution</artifactId>
             <version>${learnlib.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.learnlib</groupId>
-            <artifactId>learnlib-equivalence-oracles</artifactId>
-            <version>${learnlib.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.learnlib</groupId>
-            <artifactId>learnlib-cache</artifactId>
-            <version>${learnlib.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.learnlib</groupId>
-            <artifactId>learnlib-discrimination-tree</artifactId>
-            <version>${learnlib.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.learnlib</groupId>
-            <artifactId>learnlib-dhc</artifactId>
-            <version>${learnlib.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.learnlib</groupId>
-            <artifactId>learnlib-kearns-vazirani</artifactId>
-            <version>${learnlib.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.learnlib</groupId>
-            <artifactId>learnlib-lstar</artifactId>
-            <version>${learnlib.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.learnlib</groupId>
-            <artifactId>learnlib-ttt</artifactId>
-            <version>${learnlib.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.learnlib</groupId>
-            <artifactId>learnlib-adt</artifactId>
-            <version>${learnlib.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.learnlib</groupId>
-            <artifactId>learnlib-mapper</artifactId>
-            <version>${learnlib.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.learnlib</groupId>
-            <artifactId>learnlib-datastructure-dt</artifactId>
-            <version>${learnlib.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.learnlib</groupId>
-            <artifactId>learnlib-datastructure-ot</artifactId>
-            <version>${learnlib.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.learnlib</groupId>
-            <artifactId>learnlib-parallelism</artifactId>
-            <version>${learnlib.version}</version>
+            <type>pom</type>
         </dependency>
 
-
-        <!-- selenium testing -->
+        <!-- Selenium -->
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
@@ -326,18 +360,10 @@
             <version>${selenium.version}</version>
         </dependency>
 
-
         <dependency>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
             <version>${xml-apis.version}</version>
-        </dependency>
-
-        <!-- == Testing == -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <version>${spring-boot.version}</version>
         </dependency>
 
         <!-- JUnit -->
@@ -362,18 +388,6 @@
         <finalName>ALEX-${project.version}</finalName>
 
         <plugins>
-            <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>${clean-plugin.version}</version>
-                <configuration>
-                    <filesets>
-                        <fileset>
-                            <directory>uploads</directory>
-                        </fileset>
-                    </filesets>
-                </configuration>
-            </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
@@ -418,12 +432,42 @@
                     </systemProperties>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${compiler-plugin.version}</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${dependency-plugin.version}</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.eluder.coveralls</groupId>
+                <artifactId>coveralls-maven-plugin</artifactId>
+                <version>${coveralls-plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>javax.xml.bind</groupId>
+                        <artifactId>jaxb-api</artifactId>
+                        <version>2.4.0-b180830.0359</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <!-- Version / Update -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>${versions-plugin.version}</version>
+            </plugin>
         </plugins>
     </build>
 
-
     <profiles>
-
         <profile>
             <id>integration-tests</id>
             <build>

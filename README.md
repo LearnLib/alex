@@ -4,7 +4,6 @@
 
 # ALEX
 
-[![Travis CI](https://travis-ci.org/LearnLib/alex.svg?branch=developer)](https://travis-ci.org/LearnLib/alex)
 [![Coverage Status](https://coveralls.io/repos/github/LearnLib/alex/badge.svg?branch=developer)](https://coveralls.io/github/LearnLib/alex?branch=master)
 
 Automata Learning EXperience (ALEX) is an extension of [LearnLib][learnlib] that allows you run automated tests on web 
