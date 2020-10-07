@@ -91,9 +91,9 @@ Example:
 
 ### Documentation
 
-* [User manual](https://learnlib.github.io/alex/book/1.7.0/)
-* [Examples](https://learnlib.github.io/alex/book/1.7.0/contents/examples/todomvc/)
-* [Developer docs](https://learnlib.github.io/alex/book/1.7.0/contents/dev-docs/development/)
+* [User manual](https://learnlib.github.io/alex/book/2.0.0/)
+* [Examples](https://learnlib.github.io/alex/book/2.0.0/contents/examples/todomvc/)
+* [Developer docs](https://learnlib.github.io/alex/book/2.0.0/contents/dev-docs/development/)
 
 ### Downloads
 
