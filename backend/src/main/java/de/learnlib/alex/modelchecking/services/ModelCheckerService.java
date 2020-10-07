@@ -21,6 +21,7 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
+import de.learnlib.alex.modelchecking.dao.LtsFormulaDAO;
 import de.learnlib.alex.modelchecking.entities.LtsCheckingConfig;
 import de.learnlib.alex.modelchecking.entities.LtsCheckingResult;
 import de.learnlib.alex.modelchecking.entities.LtsFormula;
@@ -30,6 +31,7 @@ import net.automatalib.modelcheckers.ltsmin.ltl.LTSminLTLIO;
 import net.automatalib.modelcheckers.ltsmin.ltl.LTSminLTLIOBuilder;
 import net.automatalib.modelchecking.Lasso;
 import net.automatalib.words.Alphabet;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
@@ -41,18 +43,14 @@ import java.util.function.Function;
 @Service
 public class ModelCheckerService {
 
-    /** The DAO for learner results. */
     private LearnerResultDAO learnerResultDAO;
+    private LtsFormulaDAO ltsFormulaDAO;
 
-    /**
-     * Constructor.
-     *
-     * @param learnerResultDAO
-     *         {@link #learnerResultDAO}
-     */
-    @Inject
-    public ModelCheckerService(LearnerResultDAO learnerResultDAO) {
+    @Autowired
+    public ModelCheckerService(LearnerResultDAO learnerResultDAO,
+                               LtsFormulaDAO ltsFormulaDAO) {
         this.learnerResultDAO = learnerResultDAO;
+        this.ltsFormulaDAO = ltsFormulaDAO;
     }
 
     /**
@@ -75,6 +73,9 @@ public class ModelCheckerService {
             }
         }
 
+        final List<LtsFormula> formulasToCheck = new ArrayList<>(config.getFormulas());
+        formulasToCheck.addAll(ltsFormulaDAO.getByIds(user, projectId, config.getFormulaIds()));
+
         final LearnerResult learnerResult = learnerResultDAO.get(user, projectId, config.getLearnerResultId());
         final LearnerResultStep step = learnerResult.getSteps().get(config.getStepNo() - 1);
 
@@ -91,7 +92,7 @@ public class ModelCheckerService {
 
         final List<LtsCheckingResult> results = new ArrayList<>();
 
-        for (LtsFormula formula : config.getFormulas()) {
+        for (LtsFormula formula : formulasToCheck) {
             final Lasso.MealyLasso<String, String> ce = ltsmin.findCounterExample(hypothesis, alphabet, formula.getFormula());
             if (ce != null) {
                 results.add(new LtsCheckingResult(formula, learnerResult.getId(), step.getStepNo(), ce.getPrefix(), ce.getLoop()));

@@ -19,6 +19,7 @@ package de.learnlib.alex.modelchecking.dao;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.modelchecking.entities.LtsFormula;
 import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import de.learnlib.alex.modelchecking.repositories.LtsFormulaRepository;
@@ -36,18 +37,15 @@ public class LtsFormulaDAO {
 
     private final LtsFormulaRepository ltsFormulaRepository;
     private final LtsFormulaSuiteDAO ltsFormulaSuiteDAO;
+    private final ProjectRepository projectRepository;
 
-    /**
-     * Constructor.
-     *
-     * @param ltsFormulaRepository
-     *         {@link #ltsFormulaRepository}
-     */
     @Autowired
     public LtsFormulaDAO(LtsFormulaRepository ltsFormulaRepository,
-                         LtsFormulaSuiteDAO ltsFormulaSuiteDAO) {
+                         LtsFormulaSuiteDAO ltsFormulaSuiteDAO,
+                         ProjectRepository projectRepository) {
         this.ltsFormulaRepository = ltsFormulaRepository;
         this.ltsFormulaSuiteDAO = ltsFormulaSuiteDAO;
+        this.projectRepository = projectRepository;
     }
 
     public LtsFormula create(User user, Long projectId, Long suiteId, LtsFormula formula) throws NotFoundException {
@@ -61,6 +59,18 @@ public class LtsFormulaDAO {
         f.setSuite(suite);
 
         return ltsFormulaRepository.save(f);
+    }
+
+    public List<LtsFormula> getByIds(User user, Long projectId, List<Long> formulaIds) {
+        final Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new NotFoundException("Project could not be found"));
+
+        final List<LtsFormula> formulas = ltsFormulaRepository.findAllByIdIn(formulaIds);
+        for (LtsFormula formula: formulas) {
+            checkAccess(user, project, formula.getSuite(), formula);
+        }
+
+        return formulas;
     }
 
     public LtsFormula update(User user, Long projectId, Long suiteId, LtsFormula formula) throws NotFoundException {

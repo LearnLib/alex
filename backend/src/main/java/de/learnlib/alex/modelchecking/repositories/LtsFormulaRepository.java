@@ -29,4 +29,7 @@ public interface LtsFormulaRepository extends JpaRepository<LtsFormula, Long> {
 
     @Transactional(readOnly = true)
     List<LtsFormula> findAllBySuite_IdAndIdIn(Long suiteId, List<Long> formulaIds);
+
+    @Transactional(readOnly = true)
+    List<LtsFormula> findAllByIdIn(List<Long> formulaIds);
 }
