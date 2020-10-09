@@ -24,16 +24,18 @@ services:
       - 5900
   alex-frontend-production:
     build: ./frontend
+    environment:
+      - SERVER_ADDRESS=http://localhost
+      - PORT=8000
     ports:
       - 4200:4200
-    env_file:
-      - ./production.env
-    command: /bin/sh -c "envsubst '$${SERVER_ADDRESS},$${PORT}' < /usr/share/nginx/html/assets/config.template.json > /usr/share/nginx/html/assets/config.json && exec nginx -g 'daemon off;'"
   alex-backend-production:
     build: ./backend
     volumes:
       - alex-backend-db-production:/var/lib/alex/target/db
       - alex-backend-files-production:/var/lib/alex/target/files
+    environment:
+      - REMOTE_DRIVER=http://selenium-hub:4444/wd/hub
     ports:
       - 8000:8000
 
