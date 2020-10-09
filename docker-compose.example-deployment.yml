@@ -1,0 +1,43 @@
+version: '3.7'
+services:
+  selenium-hub:
+    image: selenium/hub:3
+  chrome-node:
+    image: selenium/node-chrome-debug:3
+    shm_size: '2gb'
+    depends_on:
+      - selenium-hub
+    environment:
+      - HUB_HOST=selenium-hub
+      - HUB_PORT=4444
+    ports:
+      - 5900
+  firefox-node:
+    image: selenium/node-firefox-debug:3
+    shm_size: '2gb'
+    depends_on:
+      - selenium-hub
+    environment:
+      - HUB_HOST=selenium-hub
+      - HUB_PORT=4444
+    ports:
+      - 5900
+  alex-frontend:
+    image: learnlib/alex-frontend
+    ports:
+      - 4200:4200
+    environment:
+      - SERVER_ADDRESS=http://localhost
+      - PORT=8000
+    command: /bin/sh -c "envsubst '$${SERVER_ADDRESS},$${PORT}' < /usr/share/nginx/html/assets/config.template.json > /usr/share/nginx/html/assets/config.json && exec nginx -g 'daemon off;'"
+  alex-backend:
+    image: learnlib/alex-backend
+    volumes:
+      - alex-backend-db:/var/lib/alex/target/db
+      - alex-backend-files:/var/lib/alex/target/files
+    ports:
+      - 8000:8000
+
+volumes:
+  alex-backend-db:
+  alex-backend-files:
