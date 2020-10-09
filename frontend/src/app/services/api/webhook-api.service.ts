@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { environment as env } from '../../../environments/environment';
 import { BaseApiService } from './base-api.service';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Webhook } from '../../entities/webhook';
 import { map } from 'rxjs/operators';
+import { EnvironmentProvider } from "../../../environments/environment.provider";
 
 /**
  * The resource for webhooks.
@@ -28,7 +28,7 @@ import { map } from 'rxjs/operators';
 @Injectable()
 export class WebhookApiService extends BaseApiService {
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private env: EnvironmentProvider) {
     super()
   }
 
@@ -101,6 +101,6 @@ export class WebhookApiService extends BaseApiService {
   }
 
   private url(): string {
-    return `${env.apiUrl}/webhooks`;
+    return `${this.env.apiUrl}/webhooks`;
   }
 }

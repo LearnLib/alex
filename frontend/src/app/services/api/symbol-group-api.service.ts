@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { environment as env } from '../../../environments/environment';
 import { SymbolGroup } from '../../entities/symbol-group';
 import { BaseApiService } from './base-api.service';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { EnvironmentProvider } from "../../../environments/environment.provider";
 
 /**
  * The resource that handles http requests to the API to do CRUD operations on symbol groups.
@@ -28,7 +28,7 @@ import { map } from 'rxjs/operators';
 @Injectable()
 export class SymbolGroupApiService extends BaseApiService {
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private env: EnvironmentProvider) {
     super();
   }
 
@@ -38,7 +38,7 @@ export class SymbolGroupApiService extends BaseApiService {
    * @param projectId The id of the project whose projects should be fetched.
    */
   getAll(projectId: number): Observable<SymbolGroup[]> {
-    return this.http.get(`${env.apiUrl}/projects/${projectId}/groups`, this.defaultHttpOptions)
+    return this.http.get(`${this.env.apiUrl}/projects/${projectId}/groups`, this.defaultHttpOptions)
       .pipe(
         map((body: any) => body.map(g => new SymbolGroup(g)))
       );
@@ -51,14 +51,14 @@ export class SymbolGroupApiService extends BaseApiService {
    * @param group The object of the symbol group that should be created.
    */
   create(projectId: number, group: SymbolGroup): Observable<SymbolGroup> {
-    return this.http.post(`${env.apiUrl}/projects/${projectId}/groups`, group, this.defaultHttpOptions)
+    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/groups`, group, this.defaultHttpOptions)
       .pipe(
         map(body => new SymbolGroup(body))
       );
   }
 
   importSymbolGroups(projectId: number, symbolGroupsImportable: any): Observable<SymbolGroup[]> {
-    return this.http.post(`${env.apiUrl}/projects/${projectId}/groups/import`, symbolGroupsImportable, this.defaultHttpOptions)
+    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/groups/import`, symbolGroupsImportable, this.defaultHttpOptions)
       .pipe(
         map((body: any) => body.map(g => new SymbolGroup(g)))
       );
@@ -70,7 +70,7 @@ export class SymbolGroupApiService extends BaseApiService {
    * @param group The symbol group that should be updated.
    */
   update(group: SymbolGroup): Observable<SymbolGroup> {
-    return this.http.put(`${env.apiUrl}/projects/${group.project}/groups/${group.id}`, group, this.defaultHttpOptions)
+    return this.http.put(`${this.env.apiUrl}/projects/${group.project}/groups/${group.id}`, group, this.defaultHttpOptions)
       .pipe(
         map(body => new SymbolGroup(body))
       );
@@ -82,7 +82,7 @@ export class SymbolGroupApiService extends BaseApiService {
    * @param group The symbol group to move with the new parent.
    */
   move(group: SymbolGroup): Observable<any> {
-    return this.http.put(`${env.apiUrl}/projects/${group.project}/groups/${group.id}/move`, group, this.defaultHttpOptions)
+    return this.http.put(`${this.env.apiUrl}/projects/${group.project}/groups/${group.id}/move`, group, this.defaultHttpOptions)
       .pipe(
         map(body => new SymbolGroup(body))
       );
@@ -94,6 +94,6 @@ export class SymbolGroupApiService extends BaseApiService {
    * @param group The symbol group that should be deleted.
    */
   remove(group: SymbolGroup): Observable<any> {
-    return this.http.delete(`${env.apiUrl}/projects/${group.project}/groups/${group.id}`, this.defaultHttpOptions);
+    return this.http.delete(`${this.env.apiUrl}/projects/${group.project}/groups/${group.id}`, this.defaultHttpOptions);
   }
 }

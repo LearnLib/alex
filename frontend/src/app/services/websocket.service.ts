@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import {Injectable, Predicate} from "@angular/core";
-import {WebSocketAPIService, WebSocketConnectStatus} from "./api/websocket-api.service";
-import {WebSocketMessage} from "../entities/websocket-message";
-import {Subject} from "rxjs";
-import {NavigationEnd, Router} from "@angular/router";
-import {filter} from "rxjs/operators";
+import { Injectable, Predicate } from "@angular/core";
+import { WebSocketAPIService, WebSocketConnectStatus } from "./api/websocket-api.service";
+import { WebSocketMessage } from "../entities/websocket-message";
+import { Subject } from "rxjs";
+import { NavigationEnd, Router } from "@angular/router";
+import { filter } from "rxjs/operators";
 
 @Injectable()
 export class WebSocketService {

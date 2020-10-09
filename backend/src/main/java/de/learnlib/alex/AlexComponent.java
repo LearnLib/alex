@@ -28,13 +28,12 @@ import de.learnlib.alex.settings.entities.Settings;
 import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 import javax.annotation.PostConstruct;
 import javax.validation.ValidationException;
@@ -216,7 +215,7 @@ public class AlexComponent {
      * @return The bean.
      */
     @Bean
-    public FilterRegistrationBean corsFilter() {
+    public CorsConfigurationSource corsConfigurationSource() {
         final CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         config.addAllowedOrigin("*");
@@ -226,9 +225,6 @@ public class AlexComponent {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
 
-        final FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
-        bean.setOrder(0);
-
-        return bean;
+        return source;
     }
 }

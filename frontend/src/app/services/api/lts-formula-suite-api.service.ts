@@ -17,13 +17,13 @@
 import { Injectable } from '@angular/core';
 import { BaseApiService } from './base-api.service';
 import { HttpClient } from '@angular/common/http';
-import { environment as env } from '../../../environments/environment';
 import { Observable } from 'rxjs';
+import { EnvironmentProvider } from "../../../environments/environment.provider";
 
 @Injectable()
 export class LtsFormulaSuiteApiService extends BaseApiService {
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private env: EnvironmentProvider) {
     super();
   }
 
@@ -52,6 +52,6 @@ export class LtsFormulaSuiteApiService extends BaseApiService {
   }
 
   private url(projectId: number): string {
-    return `${env.apiUrl}/projects/${projectId}/ltsFormulaSuites`;
+    return `${this.env.apiUrl}/projects/${projectId}/ltsFormulaSuites`;
   }
 }

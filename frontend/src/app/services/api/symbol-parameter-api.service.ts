@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-import { environment as env } from '../../../environments/environment';
 import { BaseApiService } from './base-api.service';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { EnvironmentProvider } from "../../../environments/environment.provider";
 
 /** The resource for symbol parameters. */
 @Injectable()
 export class SymbolParameterApiService extends BaseApiService {
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private env: EnvironmentProvider) {
     super();
   }
 
@@ -62,6 +62,6 @@ export class SymbolParameterApiService extends BaseApiService {
   }
 
   private url(projectId: number, symbolId: number) {
-    return `${env.apiUrl}/projects/${projectId}/symbols/${symbolId}/parameters`;
+    return `${this.env.apiUrl}/projects/${projectId}/symbols/${symbolId}/parameters`;
   }
 }

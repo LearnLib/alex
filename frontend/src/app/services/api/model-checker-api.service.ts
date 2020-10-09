@@ -18,16 +18,16 @@ import { Injectable } from '@angular/core';
 import { BaseApiService } from './base-api.service';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment as env } from '../../../environments/environment';
+import { EnvironmentProvider } from "../../../environments/environment.provider";
 
 @Injectable()
 export class ModelCheckerApiService extends BaseApiService {
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private env: EnvironmentProvider) {
     super();
   }
 
   check(projectId: number, config: any): Observable<any> {
-    return this.http.post(`${env.apiUrl}/projects/${projectId}/modelChecker/check`, config, this.defaultHttpOptions);
+    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/modelChecker/check`, config, this.defaultHttpOptions);
   }
 }

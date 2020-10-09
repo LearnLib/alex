@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -261,6 +261,7 @@ import { TestReportScreenshotsViewComponent } from "./views/test-report-screensh
 import { TestResultApiService } from "./services/api/test-result-api.service";
 import { ViewScreenshotModalComponent } from "./views/test-report-screenshots-view/view-screenshot-modal/view-screenshot-modal.component";
 import { FetchImgSecurePipe } from "./pipes/fetch-img-secure.pipe";
+import { EnvironmentProvider, initEnv } from "../environments/environment.provider";
 
 @NgModule({
     declarations: [
@@ -537,7 +538,14 @@ import { FetchImgSecurePipe } from "./pipes/fetch-img-secure.pipe";
     TestPresenceService,
     SymbolPresenceService,
     ImgCacheService,
-    TestResultApiService
+    TestResultApiService,
+    EnvironmentProvider,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initEnv,
+      deps: [EnvironmentProvider],
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })

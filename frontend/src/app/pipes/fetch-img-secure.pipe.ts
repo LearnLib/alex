@@ -19,7 +19,7 @@ import { BaseApiService } from "../services/api/base-api.service";
 import { ImgCacheService } from "../services/img-cache.service";
 import { HttpClient } from "@angular/common/http";
 import { BehaviorSubject } from "rxjs";
-import { environment as env } from "../../environments/environment";
+import { EnvironmentProvider } from "../../environments/environment.provider";
 
 @Pipe({
     name: 'fetchImgSecure'
@@ -27,7 +27,7 @@ import { environment as env } from "../../environments/environment";
 export class FetchImgSecurePipe extends BaseApiService implements PipeTransform {
 
     constructor(private imgCacheService: ImgCacheService,
-                private http: HttpClient) {
+                private http: HttpClient, private env: EnvironmentProvider) {
         super();
     }
 
@@ -46,7 +46,7 @@ export class FetchImgSecurePipe extends BaseApiService implements PipeTransform 
         const bSubject = new BehaviorSubject<string>('data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==');
         this.imgCacheService.put(src, bSubject);
 
-        this.http.get(`${env.apiUrl}${src}`, options as any).subscribe(response => {
+        this.http.get(`${this.env.apiUrl}${src}`, options as any).subscribe(response => {
             const reader = new FileReader();
             reader.readAsDataURL(response['body']);
             reader.onloadend = function () {

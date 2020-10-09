@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { environment as env } from '../../../environments/environment';
 import { CreateProjectForm, Project } from '../../entities/project';
 import { BaseApiService } from './base-api.service';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { EnvironmentProvider } from "../../../environments/environment.provider";
 
 /**
  * The resource that handles http calls to the API to do CRUD operations on projects.
@@ -28,7 +28,7 @@ import { map } from 'rxjs/operators';
 @Injectable()
 export class ProjectApiService extends BaseApiService {
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private env: EnvironmentProvider) {
     super();
   }
 
@@ -38,7 +38,7 @@ export class ProjectApiService extends BaseApiService {
    * @param projectId The id of the project to get.
    */
   get(projectId: number): Observable<Project> {
-    return this.http.get(`${env.apiUrl}/projects/${projectId}`, this.defaultHttpOptions)
+    return this.http.get(`${this.env.apiUrl}/projects/${projectId}`, this.defaultHttpOptions)
       .pipe(
         map(body => new Project(body))
       );
@@ -48,7 +48,7 @@ export class ProjectApiService extends BaseApiService {
    * Get all projects of a user.
    */
   getAll(): Observable<Project[]> {
-    return this.http.get(`${env.apiUrl}/projects`, this.defaultHttpOptions)
+    return this.http.get(`${this.env.apiUrl}/projects`, this.defaultHttpOptions)
       .pipe(
         map((body: any) => body.map(p => new Project(p)))
       );
@@ -60,7 +60,7 @@ export class ProjectApiService extends BaseApiService {
    * @param project The project to create.
    */
   create(project: CreateProjectForm): Observable<Project> {
-    return this.http.post(`${env.apiUrl}/projects`, project, this.defaultHttpOptions)
+    return this.http.post(`${this.env.apiUrl}/projects`, project, this.defaultHttpOptions)
       .pipe(
         map(body => new Project(body))
       );
@@ -72,7 +72,7 @@ export class ProjectApiService extends BaseApiService {
    * @param project The updated project.
    */
   update(project: Project): Observable<Project> {
-    return this.http.put(`${env.apiUrl}/projects/${project.id}`, project, this.defaultHttpOptions)
+    return this.http.put(`${this.env.apiUrl}/projects/${project.id}`, project, this.defaultHttpOptions)
       .pipe(
         map(body => new Project(body))
       );
@@ -84,34 +84,34 @@ export class ProjectApiService extends BaseApiService {
    * @param project The project to delete.
    */
   remove(project: Project): Observable<any> {
-    return this.http.delete(`${env.apiUrl}/projects/${project.id}`, this.defaultHttpOptions);
+    return this.http.delete(`${this.env.apiUrl}/projects/${project.id}`, this.defaultHttpOptions);
   }
 
   removeMany(projects: Project[]): Observable<any> {
     const ids = projects.map(p => p.id).join(',');
-    return this.http.delete(`${env.apiUrl}/projects/batch/${ids}`, this.defaultHttpOptions);
+    return this.http.delete(`${this.env.apiUrl}/projects/batch/${ids}`, this.defaultHttpOptions);
   }
 
   export(projectId: number): Observable<any> {
-    return this.http.post(`${env.apiUrl}/projects/${projectId}/export`, {}, this.defaultHttpOptions);
+    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/export`, {}, this.defaultHttpOptions);
   }
 
   import(project: Project): Observable<Project> {
-    return this.http.post(`${env.apiUrl}/projects/import`, project, this.defaultHttpOptions)
+    return this.http.post(`${this.env.apiUrl}/projects/import`, project, this.defaultHttpOptions)
       .pipe(
         map(body => new Project(body))
       );
   }
 
   addOwners(projectId: number, ownerIds: number[]): Observable<any> {
-    return this.http.post(`${env.apiUrl}/projects/${projectId}/owners`, ownerIds, this.defaultHttpOptions)
+    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/owners`, ownerIds, this.defaultHttpOptions)
       .pipe(
         map(body => new Project(body))
       );
   }
 
   addMembers(projectId: number, memberIds: number[]): Observable<any> {
-    return this.http.post(`${env.apiUrl}/projects/${projectId}/members`, memberIds, this.defaultHttpOptions)
+    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/members`, memberIds, this.defaultHttpOptions)
       .pipe(
         map(body => new Project(body))
       );
@@ -119,7 +119,7 @@ export class ProjectApiService extends BaseApiService {
 
   removeOwners(projectId: number, ownerIds: number[]): Observable<any> {
     const ids = ownerIds.join(',');
-    return this.http.delete(`${env.apiUrl}/projects/${projectId}/owners/${ids}`, this.defaultHttpOptions)
+    return this.http.delete(`${this.env.apiUrl}/projects/${projectId}/owners/${ids}`, this.defaultHttpOptions)
       .pipe(
         map(body => new Project(body))
       );
@@ -127,7 +127,7 @@ export class ProjectApiService extends BaseApiService {
 
   removeMembers(projectId: number, memberIds: number[]): Observable<any> {
     const ids = memberIds.join(',');
-    return this.http.delete(`${env.apiUrl}/projects/${projectId}/members/${ids}`, this.defaultHttpOptions)
+    return this.http.delete(`${this.env.apiUrl}/projects/${projectId}/members/${ids}`, this.defaultHttpOptions)
       .pipe(
         map(body => new Project(body))
       );

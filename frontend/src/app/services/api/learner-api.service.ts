@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { environment as env } from '../../../environments/environment';
 import { LearnerResult } from '../../entities/learner-result';
 import { BaseApiService } from './base-api.service';
 import { Injectable } from '@angular/core';
@@ -23,6 +22,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { LearnerStatus } from '../../entities/learner-status';
 import { LearnerSetup } from '../../entities/learner-setup';
+import { EnvironmentProvider } from "../../../environments/environment.provider";
 
 /**
  * The service for interacting with the learner.
@@ -30,7 +30,7 @@ import { LearnerSetup } from '../../entities/learner-setup';
 @Injectable()
 export class LearnerApiService extends BaseApiService {
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private env: EnvironmentProvider) {
     super();
   }
 
@@ -41,7 +41,7 @@ export class LearnerApiService extends BaseApiService {
    * @param configuration The configuration to learn with.
    */
   start(projectId: number, configuration: {setup: LearnerSetup, options?: any}): Observable<LearnerResult> {
-    return this.http.post(`${env.apiUrl}/projects/${projectId}/learner/start`, configuration, this.defaultHttpOptions)
+    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/learner/start`, configuration, this.defaultHttpOptions)
       .pipe(
         map(data => new LearnerResult(data))
       );
@@ -55,7 +55,7 @@ export class LearnerApiService extends BaseApiService {
    * @param testNo The number of the test process to abort.
    */
   stop(projectId: number, testNo: number): Observable<any> {
-    return this.http.get(`${env.apiUrl}/projects/${projectId}/learner/${testNo}/stop`, this.defaultHttpOptions);
+    return this.http.get(`${this.env.apiUrl}/projects/${projectId}/learner/${testNo}/stop`, this.defaultHttpOptions);
   }
 
   /**
@@ -67,7 +67,7 @@ export class LearnerApiService extends BaseApiService {
    * @param learnConfiguration The configuration to resume with.
    */
   resume(projectId: number, testNo: number, learnConfiguration: any): Observable<any> {
-    return this.http.post(`${env.apiUrl}/projects/${projectId}/learner/${testNo}/resume`, learnConfiguration, this.defaultHttpOptions)
+    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/learner/${testNo}/resume`, learnConfiguration, this.defaultHttpOptions)
       .pipe(
         map(data => new LearnerResult(data))
       );
@@ -79,7 +79,7 @@ export class LearnerApiService extends BaseApiService {
    * @param projectId The id of the test to resume with.
    */
   getStatus(projectId: number): Observable<LearnerStatus> {
-    return this.http.get(`${env.apiUrl}/projects/${projectId}/learner/status`, this.defaultHttpOptions)
+    return this.http.get(`${this.env.apiUrl}/projects/${projectId}/learner/status`, this.defaultHttpOptions)
       .pipe(
         map((data: any) => data as LearnerStatus)
       );
@@ -92,7 +92,7 @@ export class LearnerApiService extends BaseApiService {
    * @param outputConfig The id of the reset symbol.
    */
   readOutputs(projectId: number, outputConfig: any): Observable<any> {
-    return this.http.post(`${env.apiUrl}/projects/${projectId}/learner/outputs`, outputConfig, this.defaultHttpOptions)
+    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/learner/outputs`, outputConfig, this.defaultHttpOptions)
   }
 
   /**
@@ -103,7 +103,7 @@ export class LearnerApiService extends BaseApiService {
    * @param hypB The second hypothesis.
    */
   getSeparatingWord(projectId: number, hypA: any, hypB: any): Observable<any> {
-    return this.http.post(`${env.apiUrl}/projects/${projectId}/learner/compare/separatingWord`, [hypA, hypB], this.defaultHttpOptions)
+    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/learner/compare/separatingWord`, [hypA, hypB], this.defaultHttpOptions)
   }
 
   /**
@@ -115,6 +115,6 @@ export class LearnerApiService extends BaseApiService {
    * @param hypB The second hypothesis.
    */
   getDifferenceTree(projectId: number, hypA: any, hypB: any): Observable<any> {
-    return this.http.post(`${env.apiUrl}/projects/${projectId}/learner/compare/differenceTree`, [hypA, hypB], this.defaultHttpOptions)
+    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/learner/compare/differenceTree`, [hypA, hypB], this.defaultHttpOptions)
   }
 }

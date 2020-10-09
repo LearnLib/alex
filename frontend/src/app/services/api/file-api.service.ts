@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { environment as env } from '../../../environments/environment';
 import { UploadableFile } from '../../entities/uploadable-file';
 import { BaseApiService } from './base-api.service';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpEventType, HttpResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { EnvironmentProvider } from "../../../environments/environment.provider";
 
 export interface UploadProgress {
   progress: number;
@@ -34,7 +34,7 @@ export interface UploadProgress {
 @Injectable()
 export class FileApiService extends BaseApiService {
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private env: EnvironmentProvider) {
     super();
   }
 
@@ -44,7 +44,7 @@ export class FileApiService extends BaseApiService {
    * @param projectId The id of the project.
    */
   getAll(projectId: number): Observable<UploadableFile[]> {
-    return this.http.get(`${env.apiUrl}/projects/${projectId}/files`, this.defaultHttpOptions)
+    return this.http.get(`${this.env.apiUrl}/projects/${projectId}/files`, this.defaultHttpOptions)
       .pipe(
         map((body: any) => body.map(f => UploadableFile.fromData(f)))
       );
@@ -57,7 +57,7 @@ export class FileApiService extends BaseApiService {
    * @param file The file object to be deleted.
    */
   remove(projectId: number, file: UploadableFile): Observable<any> {
-    return this.http.delete(`${env.apiUrl}/projects/${projectId}/files/${file.id}`, this.defaultHttpOptions);
+    return this.http.delete(`${this.env.apiUrl}/projects/${projectId}/files/${file.id}`, this.defaultHttpOptions);
   }
 
   /**
@@ -68,7 +68,7 @@ export class FileApiService extends BaseApiService {
    */
   removeMany(projectId: number, files: UploadableFile[]): Observable<any> {
     const ids = files.map(f => f.id);
-    return this.http.delete(`${env.apiUrl}/projects/${projectId}/files/batch/${ids.join(',')}`, this.defaultHttpOptions);
+    return this.http.delete(`${this.env.apiUrl}/projects/${projectId}/files/batch/${ids.join(',')}`, this.defaultHttpOptions);
   }
 
   /**
@@ -84,7 +84,7 @@ export class FileApiService extends BaseApiService {
       observe: 'response'
     };
 
-    return this.http.get(`${env.apiUrl}/projects/${projectId}/files/${file.id}/download`, options as any);
+    return this.http.get(`${this.env.apiUrl}/projects/${projectId}/files/${file.id}/download`, options as any);
   }
 
   upload(projectId: number, file: File): Observable<UploadProgress> {
@@ -97,7 +97,7 @@ export class FileApiService extends BaseApiService {
     const formData = new FormData();
     formData.append('file', file, file.name);
 
-    this.http.post(`${env.apiUrl}/projects/${projectId}/files/upload`, formData, {
+    this.http.post(`${this.env.apiUrl}/projects/${projectId}/files/upload`, formData, {
       headers: this.defaultHttpHeaders,
       observe: 'events',
       reportProgress: true

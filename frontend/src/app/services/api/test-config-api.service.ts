@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { environment as env } from '../../../environments/environment';
 import { BaseApiService } from './base-api.service';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { EnvironmentProvider } from "../../../environments/environment.provider";
 
 /**
  * The resource for test configs.
@@ -26,7 +26,7 @@ import { Observable } from 'rxjs';
 @Injectable()
 export class TestConfigApiService extends BaseApiService {
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private env: EnvironmentProvider) {
     super();
   }
 
@@ -70,6 +70,6 @@ export class TestConfigApiService extends BaseApiService {
   }
 
   private url(projectId: number) {
-    return `${env.apiUrl}/projects/${projectId}/testConfigs`;
+    return `${this.env.apiUrl}/projects/${projectId}/testConfigs`;
   }
 }

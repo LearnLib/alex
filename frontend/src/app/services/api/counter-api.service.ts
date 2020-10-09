@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { environment as env } from '../../../environments/environment';
 import { Counter } from '../../entities/counter';
 import { BaseApiService } from './base-api.service';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { EnvironmentProvider } from "../../../environments/environment.provider";
 
 /**
  * The service that communicates with the API in order to read and delete counters.
@@ -28,7 +28,7 @@ import { map } from 'rxjs/operators';
 @Injectable()
 export class CounterApiService extends BaseApiService {
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private env: EnvironmentProvider) {
     super();
   }
 
@@ -39,7 +39,7 @@ export class CounterApiService extends BaseApiService {
    * @returns angular promise object of the request.
    */
   getAll(projectId: number): Observable<Counter[]> {
-    return this.http.get(`${env.apiUrl}/projects/${projectId}/counters`, this.defaultHttpOptions)
+    return this.http.get(`${this.env.apiUrl}/projects/${projectId}/counters`, this.defaultHttpOptions)
       .pipe(
         map((body: any) => body.map(c => Counter.fromData(c)))
       );
@@ -52,7 +52,7 @@ export class CounterApiService extends BaseApiService {
    * @param counter The counter to create.
    */
   create(projectId: number, counter: Counter): Observable<Counter> {
-    return this.http.post(`${env.apiUrl}/projects/${projectId}/counters`, counter, this.defaultHttpOptions)
+    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/counters`, counter, this.defaultHttpOptions)
       .pipe(
         map(body => Counter.fromData(body))
       );
@@ -65,7 +65,7 @@ export class CounterApiService extends BaseApiService {
    * @param counter The counter to update.
    */
   update(projectId: number, counter: Counter): Observable<Counter> {
-    return this.http.put(`${env.apiUrl}/projects/${projectId}/counters/${counter.id}`, counter, this.defaultHttpOptions)
+    return this.http.put(`${this.env.apiUrl}/projects/${projectId}/counters/${counter.id}`, counter, this.defaultHttpOptions)
       .pipe(
         map(body => Counter.fromData(body))
       );
@@ -79,7 +79,7 @@ export class CounterApiService extends BaseApiService {
    * @returns angular promise object of the request.
    */
   remove(projectId: number, counter: Counter): Observable<any> {
-    return this.http.delete(`${env.apiUrl}/projects/${projectId}/counters/${counter.id}`, this.defaultHttpOptions);
+    return this.http.delete(`${this.env.apiUrl}/projects/${projectId}/counters/${counter.id}`, this.defaultHttpOptions);
   }
 
   /**
@@ -91,6 +91,6 @@ export class CounterApiService extends BaseApiService {
    */
   removeMany(projectId: number, counters: Counter[]): Observable<any> {
     const ids = counters.map(c => c.id).join(',');
-    return this.http.delete(`${env.apiUrl}/projects/${projectId}/counters/batch/${ids}`, this.defaultHttpOptions);
+    return this.http.delete(`${this.env.apiUrl}/projects/${projectId}/counters/batch/${ids}`, this.defaultHttpOptions);
   }
 }

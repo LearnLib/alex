@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { environment as env } from '../../../environments/environment';
 import { AlphabetSymbol } from '../../entities/alphabet-symbol';
 import { SymbolGroup } from '../../entities/symbol-group';
 import { SymbolUsageResult } from '../../entities/symbol-usage-result';
@@ -23,6 +22,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { EnvironmentProvider } from "../../../environments/environment.provider";
 
 /**
  * The resource that handles http requests to the API to do CRUD operations on symbols.
@@ -30,7 +30,7 @@ import { map } from 'rxjs/operators';
 @Injectable()
 export class SymbolApiService extends BaseApiService {
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private env: EnvironmentProvider) {
     super();
   }
 
@@ -41,7 +41,7 @@ export class SymbolApiService extends BaseApiService {
    * @param symbolId The id of the symbol that should be fetched.
    */
   get(projectId: number, symbolId: number): Observable<AlphabetSymbol> {
-    return this.http.get(`${env.apiUrl}/projects/${projectId}/symbols/${symbolId}`, this.defaultHttpOptions)
+    return this.http.get(`${this.env.apiUrl}/projects/${projectId}/symbols/${symbolId}`, this.defaultHttpOptions)
       .pipe(
         map(body => new AlphabetSymbol(body))
       );
@@ -54,14 +54,14 @@ export class SymbolApiService extends BaseApiService {
    * @param includeHiddenSymbols If hidden symbols should be included or not.
    */
   getAll(projectId: number, includeHiddenSymbols = false): Observable<AlphabetSymbol[]> {
-    return this.http.get(`${env.apiUrl}/projects/${projectId}/symbols`, this.defaultHttpOptions)
+    return this.http.get(`${this.env.apiUrl}/projects/${projectId}/symbols`, this.defaultHttpOptions)
       .pipe(
         map((body: any) => body.map(s => new AlphabetSymbol(s)))
       );
   }
 
   importSymbols(projectId: number, importableEntity: any): Observable<AlphabetSymbol[]> {
-    return this.http.post(`${env.apiUrl}/projects/${projectId}/symbols/import`, importableEntity, this.defaultHttpOptions)
+    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/symbols/import`, importableEntity, this.defaultHttpOptions)
       .pipe(
         map((body: any) => body.map(s => new AlphabetSymbol(s)))
       );
@@ -74,7 +74,7 @@ export class SymbolApiService extends BaseApiService {
    * @param symbol The symbol that should be created.
    */
   create(projectId: number, symbol: AlphabetSymbol): Observable<AlphabetSymbol> {
-    return this.http.post(`${env.apiUrl}/projects/${projectId}/symbols`, symbol, this.defaultHttpOptions)
+    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/symbols`, symbol, this.defaultHttpOptions)
       .pipe(
         map(body => new AlphabetSymbol(body))
       );
@@ -87,7 +87,7 @@ export class SymbolApiService extends BaseApiService {
    * @param symbols The symbols to create.
    */
   createMany(projectId: number, symbols: AlphabetSymbol[]): Observable<AlphabetSymbol[]> {
-    return this.http.post(`${env.apiUrl}/projects/${projectId}/symbols/batch`, symbols, this.defaultHttpOptions)
+    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/symbols/batch`, symbols, this.defaultHttpOptions)
       .pipe(
         map((body: any) => body.map(s => new AlphabetSymbol(s)))
       );
@@ -102,7 +102,7 @@ export class SymbolApiService extends BaseApiService {
   moveMany(symbols: AlphabetSymbol[], group: SymbolGroup): Observable<any> {
     const ids = symbols.map(s => s.id).join(',');
     const project = symbols[0].project;
-    return this.http.put(`${env.apiUrl}/projects/${project}/symbols/batch/${ids}/moveTo/${group.id}`, {}, this.defaultHttpOptions);
+    return this.http.put(`${this.env.apiUrl}/projects/${project}/symbols/batch/${ids}/moveTo/${group.id}`, {}, this.defaultHttpOptions);
   }
 
   /**
@@ -111,7 +111,7 @@ export class SymbolApiService extends BaseApiService {
    * @param symbol The symbol to be updated.
    */
   update(symbol: AlphabetSymbol): Observable<AlphabetSymbol> {
-    return this.http.put(`${env.apiUrl}/projects/${symbol.project}/symbols/${symbol.id}`, symbol, this.defaultHttpOptions)
+    return this.http.put(`${this.env.apiUrl}/projects/${symbol.project}/symbols/${symbol.id}`, symbol, this.defaultHttpOptions)
       .pipe(
         map(body => new AlphabetSymbol(body))
       );
@@ -123,7 +123,7 @@ export class SymbolApiService extends BaseApiService {
    * @param symbol The the symbol that should be deleted.
    */
   remove(symbol: AlphabetSymbol): Observable<any> {
-    return this.http.post(`${env.apiUrl}/projects/${symbol.project}/symbols/${symbol.id}/hide`, {}, this.defaultHttpOptions);
+    return this.http.post(`${this.env.apiUrl}/projects/${symbol.project}/symbols/${symbol.id}/hide`, {}, this.defaultHttpOptions);
   }
 
   /**
@@ -131,7 +131,7 @@ export class SymbolApiService extends BaseApiService {
    */
   removeMany(projectId: number, symbols: AlphabetSymbol[]): Observable<any> {
     const ids = symbols.map(s => s.id).join(',');
-    return this.http.post(`${env.apiUrl}/projects/${projectId}/symbols/batch/${ids}/hide`, {}, this.defaultHttpOptions);
+    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/symbols/batch/${ids}/hide`, {}, this.defaultHttpOptions);
   }
 
   /**
@@ -140,7 +140,7 @@ export class SymbolApiService extends BaseApiService {
    * @param symbol The ID of the symbol.
    */
   delete(symbol: AlphabetSymbol): Observable<any> {
-    return this.http.delete(`${env.apiUrl}/projects/${symbol.project}/symbols/${symbol.id}`, this.defaultHttpOptions);
+    return this.http.delete(`${this.env.apiUrl}/projects/${symbol.project}/symbols/${symbol.id}`, this.defaultHttpOptions);
   }
 
   /**
@@ -151,7 +151,7 @@ export class SymbolApiService extends BaseApiService {
    */
   deleteMany(projectId: number, symbols: AlphabetSymbol[]): Observable<any> {
     const symbolIds = symbols.map(s => s.id).join(',');
-    return this.http.delete(`${env.apiUrl}/projects/${projectId}/symbols/batch/${symbolIds}`, this.defaultHttpOptions);
+    return this.http.delete(`${this.env.apiUrl}/projects/${projectId}/symbols/batch/${symbolIds}`, this.defaultHttpOptions);
   }
 
   /**
@@ -160,7 +160,7 @@ export class SymbolApiService extends BaseApiService {
    * @param symbol The symbol to recover.
    */
   recover(symbol: AlphabetSymbol): Observable<any> {
-    return this.http.post(`${env.apiUrl}/projects/${symbol.project}/symbols/${symbol.id}/show`, {}, this.defaultHttpOptions);
+    return this.http.post(`${this.env.apiUrl}/projects/${symbol.project}/symbols/${symbol.id}/show`, {}, this.defaultHttpOptions);
   }
 
   /**
@@ -171,17 +171,17 @@ export class SymbolApiService extends BaseApiService {
   recoverMany(symbols: AlphabetSymbol[]): Observable<any> {
     const ids = symbols.map(s => s.id).join(',');
     const project = symbols[0].project;
-    return this.http.post(`${env.apiUrl}/projects/${project}/symbols/batch/${ids}/show`, {}, this.defaultHttpOptions);
+    return this.http.post(`${this.env.apiUrl}/projects/${project}/symbols/batch/${ids}/show`, {}, this.defaultHttpOptions);
   }
 
   getUsages(projectId: number, symbolId: number): Observable<SymbolUsageResult> {
-    return this.http.get(`${env.apiUrl}/projects/${projectId}/symbols/${symbolId}/usages`, this.defaultHttpOptions)
+    return this.http.get(`${this.env.apiUrl}/projects/${projectId}/symbols/${symbolId}/usages`, this.defaultHttpOptions)
       .pipe(
         map(body => SymbolUsageResult.fromData(body))
       );
   }
 
   export(projectId: number, config: any): Observable<any> {
-    return this.http.post(`${env.apiUrl}/projects/${projectId}/symbols/export`, config, this.defaultHttpOptions)
+    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/symbols/export`, config, this.defaultHttpOptions)
   }
 }

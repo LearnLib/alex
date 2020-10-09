@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { environment as env } from '../../../environments/environment';
 import { webBrowser } from '../../constants';
 import { BaseApiService } from './base-api.service';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpEventType, HttpResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { EnvironmentProvider } from "../../../environments/environment.provider";
 
 /**
  * The resource that handles http calls to the API to do CRUD operations on projects.
@@ -28,7 +28,7 @@ import { map } from 'rxjs/operators';
 @Injectable()
 export class SettingsApiService extends BaseApiService {
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private env: EnvironmentProvider) {
     super();
   }
 
@@ -36,7 +36,7 @@ export class SettingsApiService extends BaseApiService {
    * Get application specific settings.
    */
   get(): Observable<any> {
-    return this.http.get(`${env.apiUrl}/settings`, this.defaultHttpOptions);
+    return this.http.get(`${this.env.apiUrl}/settings`, this.defaultHttpOptions);
   }
 
   /**
@@ -45,7 +45,7 @@ export class SettingsApiService extends BaseApiService {
    * @param settings The updated settings object.
    */
   update(settings: any): Observable<any> {
-    return this.http.put(`${env.apiUrl}/settings`, settings, this.defaultHttpOptions);
+    return this.http.put(`${this.env.apiUrl}/settings`, settings, this.defaultHttpOptions);
   }
 
   uploadDriver(driver: string, file: File): Observable<any> {
@@ -54,7 +54,7 @@ export class SettingsApiService extends BaseApiService {
     const formData = new FormData();
     formData.append('file', file, file.name);
 
-    this.http.post(`${env.apiUrl}/settings/drivers/${driver}`, formData, {
+    this.http.post(`${this.env.apiUrl}/settings/drivers/${driver}`, formData, {
       headers: this.defaultHttpHeaders,
       observe: 'events',
       reportProgress: true
@@ -77,7 +77,7 @@ export class SettingsApiService extends BaseApiService {
   }
 
   deleteDriver(driver: string): Observable<any> {
-    return this.http.delete(`${env.apiUrl}/settings/drivers/${driver}`, this.defaultHttpOptions);
+    return this.http.delete(`${this.env.apiUrl}/settings/drivers/${driver}`, this.defaultHttpOptions);
   }
 
   /**

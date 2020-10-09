@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { environment as env } from '../../../environments/environment';
 import { User, UserRole } from '../../entities/user';
 import { BaseApiService } from './base-api.service';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { EnvironmentProvider } from "../../../environments/environment.provider";
 
 /**
  * The resource to handle actions with users over the API.
@@ -28,7 +28,7 @@ import { map } from 'rxjs/operators';
 @Injectable()
 export class UserApiService extends BaseApiService {
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private env: EnvironmentProvider) {
     super()
   }
 
@@ -41,7 +41,7 @@ export class UserApiService extends BaseApiService {
    * @returns A promise.
    */
   changePassword(user: User, oldPassword: string, newPassword: string): Observable<any> {
-    return this.http.put(`${env.apiUrl}/users/${user.id}/password`, {
+    return this.http.put(`${this.env.apiUrl}/users/${user.id}/password`, {
       oldPassword,
       newPassword
     }, this.defaultHttpOptions);
@@ -55,7 +55,7 @@ export class UserApiService extends BaseApiService {
    * @returns A promise.
    */
   changeEmail(user: User, email: string): Observable<User> {
-    return this.http.put(`${env.apiUrl}/users/${user.id}/email`, {email}, this.defaultHttpOptions)
+    return this.http.put(`${this.env.apiUrl}/users/${user.id}/email`, {email}, this.defaultHttpOptions)
       .pipe(
         map((body: any) => User.fromData(body))
       );
@@ -68,14 +68,14 @@ export class UserApiService extends BaseApiService {
    * @param username The new username.
    */
   changeUsername(user: User, username: string): Observable<User> {
-    return this.http.put(`${env.apiUrl}/users/${user.id}/username`, {username}, this.defaultHttpOptions)
+    return this.http.put(`${this.env.apiUrl}/users/${user.id}/username`, {username}, this.defaultHttpOptions)
       .pipe(
         map((body: any) => User.fromData(body))
       );
   }
 
   changeRole(user: User, role: UserRole): Observable<User> {
-    return this.http.put(`${env.apiUrl}/users/${user.id}/role`, {role}, this.defaultHttpOptions)
+    return this.http.put(`${this.env.apiUrl}/users/${user.id}/role`, {role}, this.defaultHttpOptions)
       .pipe(
         map((body: any) => User.fromData(body))
       );
@@ -88,7 +88,7 @@ export class UserApiService extends BaseApiService {
    * @returns A promise.
    */
   get(userId: number): Observable<User> {
-    return this.http.get(`${env.apiUrl}/users/${userId}`, this.defaultHttpOptions)
+    return this.http.get(`${this.env.apiUrl}/users/${userId}`, this.defaultHttpOptions)
       .pipe(
         map((body: any) => User.fromData(body))
       );
@@ -100,14 +100,14 @@ export class UserApiService extends BaseApiService {
    * @param userIds The ids of the users to get.
    */
   getManyUsers(userIds: number[]): Observable<User[]> {
-    return this.http.get(`${env.apiUrl}/users/batch/${userIds.join(',')}`, this.defaultHttpOptions)
+    return this.http.get(`${this.env.apiUrl}/users/batch/${userIds.join(',')}`, this.defaultHttpOptions)
       .pipe(
         map((body: any) => body.map(u => User.fromData(u)))
       );
   }
 
   getByUsernameOrEmail(searchterm: string): Observable<User[]> {
-    return this.http.get(`${env.apiUrl}/users/search`, {headers: this.defaultHttpHeaders, params: {searchterm: searchterm}})
+    return this.http.get(`${this.env.apiUrl}/users/search`, {headers: this.defaultHttpHeaders, params: {searchterm: searchterm}})
       .pipe(
         map((body: any) => body.map(u => User.fromData(u)))
       )
@@ -119,7 +119,7 @@ export class UserApiService extends BaseApiService {
    * @returns A promise.
    */
   getAll(): Observable<User[]> {
-    return this.http.get(`${env.apiUrl}/users`, this.defaultHttpOptions)
+    return this.http.get(`${this.env.apiUrl}/users`, this.defaultHttpOptions)
       .pipe(
         map((body: any) => body.map(u => User.fromData(u)))
       );
@@ -132,7 +132,7 @@ export class UserApiService extends BaseApiService {
    * @returns A promise.
    */
   create(user: any): Observable<any> {
-    return this.http.post(`${env.apiUrl}/users`, user, this.defaultHttpOptions).pipe(
+    return this.http.post(`${this.env.apiUrl}/users`, user, this.defaultHttpOptions).pipe(
       map((body: any) => User.fromData(body))
     );
   }
@@ -145,7 +145,7 @@ export class UserApiService extends BaseApiService {
    * @returns A promise.
    */
   login(email: string, password: string): Observable<any> {
-    return this.http.post(`${env.apiUrl}/users/login`, {email, password}, this.defaultHttpOptions);
+    return this.http.post(`${this.env.apiUrl}/users/login`, {email, password}, this.defaultHttpOptions);
   }
 
   /**
@@ -155,7 +155,7 @@ export class UserApiService extends BaseApiService {
    * @returns The promise.
    */
   remove(user: User): Observable<any> {
-    return this.http.delete(`${env.apiUrl}/users/${user.id}`, this.defaultHttpOptions);
+    return this.http.delete(`${this.env.apiUrl}/users/${user.id}`, this.defaultHttpOptions);
   }
 
   /**
@@ -165,11 +165,11 @@ export class UserApiService extends BaseApiService {
    * @returns The promise.
    */
   removeManyUsers(userIds: number[]): Observable<any> {
-    return this.http.delete(`${env.apiUrl}/users/batch/${userIds.join(',')}`, this.defaultHttpOptions);
+    return this.http.delete(`${this.env.apiUrl}/users/batch/${userIds.join(',')}`, this.defaultHttpOptions);
   }
 
   myself(): Observable<User> {
-    return this.http.get(`${env.apiUrl}/users/myself`, this.defaultHttpOptions)
+    return this.http.get(`${this.env.apiUrl}/users/myself`, this.defaultHttpOptions)
       .pipe(
         map((body: any) => User.fromData(body))
       );

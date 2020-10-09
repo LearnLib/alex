@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-import { environment as env } from '../../../environments/environment';
 import { BaseApiService } from './base-api.service';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { EnvironmentProvider } from "../../../environments/environment.provider";
 
 /** The resource for test reports. */
 @Injectable()
 export class TestReportApiService extends BaseApiService {
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private env: EnvironmentProvider) {
     super();
   }
 
@@ -38,7 +38,7 @@ export class TestReportApiService extends BaseApiService {
   getAll(projectId: number, page = 0, size = 25): Observable<any> {
     const options = this.defaultHttpOptions;
     options.params = {page, size};
-    return this.http.get(`${env.apiUrl}/projects/${projectId}/tests/reports`, options);
+    return this.http.get(`${this.env.apiUrl}/projects/${projectId}/tests/reports`, options);
   }
 
   /**
@@ -48,7 +48,7 @@ export class TestReportApiService extends BaseApiService {
    * @param testReportId The id of the report.
    */
   get(projectId: number, testReportId: number): Observable<any> {
-    return this.http.get(`${env.apiUrl}/projects/${projectId}/tests/reports/${testReportId}`, this.defaultHttpOptions);
+    return this.http.get(`${this.env.apiUrl}/projects/${projectId}/tests/reports/${testReportId}`, this.defaultHttpOptions);
   }
 
   export(projectId: number, testReportId: number, format: string = 'junit'): Observable<any> {
@@ -61,7 +61,7 @@ export class TestReportApiService extends BaseApiService {
     options.params = new HttpParams()
       .append('format', format);
 
-    return this.http.get(`${env.apiUrl}/projects/${projectId}/tests/reports/${testReportId}`, options as any);
+    return this.http.get(`${this.env.apiUrl}/projects/${projectId}/tests/reports/${testReportId}`, options as any);
   }
 
   /**
@@ -70,7 +70,7 @@ export class TestReportApiService extends BaseApiService {
    * @param projectId The id of the project.
    */
   getLatest(projectId: number): Observable<any> {
-    return this.http.get(`${env.apiUrl}/projects/${projectId}/tests/reports/latest`, this.defaultHttpOptions)
+    return this.http.get(`${this.env.apiUrl}/projects/${projectId}/tests/reports/latest`, this.defaultHttpOptions)
   }
 
   /**
@@ -80,7 +80,7 @@ export class TestReportApiService extends BaseApiService {
    * @param testReportId The id of the report.
    */
   remove(projectId: number, testReportId: number): Observable<any> {
-    return this.http.delete(`${env.apiUrl}/projects/${projectId}/tests/reports/${testReportId}`, this.defaultHttpOptions);
+    return this.http.delete(`${this.env.apiUrl}/projects/${projectId}/tests/reports/${testReportId}`, this.defaultHttpOptions);
   }
 
   /**
@@ -91,6 +91,6 @@ export class TestReportApiService extends BaseApiService {
    */
   removeMany(projectId: number, testReports: any[]): Observable<any> {
     const ids = testReports.map((r) => r.id).join(',');
-    return this.http.delete(`${env.apiUrl}/projects/${projectId}/tests/reports/batch/${ids}`, this.defaultHttpOptions);
+    return this.http.delete(`${this.env.apiUrl}/projects/${projectId}/tests/reports/batch/${ids}`, this.defaultHttpOptions);
   }
 }

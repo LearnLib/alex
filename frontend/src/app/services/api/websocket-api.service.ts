@@ -15,13 +15,13 @@
  */
 
 import * as StompJS from "@stomp/stompjs";
+import { Client } from "@stomp/stompjs";
 import * as SockJS from 'sockjs-client';
 import { Injectable } from "@angular/core";
-import { environment as env } from '../../../environments/environment';
+import { environment } from '../../../environments/environment';
 import { BehaviorSubject, Subject } from "rxjs";
 import { WebSocketMessage } from "../../entities/websocket-message";
-import { Client } from "@stomp/stompjs";
-import { environment } from '../../../environments/environment';
+import { EnvironmentProvider } from "../../../environments/environment.provider";
 
 @Injectable()
 export class WebSocketAPIService {
@@ -34,7 +34,7 @@ export class WebSocketAPIService {
 
   private errors = new Subject<WebSocketMessage>();
 
-  constructor() {
+  constructor(private env: EnvironmentProvider) {
     this.client = new StompJS.Client({
       debug: function (str) {
         if (!environment.production) {
@@ -43,11 +43,11 @@ export class WebSocketAPIService {
       },
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
-      heartbeatOutgoing: 4000
+      heartbeatOutgoing: 4000,
     });
 
     this.client.webSocketFactory = () => {
-      return new SockJS(`${env.apiUrl}/ws/stomp`);
+      return new SockJS(`${this.env.apiUrl}/ws/stomp`);
     };
 
     this.client.beforeConnect = () => {
@@ -88,7 +88,7 @@ export class WebSocketAPIService {
   forceServerSideDisconnect(sessionId: string) {
     const jwt = localStorage.getItem('jwt');
     if (jwt != null && sessionId != null) {
-      fetch(`${env.apiUrl}/ws/disconnect`, {
+      fetch(`${this.env.apiUrl}/ws/disconnect`, {
         method: 'POST',
         keepalive: true,
         headers: {

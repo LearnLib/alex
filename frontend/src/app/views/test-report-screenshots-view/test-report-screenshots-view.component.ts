@@ -20,7 +20,6 @@ import { ActivatedRoute } from "@angular/router";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { ViewScreenshotModalComponent } from "./view-screenshot-modal/view-screenshot-modal.component";
 import { DownloadService } from "../../services/download.service";
-import { environment as env } from '../../../environments/environment';
 import { ToastService } from '../../services/toast.service';
 
 @Component({

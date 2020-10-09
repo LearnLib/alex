@@ -18,15 +18,15 @@ import { Injectable } from '@angular/core';
 import { BaseApiService } from './base-api.service';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment as env } from '../../../environments/environment';
 import { map } from 'rxjs/operators';
 import { LearnerSetup } from '../../entities/learner-setup';
 import { LearnerResult } from '../../entities/learner-result';
+import { EnvironmentProvider } from "../../../environments/environment.provider";
 
 @Injectable()
 export class LearnerSetupApiService extends BaseApiService {
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private env: EnvironmentProvider) {
     super();
   }
 
@@ -77,6 +77,6 @@ export class LearnerSetupApiService extends BaseApiService {
   }
 
   private url(projectId: number, setupId?: number): string {
-    return `${env.apiUrl}/projects/${projectId}/learner/setups${setupId != null ? '/' + setupId : ''}`;
+    return `${this.env.apiUrl}/projects/${projectId}/learner/setups${setupId != null ? '/' + setupId : ''}`;
   }
 }
