@@ -69,8 +69,7 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "alex-frontend:build",
-            "proxyConfig": "proxy.conf.js"
+            "browserTarget": "alex-frontend:build"
           },
           "configurations": {
             "production": {

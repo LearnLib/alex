@@ -1,0 +1,54 @@
+version: '3.7'
+services:
+    selenium-hub:
+        image: selenium/hub:3
+    chrome-node:
+        image: selenium/node-chrome-debug:3
+        shm_size: '2gb'
+        depends_on:
+            - selenium-hub
+        environment:
+            - HUB_HOST=selenium-hub
+            - HUB_PORT=4444
+        ports:
+            - 5900
+    firefox-node:
+        image: selenium/node-firefox-debug:3
+        shm_size: '2gb'
+        depends_on:
+            - selenium-hub
+        environment:
+            - HUB_HOST=selenium-hub
+            - HUB_PORT=4444
+        ports:
+            - 5900
+    alex-backend-development:
+        image: maven:3-jdk-11
+        working_dir: /var/alex/backend
+        volumes:
+            - ./backend/src:/var/alex/backend/src:ro
+            - ./backend/pom.xml:/var/alex/backend/pom.xml:ro
+            - alex-backend-maven-development:/root/.m2
+            - alex-backend-db-development:/var/alex/backend/target/db
+            - alex-backend-files-development:/var/alex/backend/target/files
+        command: mvn spring-boot:run -Dspring-boot.run.arguments="--remoteDriver=http://selenium-hub:4444/wd/hub"
+        ports:
+            - 8000:8000
+    alex-frontend-development:
+        image: node
+        working_dir: /var/alex/frontend
+        volumes:
+            - ./frontend:/var/alex/frontend:rw
+        command: npm run start:docker
+        ports:
+            - 4200:4200
+
+volumes:
+  alex-backend-maven-development:
+  alex-backend-db-development:
+  alex-backend-files-development:
+
+networks:
+  default:
+    external:
+      name: alex-development
