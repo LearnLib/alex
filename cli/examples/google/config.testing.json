@@ -1,0 +1,11 @@
+{
+  "driverConfig": {
+    "width": 1980,
+    "height": 1080,
+    "implicitlyWait": 0,
+    "pageLoadTimeout": 10,
+    "scriptTimeout": 10,
+    "name": "chrome",
+    "headless": true
+  }
+}

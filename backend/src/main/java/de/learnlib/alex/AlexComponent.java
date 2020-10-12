@@ -20,7 +20,6 @@ import de.learnlib.alex.auth.dao.UserDAO;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.entities.UserRole;
 import de.learnlib.alex.learning.entities.LearnerResult;
-import de.learnlib.alex.learning.entities.webdrivers.WebDrivers;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.settings.dao.SettingsDAO;
 import de.learnlib.alex.settings.entities.DriverSettings;
@@ -28,18 +27,15 @@ import de.learnlib.alex.settings.entities.Settings;
 import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 import javax.annotation.PostConstruct;
 import javax.validation.ValidationException;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -129,34 +125,20 @@ public class AlexComponent {
         }
     }
 
-    private String getDriverPath(String driver) {
-        final Path driverPath = Paths.get(env.getProperty("alex.filesRootDir"), "system", driver);
-        if (Files.notExists(driverPath)) {
-            return "";
-        } else {
-            return driver;
-        }
-    }
-
     /**
      * Initialize system properties and create the settings object if needed.
      */
     @PostConstruct
     public void initializeSettings() {
-        Settings settings = settingsDAO.get();
+        var settings = settingsDAO.get();
+
+        // create settings for the first time
         if (settings == null) {
             try {
                 settings = new Settings();
-
-                final String chromeDriverPath = System.getProperty("webdriver.chrome.driver", "");
-                final String geckoDriverPath = System.getProperty("webdriver.gecko.driver", "");
-                final String edgeDriverPath = System.getProperty("webdriver.edge.driver", "");
-                final String ieDriverPath = System.getProperty("webdriver.ie.driver", "");
-                final String remoteDriverURL = System.getProperty("webdriver.remote.url", "");
-
-                final DriverSettings driverSettings = new DriverSettings(chromeDriverPath, geckoDriverPath,
-                        edgeDriverPath, remoteDriverURL, ieDriverPath);
-
+                final var remoteDriverURL = env.getProperty("webdriver.remote.url", "");
+                final var driverSettings = new DriverSettings();
+                driverSettings.setRemote(remoteDriverURL);
                 settings.setDriverSettings(driverSettings);
                 settingsDAO.create(settings);
             } catch (ValidationException e) {
@@ -165,43 +147,12 @@ public class AlexComponent {
             }
         }
 
-        final DriverSettings driverSettings = settings.getDriverSettings();
-        driverSettings.setChrome(getDriverPath(driverSettings.getChrome()));
-        driverSettings.setFirefox(getDriverPath(driverSettings.getFirefox()));
-        driverSettings.setEdge(getDriverPath(driverSettings.getEdge()));
-        driverSettings.setIe(getDriverPath(driverSettings.getIe()));
-        settingsDAO.update(settings);
-
         // overwrite web driver paths if specified as command line arguments
         try {
-            final String chromeDriver = env.getProperty("chromeDriver");
-            if (!chromeDriver.isEmpty()) {
-                final File f = new File(chromeDriver);
-                settingsDAO.updateDriver(new FileInputStream(f), f.getName(), WebDrivers.CHROME);
-            }
-
-            final String geckoDriver = env.getProperty("geckoDriver");
-            if (!geckoDriver.isEmpty()) {
-                final File f = new File(geckoDriver);
-                settingsDAO.updateDriver(new FileInputStream(f), f.getName(), WebDrivers.FIREFOX);
-            }
-
-            final String edgeDriver = env.getProperty("edgeDriver");
-            if (!edgeDriver.isEmpty()) {
-                final File f = new File(edgeDriver);
-                settingsDAO.updateDriver(new FileInputStream(f), f.getName(), WebDrivers.EDGE);
-            }
-
-            final String ieDriver = env.getProperty("ieDriver");
-            if (!ieDriver.isEmpty()) {
-                final File f = new File(ieDriver);
-                settingsDAO.updateDriver(new FileInputStream(f), f.getName(), WebDrivers.IE);
-            }
-
-            final String remoteDriver = env.getProperty("remoteDriver");
-            if (!remoteDriver.isEmpty()) {
-                new URL(remoteDriver);
-                settings.getDriverSettings().setRemote(remoteDriver);
+            final var remoteDriverUrl = env.getProperty("webdriver.remote.url", "");
+            if (!remoteDriverUrl.isEmpty()) {
+                new URL(remoteDriverUrl);
+                settings.getDriverSettings().setRemote(remoteDriverUrl);
                 settingsDAO.update(settings);
             }
         } catch (Exception e) {
@@ -216,7 +167,7 @@ public class AlexComponent {
      * @return The bean.
      */
     @Bean
-    public FilterRegistrationBean corsFilter() {
+    public CorsConfigurationSource corsConfigurationSource() {
         final CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         config.addAllowedOrigin("*");
@@ -226,9 +177,6 @@ public class AlexComponent {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
 
-        final FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
-        bean.setOrder(0);
-
-        return bean;
+        return source;
     }
 }

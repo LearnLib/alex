@@ -1,0 +1,64 @@
+<div class="modal-header">
+  <h4 class="modal-title">Configure the test run</h4>
+  <a (click)="modal.dismiss()" class="btn btn-icon float-right">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<div class="modal-body">
+
+  <ngb-tabset>
+    <ngb-tab title="WebDriver">
+      <ng-template ngbTabContent>
+        <p></p>
+
+        <driver-config-form
+          *ngIf="configuration.driverConfig != null"
+          [(config)]="configuration.driverConfig"
+        >
+        </driver-config-form>
+      </ng-template>
+    </ngb-tab>
+    <ngb-tab title="Targets">
+      <ng-template ngbTabContent>
+        <p></p>
+
+        <p class="text-muted">
+          Select an environment for testing.
+        </p>
+
+        <div class="list-group">
+          <div
+            (click)="selectedEnvironment = env"
+            *ngFor="let env of project.environments"
+            [ngClass]="{'active': env.id === selectedEnvironment.id}"
+            class="list-group-item cursor-pointer"
+          >
+            {{env.name}}
+          </div>
+        </div>
+      </ng-template>
+    </ngb-tab>
+    <ngb-tab title="Test">
+      <ng-template ngbTabContent>
+        <p></p>
+
+        <div class="form-group">
+          <label>Description</label>
+          <textarea
+            [(ngModel)]="configuration.description"
+            class="form-control"
+            rows="3"
+            placeholder="Enter a description for the test run"
+          >
+          </textarea>
+        </div>
+      </ng-template>
+    </ngb-tab>
+  </ngb-tabset>
+</div>
+
+<div class="modal-footer">
+  <button (click)="update()" class="btn btn-primary btn-sm">Update</button>
+  <button (click)="modal.dismiss(); $event.preventDefault()" class="btn btn-default btn-sm">Cancel</button>
+</div>

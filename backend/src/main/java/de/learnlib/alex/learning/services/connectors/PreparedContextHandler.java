@@ -24,7 +24,7 @@ import de.learnlib.alex.data.entities.Counter;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
-import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
+import de.learnlib.alex.learning.entities.WebDriverConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ public class PreparedContextHandler {
     private FileDAO fileDAO;
     private User user;
     private Project project;
-    private AbstractWebDriverConfig driverConfig;
+    private WebDriverConfig driverConfig;
     private ParameterizedSymbol resetSymbol;
     private ParameterizedSymbol postSymbol;
 
@@ -42,7 +42,7 @@ public class PreparedContextHandler {
                                   FileDAO fileDAO,
                                   User user,
                                   Project project,
-                                  AbstractWebDriverConfig driverConfig,
+                                  WebDriverConfig driverConfig,
                                   ParameterizedSymbol resetSymbol,
                                   ParameterizedSymbol postSymbol) {
         this.counterDAO = counterDAO;

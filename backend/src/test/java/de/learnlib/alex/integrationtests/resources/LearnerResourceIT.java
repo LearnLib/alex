@@ -45,10 +45,10 @@ import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStatus;
 import de.learnlib.alex.learning.entities.ReadOutputConfig;
 import de.learnlib.alex.learning.entities.SymbolSet;
+import de.learnlib.alex.learning.entities.WebDriverConfig;
 import de.learnlib.alex.learning.entities.algorithms.TTT;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
-import de.learnlib.alex.learning.entities.webdrivers.HtmlUnitDriverConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
@@ -115,7 +115,10 @@ public class LearnerResourceIT extends AbstractResourceIT {
         learnerSetup.setProject(project);
         learnerSetup.setPreSymbol(resetSymbol);
         learnerSetup.setSymbols(Arrays.asList(authSymbol, getProfileSymbol));
-        learnerSetup.setWebDriver(new HtmlUnitDriverConfig());
+
+        final var webDriverConfig = new WebDriverConfig();
+        webDriverConfig.setBrowser("chrome");
+        learnerSetup.setWebDriver(webDriverConfig);
         learnerSetup.setEquivalenceOracle(eqOracleProxy);
         learnerSetup.setAlgorithm(new TTT());
         learnerSetup.setEnvironments(project.getEnvironments());

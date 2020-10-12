@@ -1,0 +1,188 @@
+{
+  "version": "1.8.0-SNAPSHOT",
+  "type": "project",
+  "project": {
+    "name": "google",
+    "environments": [
+      {
+        "name": "Env2",
+        "urls": [
+          {
+            "name": "Base",
+            "url": "https://www.google.com",
+            "default": true
+          }
+        ],
+        "variables": [],
+        "default": false
+      },
+      {
+        "name": "Production",
+        "urls": [
+          {
+            "name": "Base",
+            "url": "https://www.google.com",
+            "default": true
+          }
+        ],
+        "variables": [],
+        "default": true
+      }
+    ]
+  },
+  "groups": [
+    {
+      "name": "Default Group",
+      "symbols": [
+        {
+          "description": "",
+          "expectedResult": "",
+          "inputs": [
+            {
+              "type": "input",
+              "name": "term",
+              "parameterType": "STRING"
+            }
+          ],
+          "name": "search",
+          "outputs": [],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_clear",
+                "node": {
+                  "selector": "input[name=\"q\"]",
+                  "type": "CSS"
+                }
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_fill",
+                "node": {
+                  "selector": "input[name=\"q\"]",
+                  "type": "CSS"
+                },
+                "value": "{{$term}}"
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_pressKey",
+                "node": {
+                  "selector": "input[name=\"q\"]",
+                  "type": "CSS"
+                },
+                "key": "\\ue007"
+              }
+            }
+          ],
+          "successOutput": null
+        },
+        {
+          "description": "",
+          "expectedResult": "",
+          "inputs": [],
+          "name": "reset",
+          "outputs": [],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_goto",
+                "url": "/",
+                "baseUrl": "Base",
+                "credentials": {
+                  "name": "",
+                  "password": ""
+                }
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_waitForNode",
+                "node": {
+                  "selector": "input[name=\"q\"]",
+                  "type": "CSS"
+                },
+                "waitCriterion": "CLICKABLE",
+                "maxWaitTime": 5
+              }
+            }
+          ],
+          "successOutput": null
+        }
+      ],
+      "groups": []
+    }
+  ],
+  "tests": [
+    {
+      "name": "test",
+      "preSteps": [],
+      "steps": [
+        {
+          "expectedResult": "",
+          "expectedOutputSuccess": true,
+          "expectedOutputMessage": "",
+          "pSymbol": {
+            "parameterValues": [],
+            "outputMappings": [],
+            "symbol": {
+              "name": "reset"
+            }
+          }
+        },
+        {
+          "expectedResult": "",
+          "expectedOutputSuccess": true,
+          "expectedOutputMessage": "",
+          "pSymbol": {
+            "parameterValues": [
+              {
+                "parameter": {
+                  "type": "input",
+                  "name": "term",
+                  "parameterType": "STRING"
+                },
+                "value": "potato"
+              }
+            ],
+            "outputMappings": [],
+            "symbol": {
+              "name": "search"
+            }
+          }
+        }
+      ],
+      "postSteps": [],
+      "generated": false,
+      "status": "DONE",
+      "type": "case"
+    }
+  ]
+}

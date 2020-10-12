@@ -37,7 +37,7 @@ import de.learnlib.alex.learning.entities.SeparatingWord;
 import de.learnlib.alex.learning.entities.SymbolSet;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
-import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
+import de.learnlib.alex.learning.entities.WebDriverConfig;
 import de.learnlib.alex.learning.exceptions.LearnerException;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
@@ -323,7 +323,7 @@ public class LearnerService {
      *         If something went wrong while testing the symbols.
      */
     public List<ExecuteResult> readOutputs(User user, Project project, ProjectEnvironment environment, ParameterizedSymbol resetSymbol,
-                                           List<ParameterizedSymbol> symbols, ParameterizedSymbol postSymbol, AbstractWebDriverConfig driverConfig)
+                                           List<ParameterizedSymbol> symbols, ParameterizedSymbol postSymbol, WebDriverConfig driverConfig)
             throws LearnerException {
         logger.traceEntry();
         logger.info(LoggerMarkers.LEARNER, "Learner.readOutputs({}, {}, {}, {}, {})", user, project, resetSymbol, symbols, driverConfig);

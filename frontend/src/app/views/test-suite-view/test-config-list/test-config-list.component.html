@@ -1,0 +1,26 @@
+<div class="list-group list-group-flush">
+  <div
+    *ngFor="let config of configs"
+    [ngClass]="{'active': selectedConfig?.id === config.id}"
+    class="list-group-item d-flex flex-row"
+  >
+    <div (click)="selectConfig(config)" class="w-100 cursor-pointer text-wrap">
+      <strong>{{config.driverConfig.browser | formatWebBrowser}}</strong>
+
+      <span> ({{config.driverConfig.width}} x {{config.driverConfig.height}})</span>
+
+      <span class="pl-1 default float-right" [class.is-default]="config.default">
+        <span class="badge badge-default cursor-pointer" (click)="makeConfigDefault(config)" *ngIf="!config.default">Default</span>
+        <span class="badge badge-primary" *ngIf="config.default">Default</span>
+      </span>
+      <div>
+        <span class="badge badge-secondary">
+            {{project.getEnvironmentById(config.environment).name}}
+        </span>
+      </div>
+    </div>
+    <div class="pl-2 actions">
+      <i (click)="deleteConfig(config)" class="fas fa-fw fa-trash cursor-pointer"></i>
+    </div>
+  </div>
+</div>

@@ -21,7 +21,7 @@ import de.learnlib.alex.data.dao.CounterDAO;
 import de.learnlib.alex.data.dao.FileDAO;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
-import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
+import de.learnlib.alex.learning.entities.WebDriverConfig;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
@@ -69,7 +69,7 @@ public class PreparedConnectorContextHandlerFactory {
      */
     public PreparedContextHandler createPreparedContextHandler(User user,
                                                                Project project,
-                                                               AbstractWebDriverConfig driverConfig,
+                                                               WebDriverConfig driverConfig,
                                                                ParameterizedSymbol resetSymbol,
                                                                ParameterizedSymbol postSymbol) {
         return new PreparedContextHandler(counterDAO, fileDAO, user, project, driverConfig, resetSymbol, postSymbol);

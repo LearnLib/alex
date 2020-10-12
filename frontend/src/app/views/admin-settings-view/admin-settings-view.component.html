@@ -1,0 +1,72 @@
+<div class="view">
+  <action-bar>
+    <div class="container d-flex">
+      <button (click)="updateSettings()" class="btn btn-sm btn-success ml-auto">
+        <i class="fas fa-save fa-fw"></i> Save
+      </button>
+    </div>
+  </action-bar>
+
+  <div class="view-body settings">
+    <div *ngIf="settings != null" class="container">
+
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="m-0">Web drivers</h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="list-group-flush">
+
+            <div class="list-group-item d-flex flex-row">
+              <div class="w-100 pr-3">
+                <div class="form-group mb-0">
+                  <h6 class="mb-0">Selenium Remote Server</h6>
+                  <small class="text-muted d-block mb-2">
+                    Download Selenium server 3.11.0
+                    <a href="http://selenium-release.storage.googleapis.com/index.html?path=3.11/" rel="nofollow"
+                       target="_blank">
+                      here
+                    </a>
+                  </small>
+
+                  <input
+                    [(ngModel)]="settings.driver.remote" class="form-control"
+                    placeholder="Enter the URL to the remote Selenium Server"
+                    type="text"
+                  >
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h5 class="m-0">User registration</h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="list-group list-group-flush">
+            <div class="list-group-item d-flex flex-row">
+              <div class="w-100 pr-3">
+                <strong>Allow public user registration</strong><br>
+                <div class="text-muted">
+                  If disabled, no new user account can be created.
+                </div>
+              </div>
+              <div>
+                <toggle-button
+                  [enabled]="settings.allowUserRegistration"
+                  (toggle)="settings.allowUserRegistration = $event"
+                >
+                </toggle-button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

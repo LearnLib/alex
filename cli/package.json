@@ -1,0 +1,24 @@
+{
+  "name": "alex-cli",
+  "version": "2.0.0",
+  "repository": {
+    "url": "https://github.com/LearnLib/alex-cli.git"
+  },
+  "description": "A command line interface for executing tests and learning experiments with ALEX v1.8.0",
+  "main": "alex-cli.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "alex-cli": "./alex-cli.js"
+  },
+  "author": "Alexander Bainczyk",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "chalk": "^3.0.0",
+    "commander": "^4.1.1",
+    "dateformat": "^3.0.3",
+    "request": "^2.88.2",
+    "request-promise-native": "^1.0.8"
+  }
+}

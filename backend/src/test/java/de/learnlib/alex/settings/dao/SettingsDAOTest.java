@@ -52,20 +52,6 @@ public class SettingsDAOTest {
     }
 
     @Test
-    public void shouldSetTheDriverPropertiesOnCreation() {
-        Settings settings = new Settings();
-        settings.getDriverSettings().setChrome(PATH_TO_CHROME);
-        settings.getDriverSettings().setFirefox(PATH_TO_FIREFOX);
-        settings.getDriverSettings().setEdge(PATH_TO_EDGE);
-
-        settingsDAO.create(settings);
-
-        assertEquals("null/system/" + PATH_TO_CHROME, System.getProperty("webdriver.chrome.driver"));
-        assertEquals( "null/system/" + PATH_TO_FIREFOX, System.getProperty("webdriver.gecko.driver"));
-        assertEquals("null/system/" + PATH_TO_EDGE, System.getProperty("webdriver.edge.driver"));
-    }
-
-    @Test
     public void shouldGetTheSettings() {
         Settings settings = new Settings();
         given(settingsRepository.get()).willReturn(settings);
@@ -84,29 +70,6 @@ public class SettingsDAOTest {
         settingsDAO.create(settings);
         settingsDAO.update(settings);
         verify(settingsRepository, times(2)).save(settings); // only 1 x creation & 1 x update should call save
-    }
-
-    @Test
-    public void shouldSetTheDriverPropertiesOnUpdate() {
-        Settings settings = new Settings();
-        settings.getDriverSettings().setChrome(PATH_TO_CHROME);
-        settings.getDriverSettings().setFirefox(PATH_TO_FIREFOX);
-        settings.getDriverSettings().setEdge(PATH_TO_EDGE);
-
-        settingsDAO.create(settings);
-
-        String chromePath  = "new/" + PATH_TO_CHROME;
-        String firefoxPath = "new/" + PATH_TO_FIREFOX;
-        String edgePath = "new/" + PATH_TO_EDGE;
-        settings.getDriverSettings().setChrome(chromePath);
-        settings.getDriverSettings().setFirefox(firefoxPath);
-        settings.getDriverSettings().setEdge(edgePath);
-
-        settingsDAO.update(settings);
-
-        assertEquals("null/system/new/" + PATH_TO_CHROME, System.getProperty("webdriver.chrome.driver"));
-        assertEquals( "null/system/new/" + PATH_TO_FIREFOX, System.getProperty("webdriver.gecko.driver"));
-        assertEquals("null/system/new/" + PATH_TO_EDGE, System.getProperty("webdriver.edge.driver"));
     }
 
 }

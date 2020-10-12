@@ -1,0 +1,44 @@
+version: '3.7'
+services:
+  selenium-hub:
+    image: selenium/hub:3
+  chrome-node:
+    image: selenium/node-chrome-debug:3
+    shm_size: '2gb'
+    depends_on:
+      - selenium-hub
+    environment:
+      - HUB_HOST=selenium-hub
+      - HUB_PORT=4444
+    ports:
+      - 5900
+  firefox-node:
+    image: selenium/node-firefox-debug:3
+    shm_size: '2gb'
+    depends_on:
+      - selenium-hub
+    environment:
+      - HUB_HOST=selenium-hub
+      - HUB_PORT=4444
+    ports:
+      - 5900
+  alex-frontend-production:
+    build: ./frontend
+    environment:
+      - SERVER_ADDRESS=http://localhost
+      - PORT=8000
+    ports:
+      - 4200:4200
+  alex-backend-production:
+    build: ./backend
+    volumes:
+      - alex-backend-db-production:/var/lib/alex/target/db
+      - alex-backend-files-production:/var/lib/alex/target/files
+    environment:
+      - REMOTE_DRIVER=http://selenium-hub:4444/wd/hub
+    ports:
+      - 8000:8000
+
+volumes:
+  alex-backend-db-production:
+  alex-backend-files-production:

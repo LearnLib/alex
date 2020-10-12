@@ -1,0 +1,243 @@
+<div class="view">
+
+  <action-bar>
+    <div class="btn-group btn-group-sm">
+      <button
+        (click)="switchToFinal()"
+        [disabled]="[chartModes.SINGLE_FINAL,chartModes.MULTIPLE_FINAL].indexOf(chartMode) > -1"
+        class="btn btn-default"
+      >
+        <i class="fas fa-fw fa-chart-bar"></i> Cumulated
+      </button>
+      <button
+        (click)="switchToComplete()"
+        [disabled]="[chartModes.SINGLE_COMPLETE,chartModes.MULTIPLE_COMPLETE].indexOf(chartMode) > -1"
+        class="btn btn-default"
+      >
+        <i class="fas fa-fw fa-chart-line"></i> Complete
+      </button>
+    </div>
+
+    <button
+      (click)="toggleShowInColumns()"
+      [class.active]="showInColumns"
+      class="btn btn-sm btn-default ml-2"
+    >
+      <i class="fas fa-fw fa-columns"></i>
+    </button>
+  </action-bar>
+
+  <div class="view-body">
+    <div class="container-fluid">
+
+      <table class="table table-striped" *ngIf="chartData != null && chartData.context != null">
+        <thead>
+        <tr>
+          <th>&nbsp;</th>
+          <th>Browser</th>
+          <th>Algorithm</th>
+          <th>|&#931;|</th>
+          <th>Equivalence queries</th>
+        </tr>
+        </thead>
+        <tbody *ngIf="chartData.context.length === 0">
+        <tr>
+          <td style="width: 100px">
+            <strong>Test {{chartData.context.testNo}}</strong>
+          </td>
+          <td>
+            {{chartData.context.setup.webDriver.browser | formatWebBrowser}} ({{chartData.context.setup.webDriver.width}}px
+            x {{chartData.context.setup.webDriver.height}}px)
+          </td>
+          <td>{{chartData.context.algorithm.name | formatLearningAlgorithm}}</td>
+          <td>{{chartData.context.setup.symbols.length}}</td>
+          <td>{{chartData.context.statistics.eqsUsed}}</td>
+        </tr>
+        </tbody>
+        <tbody *ngIf="chartData.context.length > 0">
+        <tr *ngFor="let result of chartData.context">
+          <td style="width: 100px">
+            <strong>Test {{result.testNo}}</strong>
+          </td>
+          <td>
+            {{result.setup.webDriver.browser | formatWebBrowser}} ({{result.setup.webDriver.width}}px
+            x {{result.setup.webDriver.height}}px)
+          </td>
+          <td>{{result.setup.algorithm.name | formatLearningAlgorithm}}</td>
+          <td>{{result.setup.symbols.length}}</td>
+          <td>{{result.statistics.eqsUsed}}</td>
+        </tr>
+        </tbody>
+      </table>
+
+      <hr>
+
+      <div *ngIf="chartData != null && chartData.data != null" class="row">
+        <div [ngClass]="showInColumns ? 'col-md-12 col-lg-6' : 'col-sm-12'">
+
+          <div class="card mb-3" id="chart-eqs">
+            <div class="card-header">
+              <strong>Membership queries</strong>
+            </div>
+            <div class="card-body">
+              <div style="width: 100%; height: 450px">
+                <ngx-charts-bar-vertical
+                  *ngIf="chartMode == chartModes.SINGLE_FINAL || chartMode == chartModes.MULTIPLE_FINAL"
+                  [results]="chartData.data.mqs"
+                  [legend]="chartData.options.legend"
+                  [xAxis]="chartData.options.xAxis"
+                  [yAxis]="chartData.options.yAxis"
+                  [showGridLines]="chartData.options.showGridLines"
+                  [roundDomains]="chartData.options.roundDomains"
+                  [showXAxisLabel]="chartData.options.showXAxisLabel"
+                  [showYAxisLabel]="chartData.options.showYAxisLabel"
+                  [gradient]="chartData.options.gradient"
+                  [noBarWhenZero]="chartData.options.noBarWhenZero"
+                  [barPadding]="chartData.options.barPadding"
+                  [showDataLabel]="chartData.options.showDataLabel"
+                  [scheme]="chartData.options.schemeBarChart"
+                  [animations]="false"
+                >
+                </ngx-charts-bar-vertical>
+                <ngx-charts-area-chart
+                  *ngIf="chartMode == chartModes.SINGLE_COMPLETE || chartMode == chartModes.MULTIPLE_COMPLETE"
+                  [results]="chartData.data.mqs"
+                  [legend]="chartData.options.legendAreaChart"
+                  [xAxis]="chartData.options.xAxis"
+                  [yAxis]="chartData.options.yAxis"
+                  [showGridLines]="chartData.options.showGridLines"
+                  [roundDomains]="chartData.options.roundDomains"
+                  [showXAxisLabel]="chartData.options.showXAxisLabelAreaChart"
+                  [showYAxisLabel]="chartData.options.showYAxisLabelAreaChart"
+                  [gradient]="chartData.options.gradient"
+                  [scheme]="chartData.options.schemeAreaChart"
+                  [timeline]="chartData.options.timeline"
+                  [xAxisLabel]="chartData.options.xAxisLabelAreaChart"
+                  [yAxisLabel]="chartData.options.yAxisLabelAreaChart"
+                  [xAxisTickFormatting]="formatXTicks"
+                  [animations]="false"
+                >
+                </ngx-charts-area-chart>
+              </div>
+            </div>
+            <div class="card-footer">
+              <button (click)="downloadChart('#chart-eqs')" class="btn btn-sm btn-default float-right">
+                <i class="fas fa-fw fa-download"></i> Download SVG
+              </button>
+            </div>
+          </div>
+
+          <div class="card mb-3" id="chart-duration">
+            <div class="card-header">
+              <strong>Duration</strong>
+            </div>
+            <div class="card-body">
+              <div style="width: 100%; height: 450px">
+                <ngx-charts-bar-vertical
+                  *ngIf="chartMode == chartModes.SINGLE_FINAL || chartMode == chartModes.MULTIPLE_FINAL"
+                  [results]="chartData.data.duration"
+                  [legend]="chartData.options.legend"
+                  [xAxis]="chartData.options.xAxis"
+                  [yAxis]="chartData.options.yAxis"
+                  [showGridLines]="chartData.options.showGridLines"
+                  [roundDomains]="chartData.options.roundDomains"
+                  [showXAxisLabel]="chartData.options.showXAxisLabel"
+                  [showYAxisLabel]="chartData.options.showYAxisLabel"
+                  [gradient]="chartData.options.gradient"
+                  [noBarWhenZero]="chartData.options.noBarWhenZero"
+                  [barPadding]="chartData.options.barPadding"
+                  [showDataLabel]="chartData.options.showDataLabel"
+                  [scheme]="chartData.options.schemeBarChart"
+                  [animations]="false"
+                >
+                </ngx-charts-bar-vertical>
+                <ngx-charts-area-chart
+                  *ngIf="chartMode == chartModes.SINGLE_COMPLETE || chartMode == chartModes.MULTIPLE_COMPLETE"
+                  [results]="chartData.data.duration"
+                  [legend]="chartData.options.legendAreaChart"
+                  [xAxis]="chartData.options.xAxis"
+                  [yAxis]="chartData.options.yAxis"
+                  [showGridLines]="chartData.options.showGridLines"
+                  [roundDomains]="chartData.options.roundDomains"
+                  [showXAxisLabel]="chartData.options.showXAxisLabelAreaChart"
+                  [showYAxisLabel]="chartData.options.showYAxisLabelAreaChart"
+                  [gradient]="chartData.options.gradient"
+                  [scheme]="chartData.options.schemeAreaChart"
+                  [timeline]="chartData.options.timeline"
+                  [xAxisLabel]="chartData.options.xAxisLabelAreaChart"
+                  [yAxisLabel]="chartData.options.yAxisLabelAreaChart"
+                  [xAxisTickFormatting]="formatXTicks"
+                  [animations]="false"
+                >
+                </ngx-charts-area-chart>
+              </div>
+            </div>
+            <div class="card-footer">
+              <button (click)="downloadChart('#chart-duration')" class="btn btn-sm btn-default float-right">
+                <i class="fas fa-fw fa-download"></i> Download SVG
+              </button>
+            </div>
+          </div>
+
+        </div>
+        <div [ngClass]="showInColumns ? 'col-md-12 col-lg-6' : 'col-sm-12'">
+
+          <div class="card mb-3" id="chart-symbols">
+            <div class="card-header">
+              <strong>Symbols</strong>
+            </div>
+            <div class="card-body">
+              <div style="width: 100%; height: 450px">
+                <ngx-charts-bar-vertical
+                  *ngIf="chartMode == chartModes.SINGLE_FINAL || chartMode == chartModes.MULTIPLE_FINAL"
+                  [results]="chartData.data.symbols"
+                  [legend]="chartData.options.legend"
+                  [xAxis]="chartData.options.xAxis"
+                  [yAxis]="chartData.options.yAxis"
+                  [showGridLines]="chartData.options.showGridLines"
+                  [roundDomains]="chartData.options.roundDomains"
+                  [showXAxisLabel]="chartData.options.showXAxisLabel"
+                  [showYAxisLabel]="chartData.options.showYAxisLabel"
+                  [gradient]="chartData.options.gradient"
+                  [noBarWhenZero]="chartData.options.noBarWhenZero"
+                  [barPadding]="chartData.options.barPadding"
+                  [showDataLabel]="chartData.options.showDataLabel"
+                  [scheme]="chartData.options.schemeBarChart"
+                  [animations]="false"
+                >
+                </ngx-charts-bar-vertical>
+                <ngx-charts-area-chart
+                  *ngIf="chartMode == chartModes.SINGLE_COMPLETE || chartMode == chartModes.MULTIPLE_COMPLETE"
+                  [results]="chartData.data.symbols"
+                  [legend]="chartData.options.legendAreaChart"
+                  [xAxis]="chartData.options.xAxis"
+                  [yAxis]="chartData.options.yAxis"
+                  [showGridLines]="chartData.options.showGridLines"
+                  [roundDomains]="chartData.options.roundDomains"
+                  [showXAxisLabel]="chartData.options.showXAxisLabelAreaChart"
+                  [showYAxisLabel]="chartData.options.showYAxisLabelAreaChart"
+                  [gradient]="chartData.options.gradient"
+                  [scheme]="chartData.options.schemeAreaChart"
+                  [timeline]="chartData.options.timeline"
+                  [xAxisLabel]="chartData.options.xAxisLabelAreaChart"
+                  [yAxisLabel]="chartData.options.yAxisLabelAreaChart"
+                  [xAxisTickFormatting]="formatXTicks"
+                  [animations]="false"
+                >
+                </ngx-charts-area-chart>
+              </div>
+            </div>
+            <div class="card-footer">
+              <button (click)="downloadChart('#chart-symbols')" class="btn btn-sm btn-default float-right">
+                <i class="fas fa-fw fa-download"></i> Download SVG
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
