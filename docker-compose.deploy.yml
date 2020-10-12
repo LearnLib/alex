@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.3'
 services:
   selenium-hub:
     image: selenium/hub:3
@@ -23,14 +23,14 @@ services:
     ports:
       - 5900
   alex-frontend:
-    image: learnlib/alex-frontend
+    image: ghcr.io/learnlib/alex-frontend:latest
     environment:
       - SERVER_ADDRESS=http://localhost
       - PORT=8000
     ports:
       - 80:4200
   alex-backend:
-    image: learnlib/alex-backend
+    image: ghcr.io/learnlib/alex-backend:latest
     volumes:
       - alex-backend-db:/var/lib/alex/target/db
       - alex-backend-files:/var/lib/alex/target/files
