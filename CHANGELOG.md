@@ -1,3 +1,17 @@
+# ALEX 2.1.0
+
+## Breaking Changes
+
+* Use Docker for development and production versions of ALEX.
+  The standalone build is no longer supported.
+* Due to the previous point, the web drivers have been removed.
+  It is only possible to set the URL to a Selenium Hub.
+
+## Features
+
+* See which symbols and tests are used by other users in a project
+* Export formula suites while exporting a project
+
 # ALEX 2.0.0
 
 ## Fixes

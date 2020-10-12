@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.3'
 services:
   selenium-hub:
     image: selenium/hub:3
@@ -10,8 +10,6 @@ services:
     environment:
       - HUB_HOST=selenium-hub
       - HUB_PORT=4444
-    ports:
-      - 5900
   firefox-node:
     image: selenium/node-firefox-debug:3
     shm_size: '2gb'
@@ -20,8 +18,6 @@ services:
     environment:
       - HUB_HOST=selenium-hub
       - HUB_PORT=4444
-    ports:
-      - 5900
   alex-frontend-production:
     build: ./frontend
     environment:

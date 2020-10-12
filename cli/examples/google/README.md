@@ -10,7 +10,7 @@ Execute the following commands from the root of this repository.
 node alex-cli.js \
         --uri "http://localhost:8000" \
         --targets "https://www.google.com,https://www.google.com" \
-        -a "test" \
+        -d "test" \
         -u "admin@alex.example:admin" \
         -s "./examples/google/symbols.json" \
         -t "./examples/google/tests.json" \
@@ -23,7 +23,7 @@ node alex-cli.js \
 ```bash
 node alex-cli.js \
         --uri "http://localhost:8000" \
-        -a "test" \       
+        -d "test" \       
         -u "admin@alex.example:admin" \ 
         -p "./examples/google/project.json" \
         -c "./examples/google/config.testing.json" \
@@ -36,7 +36,7 @@ node alex-cli.js \
 node alex-cli.js \
         --uri "http://localhost:8000" \
         --targets "https://www.google.com,https://www.google.com" \
-        -a "learn" \
+        -d "learn" \
         -u "admin@alex.example:admin" \
         -s "./examples/google/symbols.json" \
         -c "./examples/google/config.learning.json" \

@@ -17,13 +17,13 @@
  */
 
 const program = require('commander'),
-  request = require('request-promise-native'),
+  fetch = require('node-fetch'),
   chalk = require('chalk'),
   fs = require('fs'),
   nPath = require('path'),
   dateformat = require('dateformat');
 
-const VERSION = '1.8.0-SNAPSHOT';
+const VERSION = '2.0.0';
 
 /**
  * Parse user credentials from a string.
@@ -45,7 +45,7 @@ program
   .option('--uri [uri]', 'The URI where ALEX is running without trailing \'/\'')
   .option('--targets [targets]', 'The base URL and mirrors of the target application as comma separated list')
   .option('--clean-up', 'If the project is deleted after a test or learning process')
-  .option('-a, --action [action]', 'What do you want to do with ALEX? [test|learn]')
+  .option('-d --do, [do]', 'What do you want to do with ALEX? [test|learn]')
   .option('-u, --user [credentials]', 'Credentials with the pattern "email:password"', credentials)
   .option('-p, --project [file]', 'Add the json file that contains a project. Cannot be used in combination with \'-s\', \'-t\' and \'--targets\'')
   .option('-s, --symbols [file]', 'Add the json file that contains all necessary symbols')
@@ -176,22 +176,39 @@ function _getDefaultHttpHeaders() {
 }
 
 
+async function assertStatus(res, status) {
+  if (res.status !== status) {
+    const body = await res.json();
+    throw body.data.message;
+  }
+}
+
+function timeout(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
 /**
  * Login a user.
  *
  * @param {{email:string, password:string}} user
  * @return {*}
  */
-function login(user) {
-  return request({
-    method: 'POST',
-    uri: `${_uri}/users/login`,
+async function login(user) {
+  const res = await fetch(`${_uri}/users/login`, {
+    method: 'post',
     headers: _getDefaultHttpHeaders(),
     body: JSON.stringify(user)
   });
+  assertStatus(res, 200);
+
+  const data = await res.json();
+  _jwt = data.token;
+
+  console.log(chalk.white.dim(`User "${_user.email}" logged in.`));
 }
 
-function _createProject(data) {
+async function _createProject(data) {
   function createProjectName() {
     let text = 'alex-cli-';
 
@@ -207,41 +224,46 @@ function _createProject(data) {
 
   data.project.name = createProjectName();
 
-  return request({
-    method: 'POST',
-    uri: `${_uri}/projects/import`,
+  // create project
+  const res1 = await fetch(`${_uri}/projects/import`, {
+    method: 'post',
     headers: _getDefaultHttpHeaders(),
     body: JSON.stringify(data)
-  }).then(data => {
-    _project = JSON.parse(data);
-    _environments = _project.environments;
-
-    return request({
-      method: 'GET',
-      uri: `${_uri}/projects/${_project.id}/groups`,
-      headers: _getDefaultHttpHeaders()
-    }).then(data => {
-      const groups = JSON.parse(data);
-      const symbols = [];
-      const iterate = (group) => {
-        group.symbols.forEach(s => symbols.push(s));
-        group.groups.forEach(g => iterate(g));
-      };
-      groups.forEach(iterate);
-
-      _symbolGroups = groups;
-      _symbols = symbols;
-
-      return request({
-        method: 'GET',
-        uri: `${_uri}/projects/${_project.id}/tests/root`,
-        headers: _getDefaultHttpHeaders()
-      }).then(data => {
-        _tests = JSON.parse(data).tests;
-        return _tests;
-      });
-    });
   });
+  assertStatus(res1, 201);
+
+  _project = await res1.json();
+  _environments = _project.environments;
+
+  console.log(chalk.white.dim(`Project ${_project.name} has been imported.`));
+
+  // get symbols
+  const res2 = await fetch(`${_uri}/projects/${_project.id}/groups`, {
+    method: 'get',
+    headers: _getDefaultHttpHeaders()
+  });
+  assertStatus(res2, 200);
+
+  const groups = await res2.json();
+  const symbols = [];
+  const iterate = (group) => {
+    group.symbols.forEach(s => symbols.push(s));
+    group.groups.forEach(g => iterate(g));
+  };
+  groups.forEach(iterate);
+
+  _symbolGroups = groups;
+  _symbols = symbols;
+
+  // get tests
+  const res3 = await fetch(`${_uri}/projects/${_project.id}/tests/root`, {
+    method: 'get',
+    headers: _getDefaultHttpHeaders()
+  });
+  assertStatus(res3, 200);
+
+  const root = await res3.json();
+  _tests = root.tests;
 }
 
 /**
@@ -249,9 +271,9 @@ function _createProject(data) {
  *
  * @return {*}
  */
-function createProject() {
+async function createProject() {
   if (_project) {
-    return _createProject(_project);
+    await _createProject(_project);
   } else {
     const data = {
       version: VERSION,
@@ -260,7 +282,8 @@ function createProject() {
         environments: []
       },
       groups: [],
-      tests: _tests || []
+      tests: _tests || [],
+      formulaSuites: []
     };
 
     if (_symbols) {
@@ -286,7 +309,7 @@ function createProject() {
       })
     }
 
-    return _createProject(data);
+    await _createProject(data);
   }
 }
 
@@ -295,14 +318,13 @@ function createProject() {
  *
  * @return {Promise<*>}
  */
-function deleteProject() {
-  return new Promise((resolve, reject) => {
-    request({
-      method: 'DELETE',
-      uri: `${_uri}/projects/${_project.id}`,
+async function deleteProject() {
+  const res = await fetch(`${_uri}/projects/${_project.id}`,{
+      method: 'delete',
       headers: _getDefaultHttpHeaders()
-    }).then(resolve).catch(reject);
   });
+  assertStatus(res, 204)
+  console.log(chalk.white.dim(`Project has been deleted.`));
 }
 
 /**
@@ -310,32 +332,29 @@ function deleteProject() {
  *
  * @returns {Promise<*>}
  */
-function uploadFiles() {
-  return new Promise((resolve, reject) => {
-    const headers = JSON.parse(JSON.stringify(_getDefaultHttpHeaders()));
-    headers['Content-Type'] = 'multipart/form-data';
+async function uploadFiles() {
+  const headers = JSON.parse(JSON.stringify(_getDefaultHttpHeaders()));
+  headers['Content-Type'] = 'multipart/form-data';
 
-    const queue = [..._files];
+  const queue = [..._files];
 
-    const next = (file => {
-      request({
+  async function next(file) {
+    const res = await fetch(`${_uri}/projects/${_project.id}/files/upload`,{
         headers,
-        method: 'POST',
-        uri: `${_uri}/projects/${_project.id}/files/upload`,
+        method: 'post',
         formData: {
           file: fs.createReadStream(file)
         }
-      }).then(() => {
-        if (queue.length === 0) {
-          resolve();
-        } else {
-          next(queue.shift());
-        }
-      }).catch(reject);
     });
+    assertStatus(201, res);
 
-    next(queue.shift());
-  });
+    if (queue.length > 0) {
+      await next(queue.shift());
+    }
+  }
+
+  await next(queue.shift());
+  console.log(chalk.white.dim(`Files have been uploaded.`));
 }
 
 /**
@@ -344,18 +363,22 @@ function uploadFiles() {
  * @return {*}
  */
 function executeTests() {
-  return request({
-    method: 'POST',
-    uri: `${_uri}/projects/${_project.id}/tests/execute`,
+  return fetch(`${_uri}/projects/${_project.id}/tests/execute`,{
+    method: 'post',
     headers: _getDefaultHttpHeaders(),
     body: JSON.stringify(_config)
   });
 }
 
+/**
+ * Get the test report.
+ *
+ * @param reportId The ID of the report
+ * @returns {Promise<void>}
+ */
 function getTestReport(reportId) {
-  return request({
-    method: 'GET',
-    uri: `${_uri}/projects/${_project.id}/tests/reports/${reportId}`,
+  return fetch(`${_uri}/projects/${_project.id}/tests/reports/${reportId}`, {
+    method: 'get',
     headers: _getDefaultHttpHeaders()
   });
 }
@@ -365,9 +388,8 @@ function getTestReport(reportId) {
  * @param {number} reportId The ID of the test report.
  */
 function getJUnitReport(reportId) {
-  return request({
-    method: 'GET',
-    uri: `${_uri}/projects/${_project.id}/tests/reports/${reportId}?format=${encodeURIComponent('junit')}`,
+  return  fetch(`${_uri}/projects/${_project.id}/tests/reports/${reportId}?format=${encodeURIComponent('junit')}`, {
+    method: 'get',
     headers: _getDefaultHttpHeaders()
   });
 }
@@ -378,9 +400,8 @@ function getJUnitReport(reportId) {
  * @return {*}
  */
 function getLearnerResult(resultId) {
-  return request({
-    method: 'GET',
-    uri: `${_uri}/projects/${_project.id}/results/${resultId}?embed=steps`,
+  return fetch(`${_uri}/projects/${_project.id}/results/${resultId}?embed=steps`, {
+    method: 'get',
     headers: _getDefaultHttpHeaders()
   });
 }
@@ -412,7 +433,9 @@ function writeOutputFile(data) {
  *
  * @return {Promise<*>}
  */
-function startTesting() {
+async function startTesting() {
+  console.log(chalk.white.dim(`Executing tests...`));
+
   _config.tests = _tests.map(test => test.id);
   _config.environment = _project.environments[0].id;
 
@@ -426,41 +449,33 @@ function startTesting() {
     });
   }
 
-  return new Promise((resolve, reject) => {
-    executeTests(_tests)
-      .then(res => {
-        const reportId = JSON.parse(res).report.id;
+  const res1 = await executeTests(_tests);
+  assertStatus(res1, 200);
+  let report = (await res1.json()).report;
 
-        function poll() {
-          getTestReport(reportId)
-            .then(res1 => {
-              const report = JSON.parse(res1);
-              if (report.status === 'IN_PROGRESS' || report.status === 'PENDING') {
-                setTimeout(poll, POLL_TIME_TESTING);
-              } else {
-                printReport(report);
-                getJUnitReport(report.id)
-                  .then(res3 => {
-                    writeOutputFile(res3);
-                  })
-                  .catch(err => {
-                    reject('Could not get junit report');
-                  })
-                  .finally(() => {
-                    if (report.passed) {
-                      resolve(`${report.numTestsPassed}/${report.numTests} tests passed.`);
-                    } else {
-                      reject(`${report.numTestsFailed}/${report.numTests} tests failed.`);
-                    }
-                  });
-              }
-            }).catch(reject);
-        }
+  while (true) {
+    console.log(chalk.white.dim(`Waiting for tests to finish...`));
 
-        poll();
-      })
-      .catch(reject);
-  });
+    const res2 = await getTestReport(report.id);
+    assertStatus(res2, 200);
+    report = await res2.json();
+
+    if (report.status === 'IN_PROGRESS' || report.status === 'PENDING') {
+      await timeout(POLL_TIME_TESTING);
+    } else {
+      break;
+    }
+  }
+
+  printReport(report);
+  const res3 = await getJUnitReport(report.id);
+  writeOutputFile(res3.body);
+
+  if (report.passed) {
+    console.log(chalk.green(`${report.numTestsPassed}/${report.numTests} tests passed.`));
+  } else {
+    throw `${report.numTestsFailed}/${report.numTests} tests failed.`;
+  }
 }
 
 /**
@@ -468,7 +483,8 @@ function startTesting() {
  *
  * @return {Promise<*>}
  */
-function startLearning() {
+async function startLearning() {
+  console.log(chalk.white.dim(`Start learning...`));
 
   // symbolId -> parameterName -> parameter
   // needed to set the ids of the parameters by name
@@ -495,46 +511,44 @@ function startLearning() {
 
   _config.setup.environments = _environments;
 
-  return new Promise((resolve, reject) => {
-    request({
-      method: 'POST',
-      uri: `${_uri}/projects/${_project.id}/learner/start`,
-      headers: _getDefaultHttpHeaders(),
-      body: JSON.stringify(_config)
-    }).then(res => {
-      const testNo = JSON.parse(res).testNo;
-
-      const poll = () => {
-        getLearnerResult(testNo)
-          .then(res2 => {
-            const result = JSON.parse(res2);
-            if (result.status === 'FINISHED' || result.status === 'ABORTED') {
-              if (!result.error) {
-                writeOutputFile(JSON.stringify(result.steps[result.steps.length - 1].hypothesis));
-                resolve('The learning process finished.');
-              } else {
-                reject();
-              }
-            } else {
-              setTimeout(poll, POLL_TIME_LEARNING);
-            }
-          })
-          .catch(reject);
-      };
-      poll();
-    }).catch(reject);
+  const res1 = await fetch(`${_uri}/projects/${_project.id}/learner/start`, {
+    method: 'post',
+    headers: _getDefaultHttpHeaders(),
+    body: JSON.stringify(_config)
   });
+  assertStatus(res1, 200);
+
+  const testNo = (await res1.json()).testNo;
+
+  while(true) {
+    console.log(chalk.white.dim(`Wait for the learning process to finish...`));
+
+    const res2 = await getLearnerResult(testNo);
+    const result = await res2.json();
+
+    if (result.status === 'FINISHED' || result.status === 'ABORTED') {
+      if (!result.error) {
+        writeOutputFile(JSON.stringify(result.steps[result.steps.length - 1].hypothesis));
+        console.log(chalk.green('The learning process finished successfully.'));
+        break;
+      } else {
+        throw 'The learning process finished with errors';
+      }
+    } else {
+      await timeout(POLL_TIME_LEARNING);
+    }
+  }
 }
 
 try {
   // validate the action
-  if (!program.action) {
+  if (!program.do) {
     throw 'You haven\'t specified what action to execute. It can either be \'test\' or \'learn\'.';
   } else {
-    if (['test', 'learn'].indexOf(program.action.trim()) === -1) {
+    if (['test', 'learn'].indexOf(program.do.trim()) === -1) {
       throw 'You have specified an invalid action. It can either be \'test\' or \'learn\'.';
     } else {
-      _action = program.action;
+      _action = program.do;
     }
   }
 
@@ -654,61 +668,33 @@ try {
   process.exit(1);
 }
 
-/**
- * The function that is called if the tests have been executed or the learning process finished.
- * Removes the project that has been created temporarily.
- *
- * @param {string} message The message to print after the cli terminates.
- * @param {Function} fn The callback that processes the message.
- */
-function terminate(message, fn) {
-  if (program.cleanUp) {
-    deleteProject()
-      .then(() => {
-        console.log(chalk.white.dim(`Project has been deleted.`));
-        fn(message);
-      })
-      .catch(() => fn(message));
+
+async function main() {
+  await login(_user);
+  await createProject();
+
+  if (_files.length > 0) {
+    await uploadFiles();
+  }
+
+  if (_action === 'test') {
+    await startTesting();
   } else {
-    fn(message);
+    await startLearning();
+  }
+
+  if (program.cleanUp) {
+    await deleteProject();
   }
 }
 
-// execute the tests / learning process
-login(_user).then((data) => {
-  _jwt = JSON.parse(data).token;
-  console.log(chalk.white.dim(`User "${_user.email}" logged in.`));
-
-  function progress() {
-    if (_action === 'test') {
-      console.log(chalk.white.dim(`Executing tests...`));
-      return startTesting();
-    } else {
-      console.log(chalk.white.dim(`Start learning...`));
-      return startLearning();
-    }
-  }
-
-  return createProject().then(() => {
-    console.log(chalk.white.dim(`Project ${_project.name} has been imported.`));
-
-    if (_files.length > 0) {
-      return uploadFiles().then(() => {
-        console.log(chalk.white.dim(`Files have been uploaded.`));
-        return progress()
-      })
-    } else {
-      return progress();
-    }
-  });
-}).then((result) => {
-  terminate(result, (message) => {
-    console.log(chalk.green(message));
+(async () => {
+  try {
+    await main();
     process.exit(0);
-  });
-}).catch((err) => {
-  terminate(err, (message) => {
-    console.log(chalk.red(message));
+    console.log(chalk.green('CLI terminated successfully'));
+  } catch (e) {
+    console.log(chalk.red(e));
     process.exit(1);
-  });
-});
+  }
+})();

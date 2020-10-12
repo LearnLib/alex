@@ -5,7 +5,7 @@
     "implicitlyWait": 0,
     "pageLoadTimeout": 10,
     "scriptTimeout": 10,
-    "name": "chrome",
+    "browser": "chrome",
     "headless": true
   }
 }

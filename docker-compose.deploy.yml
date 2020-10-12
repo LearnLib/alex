@@ -10,8 +10,6 @@ services:
     environment:
       - HUB_HOST=selenium-hub
       - HUB_PORT=4444
-    ports:
-      - 5900
   firefox-node:
     image: selenium/node-firefox-debug:3
     shm_size: '2gb'
@@ -20,17 +18,15 @@ services:
     environment:
       - HUB_HOST=selenium-hub
       - HUB_PORT=4444
-    ports:
-      - 5900
   alex-frontend:
-    image: ghcr.io/learnlib/alex/alex-frontend:latest
+    image: ghcr.io/learnlib/alex/alex-frontend:unstable
     environment:
       - SERVER_ADDRESS=http://localhost
       - PORT=8000
     ports:
       - 80:4200
   alex-backend:
-    image: ghcr.io/learnlib/alex/alex-backend:latest
+    image: ghcr.io/learnlib/alex/alex-backend:unstable
     volumes:
       - alex-backend-db:/var/lib/alex/target/db
       - alex-backend-files:/var/lib/alex/target/files

@@ -40,7 +40,7 @@
       "outputMappings": []
     },
     "webDriver": {
-      "name": "chrome",
+      "browser": "chrome",
       "headless": true,
       "height": 1661,
       "implicitlyWait": 0,
