@@ -17,8 +17,8 @@
 import { ParametrizedSymbol } from './parametrized-symbol';
 import { ProjectEnvironment } from './project-environment';
 import { RandomEqOracle } from './eq-oracles/random-eq-oracle';
-import { DriverConfigService } from '../services/driver-config.service';
-import { learningAlgorithm, webBrowser } from '../constants';
+import { learningAlgorithm } from '../constants';
+import { WebDriverConfig } from './web-driver-config';
 
 export class LearnerSetup {
 
@@ -41,7 +41,7 @@ export class LearnerSetup {
     this.saved = false;
     this.equivalenceOracle = new RandomEqOracle();
     this.enableCache = true;
-    this.webDriver = DriverConfigService.createFromName(webBrowser.HTML_UNIT);
+    this.webDriver = new WebDriverConfig();
     this.algorithm = {
       name: learningAlgorithm.TTT
     };
@@ -56,7 +56,7 @@ export class LearnerSetup {
     ls.enableCache = data.enableCache;
     ls.algorithm = data.algorithm;
     ls.equivalenceOracle = data.equivalenceOracle;
-    ls.webDriver = data.webDriver;
+    ls.webDriver = WebDriverConfig.fromData(data.webDriver);
     ls.preSymbol = new ParametrizedSymbol(data.preSymbol);
     ls.symbols = data.symbols.map(s => new ParametrizedSymbol(s));
     if (data.postSymbol != null) {

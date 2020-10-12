@@ -46,7 +46,7 @@
             <strong>Test {{chartData.context.testNo}}</strong>
           </td>
           <td>
-            {{chartData.context.setup.webDriver.name | formatWebBrowser}} ({{chartData.context.setup.webDriver.width}}px
+            {{chartData.context.setup.webDriver.browser | formatWebBrowser}} ({{chartData.context.setup.webDriver.width}}px
             x {{chartData.context.setup.webDriver.height}}px)
           </td>
           <td>{{chartData.context.algorithm.name | formatLearningAlgorithm}}</td>
@@ -60,7 +60,7 @@
             <strong>Test {{result.testNo}}</strong>
           </td>
           <td>
-            {{result.setup.webDriver.name | formatWebBrowser}} ({{result.setup.webDriver.width}}px
+            {{result.setup.webDriver.browser | formatWebBrowser}} ({{result.setup.webDriver.width}}px
             x {{result.setup.webDriver.height}}px)
           </td>
           <td>{{result.setup.algorithm.name | formatLearningAlgorithm}}</td>

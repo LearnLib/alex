@@ -60,11 +60,6 @@ export class LearnerSetupFormComponent implements OnInit {
     this.selectedEnvironments.addItems(this.project.environments);
     this.selectedEnvironments.selectMany(this.setup.environments);
 
-    this.settingsApi.getSupportedWebDrivers().subscribe(
-      data => this.setup.webDriver.name = data.defaultWebDriver,
-      console.error
-    );
-
     this.symbolGroupApi.getAll(this.project.id).subscribe(
       groups => this.groups = groups,
       console.error

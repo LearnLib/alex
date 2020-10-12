@@ -5,7 +5,7 @@
     class="list-group-item d-flex flex-row"
   >
     <div (click)="selectConfig(config)" class="w-100 cursor-pointer text-wrap">
-      <strong>{{config.driverConfig.name | formatWebBrowser}}</strong>
+      <strong>{{config.driverConfig.browser | formatWebBrowser}}</strong>
 
       <span> ({{config.driverConfig.width}} x {{config.driverConfig.height}})</span>
 

@@ -17,133 +17,6 @@
         <div class="card-body p-0">
           <div class="list-group-flush">
 
-            <div class="list-group-item pb-0">
-              <div class="d-flex flex-row mb-0">
-                <div class="w-100">
-                  <h6 class="mb-0">Chrome</h6>
-                  <small class="text-muted d-block mb-2">
-                    Download the latest driver
-                    <a href="https://sites.google.com/a/chromium.org/chromedriver/downloads" rel="nofollow"
-                       target="_blank">
-                      here
-                    </a>
-                  </small>
-                </div>
-                <div>
-                  <button
-                    *ngIf="canMakeDefault(webBrowsers.CHROME)"
-                    (click)="makeDriverDefault(webBrowsers.CHROME)"
-                    [ngClass]="getDefaultButtonClass(webBrowsers.CHROME)"
-                    class="btn btn-sm"
-                  >
-                    Default
-                  </button>
-                </div>
-              </div>
-              <hr class="mt-0">
-              <webdriver-settings-form
-                [driver]="settings.driver.chrome"
-                (upload)="uploadDriver(webBrowsers.CHROME, $event)"
-                (remove)="deleteDriver(webBrowsers.CHROME)"
-              >
-              </webdriver-settings-form>
-            </div>
-
-            <div class="list-group-item pb-0">
-              <div class="d-flex flex-row">
-                <div class="w-100">
-                  <h6 class="mb-0">Firefox</h6>
-                  <small class="text-muted d-block mb-2">
-                    Download the latest driver
-                    <a href="https://github.com/mozilla/geckodriver/releases" rel="nofollow" target="_blank">
-                      here
-                    </a>
-                  </small>
-                </div>
-                <div>
-                  <button
-                    *ngIf="canMakeDefault(webBrowsers.FIREFOX)"
-                    (click)="makeDriverDefault(webBrowsers.FIREFOX)"
-                    [ngClass]="getDefaultButtonClass(webBrowsers.FIREFOX)"
-                    class="btn btn-sm"
-                  >
-                    Default
-                  </button>
-                </div>
-              </div>
-              <hr class="mt-0">
-              <webdriver-settings-form
-                [driver]="settings.driver.firefox"
-                (upload)="uploadDriver(webBrowsers.FIREFOX, $event)"
-                (remove)="deleteDriver(webBrowsers.FIREFOX)"
-              >
-              </webdriver-settings-form>
-            </div>
-
-            <div class="list-group-item pb-0">
-              <div class="d-flex flex-row">
-                <div class="w-100">
-                  <h6 class="mb-0">Edge</h6>
-                  <small class="text-muted d-block mb-2">
-                    Download the latest driver
-                    <a href="https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/" rel="nofollow"
-                       target="_blank">
-                      here
-                    </a>
-                  </small>
-                </div>
-                <div>
-                  <button
-                    *ngIf="canMakeDefault(webBrowsers.EDGE)"
-                    (click)="makeDriverDefault(webBrowsers.EDGE)"
-                    [ngClass]="getDefaultButtonClass(webBrowsers.EDGE)"
-                    class="btn btn-sm"
-                  >
-                    Default
-                  </button>
-                </div>
-              </div>
-              <hr class="mt-0">
-              <webdriver-settings-form
-                [driver]="settings.driver.edge"
-                (upload)="uploadDriver(webBrowsers.EDGE, $event)"
-                (remove)="deleteDriver(webBrowsers.EDGE)"
-              >
-              </webdriver-settings-form>
-            </div>
-
-            <div class="list-group-item pb-0">
-              <div class="d-flex flex-row">
-                <div class="w-100">
-                  <h6 class="mb-0">Internet Explorer</h6>
-                  <small class="text-muted d-block mb-2">
-                    Download the driver for Selenium 3.11.0
-                    <a href="http://selenium-release.storage.googleapis.com/index.html?path=3.11/" rel="nofollow"
-                       target="_blank">
-                      here
-                    </a>
-                  </small>
-                </div>
-                <div>
-                  <button
-                    *ngIf="canMakeDefault(webBrowsers.IE)"
-                    (click)="makeDriverDefault(webBrowsers.IE)"
-                    [ngClass]="getDefaultButtonClass(webBrowsers.IE)"
-                    class="btn btn-sm"
-                  >
-                    Default
-                  </button>
-                </div>
-              </div>
-              <hr class="mt-0">
-              <webdriver-settings-form
-                [driver]="settings.driver.ie"
-                (upload)="uploadDriver(webBrowsers.IE, $event)"
-                (remove)="deleteDriver(webBrowsers.IE)"
-              >
-              </webdriver-settings-form>
-            </div>
-
             <div class="list-group-item d-flex flex-row">
               <div class="w-100 pr-3">
                 <div class="form-group mb-0">
@@ -156,54 +29,12 @@
                     </a>
                   </small>
 
-                  <input [(ngModel)]="settings.driver.remote" class="form-control"
-                         placeholder="Enter the URL to the remote Selenium Server"
-                         type="text">
+                  <input
+                    [(ngModel)]="settings.driver.remote" class="form-control"
+                    placeholder="Enter the URL to the remote Selenium Server"
+                    type="text"
+                  >
                 </div>
-              </div>
-              <div class="flex-shrink-0">
-                <button
-                  *ngIf="settings.driver.remote.trim() !== ''"
-                  (click)="makeDriverDefault(webBrowsers.REMOTE)"
-                  [ngClass]="getDefaultButtonClass(webBrowsers.REMOTE)"
-                  class="btn btn-sm"
-                >
-                  Default
-                </button>
-              </div>
-            </div>
-
-            <div class="list-group-item d-flex flex-row">
-              <div class="w-100 pr-3">
-                <div class="form-group mb-0">
-                  <label><strong>HTML Unit</strong></label>
-                </div>
-              </div>
-              <div class="flex-shrink-0">
-                <button
-                  (click)="makeDriverDefault(webBrowsers.HTML_UNIT)"
-                  [ngClass]="getDefaultButtonClass(webBrowsers.HTML_UNIT)"
-                  class="btn btn-sm"
-                >
-                  Default
-                </button>
-              </div>
-            </div>
-
-            <div class="list-group-item d-flex flex-row">
-              <div class="w-100 pr-3">
-                <div class="form-group mb-0">
-                  <label><strong>Safari</strong></label>
-                </div>
-              </div>
-              <div class="flex-shrink-0">
-                <button
-                  (click)="makeDriverDefault(webBrowsers.SAFARI)"
-                  [ngClass]="getDefaultButtonClass(webBrowsers.SAFARI)"
-                  class="btn btn-sm"
-                >
-                  Default
-                </button>
               </div>
             </div>
 

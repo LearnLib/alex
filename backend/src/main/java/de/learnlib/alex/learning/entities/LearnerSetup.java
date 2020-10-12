@@ -23,7 +23,6 @@ import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.learning.entities.algorithms.AbstractLearningAlgorithm;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
-import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
@@ -84,7 +83,7 @@ public class LearnerSetup implements Serializable {
 
     @NotNull
     @OneToOne(cascade = {javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.MERGE, javax.persistence.CascadeType.REMOVE})
-    private AbstractWebDriverConfig webDriver;
+    private WebDriverConfig webDriver;
 
     public LearnerSetup() {
         this.environments = new ArrayList<>();
@@ -192,11 +191,11 @@ public class LearnerSetup implements Serializable {
         this.equivalenceOracle = equivalenceOracle;
     }
 
-    public AbstractWebDriverConfig getWebDriver() {
+    public WebDriverConfig getWebDriver() {
         return webDriver;
     }
 
-    public void setWebDriver(AbstractWebDriverConfig webDriver) {
+    public void setWebDriver(WebDriverConfig webDriver) {
         this.webDriver = webDriver;
     }
 

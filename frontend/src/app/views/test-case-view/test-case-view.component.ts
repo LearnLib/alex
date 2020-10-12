@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-import { webBrowser } from '../../constants';
 import { TestCaseStep } from '../../entities/test-case-step';
-import { DriverConfigService } from '../../services/driver-config.service';
 import { SymbolGroupUtils } from '../../utils/symbol-group-utils';
 import { SymbolGroupApiService } from '../../services/api/symbol-group-api.service';
 import { ToastService } from '../../services/toast.service';
@@ -35,6 +33,7 @@ import { TestReportApiService } from '../../services/api/test-report-api.service
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ParametrizedSymbol } from '../../entities/parametrized-symbol';
+import { WebDriverConfig } from '../../entities/web-driver-config';
 
 @Component({
   selector: 'test-case-view',
@@ -76,7 +75,7 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
     this.testConfig = {
       tests: [this.testCase],
       environment: this.project.getDefaultEnvironment(),
-      driverConfig: DriverConfigService.createFromName(webBrowser.HTML_UNIT)
+      driverConfig: new WebDriverConfig()
     };
 
     this.symbolGroupApi.getAll(this.project.id).subscribe(
@@ -87,19 +86,13 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
       console.error
     );
 
-    this.settingsApi.getSupportedWebDrivers().subscribe(
-      data => {
-        this.testConfig.driverConfig = DriverConfigService.createFromName(data.defaultWebDriver);
-        this.testConfigApi.getAll(this.project.id).subscribe((configs: any[]) => {
-          const i = configs.findIndex(c => c.default);
-          if (i > -1) {
-            this.testConfig = configs[i];
-            this.testConfig.environment = this.project.getEnvironmentById(this.testConfig.environment);
-          }
-        });
-      },
-      console.error
-    );
+    this.testConfigApi.getAll(this.project.id).subscribe((configs: any[]) => {
+      const i = configs.findIndex(c => c.default);
+      if (i > -1) {
+        this.testConfig = configs[i];
+        this.testConfig.environment = this.project.getEnvironmentById(this.testConfig.environment);
+      }
+    });
   }
 
   ngOnDestroy(): void {

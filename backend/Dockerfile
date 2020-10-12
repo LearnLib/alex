@@ -16,4 +16,4 @@ FROM openjdk:12
 COPY --from=builder-backend /backend/target/ALEX-2.0.0.jar /usr/share/java/alex/alex.jar
 COPY --from=builder-ltsmin /ltsmin/ltsmin /opt/ltsmin
 WORKDIR /var/lib/alex
-CMD java -jar /usr/share/java/alex/alex.jar --ltsmin.path=/opt/ltsmin/bin --remoteDriver=${REMOTE_DRIVER}
+CMD java -jar /usr/share/java/alex/alex.jar --ltsmin.path=/opt/ltsmin/bin --webdriver.remote.url=${REMOTE_DRIVER}

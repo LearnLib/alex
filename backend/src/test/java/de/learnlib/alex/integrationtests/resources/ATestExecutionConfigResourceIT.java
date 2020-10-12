@@ -144,7 +144,7 @@ public class ATestExecutionConfigResourceIT extends AbstractResourceIT {
     private String createConfig(int projectId, int envId) {
         return "{"
                 + "\"tests\":[]"
-                + ",\"driverConfig\":{\"name\":\"htmlUnit\"}"
+                + ",\"driverConfig\":{\"browser\":\"chrome\"}"
                 + ",\"environment\":" + envId
                 + ",\"project\":" + projectId
                 + "}";

@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.learning.entities.webdrivers;
+package de.learnlib.alex.learning.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -32,28 +37,17 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
 /**
  * The abstract web driver configuration class.
  */
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "name", discriminatorType = DiscriminatorType.STRING)
-@DiscriminatorValue("SUPER")
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "name")
-@JsonSubTypes({
-        @JsonSubTypes.Type(name = WebDrivers.CHROME, value = ChromeDriverConfig.class),
-        @JsonSubTypes.Type(name = WebDrivers.EDGE, value = EdgeDriverConfig.class),
-        @JsonSubTypes.Type(name = WebDrivers.FIREFOX, value = FirefoxDriverConfig.class),
-        @JsonSubTypes.Type(name = WebDrivers.HTML_UNIT, value = HtmlUnitDriverConfig.class),
-        @JsonSubTypes.Type(name = WebDrivers.IE, value = IEDriverConfig.class),
-        @JsonSubTypes.Type(name = WebDrivers.REMOTE, value = RemoteDriverConfig.class),
-        @JsonSubTypes.Type(name = WebDrivers.SAFARI, value = SafariDriverConfig.class)
-})
-@JsonPropertyOrder(alphabetic = true)
-public abstract class AbstractWebDriverConfig implements Serializable {
+public class WebDriverConfig implements Serializable {
 
     private static final long serialVersionUID = -2663686839180427383L;
 
@@ -89,15 +83,34 @@ public abstract class AbstractWebDriverConfig implements Serializable {
     /** The script timeout time for selenium. */
     private int scriptTimeout;
 
+    /** The target platform. */
+    @NotNull
+    private Platform platform;
+
+    /**  The browser to run the tests in. */
+    @NotBlank
+    private String browser;
+
+    /** The browser version. */
+    @NotNull
+    private String version;
+
+    /** If the browser should be executed in headless mode. */
+    @NotNull
+    private boolean headless;
+
     /**
      * Constructor.
      */
-    public AbstractWebDriverConfig() {
+    public WebDriverConfig() {
         this.width = 0;
         this.height = 0;
         this.implicitlyWait = DEFAULT_IMPLICITLY_WAIT;
         this.pageLoadTimeout = DEFAULT_PAGE_LOAD_TIMEOUT;
         this.scriptTimeout = DEFAULT_SCRIPT_TIMEOUT;
+        this.version = "";
+        this.platform = Platform.ANY;
+        this.headless = false;
     }
 
     /**
@@ -107,7 +120,36 @@ public abstract class AbstractWebDriverConfig implements Serializable {
      * @throws Exception
      *         If the instantiation of the web driver fails.
      */
-    public abstract WebDriver createDriver() throws Exception;
+    public WebDriver createWebDriver() throws Exception {
+        final URL remoteURL = new URL(System.getProperty("webdriver.remote.url"));
+
+        final DesiredCapabilities capabilities = new DesiredCapabilities();
+        capabilities.setPlatform(platform);
+        capabilities.setBrowserName(browser);
+
+        switch (browser) {
+            case "chrome":
+                final ChromeOptions chromeOptions = new ChromeOptions();
+                chromeOptions.setHeadless(headless);
+                capabilities.merge(chromeOptions);
+                break;
+            case "firefox":
+                final FirefoxOptions firefoxOptions = new FirefoxOptions();
+                firefoxOptions.setHeadless(headless);
+                capabilities.merge(firefoxOptions);
+                break;
+            default:
+                break;
+        }
+
+        if (!version.trim().equals("")) {
+            capabilities.setVersion(version);
+        }
+
+        final WebDriver driver = new RemoteWebDriver(remoteURL, capabilities);
+        manage(driver);
+        return driver;
+    }
 
     /**
      * Handle timeouts and browser dimensions.
@@ -141,7 +183,7 @@ public abstract class AbstractWebDriverConfig implements Serializable {
     }
 
     public void setWidth(int width) {
-        this.width = width < 0 ? 0 : width;
+        this.width = Math.max(width, 0);
     }
 
     public int getHeight() {
@@ -149,7 +191,7 @@ public abstract class AbstractWebDriverConfig implements Serializable {
     }
 
     public void setHeight(int height) {
-        this.height = height < 0 ? 0 : height;
+        this.height = Math.max(height, 0);
     }
 
     public int getImplicitlyWait() {
@@ -157,7 +199,7 @@ public abstract class AbstractWebDriverConfig implements Serializable {
     }
 
     public void setImplicitlyWait(int implicitlyWait) {
-        this.implicitlyWait = implicitlyWait < 0 ? 0 : implicitlyWait;
+        this.implicitlyWait = Math.max(implicitlyWait, 0);
     }
 
     public int getPageLoadTimeout() {
@@ -165,7 +207,7 @@ public abstract class AbstractWebDriverConfig implements Serializable {
     }
 
     public void setPageLoadTimeout(int pageLoadTimeout) {
-        this.pageLoadTimeout = pageLoadTimeout < 0 ? 0 : pageLoadTimeout;
+        this.pageLoadTimeout = Math.max(pageLoadTimeout, 0);
     }
 
     public int getScriptTimeout() {
@@ -173,6 +215,38 @@ public abstract class AbstractWebDriverConfig implements Serializable {
     }
 
     public void setScriptTimeout(int scriptTimeout) {
-        this.scriptTimeout = scriptTimeout < 0 ? 0 : scriptTimeout;
+        this.scriptTimeout = Math.max(scriptTimeout, 0);
+    }
+
+    public Platform getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(Platform platform) {
+        this.platform = platform;
+    }
+
+    public String getBrowser() {
+        return browser;
+    }
+
+    public void setBrowser(String browser) {
+        this.browser = browser;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public boolean isHeadless() {
+        return headless;
+    }
+
+    public void setHeadless(boolean headless) {
+        this.headless = headless;
     }
 }

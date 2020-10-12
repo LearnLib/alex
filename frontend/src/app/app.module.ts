@@ -56,7 +56,6 @@ import { PromptModalComponent } from './common/modals/prompt-modal/prompt-modal.
 import { ConfirmModalComponent } from './common/modals/confirm-modal/confirm-modal.component';
 import { PromptService } from './services/prompt.service';
 import { TestConfigListComponent } from './views/test-suite-view/test-config-list/test-config-list.component';
-import { FormatWebBrowserPipe } from './pipes/format-web-browser.pipe';
 import { ProjectDetailsWidgetComponent } from './views/project-view/project-details-widget/project-details-widget.component';
 import { LatestTestReportWidgetComponent } from './views/project-view/latest-test-report-widget/latest-test-report-widget.component';
 import { LatestLearnerResultWidgetComponent } from './views/project-view/latest-learner-result-widget/latest-learner-result-widget.component';
@@ -133,7 +132,7 @@ import { TestConfigModalComponent } from './views/tests-view/test-config-modal/t
 import { TestsImportModalComponent } from './views/test-suite-view/tests-import-modal/tests-import-modal.component';
 import { TestSuiteTreeComponent } from './views/test-suite-view/tests-move-modal/test-suite-tree-component/test-suite-tree.component';
 import { TestsMoveModalComponent } from './views/test-suite-view/tests-move-modal/tests-move-modal.component';
-import { BrowserConfigFormComponent } from './common/browser-config-form/browser-config-form.component';
+import { DriverConfigFormComponent } from './common/web-driver-config-form/driver-config-form.component';
 import { LearnerResultListModalComponent } from './views/learner-results-compare-view/learner-result-list-modal/learner-result-list-modal.component';
 import { SeparatingWordModalComponent } from './common/modals/separating-word-modal/separating-word-modal.component';
 import { SymbolsViewComponent } from './views/symbols-view/symbols-view.component';
@@ -236,7 +235,6 @@ import { ProjectUsersViewComponent } from './views/project-users-view/project-us
 import { AddUserModalComponent } from './views/project-users-view/add-user-modal/add-user-modal.component';
 import { SymbolsDataContextComponent } from './common/symbols-data-context/symbols-data-context.component';
 import { ClipboardModule } from 'ngx-clipboard';
-import { WebdriverSettingsFormComponent } from './views/admin-settings-view/webdriver-settings-form/webdriver-settings-form.component';
 import { ToggleButtonComponent } from './common/toggle-button/toggle-button.component';
 import { LearnerSetupApiService } from './services/api/learner-setup-api.service';
 import { LearnerSetupTableComponent } from './common/learner-setup-table/learner-setup-table.component';
@@ -262,6 +260,7 @@ import { TestResultApiService } from "./services/api/test-result-api.service";
 import { ViewScreenshotModalComponent } from "./views/test-report-screenshots-view/view-screenshot-modal/view-screenshot-modal.component";
 import { FetchImgSecurePipe } from "./pipes/fetch-img-secure.pipe";
 import { EnvironmentProvider, initEnv } from "../environments/environment.provider";
+import { FormatWebBrowserPipe } from './pipes/format-web-browser.pipe';
 
 @NgModule({
     declarations: [
@@ -292,7 +291,6 @@ import { EnvironmentProvider, initEnv } from "../environments/environment.provid
         PromptModalComponent,
         ConfirmModalComponent,
         TestConfigListComponent,
-        FormatWebBrowserPipe,
         ProjectDetailsWidgetComponent,
         LatestTestReportWidgetComponent,
         LatestLearnerResultWidgetComponent,
@@ -360,7 +358,7 @@ import { EnvironmentProvider, initEnv } from "../environments/environment.provid
         TestConfigModalComponent,
         TestsMoveModalComponent,
         TestsImportModalComponent,
-        BrowserConfigFormComponent,
+        DriverConfigFormComponent,
         LearnerResultListModalComponent,
         SeparatingWordModalComponent,
         SymbolsViewComponent,
@@ -458,7 +456,6 @@ import { EnvironmentProvider, initEnv } from "../environments/environment.provid
         ProjectUsersViewComponent,
         AddUserModalComponent,
         SymbolsDataContextComponent,
-        WebdriverSettingsFormComponent,
         ToggleButtonComponent,
         LearnerSetupTableComponent,
         LearnerSetupsCreateViewComponent,
@@ -472,7 +469,8 @@ import { EnvironmentProvider, initEnv } from "../environments/environment.provid
         LockInfoListComponent,
         FetchImgSecurePipe,
         TestReportScreenshotsViewComponent,
-        ViewScreenshotModalComponent
+        ViewScreenshotModalComponent,
+        FormatWebBrowserPipe
     ],
   imports: [
     BrowserModule,

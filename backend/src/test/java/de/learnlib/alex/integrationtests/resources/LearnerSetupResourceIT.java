@@ -35,9 +35,9 @@ import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.entities.LearnerSetup;
 import de.learnlib.alex.learning.entities.Statistics;
+import de.learnlib.alex.learning.entities.WebDriverConfig;
 import de.learnlib.alex.learning.entities.algorithms.TTT;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
-import de.learnlib.alex.learning.entities.webdrivers.HtmlUnitDriverConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
@@ -258,7 +258,9 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
         ls.setEnableCache(true);
         ls.setName("testSetup");
         ls.setAlgorithm(new TTT());
-        ls.setWebDriver(new HtmlUnitDriverConfig());
+        final var webDriverConfig = new WebDriverConfig();
+        webDriverConfig.setBrowser("chrome");
+        ls.setWebDriver(webDriverConfig);
         ls.setEquivalenceOracle(new MealyRandomWordsEQOracleProxy());
         ls.setPreSymbol(new ParameterizedSymbol(symbols.get(0)));
         ls.setSymbols(symbols.stream()

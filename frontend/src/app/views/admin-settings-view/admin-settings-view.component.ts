@@ -15,7 +15,6 @@
  */
 
 import { Component } from '@angular/core';
-import { webBrowser } from '../../constants';
 import { SettingsApiService } from '../../services/api/settings-api.service';
 import { ToastService } from '../../services/toast.service';
 
@@ -25,8 +24,6 @@ import { ToastService } from '../../services/toast.service';
   styleUrls: ['./admin-settings-view.component.scss']
 })
 export class AdminSettingsViewComponent {
-
-  webBrowsers: any = webBrowser;
 
   settings: any;
 
@@ -47,40 +44,5 @@ export class AdminSettingsViewComponent {
       () => this.toastService.success('The settings have been updated.'),
       res => this.toastService.danger('<strong>Update failed!</strong> ' + res.error.message)
     );
-  }
-
-  makeDriverDefault(driver: string): void {
-    if (this.settings.driver.defaultDriver !== driver) {
-      this.settings.driver.defaultDriver = driver;
-    } else {
-      this.settings.driver.defaultDriver = webBrowser.HTML_UNIT;
-    }
-  }
-
-  uploadDriver(driver: string, file: File): void {
-    this.settingsApi.uploadDriver(driver, file).subscribe(
-      () => this.init(),
-      err => this.toastService.danger(err)
-    );
-  }
-
-  deleteDriver(driver: string): void {
-    this.settingsApi.deleteDriver(driver).subscribe(
-      () => this.init(),
-      err => this.toastService.danger(err)
-    );
-  }
-
-  canMakeDefault(driver: string): boolean {
-    const d = this.settings.driver[driver];
-    return d != null && d.trim() !== '';
-  }
-
-  getDefaultButtonClass(driver: string): any {
-    const isDefault = this.settings.driver.defaultDriver === driver;
-    return {
-      'btn-default': !isDefault,
-      'btn-primary': isDefault
-    };
   }
 }

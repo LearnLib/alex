@@ -21,7 +21,7 @@ import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.data.entities.actions.Credentials;
-import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
+import de.learnlib.alex.learning.entities.WebDriverConfig;
 import de.learnlib.alex.learning.services.BaseUrlManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,7 +50,7 @@ public class WebSiteConnector implements Connector {
     private static final int MAX_RETRIES = 10;
 
     /** The browser to use. */
-    private AbstractWebDriverConfig driverConfig;
+    private WebDriverConfig driverConfig;
 
     /** A managed base url to use. */
     private BaseUrlManager baseUrlManager;
@@ -64,7 +64,7 @@ public class WebSiteConnector implements Connector {
     /**
      * Constructor.
      */
-    public WebSiteConnector(ProjectEnvironment environment, AbstractWebDriverConfig driverConfig) {
+    public WebSiteConnector(ProjectEnvironment environment, WebDriverConfig driverConfig) {
         this.baseUrlManager = new BaseUrlManager(environment);
         this.driverConfig = driverConfig;
     }
@@ -108,7 +108,7 @@ public class WebSiteConnector implements Connector {
     public void restart() throws Exception {
         if (this.driver != null) {
             this.driver.quit();
-            this.driver = driverConfig.createDriver();
+            this.driver = driverConfig.createWebDriver();
         }
     }
 
@@ -124,7 +124,7 @@ public class WebSiteConnector implements Connector {
      */
     public void get(String baseUrl, String path, Credentials credentials) throws Exception {
         if (this.driver == null) {
-            this.driver = driverConfig.createDriver();
+            this.driver = driverConfig.createWebDriver();
         }
 
         final String url = baseUrlManager.getAbsoluteUrl(baseUrl, path, credentials);

@@ -17,7 +17,6 @@
 package de.learnlib.alex.learning.entities;
 
 import de.learnlib.alex.data.entities.ProjectEnvironment;
-import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 
 /**
  * Helper object that is used to test words.
@@ -25,14 +24,14 @@ import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 public class ReadOutputConfig {
 
     private SymbolSet symbols;
-    private AbstractWebDriverConfig driverConfig;
+    private WebDriverConfig driverConfig;
     private ProjectEnvironment environment;
 
     public ReadOutputConfig() {
     }
 
     public ReadOutputConfig(SymbolSet symbols,
-                            AbstractWebDriverConfig driverConfig,
+                            WebDriverConfig driverConfig,
                             ProjectEnvironment environment) {
         this.symbols = symbols;
         this.driverConfig = driverConfig;
@@ -55,11 +54,11 @@ public class ReadOutputConfig {
         this.symbols = symbols;
     }
 
-    public AbstractWebDriverConfig getDriverConfig() {
+    public WebDriverConfig getDriverConfig() {
         return driverConfig;
     }
 
-    public void setDriverConfig(AbstractWebDriverConfig driverConfig) {
+    public void setDriverConfig(WebDriverConfig driverConfig) {
         this.driverConfig = driverConfig;
     }
 }

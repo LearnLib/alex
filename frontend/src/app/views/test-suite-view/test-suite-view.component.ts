@@ -15,8 +15,6 @@
  */
 
 import { orderBy, remove } from 'lodash';
-import { webBrowser } from '../../constants';
-import { DriverConfigService } from '../../services/driver-config.service';
 import { DateUtils } from '../../utils/date-utils';
 import { Selectable } from '../../utils/selectable';
 import { SymbolGroupApiService } from '../../services/api/symbol-group-api.service';
@@ -40,6 +38,7 @@ import { TestConfigModalComponent } from '../tests-view/test-config-modal/test-c
 import { TestsMoveModalComponent } from './tests-move-modal/tests-move-modal.component';
 import { TestReportStatus, TestStatus } from '../../entities/test-status';
 import {TestLockInfo, TestPresenceService} from "../../services/test-presence.service";
+import { WebDriverConfig } from '../../entities/web-driver-config';
 
 @Component({
   selector: 'test-suite-view',
@@ -97,23 +96,17 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
     this.testConfig = {
       tests: [],
       environment: this.project.getDefaultEnvironment(),
-      driverConfig: DriverConfigService.createFromName(webBrowser.HTML_UNIT),
+      driverConfig: new WebDriverConfig(),
       description: ""
     };
 
-    this.settingsApi.getSupportedWebDrivers().subscribe(
-      data => {
-        this.testConfig.driverConfig = DriverConfigService.createFromName(data.defaultWebDriver);
-        this.testConfigApi.getAll(this.project.id).subscribe(
-          testConfigs => {
-            this.testConfigs = testConfigs;
-            const i = this.testConfigs.findIndex(c => c.default);
-            if (i > -1) {
-              this.testConfig = this.testConfigs[i];
-            }
-          },
-          console.error
-        );
+    this.testConfigApi.getAll(this.project.id).subscribe(
+      testConfigs => {
+        this.testConfigs = testConfigs;
+        const i = this.testConfigs.findIndex(c => c.default);
+        if (i > -1) {
+          this.testConfig = this.testConfigs[i];
+        }
       },
       console.error
     );

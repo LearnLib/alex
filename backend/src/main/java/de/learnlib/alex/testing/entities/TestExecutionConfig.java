@@ -19,8 +19,7 @@ package de.learnlib.alex.testing.entities;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
-import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
-import de.learnlib.alex.learning.entities.webdrivers.HtmlUnitDriverConfig;
+import de.learnlib.alex.learning.entities.WebDriverConfig;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -58,7 +57,7 @@ public class TestExecutionConfig implements Serializable {
     /** The configuration for the web driver. */
     @NotNull
     @OneToOne(cascade = CascadeType.ALL)
-    private AbstractWebDriverConfig driverConfig;
+    private WebDriverConfig driverConfig;
 
     /** The id of the URL to use for testing. */
     @NotNull
@@ -77,7 +76,7 @@ public class TestExecutionConfig implements Serializable {
 
     /** Constructor. */
     public TestExecutionConfig() {
-        this(new ArrayList<>(), new HtmlUnitDriverConfig());
+        this(new ArrayList<>(), new WebDriverConfig());
     }
 
     /**
@@ -88,7 +87,7 @@ public class TestExecutionConfig implements Serializable {
      * @param driverConfig
      *         The configuration for the web driver.
      */
-    public TestExecutionConfig(List<Long> testIds, AbstractWebDriverConfig driverConfig) {
+    public TestExecutionConfig(List<Long> testIds, WebDriverConfig driverConfig) {
         this.setTestIds(testIds);
         this.driverConfig = driverConfig;
         this.isDefault = false;
@@ -144,11 +143,11 @@ public class TestExecutionConfig implements Serializable {
         this.environment.setId(environmentId);
     }
 
-    public AbstractWebDriverConfig getDriverConfig() {
+    public WebDriverConfig getDriverConfig() {
         return driverConfig;
     }
 
-    public void setDriverConfig(AbstractWebDriverConfig driverConfig) {
+    public void setDriverConfig(WebDriverConfig driverConfig) {
         this.driverConfig = driverConfig;
     }
 

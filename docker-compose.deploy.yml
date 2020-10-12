@@ -28,7 +28,7 @@ services:
       - SERVER_ADDRESS=http://localhost
       - PORT=8000
     ports:
-      - 4200:4200
+      - 80:4200
   alex-backend:
     image: learnlib/alex-backend
     volumes:

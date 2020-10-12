@@ -26,7 +26,7 @@ import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.learning.entities.LearnerSetup;
-import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
+import de.learnlib.alex.learning.entities.WebDriverConfig;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.repositories.LearnerSetupRepository;
 import org.hibernate.Hibernate;
@@ -131,7 +131,7 @@ public class LearnerSetupDAO {
         newSetup.setEnableCache(setupInDb.isEnableCache());
         newSetup.setSaved(saved);
 
-        final AbstractWebDriverConfig webDriverConfig = setupInDb.getWebDriver();
+        final WebDriverConfig webDriverConfig = setupInDb.getWebDriver();
         entityManager.detach(webDriverConfig);
         webDriverConfig.setId(null);
 

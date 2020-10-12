@@ -12,11 +12,11 @@
       <ng-template ngbTabContent>
         <p></p>
 
-        <browser-config-form
+        <driver-config-form
           *ngIf="configuration.driverConfig != null"
           [(config)]="configuration.driverConfig"
         >
-        </browser-config-form>
+        </driver-config-form>
       </ng-template>
     </ngb-tab>
     <ngb-tab title="Targets">

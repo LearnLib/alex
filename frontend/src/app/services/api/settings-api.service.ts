@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-import { webBrowser } from '../../constants';
 import { BaseApiService } from './base-api.service';
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpEventType, HttpResponse } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { EnvironmentProvider } from "../../../environments/environment.provider";
 
 /**
@@ -46,63 +44,5 @@ export class SettingsApiService extends BaseApiService {
    */
   update(settings: any): Observable<any> {
     return this.http.put(`${this.env.apiUrl}/settings`, settings, this.defaultHttpOptions);
-  }
-
-  uploadDriver(driver: string, file: File): Observable<any> {
-    const status = new BehaviorSubject<boolean>(false);
-
-    const formData = new FormData();
-    formData.append('file', file, file.name);
-
-    this.http.post(`${this.env.apiUrl}/settings/drivers/${driver}`, formData, {
-      headers: this.defaultHttpHeaders,
-      observe: 'events',
-      reportProgress: true
-    }).subscribe(
-      e => {
-        if (e.type === HttpEventType.UploadProgress) {
-          status.next(false);
-        } else if (e instanceof HttpResponse) {
-          status.next(true);
-          status.complete();
-        }
-      },
-      () => {
-        status.error('failed to upload file.');
-        status.complete();
-      }
-    );
-
-    return status;
-  }
-
-  deleteDriver(driver: string): Observable<any> {
-    return this.http.delete(`${this.env.apiUrl}/settings/drivers/${driver}`, this.defaultHttpOptions);
-  }
-
-  /**
-   * Get the supported web drivers.
-   */
-  getSupportedWebDrivers(): Observable<any> {
-    return this.get().pipe(
-      map(settings => {
-        const supportedWebDrivers = {
-          HTMLUNITDRIVER: 'htmlUnit',
-          SAFARI: 'safari'
-        };
-
-        for (let key in webBrowser) {
-          if (key === 'HTML_UNIT' || key === 'SAFARI') continue;
-          if (settings.driver[webBrowser[key]].trim() !== '') {
-            supportedWebDrivers[key] = webBrowser[key];
-          }
-        }
-
-        return {
-          supportedWebDrivers,
-          defaultWebDriver: settings.driver.defaultDriver || webBrowser.HTML_UNIT
-        };
-      })
-    );
   }
 }

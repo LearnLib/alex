@@ -27,16 +27,6 @@ export const symbolParameterType = {
   COUNTER: 'COUNTER'
 };
 
-export const webBrowser = {
-  CHROME: 'chrome',
-  FIREFOX: 'firefox',
-  EDGE: 'edge',
-  HTML_UNIT: 'htmlUnit',
-  SAFARI: 'safari',
-  REMOTE: 'remote',
-  IE: 'ie'
-};
-
 export const eqOracleType = {
   RANDOM: 'random_word',
   COMPLETE: 'complete',
