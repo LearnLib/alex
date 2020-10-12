@@ -23,14 +23,14 @@ services:
     ports:
       - 5900
   alex-frontend:
-    image: ghcr.io/learnlib/alex-frontend:latest
+    image: ghcr.io/learnlib/alex/alex-frontend:latest
     environment:
       - SERVER_ADDRESS=http://localhost
       - PORT=8000
     ports:
       - 80:4200
   alex-backend:
-    image: ghcr.io/learnlib/alex-backend:latest
+    image: ghcr.io/learnlib/alex/alex-backend:latest
     volumes:
       - alex-backend-db:/var/lib/alex/target/db
       - alex-backend-files:/var/lib/alex/target/files

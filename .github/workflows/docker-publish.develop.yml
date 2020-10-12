@@ -24,12 +24,11 @@ jobs:
         run: docker build ./backend --file ./backend/Dockerfile --tag $IMAGE_NAME_BACKEND
 
       - name: Log into GitHub Container Registry
-      # TODO: Create a PAT with `read:packages` and `write:packages` scopes and save it as an Actions secret `CR_PAT`
         run: echo "${{ secrets.CR_PAT }}" | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Push image to GitHub Container Registry
         run: |
-          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME_BACKEND
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/alex/$IMAGE_NAME_BACKEND
 
           # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
@@ -60,12 +59,11 @@ jobs:
         run: docker build ./frontend --file ./frontend/Dockerfile --tag $IMAGE_NAME_FRONTEND
 
       - name: Log into GitHub Container Registry
-      # TODO: Create a PAT with `read:packages` and `write:packages` scopes and save it as an Actions secret `CR_PAT`
         run: echo "${{ secrets.CR_PAT }}" | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Push image to GitHub Container Registry
         run: |
-          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME_FRONTEND
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/alex/$IMAGE_NAME_FRONTEND
 
           # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
