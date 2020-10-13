@@ -9,7 +9,7 @@ Execute the following commands from the root of this repository.
 ```bash
 node alex-cli.js \
         --uri "http://localhost:8000" \
-        --targets "https://www.google.com,https://www.google.com" \
+        --targets "https://www.google.com" "https://www.google.com" \
         -d "test" \
         -u "admin@alex.example:admin" \
         -s "./examples/google/symbols.json" \
@@ -35,7 +35,7 @@ node alex-cli.js \
 ```bash
 node alex-cli.js \
         --uri "http://localhost:8000" \
-        --targets "https://www.google.com,https://www.google.com" \
+        --targets "https://www.google.com" "https://www.google.com" \
         -d "learn" \
         -u "admin@alex.example:admin" \
         -s "./examples/google/symbols.json" \
