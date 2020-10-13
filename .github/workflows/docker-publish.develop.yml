@@ -9,6 +9,7 @@ on:
 env:
   IMAGE_NAME_BACKEND: alex-backend
   IMAGE_NAME_FRONTEND: alex-frontend
+  IMAGE_NAME_CLI: alex-cli
 
 jobs:
   # Push image to GitHub Packages.
@@ -81,4 +82,39 @@ jobs:
           echo VERSION=$VERSION
 
           docker tag $IMAGE_NAME_FRONTEND $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:$VERSION
+
+  push-cli:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build image
+        run: docker build ./cli --file ./cli/Dockerfile --tag $IMAGE_NAME_CLI
+
+      - name: Log into GitHub Container Registry
+        run: echo "${{ secrets.CR_PAT }}" | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Push image to GitHub Container Registry
+        run: |
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/alex/$IMAGE_NAME_CLI
+
+          # Change all uppercase to lowercase
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+          # Strip "v" prefix from tag name
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+
+          # Use Docker `latest` tag convention
+          [ "$VERSION" == "developer" ] && VERSION=unstable
+
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+
+          docker tag $IMAGE_NAME_CLI $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
