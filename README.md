@@ -71,15 +71,9 @@ Password: *admin*
 * [Examples](https://learnlib.github.io/alex/book/2.0.0/contents/examples/todomvc/)
 * [Developer docs](https://learnlib.github.io/alex/book/2.0.0/contents/dev-docs/development/)
 
-### Downloads
-
-* [Releases](https://ls5download.cs.tu-dortmund.de/alex/builds/releases/)
-
-### Background & related tools
+### Background
 
 * [Active automata learning](https://scholar.google.de/scholar?hl=de&q=active+automata+learning)
-* [LearnLib](https://learnlib.de/)
-* [AutomataLib](https://github.com/Learnlib/automatalib)
 
 ### Used libraries
 

@@ -1,14 +1,12 @@
-$fa-font-path: "fonts" !default;
-
-@import "../../node_modules/@fortawesome/fontawesome-free/scss/variables";
-@import "../../node_modules/@fortawesome/fontawesome-free/scss/mixins";
-@import "../../node_modules/@fortawesome/fontawesome-free/scss/core";
-@import "../../node_modules/@fortawesome/fontawesome-free/scss/larger";
-@import "../../node_modules/@fortawesome/fontawesome-free/scss/fixed-width";
-@import "../../node_modules/@fortawesome/fontawesome-free/scss/animated";
-@import "../../node_modules/@fortawesome/fontawesome-free/scss/rotated-flipped";
-@import "../../node_modules/@fortawesome/fontawesome-free/scss/icons";
+@import "~@fortawesome/fontawesome-free/scss/variables";
+@import "~@fortawesome/fontawesome-free/scss/mixins";
+@import "~@fortawesome/fontawesome-free/scss/core";
+@import "~@fortawesome/fontawesome-free/scss/larger";
+@import "~@fortawesome/fontawesome-free/scss/fixed-width";
+@import "~@fortawesome/fontawesome-free/scss/animated";
+@import "~@fortawesome/fontawesome-free/scss/rotated-flipped";
+@import "~@fortawesome/fontawesome-free/scss/icons";
 
 /** icon packs. */
-@import "../../node_modules/@fortawesome/fontawesome-free/scss/solid";
-@import "../../node_modules/@fortawesome/fontawesome-free/scss/regular";
+@import "~@fortawesome/fontawesome-free/scss/solid";
+@import "~@fortawesome/fontawesome-free/scss/regular";
