@@ -1,9 +1,7 @@
-FROM node as builder
-RUN mkdir -p /frontend
+FROM node:12.19.0 as builder
 WORKDIR /frontend
-COPY package.json /frontend
-RUN npm install
-COPY . /frontend
+COPY . .
+RUN npm ci
 RUN npm run build:prod
 
 FROM nginx:stable-alpine
