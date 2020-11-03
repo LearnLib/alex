@@ -146,5 +146,14 @@ module.exports = {
         body: JSON.stringify(config)
       });
     }
+  },
+  modelChecker: {
+    check: async function(projectId, config) {
+      return fetch(`${_uri}/projects/${projectId}/modelChecker/check`, {
+        method: 'post',
+        headers: _getDefaultHttpHeaders(),
+        body: JSON.stringify(config)
+      });
+    }
   }
 };

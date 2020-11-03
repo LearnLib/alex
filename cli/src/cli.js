@@ -118,6 +118,14 @@ let _action = null;
  */
 let _files = [];
 
+/**
+ * The LTL formulas to verify on the learned model.
+ *
+ * @type {*[]}
+ * @private
+ */
+let _formulas = [];
+
 async function _createProject(data) {
 
   // generate unique project name
@@ -358,14 +366,59 @@ async function startLearning() {
   }
 
   if (!result.error) {
+
+    // check model
+    if (_formulas.length > 0) {
+      await verifyLTLProperties(result);
+    }
+
     // write learned model to a file
     if (program.out) {
       const model = result.steps[result.steps.length - 1].hypothesis;
       writeOutputFile(JSON.stringify(model));
     }
+
     console.log(chalk.green('The learning process finished successfully.'));
   } else {
     throw 'The learning process finished with errors';
+  }
+}
+
+async function verifyLTLProperties(result) {
+  console.log(chalk.white.dim(`Checking ${_formulas.length} LTL formulas.`));
+
+  const config = {
+    learnerResultId: result.testNo,
+    stepNo: result.steps[result.steps.length - 1].stepNo,
+    formulas: _formulas.map(f => ({
+      formula: f
+    })),
+    formulaIds: [],
+    minUnfolds: 3,
+    multiplier: 1.0,
+  };
+
+  const res3 = await api.modelChecker.check(_project.id, config);
+  await utils.assertStatus(res3, 200);
+  const checkResults = await res3.json();
+
+  let passed = true;
+  let numFailed = 0;
+  for (let cr of checkResults) {
+    passed &= cr.passed;
+
+    if (cr.passed) {
+      console.log(chalk.green(`(✓) ${cr.formula.formula}`));
+    } else {
+      numFailed++;
+      console.log(chalk.red(`(x) ${cr.formula.formula} with prefix: ${cr.prefix} and loop: ${cr.loop}`));
+    }
+  }
+
+  if (passed) {
+    console.log(chalk.green('All LTL properties hold.'));
+  } else {
+    throw `${numFailed}/${_formulas.length} LTL properties do not hold.`;
   }
 }
 
@@ -402,6 +455,10 @@ function processProgram() {
   }
 
   if (_action === 'test') {
+    if (program.formulas) {
+      throw 'You may not specify ltl formulas when testing.';
+    }
+
     if (!program.project) {
       // validate tests
       if (!program.tests) {
@@ -413,6 +470,10 @@ function processProgram() {
   } else if (_action === 'learn') {
     if (program.tests) {
       throw 'You want to learn, but have specified tests.';
+    }
+
+    if (program.formulas) {
+      _formulas = processors.formulas(program.formulas);
     }
   }
 

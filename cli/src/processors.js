@@ -160,5 +160,25 @@ module.exports = {
         return data.tests;
       }
     }
+  },
+
+  /**
+   * Process the formulas file.
+   *
+   * @param value The path to the file that contains ltl formulas.
+   * @returns {*[]} The formulas.
+   */
+  formulas: function(value) {
+    if (!fs.existsSync(value)) {
+      throw 'The file for the ltl that you specified cannot be found.';
+    } else {
+      const contents = fs.readFileSync(value);
+      const data = JSON.parse(contents);
+      if (!data.length) {
+        throw 'The file that you specified does not seem to contain any tests.';
+      } else {
+        return data;
+      }
+    }
   }
 }

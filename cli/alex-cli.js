@@ -35,6 +35,7 @@ program
   .requiredOption('-u, --user <credentials>', 'Credentials with the pattern "email:password".')
   .requiredOption('-c, --config <file>', 'Add the json file that contains the configuration for the web driver.')
   .option('--targets <targets...>', 'The base URL and mirrors of the target application as comma separated list.')
+  .option('--formulas <file>', 'The json file that contains the LTL formulas.')
   .option('-p, --project <file>', `Add the json file that contains a project. Cannot be used in combination with '-s', '-t' and '--targets'.`)
   .option('-s, --symbols <file>', 'Add the json file that contains all necessary symbols.')
   .option('-t, --tests <file>', 'Add the json file that contains all tests that should be executed. Omit this if you want to learn.')
