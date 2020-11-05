@@ -1,6 +1,6 @@
 # ALEX CLI
 
-A command line interface for running tests and learning experiments with [ALEX](https://github.com/LearnLib/alex) **(v1.7.*)**.
+A command line interface for running tests and learning experiments with [ALEX](https://github.com/LearnLib/alex) **(v2.0.\*)**.
 
 NPM package: [https://www.npmjs.com/package/alex-cli](https://www.npmjs.com/package/alex-cli)
 
@@ -14,26 +14,26 @@ NPM package: [https://www.npmjs.com/package/alex-cli](https://www.npmjs.com/pack
 ### Via NPM
 
 ```bash
-npm install alex-cli
-node node_modules/alex-cli/alex-cli.js -h 
+npm install -g alex-cli
+alex-cli -h 
 ```
 
 ### From source
 
 ```bash
-git clone https://github.com/LearnLib/alex-cli.git
-cd alex-cli
-npm install
+git clone https://github.com/LearnLib/alex.git
+cd ./alex/cli
+npm ci
 node alex-cli.js -h 
 ```
 
 ## Usage
 
-1. Export the symbols from ALEX ([see here](http://learnlib.github.io/alex/book/1.7.0/contents/user-manual/symbol-modeling/#export--import)).
-2. Export the tests from ALEX ([see here](http://learnlib.github.io/alex/book/1.7.0/contents/user-manual/testing.html)).
+1. Export the symbols from ALEX ([see here](http://learnlib.github.io/alex/book/2.0.0/contents/user-manual/symbol-modeling/#export--import)).
+2. Export the tests from ALEX ([see here](http://learnlib.github.io/alex/book/2.0.0/contents/user-manual/testing.html)).
 
 Execute `node alex-cli.js -h` to see a complete list of parameters and their descriptions.
-For examples, see the section below.
+Fine usage examples [here](./examples/google/README.md).
 
 ### Configuration
 
@@ -63,29 +63,4 @@ For examples, see the section below.
 |name|The name of the browser, 'firefox', 'chrome', 'htmlUnit', 'ie', 'safari', 'edge'|
 |headless|If the browser is run headless. Only for Firefox and Chrome|
 
-### CLI
 
-#### Testing
-
-```bash
-node alex-cli.js --uri "http://localhost:8080" \
-                 --targets "https://www.google.com,https://www.google.com" \
-                 -a "test" \
-                 -u "admin@alex.example:admin" \
-                 -s "./symbols.json" \
-                 -t "./tests.json" \
-                 -c "./config.testing.json" \
-                 --clean-up
-```
-
-#### Learning
-
-```bash
-node alex-cli.js --uri "http://alex.some-server.de" \
-                 --target "https://www.google.com,https://www.google.com" \
-                 -a "learn" \
-                 -u "admin@alex.example:admin" \
-                 -s "./symbols.json" \
-                 -c "./config.learning.json" \
-                 --clean-up
-```

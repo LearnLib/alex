@@ -54,5 +54,22 @@ module.exports = {
       str += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     return str;
+  },
+
+  /**
+   * Tests if two arrays are equal.
+   *
+   * @param a {*[]}
+   * @param b {*[]}
+   * @returns {boolean}
+   */
+  listsAreEqual: function(a, b) {
+    if (a.length !== b.length) return false;
+
+    for (let i = 0; i < a.length; i++) {
+      if (a[i] !== b[i]) return false;
+    }
+
+    return true;
   }
 }

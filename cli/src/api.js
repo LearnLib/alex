@@ -84,6 +84,15 @@ module.exports = {
       });
     }
   },
+  projectEnvironments: {
+    getOutputs: async function(projectId, envId, config) {
+      return fetch(`${_uri}/projects/${projectId}/environments/${envId}/outputs`, {
+        method: 'post',
+        headers: _getDefaultHttpHeaders(),
+        body: JSON.stringify(config)
+      });
+    }
+  },
   symbolGroups: {
     getAll: async function(projectId) {
       return fetch(`${_uri}/projects/${projectId}/groups`, {
@@ -97,6 +106,15 @@ module.exports = {
       return fetch(`${_uri}/projects/${projectId}/results/${resultId}?embed=steps`, {
         method: 'get',
         headers: _getDefaultHttpHeaders()
+      });
+    }
+  },
+  learnerResultSteps: {
+    getHypothesisOutputs: async function(projectId, resultId, stepId, inputs) {
+      return fetch(`${_uri}/projects/${projectId}/results/${resultId}/steps/${stepId}/hypothesis/outputs`, {
+        method: 'post',
+        headers: _getDefaultHttpHeaders(),
+        body: JSON.stringify(inputs)
       });
     }
   },
@@ -141,6 +159,13 @@ module.exports = {
   learner: {
     start: async function(projectId, config) {
       return fetch(`${_uri}/projects/${projectId}/learner/start`, {
+        method: 'post',
+        headers: _getDefaultHttpHeaders(),
+        body: JSON.stringify(config)
+      });
+    },
+    refine: async function(projectId, resultId, config) {
+      return fetch(`${_uri}/projects/${projectId}/learner/${resultId}/resume`, {
         method: 'post',
         headers: _getDefaultHttpHeaders(),
         body: JSON.stringify(config)

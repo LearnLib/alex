@@ -1,1 +1,1 @@
-["[]true"]
+["[]((input == \"search <test>\") -> (output == \"Ok\"))"]
