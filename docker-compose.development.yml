@@ -41,7 +41,14 @@ services:
             - alex-backend-maven-development:/root/.m2
             - alex-backend-db-development:/var/alex/backend/target/db
             - alex-backend-files-development:/var/alex/backend/target/files
-        command: mvn spring-boot:run -Dspring-boot.run.arguments="--webdriver.remote.url=http://selenium-hub:4444/wd/hub"
+            - alex-backend-ltsmin-development:/var/ltsmin
+        command:
+            bash -c "if [ ! -d "/var/ltsmin/bin" ]; then
+            wget -P /var/ltsmin http://github.com/utwente-fmt/ltsmin/releases/download/v3.0.2/ltsmin-v3.0.2-linux.tgz;
+            tar -xzf /var/ltsmin/ltsmin-v3.0.2-linux.tgz -C /var/ltsmin;
+            mv /var/ltsmin/v3.0.2/* /var/ltsmin/;
+            rm -rf /var/ltsmin/v3.0.2 /var/ltsmin/ltsmin-v3.0.2-linux.tgz;
+            fi && mvn spring-boot:run -Dspring-boot.run.arguments=--ltsmin.path=/var/ltsmin/bin,--webdriver.remote.url=http://selenium-hub:4444/wd/hub"
         ports:
             - 8000:8000
         networks:
@@ -62,6 +69,7 @@ volumes:
   alex-backend-maven-development:
   alex-backend-db-development:
   alex-backend-files-development:
+  alex-backend-ltsmin-development:
 
 networks:
     frontend:
