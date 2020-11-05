@@ -16,42 +16,32 @@
 
 package de.learnlib.alex.learning.entities;
 
-import de.learnlib.alex.data.entities.ProjectEnvironment;
+import de.learnlib.alex.data.entities.ParameterizedSymbol;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Helper object that is used to test words.
  */
 public class ReadOutputConfig {
 
-    private SymbolSet symbols;
+    private ParameterizedSymbol preSymbol;
+    private List<ParameterizedSymbol> symbols = new ArrayList<>();
+    private ParameterizedSymbol postSymbol;
     private WebDriverConfig driverConfig;
-    private ProjectEnvironment environment;
 
     public ReadOutputConfig() {
     }
 
-    public ReadOutputConfig(SymbolSet symbols,
-                            WebDriverConfig driverConfig,
-                            ProjectEnvironment environment) {
+    public ReadOutputConfig(ParameterizedSymbol preSymbol,
+                            List<ParameterizedSymbol> symbols,
+                            ParameterizedSymbol postSymbol,
+                            WebDriverConfig driverConfig) {
+        this.preSymbol = preSymbol;
         this.symbols = symbols;
+        this.postSymbol = postSymbol;
         this.driverConfig = driverConfig;
-        this.environment = environment;
-    }
-
-    public ProjectEnvironment getEnvironment() {
-        return environment;
-    }
-
-    public void setEnvironment(ProjectEnvironment environment) {
-        this.environment = environment;
-    }
-
-    public SymbolSet getSymbols() {
-        return symbols;
-    }
-
-    public void setSymbols(SymbolSet symbols) {
-        this.symbols = symbols;
     }
 
     public WebDriverConfig getDriverConfig() {
@@ -60,5 +50,29 @@ public class ReadOutputConfig {
 
     public void setDriverConfig(WebDriverConfig driverConfig) {
         this.driverConfig = driverConfig;
+    }
+
+    public ParameterizedSymbol getPreSymbol() {
+        return preSymbol;
+    }
+
+    public void setPreSymbol(ParameterizedSymbol preSymbol) {
+        this.preSymbol = preSymbol;
+    }
+
+    public List<ParameterizedSymbol> getSymbols() {
+        return symbols;
+    }
+
+    public void setSymbols(List<ParameterizedSymbol> symbols) {
+        this.symbols = symbols;
+    }
+
+    public ParameterizedSymbol getPostSymbol() {
+        return postSymbol;
+    }
+
+    public void setPostSymbol(ParameterizedSymbol postSymbol) {
+        this.postSymbol = postSymbol;
     }
 }

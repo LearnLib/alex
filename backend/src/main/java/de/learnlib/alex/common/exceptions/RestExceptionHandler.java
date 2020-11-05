@@ -17,6 +17,7 @@
 package de.learnlib.alex.common.exceptions;
 
 import de.learnlib.alex.common.utils.RESTError;
+import de.learnlib.alex.learning.exceptions.LearnerException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -49,6 +50,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         LOGGER.info("DataIntegrityViolationException caught.", e);
         final RESTError error = new RESTError(HttpStatus.INTERNAL_SERVER_ERROR, e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
+
+    @ExceptionHandler(LearnerException.class)
+    protected ResponseEntity<Object> handleLearnerException(LearnerException e) {
+        LOGGER.info("LearnerException caught.", e);
+        final RESTError error = new RESTError(HttpStatus.BAD_REQUEST, e);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(NotFoundException.class)

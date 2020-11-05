@@ -96,7 +96,6 @@ public class LearnerResultStep implements Serializable {
 
     @Id
     @GeneratedValue
-    @JsonIgnore
     public Long getId() {
         return id;
     }
@@ -110,9 +109,21 @@ public class LearnerResultStep implements Serializable {
      */
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "result_id")
-    @JsonIgnore
     public LearnerResult getResult() {
         return result;
+    }
+
+    @JsonProperty("result")
+    @Transient
+    public Long getResultId() {
+        return this.result == null ? null : this.result.getId();
+    }
+
+    @JsonProperty("result")
+    @Transient
+    public void setResultId(Long resultId) {
+        this.result = new LearnerResult();
+        this.result.setId(resultId);
     }
 
     /**

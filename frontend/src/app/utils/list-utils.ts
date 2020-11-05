@@ -28,3 +28,17 @@ export function removeItems<T>(arr: T[], removeFn: (T) => boolean): T[] {
   remove(newArr, removeFn);
   return newArr;
 }
+
+export function listEquals<T>(a: T[], b: T[]) {
+  if (a == null || b == null || a.length !== b.length) {
+    return false;
+  }
+
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] !== b[i]) {
+      return false;
+    }
+  }
+
+  return true;
+}

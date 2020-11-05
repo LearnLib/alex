@@ -17,14 +17,26 @@
 package de.learnlib.alex.data.rest;
 
 import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.common.exceptions.NotFoundException;
+import de.learnlib.alex.common.utils.ResourceErrorHandler;
+import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.dao.ProjectEnvironmentDAO;
+import de.learnlib.alex.data.dao.SymbolDAO;
+import de.learnlib.alex.data.entities.ExecuteResult;
+import de.learnlib.alex.data.entities.ParameterizedSymbol;
+import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.ProjectEnvironmentVariable;
 import de.learnlib.alex.data.entities.ProjectUrl;
+import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.learning.entities.ReadOutputConfig;
+import de.learnlib.alex.learning.exceptions.LearnerException;
+import de.learnlib.alex.learning.services.LearnerService;
 import de.learnlib.alex.security.AuthContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -36,8 +48,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.ValidationException;
 import javax.ws.rs.core.MediaType;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/rest/projects/{projectId}/environments")
@@ -45,14 +62,65 @@ public class ProjectEnvironmentResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private AuthContext authContext;
-
-    private ProjectEnvironmentDAO environmentDAO;
+    private final AuthContext authContext;
+    private final ProjectEnvironmentDAO environmentDAO;
+    private final ProjectDAO projectDAO;
+    private final SymbolDAO symbolDAO;
+    private final LearnerService learnerService;
 
     @Autowired
-    public ProjectEnvironmentResource(AuthContext authContext, ProjectEnvironmentDAO environmentDAO) {
+    public ProjectEnvironmentResource(
+            AuthContext authContext,
+            ProjectEnvironmentDAO environmentDAO,
+            @Lazy ProjectDAO projectDAO,
+            SymbolDAO symbolDAO,
+            LearnerService learnerService
+    ) {
         this.authContext = authContext;
         this.environmentDAO = environmentDAO;
+        this.projectDAO = projectDAO;
+        this.symbolDAO = symbolDAO;
+        this.learnerService = learnerService;
+    }
+
+    @PostMapping(
+            value = "/{environmentId}/outputs",
+            produces = MediaType.APPLICATION_JSON,
+            consumes = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity<List<String>> getOutputs(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("environmentId") Long environmentId,
+            @RequestBody ReadOutputConfig config
+    ) {
+        final var user = authContext.getUser();
+        final var env = environmentDAO.getById(user, environmentId);
+
+        if (config.getSymbols().isEmpty()) {
+            throw new ValidationException("You have to specify at least one symbol.");
+        }
+
+        final var project = projectDAO.getByID(user, projectId);
+
+        final var pResetSymbol = config.getPreSymbol();
+        if (pResetSymbol == null) {
+            throw new NotFoundException("No reset symbol specified!");
+        }
+
+        final var resetSymbol = symbolDAO.get(user, projectId, pResetSymbol.getSymbol().getId());
+        config.getPreSymbol().setSymbol(resetSymbol);
+
+        final var symbolIds = config.getSymbols().stream().map(ps -> ps.getSymbol().getId()).collect(Collectors.toList());
+        final var symbols = symbolDAO.getByIds(user, projectId, symbolIds);
+        final var symbolMap = new HashMap<Long, Symbol>();
+        symbols.forEach(s -> symbolMap.put(s.getId(), s));
+        config.getSymbols().forEach(ps -> ps.setSymbol(symbolMap.get(ps.getSymbol().getId())));
+
+        final var outputs = learnerService.readOutputs(user, project, env, config).stream()
+                .map(ExecuteResult::getOutput)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(outputs);
     }
 
     @GetMapping(

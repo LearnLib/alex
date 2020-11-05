@@ -34,7 +34,6 @@ import de.learnlib.alex.learning.entities.LearnerStatus;
 import de.learnlib.alex.learning.entities.LearningProcessStatus;
 import de.learnlib.alex.learning.entities.ReadOutputConfig;
 import de.learnlib.alex.learning.entities.SeparatingWord;
-import de.learnlib.alex.learning.entities.SymbolSet;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
 import de.learnlib.alex.learning.entities.WebDriverConfig;
@@ -328,15 +327,15 @@ public class LearnerService {
         logger.traceEntry();
         logger.info(LoggerMarkers.LEARNER, "Learner.readOutputs({}, {}, {}, {}, {})", user, project, resetSymbol, symbols, driverConfig);
 
-        final SymbolSet symbolSet = new SymbolSet(resetSymbol, symbols, postSymbol);
         final ReadOutputConfig config = new ReadOutputConfig(
-                symbolSet,
-                driverConfig,
-                environment
+                resetSymbol,
+                symbols,
+                postSymbol,
+                driverConfig
         );
 
         logger.traceExit();
-        return readOutputs(user, project, config);
+        return readOutputs(user, project, environment, config);
     }
 
     /**
@@ -350,12 +349,12 @@ public class LearnerService {
      *         The config to use.
      * @return The outputs of the SUL.
      */
-    public List<ExecuteResult> readOutputs(User user, Project project, ReadOutputConfig readOutputConfig) {
-        PreparedContextHandler ctxHandler = contextHandlerFactory.createPreparedContextHandler(user, project, readOutputConfig.getDriverConfig(), readOutputConfig.getSymbols().getResetSymbol(), readOutputConfig.getSymbols().getPostSymbol());
-        ConnectorManager connectors = ctxHandler.create(readOutputConfig.getEnvironment()).createContext();
+    public List<ExecuteResult> readOutputs(User user, Project project, ProjectEnvironment environment, ReadOutputConfig readOutputConfig) {
+        PreparedContextHandler ctxHandler = contextHandlerFactory.createPreparedContextHandler(user, project, readOutputConfig.getDriverConfig(), readOutputConfig.getPreSymbol(), readOutputConfig.getPostSymbol());
+        ConnectorManager connectors = ctxHandler.create(environment).createContext();
 
         try {
-            List<ExecuteResult> outputs = readOutputConfig.getSymbols().getSymbols().stream()
+            List<ExecuteResult> outputs = readOutputConfig.getSymbols().stream()
                     .map(s -> s.execute(connectors))
                     .collect(Collectors.toList());
             connectors.dispose();
