@@ -26,6 +26,7 @@ import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -43,7 +44,7 @@ public abstract class SymbolStep {
 
     /** The ID of the step in the DB. */
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
 
     /** If the step is disabled and therefor should not be executed. */

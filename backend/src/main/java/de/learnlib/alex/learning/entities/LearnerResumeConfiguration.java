@@ -21,6 +21,7 @@ import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
 
+import javax.persistence.OrderBy;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ public class LearnerResumeConfiguration {
     private int stepNo;
 
     /** The ids of the symbols to add. */
+    @OrderBy
     private List<ParameterizedSymbol> symbolsToAdd;
 
     /** Constructor. */

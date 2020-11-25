@@ -29,11 +29,13 @@ import org.hibernate.validator.constraints.Length;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
@@ -61,7 +63,7 @@ public class Project implements Serializable {
      * The project ID.
      */
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
@@ -75,6 +77,7 @@ public class Project implements Serializable {
             joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id")
     )
+    @OrderBy
     private List<User> owners;
 
     /**
@@ -88,6 +91,7 @@ public class Project implements Serializable {
             joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id")
     )
+    @OrderBy
     private List<User> members;
 
     /**
@@ -116,6 +120,7 @@ public class Project implements Serializable {
             mappedBy = "project",
             cascade = {CascadeType.REMOVE}
     )
+    @OrderBy
     private List<ProjectEnvironment> environments;
 
     /**
@@ -149,6 +154,7 @@ public class Project implements Serializable {
             mappedBy = "project",
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
     )
+    @OrderBy
     @JsonIgnore
     private List<TestExecutionConfig> testExecutionConfigs;
 
@@ -167,6 +173,7 @@ public class Project implements Serializable {
     @OneToMany(
             mappedBy = "project",
             cascade = {CascadeType.REMOVE})
+    @OrderBy
     @JsonIgnore
     private List<LtsFormulaSuite> ltsFormulaSuites;
 

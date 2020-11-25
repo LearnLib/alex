@@ -36,6 +36,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -94,15 +95,18 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     private boolean hidden;
 
     /** The steps to execute when the symbol is executed. */
+    @OrderBy
     private List<SymbolStep> steps;
 
     /** The custom output if the symbol is executed successfully. */
     private String successOutput;
 
     /** The list of input variables. */
+    @OrderBy
     private List<SymbolInputParameter> inputs;
 
     /** The list of output variables. */
+    @OrderBy
     private List<SymbolOutputParameter> outputs;
 
     /** The date when the symbol was updated the last time. */
@@ -221,7 +225,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * @return The ID.
      */
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty
     public Long getId() {
         return this.id;

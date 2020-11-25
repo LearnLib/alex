@@ -27,9 +27,11 @@ import org.hibernate.annotations.Cascade;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
@@ -44,6 +46,7 @@ import java.util.stream.Collectors;
  * The model for a user.
  */
 @Entity
+@Table(name = "user", schema = "public")
 public class User implements Serializable {
 
     /** Auto generated id for saving it into the db. */
@@ -54,7 +57,7 @@ public class User implements Serializable {
 
     /** The unique id of the user. */
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /** The username of the user. */

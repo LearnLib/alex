@@ -24,9 +24,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.transaction.TransactionSystemException;
 
 import javax.inject.Inject;
+import javax.validation.ValidationException;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -72,7 +72,7 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
         symbolGroupRepository.save(group); // should fail
     }
 
-    @Test(expected = TransactionSystemException.class)
+    @Test(expected = ValidationException.class)
     public void shouldFailToSaveAGroupWithoutAName() {
         SymbolGroup group = new SymbolGroup();
         group.setProject(project);

@@ -29,12 +29,14 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
@@ -136,6 +138,7 @@ public class Test implements Serializable {
     protected String name;
 
     /** The results where the test appears. */
+    @OrderBy
     private List<TestResult> testResults;
 
     /** Constructor. */
@@ -215,7 +218,7 @@ public class Test implements Serializable {
      * @return The ID.
      */
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty
     public Long getId() {
         return this.id;

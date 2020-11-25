@@ -29,6 +29,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -95,7 +96,7 @@ public class LearnerResultStep implements Serializable {
     }
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     public Long getId() {
         return id;
@@ -146,7 +147,7 @@ public class LearnerResultStep implements Serializable {
     /**
      * @return The current eq oracle strategy of the step.
      */
-    @Column(columnDefinition = "BLOB")
+    @Column(columnDefinition="BYTEA")
     public AbstractEquivalenceOracleProxy getEqOracle() {
         return eqOracle;
     }
@@ -263,7 +264,7 @@ public class LearnerResultStep implements Serializable {
         return errorText != null;
     }
 
-    @Column(columnDefinition = "BLOB")
+    @Column(columnDefinition="BYTEA")
     @JsonIgnore
     public byte[] getState() {
         return state;

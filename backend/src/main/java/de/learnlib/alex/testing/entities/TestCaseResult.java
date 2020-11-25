@@ -26,6 +26,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +46,7 @@ public class TestCaseResult extends TestResult {
             mappedBy = "result",
             cascade = {CascadeType.ALL}
     )
+    @OrderBy
     private List<TestExecutionResult> outputs;
 
     private Long failedStep;

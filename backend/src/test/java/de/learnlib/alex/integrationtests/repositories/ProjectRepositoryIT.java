@@ -22,9 +22,9 @@ import de.learnlib.alex.data.repositories.SymbolGroupRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.transaction.TransactionSystemException;
 
 import javax.inject.Inject;
+import javax.validation.ValidationException;
 import java.util.Collections;
 import java.util.List;
 
@@ -56,7 +56,7 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
         assertTrue(project.getId() > 0L);
     }
 
-    @Test(expected = TransactionSystemException.class)
+    @Test(expected = ValidationException.class)
     public void shouldFailToSaveAProjectWithoutAName() {
         Project project = new Project();
         project.addOwner(user);

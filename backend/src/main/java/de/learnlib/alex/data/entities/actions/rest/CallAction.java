@@ -24,6 +24,8 @@ import de.learnlib.alex.data.entities.actions.Credentials;
 import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.annotations.Type;
+import org.springframework.util.SerializationUtils;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -103,7 +105,9 @@ public class CallAction extends RESTSymbolAction {
      * conform (e.g. Accept: text/html,application/xml).
      */
     @Lob
-    private HashMap<String, String> headers;
+    @Column(columnDefinition="BYTEA")
+    @Type(type="org.hibernate.type.BinaryType")
+    private byte[] headers;
 
     /**
      * Optional credentials to authenticate via HTTP basic auth.
@@ -116,20 +120,20 @@ public class CallAction extends RESTSymbolAction {
      * things easier.
      */
     @Lob
-    private HashMap<String, String> cookies; // OM NOM NOM NOM!!!
+    @Column(columnDefinition="BYTEA")
+    @Type(type="org.hibernate.type.BinaryType")
+    private byte[] cookies; // OM NOM NOM NOM!!!
 
     /**
      * Optional data to sent with a POST or PUT request.
      */
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(columnDefinition = "TEXT")
     private String data;
 
     /**
      * Default constructor that just initializes the internal data structures.
      */
     public CallAction() {
-        this.headers = new HashMap<>();
-        this.cookies = new HashMap<>();
         this.timeout = 0;
     }
 
@@ -171,7 +175,10 @@ public class CallAction extends RESTSymbolAction {
     }
 
     public HashMap<String, String> getHeaders() {
-        return headers;
+        if (headers == null) {
+            return new HashMap<>();
+        }
+        return (HashMap<String, String>) SerializationUtils.deserialize(headers);
     }
 
     /**
@@ -181,12 +188,12 @@ public class CallAction extends RESTSymbolAction {
      */
     private Map<String, String> getHeadersWithVariableValues() {
         Map<String, String> result = new HashMap<>();
-        headers.forEach((k, v) -> result.put(k, insertVariableValues(v)));
+        getHeaders().forEach((k, v) -> result.put(k, insertVariableValues(v)));
         return result;
     }
 
     public void setHeaders(HashMap<String, String> headers) {
-        this.headers = headers;
+        this.headers = SerializationUtils.serialize(headers);
     }
 
     public Credentials getCredentials() {
@@ -214,7 +221,10 @@ public class CallAction extends RESTSymbolAction {
     }
 
     public HashMap<String, String> getCookies() {
-        return cookies;
+        if (cookies == null) {
+            return new HashMap<>();
+        }
+        return (HashMap<String, String>) SerializationUtils.deserialize(cookies);
     }
 
     /**
@@ -225,12 +235,12 @@ public class CallAction extends RESTSymbolAction {
      */
     private Set<Cookie> getCookiesWithVariableValues() {
         Set<Cookie> result = new HashSet<>();
-        cookies.forEach((n, v) -> result.add(new Cookie(n, insertVariableValues(v))));
+        getCookies().forEach((n, v) -> result.add(new Cookie(n, insertVariableValues(v))));
         return result;
     }
 
     public void setCookies(HashMap<String, String> cookies) {
-        this.cookies = cookies;
+        this.cookies = SerializationUtils.serialize(cookies);
     }
 
     public String getData() {

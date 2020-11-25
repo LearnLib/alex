@@ -18,6 +18,14 @@ services:
     environment:
       - HUB_HOST=selenium-hub
       - HUB_PORT=4444
+  alex-database:
+    image: postgres:10
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_USER=sa
+      - POSTGRES_DB=alex
+    volumes:
+      - alex-database:/var/lib/postgresql
   alex-frontend:
     image: ghcr.io/learnlib/alex/alex-frontend:unstable
     environment:
@@ -36,5 +44,4 @@ services:
       - 8000:8000
 
 volumes:
-  alex-backend-db:
-  alex-backend-files:
+  alex-database:

@@ -22,8 +22,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.transaction.TransactionSystemException;
 
+import javax.validation.ValidationException;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -44,7 +44,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
         Assert.assertTrue(user.getId() > 1);
     }
 
-    @Test(expected = TransactionSystemException.class)
+    @Test(expected = ValidationException.class)
     public void shouldFailWhenSavingAnUserWithoutAnEmail() {
         User user = new User();
         user.setPassword("password");
@@ -53,7 +53,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
     }
 
 
-    @Test(expected = TransactionSystemException.class)
+    @Test(expected = ValidationException.class)
     public void shouldFailWhenSavingAnUserWithAnInvalidEmail() {
         User user = new User();
         user.setEmail("test");
@@ -62,7 +62,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
         userRepository.save(user);
     }
 
-    @Test(expected = TransactionSystemException.class)
+    @Test(expected = ValidationException.class)
     public void shouldFailWhenSavingAnUserWithoutPassword() {
         User user = new User();
         user.setEmail("test_user@test.example");

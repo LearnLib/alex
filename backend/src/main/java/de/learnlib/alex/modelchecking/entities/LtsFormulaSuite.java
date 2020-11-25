@@ -23,10 +23,12 @@ import de.learnlib.alex.data.entities.Project;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -38,7 +40,7 @@ public class LtsFormulaSuite implements Serializable {
     private static final long serialVersionUID = -7231689556807426040L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotEmpty
@@ -48,6 +50,7 @@ public class LtsFormulaSuite implements Serializable {
             cascade = CascadeType.REMOVE,
             mappedBy = "suite"
     )
+    @OrderBy
     private List<LtsFormula> formulas;
 
     @ManyToOne(

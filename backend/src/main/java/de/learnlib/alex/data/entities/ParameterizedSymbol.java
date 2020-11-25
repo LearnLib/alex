@@ -28,9 +28,11 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,7 +54,7 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
      * The ID of the parameterized symbol in the database.
      */
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
@@ -72,6 +74,7 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
             fetch = FetchType.EAGER,
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE}
     )
+    @OrderBy
     private List<SymbolParameterValue> parameterValues;
 
     /**
@@ -81,6 +84,7 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
             fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE}
     )
+    @OrderBy
     private List<SymbolOutputMapping> outputMappings;
 
     /**

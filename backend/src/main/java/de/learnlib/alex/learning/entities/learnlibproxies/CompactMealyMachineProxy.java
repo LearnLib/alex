@@ -28,6 +28,7 @@ import net.automatalib.words.impl.GrowingMapAlphabet;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 import java.io.IOException;
 import java.io.Serializable;
@@ -49,12 +50,14 @@ public class CompactMealyMachineProxy implements Serializable {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     /** The states of the machine. */
+    @OrderBy
     private List<Integer> nodes;
 
     /** The initial state. */
     private Integer initNode;
 
     /** The transitions between the states. */
+    @OrderBy
     private List<CompactMealyTransitionProxy> edges;
 
     /**

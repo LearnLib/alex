@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.7'
 services:
     selenium-hub:
         image: selenium/hub:3
@@ -30,23 +30,46 @@ services:
             - 5901:5900
         networks:
             - backend
+    alex-database-development:
+        image: postgres:10
+        environment:
+            - POSTGRES_HOST_AUTH_METHOD=trust
+            - POSTGRES_USER=sa
+            - POSTGRES_DB=alex
+        volumes:
+          - alex-database-development:/var/lib/postgresql
+        networks:
+          - backend
+        ports:
+          - "127.0.0.1:5432:5432"
     alex-backend-development:
         image: maven:3-jdk-11
         depends_on:
             - selenium-hub
+            - alex-database-development
         working_dir: /var/alex/backend
+        environment:
+            - DATABASE_HOST=alex-database-development
+            - DATABASE_PORT=5432
+            - DATABASE_NAME=alex
+            - DATABASE_USER=sa
         volumes:
             - ./backend/src:/var/alex/backend/src:ro
             - ./backend/pom.xml:/var/alex/backend/pom.xml:ro
             - alex-backend-maven-development:/root/.m2
-            - alex-backend-db-development:/var/alex/backend/target/db
-            - alex-backend-files-development:/var/alex/backend/target/files
-        command: mvn spring-boot:run -Dspring-boot.run.arguments="--webdriver.remote.url=http://selenium-hub:4444/wd/hub"
+            - alex-database-development:/var/alex/backend/target/postgresql
+            - alex-backend-ltsmin-development:/var/ltsmin
+        command:
+            bash -c "if [ ! -d "/var/ltsmin/bin" ]; then
+            wget -P /var/ltsmin http://github.com/utwente-fmt/ltsmin/releases/download/v3.0.2/ltsmin-v3.0.2-linux.tgz;
+            tar -xzf /var/ltsmin/ltsmin-v3.0.2-linux.tgz -C /var/ltsmin;
+            mv /var/ltsmin/v3.0.2/* /var/ltsmin/;
+            rm -rf /var/ltsmin/v3.0.2 /var/ltsmin/ltsmin-v3.0.2-linux.tgz;
+            fi && mvn spring-boot:run -Dspring-boot.run.arguments=--ltsmin.path=/var/ltsmin/bin,--webdriver.remote.url=http://selenium-hub:4444/wd/hub,--spring.datasource.url=jdbc:postgresql://$${DATABASE_HOST}:$${DATABASE_PORT}/$${DATABASE_NAME},--spring.datasource.username=$${DATABASE_USER}"
         ports:
-            - 8000:8000
+            - "127.0.0.1:8000:8000"
         networks:
             - backend
-            - frontend
     alex-frontend-development:
         image: node
         working_dir: /var/alex/frontend
@@ -54,14 +77,25 @@ services:
             - ./frontend:/var/alex/frontend:rw
         command: npm run start:docker
         ports:
-            - 4200:4200
+            - "127.0.0.1:4200:4200"
         networks:
             - frontend
+    alex-integration-tests-database:
+        image: postgres:10
+        environment:
+            - POSTGRES_HOST_AUTH_METHOD=trust
+            - POSTGRES_USER=sa
+            - POSTGRES_DB=alex
+        ports:
+            - "127.0.0.1:5431:5432"
+        networks:
+            - backend
 
 volumes:
   alex-backend-maven-development:
-  alex-backend-db-development:
-  alex-backend-files-development:
+  alex-database-development:
+  alex-backend-ltsmin-development:
+
 
 networks:
     frontend:

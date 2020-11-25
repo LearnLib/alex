@@ -26,11 +26,13 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -58,7 +60,7 @@ public class TestReport implements Serializable {
 
     /** The id in the database. */
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /** The project the report belongs to. */
@@ -75,6 +77,7 @@ public class TestReport implements Serializable {
             mappedBy = "testReport",
             cascade = {CascadeType.ALL}
     )
+    @OrderBy
     private List<TestResult> testResults;
 
     /** The environment that the test was executed in. */
