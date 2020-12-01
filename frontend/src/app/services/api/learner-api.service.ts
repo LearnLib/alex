@@ -86,16 +86,6 @@ export class LearnerApiService extends BaseApiService {
   }
 
   /**
-   * Verifies a possible counterexample.
-   *
-   * @param projectId The project id.
-   * @param outputConfig The id of the reset symbol.
-   */
-  readOutputs(projectId: number, outputConfig: any): Observable<any> {
-    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/learner/outputs`, outputConfig, this.defaultHttpOptions)
-  }
-
-  /**
    * Compare two hypotheses and return the separating word.
    *
    * @param projectId The ID of the project.

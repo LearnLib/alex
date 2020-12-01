@@ -44,7 +44,6 @@ import de.learnlib.alex.learning.entities.LearnerSetup;
 import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStatus;
 import de.learnlib.alex.learning.entities.ReadOutputConfig;
-import de.learnlib.alex.learning.entities.SymbolSet;
 import de.learnlib.alex.learning.entities.WebDriverConfig;
 import de.learnlib.alex.learning.entities.algorithms.TTT;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
@@ -272,25 +271,6 @@ public class LearnerResourceIT extends AbstractResourceIT {
         final LearnerStatus status = objectMapper.readValue(res.readEntity(String.class), LearnerStatus.class);
         assertEquals(0, status.getQueue().size());
         assertNull(status.getCurrentProcess());
-    }
-
-    @Test
-    public void readOutputs() throws Exception {
-        final SymbolSet symbolSet = new SymbolSet();
-        symbolSet.setSymbols(startConfiguration.getSetup().getSymbols());
-        symbolSet.setResetSymbol(startConfiguration.getSetup().getPreSymbol());
-
-        final ReadOutputConfig config = new ReadOutputConfig(
-                symbolSet,
-                startConfiguration.getSetup().getWebDriver(),
-                startConfiguration.getSetup().getEnvironments().get(0)
-        );
-
-        final Response res = learnerApi.readOutput(project.getId(), config, jwt);
-        assertEquals(HttpStatus.OK.value(), res.getStatus());
-
-        final List<ExecuteResult> outputs = Arrays.asList(objectMapper.readValue(res.readEntity(String.class), ExecuteResult[].class));
-        assertEquals(2, outputs.size());
     }
 
     private ParameterizedSymbol createResetSymbol() throws Exception {

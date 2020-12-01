@@ -21,7 +21,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Page } from '../../entities/interfaces';
-import { EnvironmentProvider } from "../../../environments/environment.provider";
+import { EnvironmentProvider } from '../../../environments/environment.provider';
 
 /**
  * The resource that handles http request to the API to do CRUD operations on learn results.

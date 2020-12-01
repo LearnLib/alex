@@ -118,6 +118,14 @@ let _action = null;
  */
 let _files = [];
 
+/**
+ * The LTL formulas to verify on the learned model.
+ *
+ * @type {*[]}
+ * @private
+ */
+let _formulas = [];
+
 async function _createProject(data) {
 
   // generate unique project name
@@ -302,6 +310,25 @@ async function startTesting() {
   }
 }
 
+
+async function waitForLearnerToFinish(startTime, testNo) {
+  while(true) {
+    const timeElapsed = Date.now() - startTime;
+    console.log(chalk.white.dim(`Wait for the learning process to finish... (${Math.floor(timeElapsed / 1000)}s elapsed)`));
+
+    const res2 = await api.learnerResults.get(_project.id, testNo);
+    await utils.assertStatus(res2, 200);
+    let result = await res2.json();
+
+    if (result.status === 'FINISHED' || result.status === 'ABORTED') {
+      return result;
+    } else {
+      await utils.timeout(POLL_TIME_LEARNING);
+    }
+  }
+}
+
+
 /**
  * Start learning.
  *
@@ -342,31 +369,150 @@ async function startLearning() {
   // poll for learner result
   let result = await res1.json();
   const startTime = Date.now();
-  while(true) {
-    const timeElapsed = Date.now() - startTime;
-    console.log(chalk.white.dim(`Wait for the learning process to finish... (${Math.floor(timeElapsed / 1000)}s elapsed)`));
+  result = await waitForLearnerToFinish(startTime, result.testNo);
+  console.log(chalk.white.dim(`The learning process finished.`));
 
-    const res2 = await api.learnerResults.get(_project.id, result.testNo);
-    await utils.assertStatus(res2, 200);
-    result = await res2.json();
+  if (result.error) {
+    throw 'The learning process finished with errors.';
+  }
 
-    if (result.status === 'FINISHED' || result.status === 'ABORTED') {
+  // check model
+  if (_formulas.length > 0) {
+    console.log(chalk.white.dim(`Checking ${_formulas.length} LTL properties.`));
+
+    while (true) {
+      const checkResults = await checkLTLProperties(result);
+      const failedCheckResults = checkResults.filter(cr => !cr.passed);
+
+      if (failedCheckResults.length > 0) {
+
+        // test if one of the counterexamples is an actual counterexample and refine the hypothesis
+        console.log(chalk.white.dim(`${failedCheckResults.length}/${checkResults.length} LTL properties do${failedCheckResults.length === 1 ? 'es' : ''} not hold.`));
+        console.log(chalk.white.dim(`Search for counterexamples in failed LTL properties...`));
+        const ce = await findCounterexample(result, failedCheckResults);
+        if (ce != null) {
+
+          // refine the model with a sample eq oracle
+          console.log(chalk.white.dim(`Counterexample found! Refine model with ${ce}.`));
+          const res3 = await api.learner.refine(_project.id, result.testNo, {
+            eqOracle: {
+              type: "sample",
+              batchSize: 1,
+              counterExamples: [ce]
+            },
+            stepNo: result.steps[result.steps.length - 1].stepNo,
+            symbolsToAdd: []
+          });
+          await utils.assertStatus(res3, 200);
+          result = await waitForLearnerToFinish(startTime, result.testNo);
+
+          if (result.error) {
+            throw 'The learning process finished with errors.';
+          }
+
+          // continue until no LTL-based counterexamples could be found.
+          continue;
+        } else {
+          console.log(chalk.white.dim(`No counterexamples found.`));
+          assertCheckResults(checkResults);
+        }
+      } else {
+        assertCheckResults(checkResults);
+      }
+
       break;
-    } else {
-      await utils.timeout(POLL_TIME_LEARNING);
     }
   }
 
-  if (!result.error) {
-    // write learned model to a file
-    if (program.out) {
-      const model = result.steps[result.steps.length - 1].hypothesis;
-      writeOutputFile(JSON.stringify(model));
-    }
-    console.log(chalk.green('The learning process finished successfully.'));
-  } else {
-    throw 'The learning process finished with errors';
+  // write learned model to a file
+  if (program.out) {
+    const model = result.steps[result.steps.length - 1].hypothesis;
+    writeOutputFile(JSON.stringify(model));
   }
+}
+
+function assertCheckResults(checkResults) {
+  let passed = true;
+  let numFailed = 0;
+  for (let cr of checkResults) {
+    passed &= cr.passed;
+
+    if (cr.passed) {
+      console.log(chalk.green(`(✓) ${cr.formula.formula}`));
+    } else {
+      numFailed++;
+      console.log(chalk.red(`(x) ${cr.formula.formula} with prefix: ${cr.prefix} and loop: ${cr.loop}.`));
+    }
+  }
+
+  if (passed) {
+    console.log(chalk.white.dim('All LTL properties hold.'));
+  } else {
+    throw `${numFailed}/${_formulas.length} LTL properties do${numFailed === 1 ? 'es' : ''} not hold.`;
+  }
+}
+
+async function findCounterexample(result, checkResults) {
+  for (let cr of checkResults) {
+    if (!cr.passed) {
+      const inputs = cr.prefix.concat(cr.loop);
+      const hypOutput = await getHypOutput(result, inputs);
+      const sulOutput = await getSulOutput(result, inputs);
+
+      if (!utils.listsAreEqual(hypOutput, sulOutput)) {
+        return inputs.map((input, i) => ({input, output: sulOutput[i]}));
+      }
+    }
+  }
+
+  return null;
+}
+
+async function getSulOutput(learnerResult, inputs) {
+
+  const symbolIdMap = {};
+  _symbols.forEach(s => symbolIdMap[s.id] = s);
+
+  const symbolNameMap = {};
+  _config.setup.symbols.forEach(ps => {
+    ps.symbol.name = symbolIdMap[ps.symbol.id].name;
+    symbolNameMap[getComputedName(ps)] = ps
+  });
+
+  const config = {
+    preSymbol: _config.setup.preSymbol,
+    symbols: inputs.map(sym => symbolNameMap[sym]),
+    postSymbol: _config.setup.postSymbol,
+    driverConfig: _config.setup.webDriver
+  };
+
+  const res = await api.projectEnvironments.getOutputs(_project.id, _config.setup.environments[0].id, config);
+  await utils.assertStatus(res, 200);
+  return await res.json();
+}
+
+async function getHypOutput(learnerResult, inputs) {
+  const stepId = learnerResult.steps[learnerResult.steps.length - 1].id;
+  const res = await api.learnerResultSteps.getHypothesisOutputs(_project.id, learnerResult.id, stepId, inputs);
+  await utils.assertStatus(res, 200);
+  return await res.json();
+}
+
+async function checkLTLProperties(result) {
+  const config = {
+    learnerResultId: result.testNo,
+    stepNo: result.steps[result.steps.length - 1].stepNo,
+    formulas: _formulas.map(f => ({
+      formula: f
+    })),
+    formulaIds: [],
+    minUnfolds: 3,
+    multiplier: 1.0,
+  };
+
+  const res = await api.modelChecker.check(_project.id, config);
+  await utils.assertStatus(res, 200);
+  return await res.json();
 }
 
 function processProgram() {
@@ -402,6 +548,10 @@ function processProgram() {
   }
 
   if (_action === 'test') {
+    if (program.formulas) {
+      throw 'You may not specify ltl formulas when testing.';
+    }
+
     if (!program.project) {
       // validate tests
       if (!program.tests) {
@@ -414,10 +564,26 @@ function processProgram() {
     if (program.tests) {
       throw 'You want to learn, but have specified tests.';
     }
+
+    if (program.formulas) {
+      _formulas = processors.formulas(program.formulas);
+    }
   }
 
   if (program.files) {
     _files = processors.files(program.files);
+  }
+}
+
+function getComputedName(s) {
+  const params = s.parameterValues
+    .filter(v => v.value != null)
+    .map(v => v.value);
+
+  if (params.length === 0) {
+    return s.symbol.name;
+  } else {
+    return `${s.symbol.name} <${params.join(', ')}>`;
   }
 }
 

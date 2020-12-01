@@ -40,5 +40,6 @@ node alex-cli.js \
         -u "admin@alex.example:admin" \
         -s "./examples/google/symbols.json" \
         -c "./examples/google/config.learning.json" \
+        --formulas "./examples/google/formulas.json" \
         --clean-up
 ```

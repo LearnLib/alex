@@ -22,6 +22,9 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angu
 import { DragulaService } from 'ng2-dragula';
 import { LearnerViewStoreService } from '../../learner-view-store.service';
 import set = Reflect.set;
+import { LearnerResultStepApiService } from '../../../../services/api/learner-result-step-api.service';
+import { ProjectEnvironmentApiService } from '../../../../services/api/project-environment-api.service';
+import { listEquals } from '../../../../utils/list-utils';
 
 interface IOPair {
   input: string;
@@ -45,6 +48,7 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
 
   @Input()
   result: LearnerResult;
+
   selectedEnvironmentId: number;
 
   /** The array of input output pairs of the shared counterexample. */
@@ -59,6 +63,8 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
               private toastService: ToastService,
               private symbolApi: SymbolApiService,
               private dragulaService: DragulaService,
+              private projectEnvironmentApi: ProjectEnvironmentApiService,
+              private learnerResultStepApi: LearnerResultStepApiService,
               private store: LearnerViewStoreService) {
 
     this.store.edgeSelected$.subscribe((data) => {
@@ -109,7 +115,7 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
       .then(counterexample => {
         this.toastService.success('The selected word is a counterexample');
         for (let i = 0; i < counterexample.length; i++) {
-          this.counterexample[i].output = counterexample[i].output;
+          this.counterexample[i].output = counterexample[i];
         }
         this.tmpCounterexamples.push(JSON.parse(JSON.stringify(this.counterexample)));
         this.renewCounterexamples();
@@ -137,7 +143,6 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
   testCounterExample(): Promise<any> {
     return new Promise((resolve, reject) => {
       const setup = this.result.setup;
-      // helper function to test the counterexample
       const testSymbols = [];
 
       const pSymbols = setup.symbols;
@@ -148,8 +153,8 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
         testSymbols.push(pSymbols[j]);
       }
 
-      const resetSymbol = JSON.parse(JSON.stringify(setup.preSymbol));
-      resetSymbol.symbol = {id: resetSymbol.symbol.id};
+      const preSymbol = JSON.parse(JSON.stringify(setup.preSymbol));
+      preSymbol.symbol = {id: preSymbol.symbol.id};
 
       const symbols = JSON.parse(JSON.stringify(testSymbols));
       symbols.forEach(s => s.symbol = {id: s.symbol.id});
@@ -162,24 +167,27 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
         }
       }
 
-      this.learnerApi.readOutputs(this.result.project, {
-        symbols: {resetSymbol, symbols, postSymbol},
-        driverConfig: setup.webDriver,
-        environment: setup.environments.filter(e => e.id === this.selectedEnvironmentId)[0]
-      }).subscribe(
-        ce => {
-          let ceFound = false;
-          for (let i = 0; i < ce.length; i++) {
-            if (ce[i].output !== this.counterexample[i].output) {
-              ceFound = true;
-              break;
-            }
-          }
-          if (ceFound) {
-            resolve(ce);
-          } else {
-            reject();
-          }
+      const input = testSymbols.map(ts => ts.getAliasOrComputedName());
+      this.learnerResultStepApi.getHypothesisOutput(this.result.project, this.result.id, this.result.steps[this.result.steps.length - 1].id, input).subscribe(
+        hypOutput => {
+
+          const config = {
+            preSymbol,
+            symbols,
+            postSymbol,
+            driverConfig: setup.webDriver
+          };
+
+          this.projectEnvironmentApi.getOutput(this.result.project, this.selectedEnvironmentId, config).subscribe(
+            sulOutput => {
+              if (!listEquals(hypOutput, sulOutput)) {
+                resolve(sulOutput);
+              } else {
+                reject();
+              }
+            },
+            console.error
+          );
         },
         console.error
       );

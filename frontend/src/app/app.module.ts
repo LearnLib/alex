@@ -261,6 +261,7 @@ import { ViewScreenshotModalComponent } from "./views/test-report-screenshots-vi
 import { FetchImgSecurePipe } from "./pipes/fetch-img-secure.pipe";
 import { EnvironmentProvider, initEnv } from "../environments/environment.provider";
 import { FormatWebBrowserPipe } from './pipes/format-web-browser.pipe';
+import { LearnerResultStepApiService } from './services/api/learner-result-step-api.service';
 
 @NgModule({
     declarations: [
@@ -537,6 +538,7 @@ import { FormatWebBrowserPipe } from './pipes/format-web-browser.pipe';
     SymbolPresenceService,
     ImgCacheService,
     TestResultApiService,
+    LearnerResultStepApiService,
     EnvironmentProvider,
     {
       provide: APP_INITIALIZER,

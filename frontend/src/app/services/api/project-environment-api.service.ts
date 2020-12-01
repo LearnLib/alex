@@ -22,7 +22,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { EnvironmentProvider } from "../../../environments/environment.provider";
+import { EnvironmentProvider } from '../../../environments/environment.provider';
 
 @Injectable()
 export class ProjectEnvironmentApiService extends BaseApiService {
@@ -36,6 +36,10 @@ export class ProjectEnvironmentApiService extends BaseApiService {
       .pipe(
         map((body: any) => body.map(e => ProjectEnvironment.fromData(e)))
       );
+  }
+
+  getOutput(projectId: number, envId: number, config: any): Observable<any> {
+    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/environments/${envId}/outputs`, config, this.defaultHttpOptions)
   }
 
   create(projectId: number, env: ProjectEnvironment): Observable<ProjectEnvironment> {
