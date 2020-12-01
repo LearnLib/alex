@@ -102,11 +102,9 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     private String successOutput;
 
     /** The list of input variables. */
-    @OrderBy
     private List<SymbolInputParameter> inputs;
 
     /** The list of output variables. */
-    @OrderBy
     private List<SymbolOutputParameter> outputs;
 
     /** The date when the symbol was updated the last time. */

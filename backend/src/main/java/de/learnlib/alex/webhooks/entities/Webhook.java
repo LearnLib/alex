@@ -68,7 +68,6 @@ public class Webhook implements Serializable {
     /** The event that triggers the webhook. */
     @ElementCollection
     @NotEmpty
-    @OrderBy
     private List<EventType> events;
 
     /** Constructor. */

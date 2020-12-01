@@ -43,7 +43,6 @@ public class LearnerResumeConfiguration {
     private int stepNo;
 
     /** The ids of the symbols to add. */
-    @OrderBy
     private List<ParameterizedSymbol> symbolsToAdd;
 
     /** Constructor. */

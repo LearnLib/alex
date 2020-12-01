@@ -38,7 +38,6 @@ public class SymbolInputParameter extends SymbolParameter {
             cascade = CascadeType.ALL,
             mappedBy = "parameter"
     )
-    @OrderBy
     @JsonIgnore
     private List<SymbolParameterValue> parameterValues;
 

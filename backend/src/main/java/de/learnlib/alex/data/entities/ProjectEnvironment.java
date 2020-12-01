@@ -60,14 +60,12 @@ public class ProjectEnvironment implements Serializable {
             mappedBy = "environment",
             cascade = CascadeType.ALL
     )
-    @OrderBy
     private List<ProjectUrl> urls;
 
     @OneToMany(
             mappedBy = "environment",
             cascade = CascadeType.ALL
     )
-    @OrderBy
     private List<ProjectEnvironmentVariable> variables;
 
     private boolean isDefault;

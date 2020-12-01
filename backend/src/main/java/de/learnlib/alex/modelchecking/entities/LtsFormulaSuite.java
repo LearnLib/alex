@@ -50,7 +50,6 @@ public class LtsFormulaSuite implements Serializable {
             cascade = CascadeType.REMOVE,
             mappedBy = "suite"
     )
-    @OrderBy
     private List<LtsFormula> formulas;
 
     @ManyToOne(

@@ -82,7 +82,7 @@ public class SymbolGroup implements Serializable {
             mappedBy = "parent",
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
     )
-    @OrderBy
+    @OrderBy("name ASC")
     private List<SymbolGroup> groups;
 
     /** Constructor. */

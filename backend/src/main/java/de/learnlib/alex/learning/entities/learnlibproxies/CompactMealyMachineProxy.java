@@ -50,14 +50,12 @@ public class CompactMealyMachineProxy implements Serializable {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     /** The states of the machine. */
-    @OrderBy
     private List<Integer> nodes;
 
     /** The initial state. */
     private Integer initNode;
 
     /** The transitions between the states. */
-    @OrderBy
     private List<CompactMealyTransitionProxy> edges;
 
     /**

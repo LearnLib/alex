@@ -66,12 +66,10 @@ public class LearnerSetup implements Serializable {
 
     @ManyToMany
     @NotEmpty
-    @OrderBy
     private List<ProjectEnvironment> environments;
 
     @ManyToMany(cascade = javax.persistence.CascadeType.REMOVE)
     @NotEmpty
-    @OrderBy
     private List<ParameterizedSymbol> symbols;
 
     @ManyToOne(optional = false, cascade = javax.persistence.CascadeType.REMOVE)

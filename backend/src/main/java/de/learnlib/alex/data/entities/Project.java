@@ -77,7 +77,6 @@ public class Project implements Serializable {
             joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id")
     )
-    @OrderBy
     private List<User> owners;
 
     /**
@@ -91,7 +90,6 @@ public class Project implements Serializable {
             joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id")
     )
-    @OrderBy
     private List<User> members;
 
     /**
@@ -120,7 +118,6 @@ public class Project implements Serializable {
             mappedBy = "project",
             cascade = {CascadeType.REMOVE}
     )
-    @OrderBy
     private List<ProjectEnvironment> environments;
 
     /**
@@ -154,7 +151,6 @@ public class Project implements Serializable {
             mappedBy = "project",
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
     )
-    @OrderBy
     @JsonIgnore
     private List<TestExecutionConfig> testExecutionConfigs;
 
@@ -173,7 +169,6 @@ public class Project implements Serializable {
     @OneToMany(
             mappedBy = "project",
             cascade = {CascadeType.REMOVE})
-    @OrderBy
     @JsonIgnore
     private List<LtsFormulaSuite> ltsFormulaSuites;
 

@@ -74,7 +74,6 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
             fetch = FetchType.EAGER,
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE}
     )
-    @OrderBy
     private List<SymbolParameterValue> parameterValues;
 
     /**
@@ -84,7 +83,6 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
             fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE}
     )
-    @OrderBy
     private List<SymbolOutputMapping> outputMappings;
 
     /**
