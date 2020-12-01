@@ -153,45 +153,10 @@ public class LearnerResource {
     public ResponseEntity<LearnerResult> resume(@PathVariable("projectId") Long projectId,
                                                 @PathVariable("testNo") Long testNo,
                                                 @RequestBody LearnerResumeConfiguration configuration) {
-        final User user = authContext.getUser();
+        final var user = authContext.getUser();
         LOGGER.traceEntry("resume({}, {}, {}) for user {}.", projectId, testNo, configuration, user);
 
-        configuration.checkConfiguration();
-        LearnerResult result = learnerResultDAO.get(user, projectId, testNo);
-
-        if (configuration.getStepNo() > result.getSteps().size()) {
-            throw new IllegalArgumentException("The step number is not valid.");
-        }
-
-        // remove all steps after the one where the learning process should be continued from
-        if (result.getSteps().size() > 0) {
-            result.getSteps().stream()
-                    .filter(s -> s.getStepNo() > configuration.getStepNo())
-                    .forEach(learnerResultStepRepository::delete);
-            learnerResultStepRepository.flush();
-
-            result = learnerResultDAO.get(user, projectId, testNo);
-            result.getStatistics().setEqsUsed(result.getSteps().size());
-
-            // since we allow alphabets to grow, set the alphabet to the one of the latest hypothesis
-            LearnerResultStep latestStep = result.getSteps().get(result.getSteps().size() - 1);
-            Alphabet<String> alphabet = latestStep.getHypothesis().createAlphabet();
-
-            result.getSetup().getSymbols().removeIf(s -> !alphabet.contains(s.getAliasOrComputedName()));
-
-            // add the new alphabet symbols to the config.
-            if (configuration.getSymbolsToAdd().size() > 0) {
-                Map<Long, Symbol> symbolMap = new HashMap<>();
-                symbolDAO.getByIds(user, projectId, configuration.getSymbolIds())
-                        .forEach(s -> symbolMap.put(s.getId(), s));
-                configuration.getSymbolsToAdd().forEach(ps -> ps.setSymbol(symbolMap.get(ps.getSymbol().getId())));
-            }
-
-            result.setStatus(LearnerResult.Status.PENDING);
-            learnerResultRepository.saveAndFlush(result);
-        }
-
-        learnerService.resume(user, result.getProject(), result, configuration);
+        final var result = learnerService.resume(user, projectId, testNo, configuration);
         webhookService.fireEvent(user, new LearnerEvent.Resumed(result));
         return ResponseEntity.ok(result);
     }
@@ -209,18 +174,10 @@ public class LearnerResource {
             value = "/{testNo}/stop"
     )
     public ResponseEntity<String> stop(@PathVariable("projectId") Long projectId, @PathVariable("testNo") Long testNo) {
-        User user = authContext.getUser();
+        final var user = authContext.getUser();
         LOGGER.traceEntry("stop() for user {}.", user);
-        Project project = projectDAO.getByID(user, projectId); // access check
-        LearnerResult result = learnerResultDAO.get(user, projectId, testNo);
 
-        if (projectDAO.getByID(user, projectId).getOwners().stream().map(User::getId).noneMatch(ownerId -> ownerId.equals(user.getId()))
-                && result.getExecutedBy() != null && !result.getExecutedBy().getId().equals(user.getId())
-        ) {
-            throw new UnauthorizedException("You are not allowed to abort this learning process.");
-        }
-
-        learnerService.stop(projectId, testNo);
+        learnerService.stop(user, projectId, testNo);
         return ResponseEntity.ok().build();
     }
 
@@ -236,7 +193,7 @@ public class LearnerResource {
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity<LearnerStatus> getStatus(@PathVariable("projectId") Long projectId) {
-        final User user = authContext.getUser();
+        final var user = authContext.getUser();
         LOGGER.traceEntry("getStatus() for user {}.", user);
         final LearnerStatus status = learnerService.getStatus(projectId);
         LOGGER.traceExit(status);
@@ -258,7 +215,7 @@ public class LearnerResource {
     )
     public ResponseEntity<SeparatingWord> separatingWord(@PathVariable("projectId") Long projectId,
                                          @RequestBody List<CompactMealyMachineProxy> mealyMachineProxies) {
-        final User user = authContext.getUser();
+        final var user = authContext.getUser();
         LOGGER.traceEntry("calculate separating word for models ({}) and user {}.", mealyMachineProxies, user);
 
         if (mealyMachineProxies.size() != 2) {
