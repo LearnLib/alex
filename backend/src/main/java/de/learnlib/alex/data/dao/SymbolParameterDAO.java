@@ -34,58 +34,29 @@ import de.learnlib.alex.data.repositories.SymbolParameterValueRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
 import de.learnlib.alex.websocket.services.SymbolPresenceService;
 import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
-import javax.transaction.Transactional;
 import javax.validation.ValidationException;
 import java.time.ZonedDateTime;
 import java.util.List;
 
 /** The concrete DAO for symbol parameters. */
 @Service
-@Transactional(rollbackOn = Exception.class)
+@Transactional(rollbackFor = Exception.class)
 public class SymbolParameterDAO {
 
-    /** The project repository to use. */
-    private ProjectRepository projectRepository;
+    private final ProjectRepository projectRepository;
+    private final SymbolRepository symbolRepository;
+    private final SymbolParameterRepository symbolParameterRepository;
+    private final SymbolParameterValueRepository symbolParameterValueRepository;
+    private final ParameterizedSymbolRepository parameterizedSymbolRepository;
+    private final SymbolOutputMappingRepository outputMappingRepository;
+    private final SymbolPresenceService symbolPresenceService;
+    private final SymbolDAO symbolDAO;
 
-    /** The symbol repository to use. */
-    private SymbolRepository symbolRepository;
-
-    /** The symbol parameter repository to use. */
-    private SymbolParameterRepository symbolParameterRepository;
-
-    /** The injected repository for {@link SymbolParameterValue}. */
-    private SymbolParameterValueRepository symbolParameterValueRepository;
-
-    /** The injected repository for {@link ParameterizedSymbol}. */
-    private ParameterizedSymbolRepository parameterizedSymbolRepository;
-
-    private SymbolOutputMappingRepository outputMappingRepository;
-
-    private SymbolPresenceService symbolPresenceService;
-
-    /** The symbol DAO to use. */
-    private SymbolDAO symbolDAO;
-
-    /**
-     * Constructor.
-     *
-     * @param projectRepository
-     *         {@link #projectRepository}
-     * @param symbolRepository
-     *         {@link #symbolRepository}
-     * @param symbolParameterRepository
-     *         {@link #symbolParameterRepository}
-     * @param symbolParameterValueRepository
-     *         {@link #symbolParameterValueRepository}
-     * @param parameterizedSymbolRepository
-     *         {@link #parameterizedSymbolRepository}
-     * @param symbolDAO
-     *         {@link #symbolDAO}
-     */
-    @Inject
+    @Autowired
     public SymbolParameterDAO(ProjectRepository projectRepository,
                               SymbolRepository symbolRepository,
                               SymbolParameterRepository symbolParameterRepository,
@@ -104,16 +75,14 @@ public class SymbolParameterDAO {
         this.symbolPresenceService = symbolPresenceService;
     }
 
-    public SymbolParameter create(User user, Long projectId, Long symbolId, SymbolParameter parameter)
-            throws NotFoundException, UnauthorizedException, ValidationException {
+    public SymbolParameter create(User user, Long projectId, Long symbolId, SymbolParameter parameter) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final Symbol symbol = symbolRepository.findById(symbolId).orElse(null);
 
         return create(user, project, symbol, parameter);
     }
 
-    public SymbolParameter update(User user, Long projectId, Long symbolId, SymbolParameter parameter)
-            throws NotFoundException, UnauthorizedException, ValidationException {
+    public SymbolParameter update(User user, Long projectId, Long symbolId, SymbolParameter parameter) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final Symbol symbol = symbolRepository.findById(symbolId).orElse(null);
 
@@ -129,8 +98,7 @@ public class SymbolParameterDAO {
         return symbolParameterRepository.save(parameter);
     }
 
-    public void delete(User user, Long projectId, Long symbolId, Long parameterId)
-            throws NotFoundException, UnauthorizedException {
+    public void delete(User user, Long projectId, Long symbolId, Long parameterId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final Symbol symbol = symbolRepository.findById(symbolId).orElse(null);
         final SymbolParameter parameter = symbolParameterRepository.findById(parameterId).orElse(null);
@@ -158,8 +126,7 @@ public class SymbolParameterDAO {
         symbolParameterRepository.deleteById(parameterId);
     }
 
-    public void checkAccess(User user, Project project, Symbol symbol, SymbolParameter parameter)
-            throws NotFoundException, UnauthorizedException {
+    public void checkAccess(User user, Project project, Symbol symbol, SymbolParameter parameter) {
         symbolDAO.checkAccess(user, project, symbol);
 
         if (parameter == null) {
@@ -171,9 +138,7 @@ public class SymbolParameterDAO {
         }
     }
 
-    private SymbolParameter create(User user, Project project, Symbol symbol, SymbolParameter parameter)
-            throws NotFoundException, UnauthorizedException, ValidationException {
-
+    private SymbolParameter create(User user, Project project, Symbol symbol, SymbolParameter parameter) {
         symbolDAO.checkAccess(user, project, symbol);
         checkIfTypeWithNameExists(symbol, parameter);
 
@@ -212,7 +177,7 @@ public class SymbolParameterDAO {
         return createdParameter;
     }
 
-    private void checkIfTypeWithNameExists(Symbol symbol, SymbolParameter parameter) throws ValidationException {
+    private void checkIfTypeWithNameExists(Symbol symbol, SymbolParameter parameter) {
         if (parameter instanceof SymbolInputParameter) {
             if (typeWithNameExists(symbol.getInputs(), parameter)) {
                 throw new ValidationException("The name of the input parameter already exists.");

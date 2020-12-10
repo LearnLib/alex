@@ -51,7 +51,7 @@ public class WaitForTextAction extends WebSymbolAction {
      * The string or pattern to look for.
      */
     @NotBlank
-    @Column(name = "\"value\"", columnDefinition = "MEDIUMTEXT")
+    @Column(name = "\"value\"", columnDefinition = "TEXT")
     private String value;
 
     /**

@@ -16,28 +16,57 @@
 
 package de.learnlib.alex.learning.services;
 
-import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.auth.dao.UserDAO;
 import de.learnlib.alex.common.utils.LoggerMarkers;
+import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
+import de.learnlib.alex.learning.dao.LearnerResultStepDAO;
+import de.learnlib.alex.learning.dao.LearnerSetupDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
-import de.learnlib.alex.learning.entities.LearnerSetup;
 import de.learnlib.alex.learning.events.LearnerEvent;
-import de.learnlib.alex.learning.services.connectors.PreparedContextHandler;
+import de.learnlib.alex.learning.services.connectors.PreparedConnectorContextHandlerFactory;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import org.apache.logging.log4j.ThreadContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /** The learner thread that is used for starting a new experiment. */
-public class StartingLearnerProcess extends AbstractLearnerProcess {
+@Service
+@Scope("prototype")
+public class StartingLearnerProcess extends AbstractLearnerProcess<StartingLearnerProcessQueueItem> {
 
-    public StartingLearnerProcess(User user,
-                                  LearnerResultDAO learnerResultDAO,
-                                  WebhookService webhookService,
-                                  TestDAO testDAO,
-                                  PreparedContextHandler contextHandler,
-                                  LearnerResult result,
-                                  LearnerSetup setup) {
-        super(user, learnerResultDAO, webhookService, testDAO, contextHandler, result, setup, setup.getEquivalenceOracle());
+    @Autowired
+    public StartingLearnerProcess(
+            UserDAO userDAO,
+            ProjectDAO projectDAO,
+            LearnerResultDAO learnerResultDAO,
+            LearnerSetupDAO learnerSetupDAO,
+            LearnerResultStepDAO learnerResultStepDAO,
+            TestDAO testDAO,
+            WebhookService webhookService,
+            PreparedConnectorContextHandlerFactory contextHandlerFactory,
+            TransactionTemplate transactionTemplate
+    ) {
+       super(
+               userDAO,
+               projectDAO,
+               learnerResultDAO,
+               learnerSetupDAO,
+               learnerResultStepDAO,
+               testDAO,
+               webhookService,
+               contextHandlerFactory,
+               transactionTemplate
+       );
+    }
+
+    @Override
+    void init(StartingLearnerProcessQueueItem context) {
+        initInternal(context);
+        setEquivalenceOracle(result.getSetup().getEquivalenceOracle());
     }
 
     @Override
@@ -48,19 +77,22 @@ public class StartingLearnerProcess extends AbstractLearnerProcess {
 
         try {
             learn();
+            shutdown();
         } catch (Exception e) {
             logger.error(LoggerMarkers.LEARNER, "Something in the LearnerThread went wrong:", e);
             e.printStackTrace();
+            shutdownWithErrors();
         } finally {
-            shutdown();
             logger.info(LoggerMarkers.LEARNER, "The learner thread has finished.");
             logger.traceExit();
             ThreadContext.remove("userId");
         }
     }
 
-    private void learn() throws Exception {
+    private void learn() {
         logger.traceEntry();
+
+        result = learnerResultDAO.updateStatus(result.getId(), LearnerResult.Status.IN_PROGRESS);
 
         learnerPhase = LearnerService.LearnerPhase.LEARNING;
         final long learnerStartTime = System.currentTimeMillis();

@@ -25,7 +25,6 @@ import de.learnlib.alex.integrationtests.resources.api.SymbolGroupApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
 import org.junit.Before;
 import org.junit.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.http.HttpStatus;
 
 import javax.ws.rs.core.GenericType;
@@ -162,16 +161,16 @@ public class SymbolGroupResourceIT extends AbstractResourceIT {
     public void shouldUpdateGroup() throws Exception {
         final String group = createSymbolGroupJson(projectId1, "group", null);
         final Response res1 = symbolGroupApi.create(projectId1, group, jwtUser1);
-        final String createdGroup = res1.readEntity(String.class);
-        final int createdGroupId = JsonPath.read(createdGroup, "id");
+        final SymbolGroup createdGroup = res1.readEntity(SymbolGroup.class);
 
-        final String updatedGroup = ((ObjectNode) objectMapper.readTree(createdGroup))
-                .put("name", "anotherName")
-                .toString();
+        createdGroup.setName("anotherName");
 
-        final Response res = symbolGroupApi.update(projectId1, createdGroupId, updatedGroup, jwtUser1);
+        final Response res = symbolGroupApi.update(projectId1, createdGroup.getId().intValue(), objectMapper.writeValueAsString(createdGroup), jwtUser1);
         assertEquals(HttpStatus.OK.value(), res.getStatus());
-        JSONAssert.assertEquals(res.readEntity(String.class), updatedGroup, true);
+
+        final SymbolGroup updatedGroup = res.readEntity(SymbolGroup.class);
+        assertEquals(createdGroup.getId(), updatedGroup.getId());
+        assertEquals("anotherName", updatedGroup.getName());
     }
 
     @Test
@@ -252,14 +251,16 @@ public class SymbolGroupResourceIT extends AbstractResourceIT {
         g2.setName("group2");
 
         final Response res = symbolGroupApi.create(projectId1, Arrays.asList(g1, g2), jwtUser1);
-        final List<SymbolGroup> createdGroups = res.readEntity(new GenericType<List<SymbolGroup>>(){});
+        final List<SymbolGroup> createdGroups = res.readEntity(new GenericType<List<SymbolGroup>>() {
+        });
 
         assertEquals(2, createdGroups.size());
         assertEquals("group1", createdGroups.get(0).getName());
         assertEquals("group2", createdGroups.get(1).getName());
 
         final Response res1 = symbolGroupApi.getAll(projectId1, jwtUser1);
-        final List<SymbolGroup> allGroups = res1.readEntity(new GenericType<List<SymbolGroup>>(){});
+        final List<SymbolGroup> allGroups = res1.readEntity(new GenericType<List<SymbolGroup>>() {
+        });
         assertTrue(allGroups.containsAll(createdGroups));
     }
 

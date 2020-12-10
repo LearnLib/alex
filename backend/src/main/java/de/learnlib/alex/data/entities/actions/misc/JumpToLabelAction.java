@@ -47,7 +47,7 @@ public class JumpToLabelAction extends SymbolAction {
     private String label;
 
     @NotBlank
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(columnDefinition = "TEXT")
     private String script;
 
     @NotNull

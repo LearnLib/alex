@@ -39,7 +39,7 @@ public class CSSUtilsTest {
     @Test
     public void shouldEscapeIdsWithSpecialCharacters() {
         final String[] specialChars = {"!", "\"", "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", ".", "/", ":", ";",
-            "<", "=", ">", "?", "@", "[", "\\", "]", "^", "`", "{", "|", "}", "~"};
+                "<", "=", ">", "?", "@", "[", "\\", "]", "^", "`", "{", "|", "}", "~"};
 
         for (int i = 0; i < specialChars.length; i++) {
             final String s1 = "#some" + specialChars[i] + "el";

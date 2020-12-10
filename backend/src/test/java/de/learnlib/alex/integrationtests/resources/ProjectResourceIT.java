@@ -433,7 +433,7 @@ public class ProjectResourceIT extends AbstractResourceIT {
         assertEquals(HttpStatus.OK.value(), res3.getStatus());
 
         final List<Long> projectIds = projectApi.getAll(adminJwt)
-                .readEntity(new GenericType<List<Project>>(){
+                .readEntity(new GenericType<List<Project>>() {
                 })
                 .stream()
                 .map(Project::getId)
@@ -473,16 +473,16 @@ public class ProjectResourceIT extends AbstractResourceIT {
     public void memberShouldNotDeleteProject() {
         Project project = createTestProject(adminJwt);
 
-           project = projectApi.addMembers(project.getId(), Collections.singletonList(user1.getId()), adminJwt)
-                   .readEntity(Project.class);
+        project = projectApi.addMembers(project.getId(), Collections.singletonList(user1.getId()), adminJwt)
+                .readEntity(Project.class);
 
-           final Response res = projectApi.delete(project.getId(), user1Jwt);
-           assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());
-           res.readEntity(SpringRestError.class);
+        final Response res = projectApi.delete(project.getId(), user1Jwt);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());
+        res.readEntity(SpringRestError.class);
 
-           final Response res2 = projectApi.get(project.getId(), adminJwt);
-           assertEquals(HttpStatus.OK.value(), res2.getStatus());
-           res2.readEntity(Project.class);
+        final Response res2 = projectApi.get(project.getId(), adminJwt);
+        assertEquals(HttpStatus.OK.value(), res2.getStatus());
+        res2.readEntity(Project.class);
     }
 
     @Test

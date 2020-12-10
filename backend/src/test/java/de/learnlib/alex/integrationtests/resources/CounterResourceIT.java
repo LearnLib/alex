@@ -60,7 +60,7 @@ public class CounterResourceIT extends AbstractResourceIT {
         jwtUser2 = userApi.login("test2@test.de", "test");
 
         project1 = projectApi.create("{\"name\":\"test\",\"url\":\"http://localhost:8080\"}", jwtUser1)
-            .readEntity(Project.class);
+                .readEntity(Project.class);
 
         project2 = projectApi.create("{\"name\":\"test\",\"url\":\"http://localhost:8080\"}", jwtUser2)
                 .readEntity(Project.class);
@@ -107,10 +107,12 @@ public class CounterResourceIT extends AbstractResourceIT {
         assertEquals(HttpStatus.UNAUTHORIZED.value(), res1.getStatus());
 
         final Response res2 = counterApi.getAll(project1.getId(), jwtUser1);
-        assertEquals(0, res2.readEntity(new GenericType<List<Counter>>() {}).size());
+        assertEquals(0, res2.readEntity(new GenericType<List<Counter>>() {
+        }).size());
 
         final Response res3 = counterApi.getAll(project2.getId(), jwtUser2);
-        assertEquals(0, res3.readEntity(new GenericType<List<Counter>>() {}).size());
+        assertEquals(0, res3.readEntity(new GenericType<List<Counter>>() {
+        }).size());
     }
 
     @Test
@@ -161,8 +163,7 @@ public class CounterResourceIT extends AbstractResourceIT {
         counter.setName("updatedName");
 
         final Response res1 = counterApi.update(project1.getId(), counter.getId(), counter, jwtUser1);
-        assertEquals(HttpStatus.BAD_REQUEST.value(), res1.getStatus());
-        res1.readEntity(SpringRestError.class);
+        assertEquals(HttpStatus.OK.value(), res1.getStatus());
 
         counter = getCounterById(project1.getId(), counter.getId(), jwtUser1);
         assertCounter(counter, "counter1", 1);
@@ -254,13 +255,14 @@ public class CounterResourceIT extends AbstractResourceIT {
 
     private int getNumberOfCounters(Long projectId, String jwt) {
         return counterApi.getAll(projectId, jwt)
-                .readEntity(new GenericType<List<Counter>>(){})
+                .readEntity(new GenericType<List<Counter>>() {
+                })
                 .size();
     }
 
     private Counter getCounterById(Long projectId, Long counterId, String jwt) {
         return counterApi.getAll(projectId, jwt)
-                .readEntity(new GenericType<List<Counter>>(){
+                .readEntity(new GenericType<List<Counter>>() {
                 })
                 .stream()
                 .filter(c -> c.getId().equals(counterId))

@@ -46,9 +46,9 @@ public class LtsFormulaResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private AuthContext authContext;
-    private LtsFormulaDAO ltsFormulaDAO;
-    private WebhookService webhookService;
+    private final AuthContext authContext;
+    private final LtsFormulaDAO ltsFormulaDAO;
+    private final WebhookService webhookService;
 
     @Autowired
     public LtsFormulaResource(AuthContext authContext,

@@ -48,22 +48,27 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(rollbackFor = Exception.class, readOnly = true)
 public class SymbolsExporter extends EntityExporter {
 
-    @Autowired
-    private SymbolRepository symbolRepository;
+    private final SymbolRepository symbolRepository;
+    private final SymbolGroupRepository symbolGroupRepository;
+    private final SymbolGroupDAO symbolGroupDAO;
+    private final SymbolDAO symbolDAO;
 
     @Autowired
-    private SymbolGroupRepository symbolGroupRepository;
-
-    @Autowired
-    private SymbolGroupDAO symbolGroupDAO;
-
-    @Autowired
-    private SymbolDAO symbolDAO;
-
-    public SymbolsExporter() {
+    public SymbolsExporter(
+            SymbolRepository symbolRepository,
+            SymbolGroupRepository symbolGroupRepository,
+            SymbolGroupDAO symbolGroupDAO,
+            SymbolDAO symbolDAO
+    ) {
         super();
+
+        this.symbolRepository = symbolRepository;
+        this.symbolGroupRepository = symbolGroupRepository;
+        this.symbolGroupDAO = symbolGroupDAO;
+        this.symbolDAO = symbolDAO;
 
         om.addMixIn(SymbolGroup.class, IgnoreFieldsForSymbolGroupMixin.class);
         om.addMixIn(Symbol.class, IgnoreFieldsForSymbolMixin.class);
@@ -78,7 +83,6 @@ public class SymbolsExporter extends EntityExporter {
         om.registerModule(module);
     }
 
-    @Transactional
     public ExportableEntity export(User user, Long projectId, SymbolsExportConfig config) throws Exception {
         if (config.isSymbolsOnly()) {
             final List<Symbol> symbols = symbolRepository.findAllByProject_idAndIdIn(projectId, config.getSymbolIds());
@@ -96,7 +100,6 @@ public class SymbolsExporter extends EntityExporter {
         }
     }
 
-    @Transactional
     public ExportableEntity exportAll(User user, Long projectId) throws Exception {
         final List<SymbolGroup> groups = symbolGroupRepository.findAllByProject_IdAndParent_id(projectId, null);
         for (SymbolGroup g: groups) {
@@ -144,7 +147,7 @@ public class SymbolsExporter extends EntityExporter {
     private static abstract class IgnoreFieldsForSymbolMixin extends IgnoreIdFieldMixin {
         @JsonIgnore abstract Long getProjectId();
         @JsonIgnore abstract Long getGroupId();
-        @JsonIgnore abstract User getlastUpdatedBy();
+        @JsonIgnore abstract User getLastUpdatedBy();
     }
 
     private static abstract class IgnoreFieldsForSymbolStepMixin extends IgnoreIdFieldMixin {

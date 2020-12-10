@@ -23,9 +23,9 @@ import de.learnlib.alex.webhooks.entities.Webhook;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.client.ClientProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -51,17 +51,17 @@ public class WebhookService {
     private final Client client;
 
     /** The webhook DAO to use. */
-    private WebhookDAO webhookDAO;
+    private final WebhookDAO webhookDAO;
 
     /** The thread executor for webhooks. */
-    private ExecutorService executorService;
+    private final ExecutorService executorService;
 
     /**
      * Constructor.
      *
      * @param webhookDAO The injected webhook DAO.
      */
-    @Inject
+    @Autowired
     public WebhookService(WebhookDAO webhookDAO) {
         this.webhookDAO = webhookDAO;
         this.client = ClientBuilder.newClient()

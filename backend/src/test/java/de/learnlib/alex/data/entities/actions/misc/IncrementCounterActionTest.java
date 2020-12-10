@@ -43,8 +43,8 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class IncrementCounterActionTest {
 
-    private static final Long   USER_ID = 3L;
-    private static final Long   PROJECT_ID = 10L;
+    private static final Long USER_ID = 3L;
+    private static final Long PROJECT_ID = 10L;
     private static final String TEST_NAME = "counter";
 
     private IncrementCounterAction incrementAction;

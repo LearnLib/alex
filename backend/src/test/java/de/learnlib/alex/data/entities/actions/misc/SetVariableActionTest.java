@@ -42,7 +42,7 @@ public class SetVariableActionTest {
     private static final String PROJECT_URL = "http://localhost:8000";
 
     private static final String TEST_VALUE = "foobar";
-    private static final String TEST_NAME  = "variable";
+    private static final String TEST_NAME = "variable";
 
     private SetVariableAction setAction;
 

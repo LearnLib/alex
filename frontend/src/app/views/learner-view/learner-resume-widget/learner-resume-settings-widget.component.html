@@ -4,7 +4,7 @@
   </div>
   <div class="card-body p-0">
 
-    <form name="form">
+    <form name="form" *ngIf="configuration !== null">
 
       <ngb-accordion [closeOthers]="true" activeIds="static-1">
         <ngb-panel id="static-1" title="General configuration">

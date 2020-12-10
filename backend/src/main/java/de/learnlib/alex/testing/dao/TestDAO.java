@@ -65,48 +65,15 @@ public class TestDAO {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    /** The ProjectDAO to use. Will be injected. */
     private final ProjectDAO projectDAO;
-
-    /** The SymbolDAO to use. Will be injected. */
     private final SymbolDAO symbolDAO;
-
-    /** The TestCaseRepository to use. Will be injected. */
     private final TestRepository testRepository;
-
-    /** The repository for projects. */
     private final ProjectRepository projectRepository;
-
-    /** The repository for test case steps. */
     private final TestCaseStepRepository testCaseStepRepository;
-
-    /** The injected DAP for parameterized symbols. */
     private final ParameterizedSymbolDAO parameterizedSymbolDAO;
-
-    /** The {@link TestResultRepository} to use. */
     private final TestResultRepository testResultRepository;
-
-    /** The service for test locking. */
     private final TestPresenceService testPresenceService;
 
-    /**
-     * Constructor.
-     *
-     * @param projectDAO
-     *         The injected project DAO.
-     * @param testRepository
-     *         The injected repository for tests.
-     * @param symbolDAO
-     *         The injected symbol DAO.
-     * @param testCaseStepRepository
-     *         The injected repository for test case steps.
-     * @param projectRepository
-     *         The injected repository for projects.
-     * @param parameterizedSymbolDAO
-     *         The injected DAO for parameterized symbols.
-     * @param testResultRepository
-     *         The injected repository for test results.
-     */
     @Autowired
     public TestDAO(ProjectDAO projectDAO, TestRepository testRepository, SymbolDAO symbolDAO,
                    TestCaseStepRepository testCaseStepRepository, ProjectRepository projectRepository,
@@ -192,11 +159,11 @@ public class TestDAO {
         return createdTest;
     }
 
-    public List<Test> create(User user, Long projectId, List<Test> tests) throws NotFoundException, ValidationException {
+    public List<Test> create(User user, Long projectId, List<Test> tests) {
         return create(user, projectId, new ArrayList<>(tests), null);
     }
 
-    public List<Test> importTests(User user, Long projectId, List<Test> tests) throws ValidationException, NotFoundException {
+    public List<Test> importTests(User user, Long projectId, List<Test> tests) {
         projectDAO.getByID(user, projectId);
         final Map<String, Symbol> symbolMap = symbolDAO.getAll(user, projectId).stream()
                 .collect(Collectors.toMap(Symbol::getName, Function.identity()));
@@ -224,7 +191,7 @@ public class TestDAO {
         }
     }
 
-    private List<Test> create(User user, Long projectId, List<Test> tests, TestSuite parent) throws NotFoundException, ValidationException {
+    private List<Test> create(User user, Long projectId, List<Test> tests, TestSuite parent) {
         final List<Test> createdTests = new ArrayList<>();
 
         for (final Test test : tests) {
@@ -247,12 +214,12 @@ public class TestDAO {
         return createdTests;
     }
 
-    public Test get(User user, Long projectId, Long testId) throws NotFoundException, UnauthorizedException {
+    public Test get(User user, Long projectId, Long testId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         return get(user, project, testId);
     }
 
-    public List<Test> get(User user, Long projectId, List<Long> ids) throws NotFoundException, UnauthorizedException {
+    public List<Test> get(User user, Long projectId, List<Long> ids) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
         final List<Test> tests = testRepository.findAllByProject_IdAndIdIn(projectId, ids);
@@ -260,7 +227,7 @@ public class TestDAO {
         return tests;
     }
 
-    public Test getRoot(User user, Long projectId) throws NotFoundException {
+    public Test getRoot(User user, Long projectId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
@@ -270,7 +237,7 @@ public class TestDAO {
         return root;
     }
 
-    public void update(User user, Long projectId, Test test) throws NotFoundException {
+    public void update(User user, Long projectId, Test test) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         checkAccess(user, project, test);
 
@@ -308,7 +275,7 @@ public class TestDAO {
                 .collect(Collectors.toList());
     }
 
-    private void updateTestCase(User user, TestCase testCase, Project project) throws NotFoundException {
+    private void updateTestCase(User user, TestCase testCase, Project project) {
         checkIfOutputMappingNamesAreUnique(testCase);
 
         beforeSaving(user, project, testCase);
@@ -343,13 +310,13 @@ public class TestDAO {
         SymbolOutputMappingUtils.checkIfMappedNamesAreUnique(oms);
     }
 
-    private void updateTestSuite(User user, TestSuite testSuite, Project project) throws NotFoundException {
+    private void updateTestSuite(User user, TestSuite testSuite, Project project) {
         testSuite.getTests().forEach(t -> t.setParent(null));
         beforeSaving(user, project, testSuite);
         testRepository.save(testSuite);
     }
 
-    public void delete(User user, Long projectId, Long testId) throws NotFoundException, ValidationException {
+    public void delete(User user, Long projectId, Long testId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final Test test = testRepository.findById(testId).orElse(null);
         checkAccess(user, project, test);
@@ -371,14 +338,13 @@ public class TestDAO {
         testRepository.delete(test);
     }
 
-    public void delete(User user, Long projectId, List<Long> ids) throws NotFoundException, ValidationException {
+    public void delete(User user, Long projectId, List<Long> ids) {
         for (Long id : ids) {
             delete(user, projectId, id);
         }
     }
 
-    public List<Test> move(User user, Long projectId, List<Long> testIds, Long targetId)
-            throws NotFoundException, ValidationException {
+    public List<Test> move(User user, Long projectId, List<Long> testIds, Long targetId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final List<Test> tests = testRepository.findAllById(testIds);
         final Test targetTest = testRepository.findById(targetId).orElse(null);
@@ -428,8 +394,7 @@ public class TestDAO {
         return movedTests;
     }
 
-    public List<TestCase> getTestCases(User user, Long projectId, Long testSuiteId, boolean includeChildTestSuites)
-            throws NotFoundException, ValidationException {
+    public List<TestCase> getTestCases(User user, Long projectId, Long testSuiteId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final Test test = testRepository.findById(testSuiteId).orElse(null);
         checkAccess(user, project, test);
@@ -459,7 +424,7 @@ public class TestDAO {
         return testCases;
     }
 
-    public Page<TestResult> getResults(User user, Long projectId, Long testId, Pageable pageable) throws NotFoundException {
+    public Page<TestResult> getResults(User user, Long projectId, Long testId, Pageable pageable) {
         get(user, projectId, testId);
 
         final Page<TestResult> results = testResultRepository.findAllByTest_IdOrderByTestReport_StartDateDesc(testId, pageable);
@@ -468,7 +433,7 @@ public class TestDAO {
         return results;
     }
 
-    public void checkAccess(User user, Project project, Test test) throws NotFoundException, UnauthorizedException {
+    public void checkAccess(User user, Project project, Test test) {
         projectDAO.checkAccess(user, project);
 
         if (test == null) {
@@ -547,7 +512,7 @@ public class TestDAO {
         }
     }
 
-    private void beforeSaving(User user, Project project, Test test) throws NotFoundException {
+    private void beforeSaving(User user, Project project, Test test) {
         if (test instanceof TestSuite) {
             TestSuite testSuite = (TestSuite) test;
             for (Long testId : testSuite.getTestsAsIds()) {

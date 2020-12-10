@@ -39,7 +39,7 @@ import static org.mockito.Mockito.mock;
 @RunWith(MockitoJUnitRunner.class)
 public class AssertCounterActionTest {
 
-    private static final String  TEST_NAME = "counter";
+    private static final String TEST_NAME = "counter";
     private static final Integer TEST_VALUE = 42;
 
     private AssertCounterAction assertAction;

@@ -369,7 +369,8 @@ public class SymbolResourceIT extends AbstractResourceIT {
         final Symbol s3 = createSymbol("s3", (long) projectId1, jwtUser1);
 
         final Response res = symbolApi.get(projectId1, Arrays.asList(s1.getId(), s3.getId()), jwtUser1);
-        final List<Symbol> symbols = res.readEntity(new GenericType<List<Symbol>>(){});
+        final List<Symbol> symbols = res.readEntity(new GenericType<List<Symbol>>() {
+        });
         final List<Long> symbolIds = symbols.stream().map(Symbol::getId).collect(Collectors.toList());
 
         assertEquals(HttpStatus.OK.value(), res.getStatus());
@@ -407,7 +408,7 @@ public class SymbolResourceIT extends AbstractResourceIT {
 
     @Test
     public void shouldUpdateModifiedByOnUpdate() throws Exception {
-        projectApi.addOwners((long)projectId1, Collections.singletonList((long)userId2), jwtUser1);
+        projectApi.addOwners((long) projectId1, Collections.singletonList((long) userId2), jwtUser1);
 
         final Symbol s1 = createSymbol("s1", (long) projectId1, jwtUser1);
         s1.setName("updatedName");
@@ -539,13 +540,14 @@ public class SymbolResourceIT extends AbstractResourceIT {
         symbolApi.archive(projectId1, s2.getId().intValue(), jwtUser1);
 
         final Response res = symbolApi.restore((long) projectId1, Arrays.asList(s1.getId(), s2.getId()), jwtUser1);
-        final List<Symbol> restoredSymbols = res.readEntity(new GenericType<List<Symbol>>(){});
+        final List<Symbol> restoredSymbols = res.readEntity(new GenericType<List<Symbol>>() {
+        });
 
         s1 = symbolApi.get(projectId1, s1.getId(), jwtUser1).readEntity(Symbol.class);
         s2 = symbolApi.get(projectId1, s2.getId(), jwtUser1).readEntity(Symbol.class);
 
         assertEquals(HttpStatus.OK.value(), res.getStatus());
-        for (Symbol s: restoredSymbols) {
+        for (Symbol s : restoredSymbols) {
             assertFalse(s.isHidden());
         }
         assertFalse(s1.isHidden());

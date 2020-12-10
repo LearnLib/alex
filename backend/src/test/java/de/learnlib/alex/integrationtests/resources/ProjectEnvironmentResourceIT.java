@@ -362,8 +362,8 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
 
         res.readEntity(SpringRestError.class);
         assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
-        assertEquals(1,  project.getDefaultEnvironment().getVariables().stream().filter(v -> v.getName().equals("var1")).count());
-        assertEquals(1,  project.getDefaultEnvironment().getVariables().stream().filter(v -> v.getName().equals("var2")).count());
+        assertEquals(1, project.getDefaultEnvironment().getVariables().stream().filter(v -> v.getName().equals("var1")).count());
+        assertEquals(1, project.getDefaultEnvironment().getVariables().stream().filter(v -> v.getName().equals("var2")).count());
     }
 
     @Test
@@ -376,7 +376,7 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void memberShouldNotUpdateEnvironment() {
+    public void shouldNotUpdateEnvironmentAsMember() {
         final ProjectEnvironment env = new ProjectEnvironment();
         env.setName("test");
 
@@ -390,7 +390,7 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void memberShouldNotDeleteEnvironment() {
+    public void shouldNotDeleteEnvironmentAsMember() {
         final ProjectEnvironment env = new ProjectEnvironment();
         env.setName("test");
 
@@ -402,7 +402,7 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void memberShouldNotCreateUrl() {
+    public void shouldNotCreateUrlAsMember() {
         final ProjectEnvironment env = new ProjectEnvironment();
         env.setName("test");
 
@@ -418,7 +418,7 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void memberShouldNotUpdateUrl() {
+    public void shouldNotUpdateUrlAsMember() {
         final ProjectEnvironment env = new ProjectEnvironment();
         env.setName("test");
 
@@ -433,7 +433,7 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void memberShouldNotDeleteUrl() {
+    public void shouldNotDeleteUrlAsMember() {
         final ProjectEnvironment env = new ProjectEnvironment();
         env.setName("test");
 
@@ -442,12 +442,12 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
 
         final ProjectUrl urlToDelete = createdEnvironment.getUrls().get(0);
 
-        final Response res2 = envApi.deleteUrl(project.getId(), createdEnvironment.getId(),urlToDelete.getId(), memberJwt);
+        final Response res2 = envApi.deleteUrl(project.getId(), createdEnvironment.getId(), urlToDelete.getId(), memberJwt);
         assertEquals(HttpStatus.UNAUTHORIZED.value(), res2.getStatus());
     }
 
     @Test
-    public void memberShouldNotCreateVariable() {
+    public void shouldNotCreateVariableAsMember() {
         final ProjectEnvironment env = new ProjectEnvironment();
         env.setName("test");
 
@@ -463,7 +463,7 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void memberShouldNotUpdateVariable() {
+    public void shouldNotUpdateVariableAsMember() {
         final ProjectEnvironment env = new ProjectEnvironment();
         env.setName("test");
 
@@ -485,7 +485,7 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void memberShouldNotDeleteVariable() {
+    public void shouldNotDeleteVariableAsMember() {
         final ProjectEnvironment env = new ProjectEnvironment();
         env.setName("test");
 
@@ -525,7 +525,7 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
 
     private List<ProjectEnvironment> getAllEnvironments() {
         return envApi.getAll(project.getId(), adminJwt)
-                .readEntity(new GenericType<List<ProjectEnvironment>>() {
+                .readEntity(new GenericType<>() {
                 });
     }
 

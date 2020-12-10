@@ -139,7 +139,7 @@ public class DefaultQueryProxy implements Serializable {
      *
      * @return The Proxy as JSON string.
      */
-    @Column(name = "counterExample", columnDefinition = "MEDIUMTEXT")
+    @Column(name = "counterExample", columnDefinition = "TEXT")
     @JsonIgnore
     public String getProxyDB() {
         try {

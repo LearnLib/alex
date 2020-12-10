@@ -47,10 +47,10 @@ import net.automatalib.util.automata.conformance.WMethodTestsIterator;
 import net.automatalib.util.automata.conformance.WpMethodTestsIterator;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
 import javax.validation.ValidationException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -72,7 +72,7 @@ public class TestGenerator {
     private final ProjectDAO projectDAO;
     private final TestDAO testDAO;
 
-    @Inject
+    @Autowired
     public TestGenerator(LearnerResultDAO learnerResultDAO,
                          TestDAO testDAO,
                          ProjectDAO projectDAO) {
@@ -104,7 +104,7 @@ public class TestGenerator {
     public TestSuite generate(User user, Long projectId, Long testNo, TestSuiteGenerationConfig config)
             throws NotFoundException, IOException, ClassNotFoundException {
 
-        final LearnerResult result = learnerResultDAO.get(user, projectId, testNo);
+        final LearnerResult result = learnerResultDAO.getByTestNo(user, projectId, testNo);
         final LearnerResultStep step = result.getSteps().stream()
                 .filter(s -> s.getStepNo().equals(config.getStepNo()))
                 .findFirst()

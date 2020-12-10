@@ -185,7 +185,7 @@ public class LtsFormulaResourceIT extends AbstractResourceIT {
         final List<Long> ids = Arrays.asList(
                 createFormula(projectId1, suite1.getId(), "test", "<> true", jwtUser1).getId(),
                 createFormula(projectId1, suite1.getId(), "test", "<> true", jwtUser1).getId()
-                -1
+                        - 1
         );
         final Response res = formulaApi.delete(projectId1, suite1.getId(), ids, jwtUser1);
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), res.getStatus());
@@ -221,8 +221,8 @@ public class LtsFormulaResourceIT extends AbstractResourceIT {
 
     @Test
     public void shouldMoveFormulaToAnotherSuite() {
-        LtsFormulaSuite s1 = createFormulaSuite(projectId1,"s1", jwtUser1);
-        LtsFormulaSuite s2 = createFormulaSuite(projectId1,"s2", jwtUser1);
+        LtsFormulaSuite s1 = createFormulaSuite(projectId1, "s1", jwtUser1);
+        LtsFormulaSuite s2 = createFormulaSuite(projectId1, "s2", jwtUser1);
 
         LtsFormula formula = createFormula(projectId1, s1.getId(), "test", "true", jwtUser1);
 
@@ -234,8 +234,8 @@ public class LtsFormulaResourceIT extends AbstractResourceIT {
 
     @Test
     public void shouldMoveMultipleFormulasToAnotherSuite() throws Exception {
-        LtsFormulaSuite s1 = createFormulaSuite(projectId1,"s1", jwtUser1);
-        LtsFormulaSuite s2 = createFormulaSuite(projectId1,"s2", jwtUser1);
+        LtsFormulaSuite s1 = createFormulaSuite(projectId1, "s1", jwtUser1);
+        LtsFormulaSuite s2 = createFormulaSuite(projectId1, "s2", jwtUser1);
 
         LtsFormula f1 = createFormula(projectId1, s1.getId(), "test", "true", jwtUser1);
         LtsFormula f2 = createFormula(projectId1, s1.getId(), "test", "true", jwtUser1);
@@ -243,8 +243,9 @@ public class LtsFormulaResourceIT extends AbstractResourceIT {
         final Response res = formulaApi.updateSuite(projectId1, s1.getId(), Arrays.asList(f1.getId(), f2.getId()), s2, jwtUser1);
         assertEquals(HttpStatus.OK.value(), res.getStatus());
 
-        final List<LtsFormula> updatedFormulas = res.readEntity(new GenericType<List<LtsFormula>>(){});
-        for (LtsFormula f: updatedFormulas) {
+        final List<LtsFormula> updatedFormulas = res.readEntity(new GenericType<List<LtsFormula>>() {
+        });
+        for (LtsFormula f : updatedFormulas) {
             assertEquals(s2.getId(), f.getSuiteId());
         }
 

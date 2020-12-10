@@ -263,7 +263,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     }
 
     @JsonProperty
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(columnDefinition = "TEXT")
     public String getDescription() {
         return description;
     }
@@ -274,7 +274,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     }
 
     @JsonProperty
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(columnDefinition = "TEXT")
     public String getExpectedResult() {
         return expectedResult;
     }

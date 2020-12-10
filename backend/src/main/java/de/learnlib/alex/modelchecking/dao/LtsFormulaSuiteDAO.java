@@ -32,8 +32,8 @@ import java.util.List;
 @Service
 public class LtsFormulaSuiteDAO {
 
-    private ProjectDAO projectDAO;
-    private LtsFormulaSuiteRepository formulaSuiteRepository;
+    private final ProjectDAO projectDAO;
+    private final LtsFormulaSuiteRepository formulaSuiteRepository;
 
     @Autowired
     public LtsFormulaSuiteDAO(ProjectDAO projectDAO,

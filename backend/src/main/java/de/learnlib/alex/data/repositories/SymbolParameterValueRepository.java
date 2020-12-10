@@ -20,8 +20,6 @@ import de.learnlib.alex.data.entities.SymbolParameterValue;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
-
 /** The repository for the symbol parameter values. */
 @Repository
 public interface SymbolParameterValueRepository extends JpaRepository<SymbolParameterValue, Long> {
@@ -32,7 +30,5 @@ public interface SymbolParameterValueRepository extends JpaRepository<SymbolPara
      * @param parameterId
      *         The id of the parameter.
      */
-    @Transactional
-    @SuppressWarnings("checkstyle:methodname")
     void removeAllByParameter_Id(Long parameterId);
 }

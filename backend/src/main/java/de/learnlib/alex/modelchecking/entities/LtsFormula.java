@@ -51,12 +51,12 @@ public class LtsFormula implements Serializable {
     private LtsFormulaSuite suite;
 
     /** The formula. */
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(columnDefinition = "TEXT")
     private String name;
 
     /** The formula. */
     @NotBlank
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(columnDefinition = "TEXT")
     private String formula;
 
     public Long getId() {

@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.ValidationException;
 import javax.ws.rs.core.MediaType;
 import java.util.Collections;
 import java.util.List;
@@ -67,7 +66,7 @@ public class CounterResource {
     @GetMapping(
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity getAllCounters(@PathVariable("projectId") Long projectId) {
+    public ResponseEntity<List<Counter>> getAllCounters(@PathVariable("projectId") Long projectId) {
         final User user = authContext.getUser();
         LOGGER.traceEntry("getAllCounters({}) for user {}.", projectId, user);
 
@@ -90,16 +89,13 @@ public class CounterResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity createCounter(@PathVariable("projectId") Long projectId, @RequestBody Counter counter) {
-        final User user = authContext.getUser();
+    public ResponseEntity<Counter> createCounter(@PathVariable("projectId") Long projectId, @RequestBody Counter counter) {
+        final var user = authContext.getUser();
         LOGGER.traceEntry("createCounter({}, {}) for user {}.", projectId, counter.getName(), user);
 
-        if (!counter.getProjectId().equals(projectId)) {
-            throw new ValidationException("The ID of the project does not match with the URL.");
-        }
+        final var createdCounter = counterDAO.create(user, projectId, counter);
 
-        counterDAO.create(user, counter);
-        return ResponseEntity.status(HttpStatus.CREATED).body(counter);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdCounter);
     }
 
     /**
@@ -118,17 +114,15 @@ public class CounterResource {
             produces = MediaType.APPLICATION_JSON,
             consumes = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity updateCounter(@PathVariable("projectId") Long projectId,
-                                        @PathVariable("counterId") Long counterId,
-                                        @RequestBody Counter counter) {
+    public ResponseEntity<Counter> updateCounter(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("counterId") Long counterId,
+            @RequestBody Counter counter
+    ) {
         final User user = authContext.getUser();
         LOGGER.traceEntry("updateCounter({}, {}) for user {}.", projectId, counterId, user);
 
-        if (!counter.getProjectId().equals(projectId)) {
-            throw new ValidationException("The ID of the project does not match with the URL.");
-        }
-
-        final Counter updatedCounter = counterDAO.update(user, counter);
+        final var updatedCounter = counterDAO.update(user, projectId, counterId, counter);
         return ResponseEntity.ok(updatedCounter);
     }
 
@@ -145,7 +139,7 @@ public class CounterResource {
             value = "/{counterId}",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity deleteCounter(@PathVariable("projectId") Long projectId,
+    public ResponseEntity<?> deleteCounter(@PathVariable("projectId") Long projectId,
                                         @PathVariable("counterId") Long counterId) {
         final User user = authContext.getUser();
         LOGGER.traceEntry("deleteCounter({}, {}) for user {}.", projectId, counterId, user);
@@ -169,7 +163,7 @@ public class CounterResource {
             value = "/batch/{counterIds}",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity deleteCounter(@PathVariable("projectId") Long projectId,
+    public ResponseEntity<?> deleteCounter(@PathVariable("projectId") Long projectId,
                                         @PathVariable("counterIds") List<Long> counterIds) {
         final User user = authContext.getUser();
         LOGGER.traceEntry("deleteCounter({}, {}) for user {}.", projectId, counterIds, user);

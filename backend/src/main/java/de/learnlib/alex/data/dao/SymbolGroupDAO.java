@@ -63,18 +63,24 @@ public class SymbolGroupDAO {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private ProjectRepository projectRepository;
-    private ProjectDAO projectDAO;
-    private SymbolGroupRepository symbolGroupRepository;
-    private SymbolRepository symbolRepository;
-    private SymbolDAO symbolDAO;
-    private ObjectMapper objectMapper;
-    private SymbolPresenceService symbolPresenceService;
+    private final ProjectRepository projectRepository;
+    private final ProjectDAO projectDAO;
+    private final SymbolGroupRepository symbolGroupRepository;
+    private final SymbolRepository symbolRepository;
+    private final SymbolDAO symbolDAO;
+    private final ObjectMapper objectMapper;
+    private final SymbolPresenceService symbolPresenceService;
 
     @Autowired
-    public SymbolGroupDAO(ProjectRepository projectRepository, ProjectDAO projectDAO,
-                          SymbolGroupRepository symbolGroupRepository, SymbolRepository symbolRepository,
-                          @Lazy SymbolDAO symbolDAO, ObjectMapper objectMapper, @Lazy SymbolPresenceService symbolPresenceService) {
+    public SymbolGroupDAO(
+            ProjectRepository projectRepository,
+            ProjectDAO projectDAO,
+            SymbolGroupRepository symbolGroupRepository,
+            SymbolRepository symbolRepository,
+            @Lazy SymbolDAO symbolDAO,
+            ObjectMapper objectMapper,
+            @Lazy SymbolPresenceService symbolPresenceService
+    ) {
         this.projectRepository = projectRepository;
         this.projectDAO = projectDAO;
         this.symbolGroupRepository = symbolGroupRepository;
@@ -156,14 +162,13 @@ public class SymbolGroupDAO {
         return importedGroups;
     }
 
-    public void create(User user, SymbolGroup group) throws NotFoundException, ValidationException {
-        LOGGER.traceEntry("create({})", group);
-
-        final Project project = projectRepository.findById(group.getProjectId()).orElse(null);
+    public SymbolGroup create(User user, Long projectId, SymbolGroup group) {
+        final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
         group.setId(null);
         group.setName(createGroupName(project, group));
+        group.setProject(project);
         project.addGroup(group);
         beforePersistGroup(group);
 
@@ -176,15 +181,10 @@ public class SymbolGroupDAO {
             symbolGroupRepository.save(parent);
         }
 
-        symbolGroupRepository.save(group);
-
-        LOGGER.traceExit(group);
+        return symbolGroupRepository.save(group);
     }
 
-    public List<SymbolGroup> create(User user, Long projectId, List<SymbolGroup> groups)
-            throws NotFoundException, ValidationException {
-        LOGGER.traceEntry("create({})", groups);
-
+    public List<SymbolGroup> create(User user, Long projectId, List<SymbolGroup> groups) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
@@ -193,8 +193,7 @@ public class SymbolGroupDAO {
         return groups;
     }
 
-    private List<SymbolGroup> create(User user, Project project, List<SymbolGroup> groups, SymbolGroup parent)
-            throws NotFoundException, ValidationException {
+    private List<SymbolGroup> create(User user, Project project, List<SymbolGroup> groups, SymbolGroup parent) {
         final List<SymbolGroup> createdGroups = new ArrayList<>();
         for (SymbolGroup group : groups) {
             createdGroups.add(create(user, project, group, parent));
@@ -202,8 +201,7 @@ public class SymbolGroupDAO {
         return createdGroups;
     }
 
-    private SymbolGroup create(User user, Project project, SymbolGroup group, SymbolGroup parent)
-            throws NotFoundException, ValidationException {
+    private SymbolGroup create(User user, Project project, SymbolGroup group, SymbolGroup parent) {
         final List<SymbolGroup> children = group.getGroups();
         final Set<Symbol> symbols = group.getSymbols();
 
@@ -227,8 +225,7 @@ public class SymbolGroupDAO {
         return createdGroup;
     }
 
-    public List<SymbolGroup> getAll(User user, long projectId)
-            throws NotFoundException {
+    public List<SymbolGroup> getAll(User user, long projectId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
@@ -240,8 +237,7 @@ public class SymbolGroupDAO {
         return groups;
     }
 
-    public SymbolGroup get(User user, long projectId, Long groupId)
-            throws NotFoundException {
+    public SymbolGroup get(User user, long projectId, Long groupId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final SymbolGroup group = symbolGroupRepository.findById(groupId).orElse(null);
         checkAccess(user, project, group);
@@ -251,7 +247,7 @@ public class SymbolGroupDAO {
         return group;
     }
 
-    public void update(User user, SymbolGroup group) throws NotFoundException, ValidationException {
+    public SymbolGroup update(User user, SymbolGroup group) {
         final Project project = projectRepository.findById(group.getProjectId()).orElse(null);
         final SymbolGroup groupInDB = symbolGroupRepository.findById(group.getId()).orElse(null);
         checkAccess(user, project, groupInDB);
@@ -274,10 +270,11 @@ public class SymbolGroupDAO {
 
         groupInDB.setProject(project);
         groupInDB.setName(group.getName());
-        symbolGroupRepository.save(groupInDB);
+
+        return symbolGroupRepository.save(groupInDB);
     }
 
-    public SymbolGroup move(User user, SymbolGroup group) throws NotFoundException, ValidationException {
+    public SymbolGroup move(User user, SymbolGroup group) {
         final Project project = projectRepository.findById(group.getProjectId()).orElse(null);
         final SymbolGroup groupInDB = symbolGroupRepository.findById(group.getId()).orElse(null);
         checkAccess(user, project, groupInDB);
@@ -326,7 +323,7 @@ public class SymbolGroupDAO {
         return movedGroup;
     }
 
-    public void delete(User user, long projectId, Long groupId) throws IllegalArgumentException, NotFoundException {
+    public void delete(User user, long projectId, Long groupId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final SymbolGroup group = symbolGroupRepository.findById(groupId).orElse(null);
         checkAccess(user, project, group);
@@ -363,8 +360,7 @@ public class SymbolGroupDAO {
         }
     }
 
-    public void checkAccess(User user, Project project, SymbolGroup group)
-            throws NotFoundException, UnauthorizedException {
+    public void checkAccess(User user, Project project, SymbolGroup group) {
         projectDAO.checkAccess(user, project);
 
         if (group == null) {

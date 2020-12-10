@@ -19,25 +19,17 @@ package de.learnlib.alex.data.repositories;
 import de.learnlib.alex.data.entities.UploadableFile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Repository
 public interface UploadableFileRepository extends JpaRepository<UploadableFile, Long>  {
 
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     List<UploadableFile> findAllByProject_Id(Long projectId);
 
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     UploadableFile findByProject_IdAndName(Long projectId, String name);
 
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     List<UploadableFile> findAllByIdIn(List<Long> fileIds);
 
-    @Transactional()
     void deleteAllByProject_Id(Long projectId);
 }

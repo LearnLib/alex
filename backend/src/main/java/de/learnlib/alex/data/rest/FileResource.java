@@ -52,11 +52,8 @@ public class FileResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    /** The security context containing the user of the request. */
-    private AuthContext authContext;
-
-    /** The FileDAO to use. */
-    private FileDAO fileDAO;
+    private final AuthContext authContext;
+    private final FileDAO fileDAO;
 
     @Autowired
     public FileResource(AuthContext authContext, FileDAO fileDAO) {

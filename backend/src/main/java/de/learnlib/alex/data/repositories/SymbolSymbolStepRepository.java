@@ -19,7 +19,6 @@ package de.learnlib.alex.data.repositories;
 import de.learnlib.alex.data.entities.SymbolPSymbolStep;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Repository for {@link SymbolPSymbolStep}.
@@ -34,7 +33,5 @@ public interface SymbolSymbolStepRepository extends JpaRepository<SymbolPSymbolS
      *         The ID of the symbol.
      * @return The count.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     Long countAllByPSymbol_Symbol_Id(Long symbolId);
 }

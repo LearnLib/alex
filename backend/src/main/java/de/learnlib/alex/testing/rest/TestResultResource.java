@@ -17,12 +17,10 @@
 package de.learnlib.alex.testing.rest;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.testing.dao.TestReportDAO;
-import de.learnlib.alex.testing.entities.TestResult;
-import de.learnlib.alex.testing.repositories.TestResultRepository;
+import de.learnlib.alex.testing.dao.TestResultDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
@@ -40,7 +38,6 @@ import javax.ws.rs.core.MediaType;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/rest/projects/{projectId}/tests/reports/{reportId}/results")
@@ -48,18 +45,16 @@ public class TestResultResource {
 
     /** The security context containing the user of the request. */
     private final AuthContext authContext;
-
-    /** The test report DAO. */
     private final TestReportDAO testReportDAO;
-
-    /** The test result repository. */
-    private final TestResultRepository testResultRepository;
+    private final TestResultDAO testResultDAO;
 
     @Autowired
-    public TestResultResource(AuthContext authContext, TestReportDAO testReportDAO, TestResultRepository testResultRepository) {
+    public TestResultResource(AuthContext authContext,
+                              TestReportDAO testReportDAO,
+                              TestResultDAO testResultDAO) {
         this.authContext = authContext;
         this.testReportDAO = testReportDAO;
-        this.testResultRepository = testResultRepository;
+        this.testResultDAO = testResultDAO;
     }
 
     /**
@@ -79,17 +74,8 @@ public class TestResultResource {
                               @PathVariable("reportId") Long reportId,
                               @PathVariable("resultId") Long resultId) {
         final User user = authContext.getUser();
-
-        /* check access */
-        testReportDAO.get(user, projectId, reportId);
-
-        Optional<TestResult> result = testResultRepository.findById(resultId);
-        if (result.isPresent()) {
-            return ResponseEntity.ok(result.get());
-        } else {
-            Exception e = new NotFoundException("The requested testresult does not exist.");
-            return ResourceErrorHandler.createRESTErrorMessage("TestResultResource.get.", HttpStatus.NOT_FOUND, e);
-        }
+        final var result = testResultDAO.getByID(user, projectId, reportId, resultId);
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping(

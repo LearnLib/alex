@@ -46,9 +46,8 @@ public class LtsFormulaSuiteResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    /** The security context containing the user of the request. */
-    private AuthContext authContext;
-    private LtsFormulaSuiteDAO ltsFormulaSuiteDAO;
+    private final AuthContext authContext;
+    private final LtsFormulaSuiteDAO ltsFormulaSuiteDAO;
 
     @Autowired
     public LtsFormulaSuiteResource(AuthContext authContext,

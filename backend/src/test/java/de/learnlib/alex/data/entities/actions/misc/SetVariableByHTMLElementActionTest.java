@@ -47,8 +47,8 @@ import static org.mockito.Mockito.verify;
 
 public class SetVariableByHTMLElementActionTest {
 
-    private static final String VARIABLE   = "variable";
-    private static final String NODE_NAME  = "foobar";
+    private static final String VARIABLE = "variable";
+    private static final String NODE_NAME = "foobar";
     private static final String NODE_VALUE = "Hello World";
 
     private SetVariableByHTMLElementAction setAction;

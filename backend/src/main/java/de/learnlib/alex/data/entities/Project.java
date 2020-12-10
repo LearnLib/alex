@@ -20,6 +20,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.learning.entities.LearnerResult;
+import de.learnlib.alex.learning.entities.LearnerSetup;
 import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
@@ -35,7 +37,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
@@ -109,14 +110,16 @@ public class Project implements Serializable {
      */
     @OneToMany(
             mappedBy = "project",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
     )
     @JsonIgnore
     private Set<SymbolGroup> groups;
 
     @OneToMany(
             mappedBy = "project",
-            cascade = {CascadeType.REMOVE}
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
     )
     private List<ProjectEnvironment> environments;
 
@@ -125,7 +128,8 @@ public class Project implements Serializable {
      */
     @OneToMany(
             mappedBy = "project",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
     )
     @JsonIgnore
     private Set<TestReport> testReports;
@@ -135,21 +139,26 @@ public class Project implements Serializable {
      */
     @OneToMany(
             mappedBy = "project",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
     @JsonIgnore
     private Set<Symbol> symbols;
 
     /** The tests of this project. */
     @OneToMany(
             mappedBy = "project",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
     @JsonIgnore
     private Set<Test> tests;
 
     /** The test configurations of this project. */
     @OneToMany(
             mappedBy = "project",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
     )
     @JsonIgnore
     private List<TestExecutionConfig> testExecutionConfigs;
@@ -159,16 +168,42 @@ public class Project implements Serializable {
      */
     @OneToMany(
             mappedBy = "project",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
     @JsonIgnore
     private Set<Counter> counters;
+
+    /**
+     * The counters of the project.
+     */
+    @OneToMany(
+            mappedBy = "project",
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JsonIgnore
+    private List<LearnerResult> learnerResults;
+
+    /**
+     * The counters of the project.
+     */
+    @OneToMany(
+            mappedBy = "project",
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JsonIgnore
+    private List<LearnerSetup> learnerSetups;
 
     /**
      * The lts formulas of the project.
      */
     @OneToMany(
             mappedBy = "project",
-            cascade = {CascadeType.REMOVE})
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
     @JsonIgnore
     private List<LtsFormulaSuite> ltsFormulaSuites;
 
@@ -196,6 +231,8 @@ public class Project implements Serializable {
         this.environments = new ArrayList<>();
         this.owners = new ArrayList<>();
         this.members = new ArrayList<>();
+        this.learnerResults = new ArrayList<>();
+        this.learnerSetups = new ArrayList<>();
     }
 
     /**
@@ -243,8 +280,7 @@ public class Project implements Serializable {
      */
     @JsonIgnore
     public void setOwners(List<User> owners) {
-
-        if ( owners != null) {
+        if (owners != null) {
             this.owners = owners;
         }
     }
@@ -445,6 +481,22 @@ public class Project implements Serializable {
 
     public void setTestExecutionConfigs(List<TestExecutionConfig> testExecutionConfigs) {
         this.testExecutionConfigs = testExecutionConfigs;
+    }
+
+    public List<LearnerResult> getLearnerResults() {
+        return learnerResults;
+    }
+
+    public void setLearnerResults(List<LearnerResult> learnerResults) {
+        this.learnerResults = learnerResults;
+    }
+
+    public List<LearnerSetup> getLearnerSetups() {
+        return learnerSetups;
+    }
+
+    public void setLearnerSetups(List<LearnerSetup> learnerSetups) {
+        this.learnerSetups = learnerSetups;
     }
 
     @Transient

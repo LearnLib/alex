@@ -19,7 +19,6 @@ package de.learnlib.alex.testing.repositories;
 import de.learnlib.alex.testing.entities.TestExecutionResult;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 /** The repository for test results. */
 @Repository
@@ -32,7 +31,5 @@ public interface TestExecutionResultRepository extends JpaRepository<TestExecuti
      *         The ID of the symbol.
      * @return The count.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     Long countAllBySymbol_Id(Long symbolId);
 }

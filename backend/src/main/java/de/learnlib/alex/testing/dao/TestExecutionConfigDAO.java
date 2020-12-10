@@ -30,13 +30,13 @@ import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Transactional(rollbackOn = Exception.class)
+@Transactional(rollbackFor = Exception.class)
 public class TestExecutionConfigDAO {
 
     private final ProjectDAO projectDAO;
@@ -58,8 +58,7 @@ public class TestExecutionConfigDAO {
         this.environmentDAO = environmentDAO;
     }
 
-    public TestExecutionConfig create(User user, Long projectId, TestExecutionConfig config)
-            throws NotFoundException, UnauthorizedException {
+    public TestExecutionConfig create(User user, Long projectId, TestExecutionConfig config) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
@@ -78,7 +77,7 @@ public class TestExecutionConfigDAO {
         return createdConfig;
     }
 
-    public List<TestExecutionConfig> getAll(User user, Long projectId) throws NotFoundException, UnauthorizedException {
+    public List<TestExecutionConfig> getAll(User user, Long projectId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
@@ -88,8 +87,7 @@ public class TestExecutionConfigDAO {
         return configs;
     }
 
-    public TestExecutionConfig get(User user, Long projectId, Long configId)
-            throws NotFoundException, UnauthorizedException {
+    public TestExecutionConfig get(User user, Long projectId, Long configId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final TestExecutionConfig config = testExecutionConfigRepository.findById(configId).orElse(null);
         checkAccess(user, project, config);
@@ -98,8 +96,7 @@ public class TestExecutionConfigDAO {
         return config;
     }
 
-    public void delete(User user, Long projectId, Long configId)
-            throws NotFoundException, UnauthorizedException {
+    public void delete(User user, Long projectId, Long configId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final TestExecutionConfig config = testExecutionConfigRepository.findById(configId).orElse(null);
         checkAccess(user, project, config);
@@ -107,8 +104,7 @@ public class TestExecutionConfigDAO {
         testExecutionConfigRepository.deleteById(configId);
     }
 
-    public TestExecutionConfig update(User user, Long projectId, Long configId, TestExecutionConfig config)
-            throws NotFoundException, UnauthorizedException {
+    public TestExecutionConfig update(User user, Long projectId, Long configId, TestExecutionConfig config) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final TestExecutionConfig configInDb = testExecutionConfigRepository.findById(configId).orElse(null);
         checkAccess(user, project, configInDb);
@@ -131,8 +127,7 @@ public class TestExecutionConfigDAO {
         return updatedConfig;
     }
 
-    public void checkAccess(User user, Project project, TestExecutionConfig config)
-            throws NotFoundException, UnauthorizedException {
+    public void checkAccess(User user, Project project, TestExecutionConfig config) {
         projectDAO.checkAccess(user, project);
 
         if (config == null || config.getProjectId() == null) {

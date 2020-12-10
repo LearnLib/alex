@@ -40,8 +40,8 @@ public class ModelCheckerResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private AuthContext authContext;
-    private ModelCheckerService modelCheckerService;
+    private final AuthContext authContext;
+    private final ModelCheckerService modelCheckerService;
 
     @Autowired
     public ModelCheckerResource(AuthContext authContext,

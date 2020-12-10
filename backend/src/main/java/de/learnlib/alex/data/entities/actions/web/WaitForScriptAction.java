@@ -50,7 +50,7 @@ public class WaitForScriptAction extends SymbolAction {
     private static final int DEFAULT_SCRIPT_TIMEOUT = 10;
 
     @NotBlank
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(columnDefinition = "TEXT")
     private String script;
 
     /** When the script should be timed out in s. */

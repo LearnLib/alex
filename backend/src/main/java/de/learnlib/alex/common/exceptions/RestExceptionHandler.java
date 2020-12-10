@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.util.List;
@@ -60,8 +61,15 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(NotFoundException.class)
-    protected ResponseEntity<Object> handleNotFound(NotFoundException e) {
+    protected ResponseEntity<Object> handleNotFoundException(NotFoundException e) {
         LOGGER.info("NotFoundException caught.", e);
+        final RESTError error = new RESTError(HttpStatus.NOT_FOUND, e);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    protected ResponseEntity<Object> handleNotFoundException(EntityNotFoundException e) {
+        LOGGER.info("EntityNotFoundException caught.", e);
         final RESTError error = new RESTError(HttpStatus.NOT_FOUND, e);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }

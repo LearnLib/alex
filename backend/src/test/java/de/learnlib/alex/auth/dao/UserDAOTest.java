@@ -32,23 +32,17 @@ import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.transaction.TransactionSystemException;
 
 import javax.persistence.EntityManager;
-import javax.persistence.RollbackException;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserDAOTest {
@@ -71,7 +65,7 @@ public class UserDAOTest {
     private WebSocketService webSocketService;
 
     @Mock
-    private EntityManager em;
+    private EntityManager entityManager;
 
     private UserDAO userDAO;
 
@@ -80,7 +74,7 @@ public class UserDAOTest {
     @Before
     public void setUp() throws NotFoundException {
         userDAO = new UserDAO(userRepository, fileDAO, projectDAO, projectRepository,
-                              webSocketService, em);
+                webSocketService, entityManager);
         dummyAdmin = new User();
         dummyAdmin.setRole(UserRole.ADMIN);
         dummyAdmin.setId(-1L);
@@ -96,31 +90,9 @@ public class UserDAOTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldHandleTransactionSystemExceptionsOnUserCreationGracefully() {
-        User user = createUser();
-        ConstraintViolationException constraintViolationException;
-        constraintViolationException = new ConstraintViolationException("User is not valid!", new HashSet<>());
-        RollbackException rollbackException = new RollbackException("RollbackException", constraintViolationException);
-        TransactionSystemException transactionSystemException;
-        transactionSystemException = new TransactionSystemException("Spring TransactionSystemException",
-                                                                    rollbackException);
-        BDDMockito.given(userRepository.save(user)).willThrow(transactionSystemException);
-
-        userDAO.create(user);
-    }
-
-    @Test(expected = ValidationException.class)
     public void shouldHandleConstraintViolationExceptionOnUserCreationGracefully() {
         User user = createUser();
         BDDMockito.given(userRepository.save(user)).willThrow(ConstraintViolationException.class);
-
-        userDAO.create(user);
-    }
-
-    @Test(expected = ValidationException.class)
-    public void shouldHandleDataIntegrityViolationExceptionOnUserCreationGracefully() {
-        User user = createUser();
-        BDDMockito.given(userRepository.save(user)).willThrow(DataIntegrityViolationException.class);
 
         userDAO.create(user);
     }
@@ -132,7 +104,7 @@ public class UserDAOTest {
 
         List<User> allUsers = userDAO.getAll();
 
-        assertThat(allUsers.size(), is(equalTo(users.size())));
+        assertEquals(users.size(), allUsers.size());
         for (User u : allUsers) {
             Assert.assertTrue(users.contains(u));
         }
@@ -145,7 +117,7 @@ public class UserDAOTest {
 
         List<User> allAdmins = userDAO.getAllByRole(UserRole.ADMIN);
 
-        assertThat(allAdmins.size(), is(equalTo(users.size())));
+        assertEquals(users.size(), allAdmins.size());
         for (User u : allAdmins) {
             Assert.assertTrue(users.contains(u));
         }
@@ -158,7 +130,7 @@ public class UserDAOTest {
 
         List<User> allRegistered = userDAO.getAllByRole(UserRole.REGISTERED);
 
-        assertThat(allRegistered.size(), is(equalTo(users.size())));
+        assertEquals(users.size(), allRegistered.size());
         for (User u : allRegistered) {
             Assert.assertTrue(users.contains(u));
         }
@@ -169,30 +141,32 @@ public class UserDAOTest {
         User user = createUser();
         BDDMockito.given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
 
-        User userFromDB = userDAO.getById(user.getId());
+        User userFromDB = userDAO.getByID(user.getId());
 
-        Assert.assertEquals(user, userFromDB);
+        assertEquals(user, userFromDB);
     }
 
     @Test(expected = NotFoundException.class)
     public void shouldThrowAnExceptionIfTheUserCanNotBeFoundByID() throws NotFoundException {
-        userDAO.getById((long) TEST_USER_COUNT);
+        userDAO.getByID((long) TEST_USER_COUNT);
     }
 
     @Test
     public void shouldGetByEmail() throws NotFoundException {
         User user = createUser();
-        BDDMockito.given(userRepository.findOneByEmail(user.getEmail())).willReturn(user);
+        BDDMockito.given(userRepository.findOneByEmail(user.getEmail())).willReturn(Optional.of(user));
 
         User userFromDB = userDAO.getByEmail(user.getEmail());
 
-        Assert.assertEquals(user, userFromDB);
+        assertEquals(user, userFromDB);
     }
 
     @Test(expected = NotFoundException.class)
     public void shouldThrowAnExceptionIfTheUserCanNotBeFoundByEmail() throws NotFoundException {
         User user = createUser();
-        BDDMockito.given(userRepository.findOneByEmail(user.getEmail())).willReturn(null);
+
+        BDDMockito.given(userRepository.findOneByEmail(user.getEmail()))
+                .willReturn(Optional.empty());
 
         userDAO.getByEmail(user.getEmail());
     }
@@ -200,18 +174,21 @@ public class UserDAOTest {
     @Test
     public void shouldGetByUsername() throws NotFoundException {
         User user = createUser();
-        BDDMockito.given(userRepository.findOneByUsername(user.getUsername())).willReturn(user);
+
+        BDDMockito.given(userRepository.findOneByUsername(user.getUsername()))
+                .willReturn(Optional.of(user));
 
         User userFromDB = userDAO.getByUsername(user.getUsername());
 
-        Assert.assertEquals(user, userFromDB);
+        assertEquals(user, userFromDB);
     }
 
     @Test(expected = NotFoundException.class)
     public void shouldThrowAnExceptionIfTheUserCanNotBeFoundByUsername() throws NotFoundException {
         User user = createUser();
 
-        BDDMockito.given(userRepository.findOneByUsername(user.getUsername())).willReturn(null);
+        BDDMockito.given(userRepository.findOneByUsername(user.getUsername()))
+                .willReturn(Optional.empty());
 
         userDAO.getByUsername(user.getUsername());
     }
@@ -226,31 +203,9 @@ public class UserDAOTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldHandleTransactionSystemExceptionsOnUserUpdateGracefully() {
-        User user = createUser();
-        ConstraintViolationException constraintViolationException;
-        constraintViolationException = new ConstraintViolationException("User is not valid!", new HashSet<>());
-        RollbackException rollbackException = new RollbackException("RollbackException", constraintViolationException);
-        TransactionSystemException transactionSystemException;
-        transactionSystemException = new TransactionSystemException("Spring TransactionSystemException",
-                                                                    rollbackException);
-        BDDMockito.given(userRepository.save(user)).willThrow(transactionSystemException);
-
-        userDAO.update(user);
-    }
-
-    @Test(expected = ValidationException.class)
     public void shouldHandleConstraintViolationExceptionOnUserUpdateGracefully() {
         User user = createUser();
         BDDMockito.given(userRepository.save(user)).willThrow(ConstraintViolationException.class);
-
-        userDAO.update(user);
-    }
-
-    @Test(expected = ValidationException.class)
-    public void shouldHandleDataIntegrityViolationExceptionOnUserUpdateGracefully() {
-        User user = createUser();
-        BDDMockito.given(userRepository.save(user)).willThrow(DataIntegrityViolationException.class);
 
         userDAO.update(user);
     }
@@ -306,7 +261,7 @@ public class UserDAOTest {
 
         userDAO.delete(dummyAdmin, Arrays.asList(user1.getId(), user2.getId()));
 
-        Assert.assertEquals(userDAO.getAllByRole(UserRole.REGISTERED).size(), 0);
+        assertEquals(userDAO.getAllByRole(UserRole.REGISTERED).size(), 0);
     }
 
     @Test(expected = NotFoundException.class)
@@ -348,7 +303,7 @@ public class UserDAOTest {
 
     private List<User> createUsersList() {
         List<User> users = new ArrayList<>();
-        for (int i = 0; i  < TEST_USER_COUNT; i++) {
+        for (int i = 0; i < TEST_USER_COUNT; i++) {
             User u = new User();
             u.setEmail("user-" + i + "@mail.de");
             u.setEncryptedPassword("test");

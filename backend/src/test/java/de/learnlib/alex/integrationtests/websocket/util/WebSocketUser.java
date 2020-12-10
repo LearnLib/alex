@@ -59,6 +59,7 @@ public class WebSocketUser {
     private String wsUrl() {
         return "ws://localhost:" + port + "/rest/ws/stomp";
     }
+
     private String baseUrl() {
         return "http://localhost:" + port + "/rest";
     }

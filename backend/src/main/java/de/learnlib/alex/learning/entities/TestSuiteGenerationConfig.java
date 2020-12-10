@@ -16,35 +16,36 @@
 
 package de.learnlib.alex.learning.entities;
 
-import javax.validation.ValidationException;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 /** The configuration class for the test suite generation. */
 public class TestSuiteGenerationConfig {
 
     /** Which strategy is used for test generation. */
     public enum GenerationMethod {
-
-        /** Use discrimination tree. */
         DT,
-
-        /** Use w method. */
         W_METHOD,
-
-        /** Use the wp method. */
         WP_METHOD,
-
         TRANS_COVER,
     }
 
     /** The number of the step. */
+    @NotNull
+    @Min(1)
     private Long stepNo;
 
     /** The name of the generated test suite. */
+    @NotEmpty
     private String name;
 
+    /** The ID of the test suite to update. */
+    @NotNull
     private Long testSuiteToUpdateId;
 
     /** which method is used. */
+    @NotNull
     private GenerationMethod method;
 
     /** Constructor. */
@@ -84,19 +85,5 @@ public class TestSuiteGenerationConfig {
 
     public void setTestSuiteToUpdateId(Long testSuiteToUpdateId) {
         this.testSuiteToUpdateId = testSuiteToUpdateId;
-    }
-
-    /**
-     * Validate the object.
-     *
-     * @throws ValidationException
-     *         If one of the properties are not valid.
-     */
-    public void validate() throws ValidationException {
-        if (stepNo == null || stepNo < 1) {
-            throw new ValidationException("The step number must be greater than 0.");
-        } else if (name == null || name.trim().equals("")) {
-            throw new ValidationException("The name of the test suite may not be empty.");
-        }
     }
 }

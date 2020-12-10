@@ -37,6 +37,7 @@ import de.learnlib.alex.websocket.services.enums.TestPresenceServiceEnum;
 import de.learnlib.alex.websocket.services.enums.WebSocketServiceEnum;
 import io.reactivex.rxjava3.disposables.Disposable;
 import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,7 +60,7 @@ import java.util.stream.Collectors;
  * Service class which tracks user presences in tests.
  */
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class TestPresenceService {
 
     /**
@@ -91,6 +92,7 @@ public class TestPresenceService {
 
     private final Set<Disposable> disposables;
 
+    @Autowired
     public TestPresenceService(WebSocketService webSocketService,
                                TestDAO testDAO,
                                ProjectDAO projectDAO,
@@ -161,7 +163,7 @@ public class TestPresenceService {
             projectDAO.checkAccess(message.getUser(), project);
 
             /* ignore TestSuites */
-            if (testDAO.get(userDAO.getById(userId), projectId, testId) instanceof TestCase) {
+            if (testDAO.get(userDAO.getByID(userId), projectId, testId) instanceof TestCase) {
                 acquireTestLock(projectId, testId, userId, sessionId);
             }
 
@@ -186,7 +188,7 @@ public class TestPresenceService {
             final String sessionId = message.getSessionId();
 
             /* Ignore TestSuites */
-            if (testDAO.get(userDAO.getById(userId), projectId, testId) instanceof TestCase) {
+            if (testDAO.get(userDAO.getByID(userId), projectId, testId) instanceof TestCase) {
                 releaseTestLock(projectId, testId, userId, sessionId);
             }
 
@@ -358,7 +360,7 @@ public class TestPresenceService {
             userMap.computeIfAbsent(userId, k -> new HashSet<>())
                     .add(testCaseLock);
 
-            Test test = testDAO.get(userDAO.getById(userId), projectId, testId);
+            Test test = testDAO.get(userDAO.getByID(userId), projectId, testId);
             while (test.getParent() != null) {
                 test = test.getParent();
 
@@ -385,7 +387,7 @@ public class TestPresenceService {
                             }
                         }
 
-                        Test test = testDAO.get(userDAO.getById(userId), projectId, testId);
+                        Test test = testDAO.get(userDAO.getByID(userId), projectId, testId);
                         while (test.getParent() != null) {
 
                             test = test.getParent();
@@ -530,7 +532,7 @@ public class TestPresenceService {
 
         @JsonProperty("username")
         public String getUsername() {
-            return userDAO.getById(lockOwner).getUsername();
+            return userDAO.getByID(lockOwner).getUsername();
         }
 
         @JsonProperty("timestamp")
@@ -590,7 +592,7 @@ public class TestPresenceService {
 
         @JsonProperty("locks")
         public List getLockOwnersNames() {
-            return lockOwners.stream().map(userId -> userDAO.getById(userId).getUsername()).collect(Collectors.toList());
+            return lockOwners.stream().map(userId -> userDAO.getByID(userId).getUsername()).collect(Collectors.toList());
         }
     }
  }

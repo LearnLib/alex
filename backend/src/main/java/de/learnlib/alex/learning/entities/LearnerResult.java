@@ -100,7 +100,7 @@ public class LearnerResult implements Serializable {
         this.id = id;
     }
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JsonIgnore
     public Project getProject() {
         return project;
@@ -132,6 +132,7 @@ public class LearnerResult implements Serializable {
 
     @OneToMany(
             mappedBy = "result",
+            cascade = {CascadeType.REMOVE},
             orphanRemoval = true
     )
     @OrderBy("stepNo ASC")

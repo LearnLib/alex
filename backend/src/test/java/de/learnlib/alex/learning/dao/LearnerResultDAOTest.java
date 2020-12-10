@@ -22,7 +22,6 @@ import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.learning.entities.LearnerResult;
-import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;
 import org.junit.Before;
@@ -37,10 +36,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -51,8 +47,6 @@ public class LearnerResultDAOTest {
     private static final long USER_ID = 21L;
     private static final long PROJECT_ID = 42L;
     private static final int RESULTS_AMOUNT = 3;
-    private static final MealyRandomWordsEQOracleProxy EXAMPLE_EQ_ORACLE =
-            new MealyRandomWordsEQOracleProxy(1, 5, 10, 42);
 
     @Mock
     private ProjectDAO projectDAO;
@@ -64,59 +58,57 @@ public class LearnerResultDAOTest {
     private LearnerResultStepRepository learnerResultStepRepository;
 
     @Mock
-    private EntityManager entityManager;
+    private LearnerSetupDAO learnerSetupDAO;
 
     @Mock
-    private LearnerSetupDAO learnerSetupDAO;
+    private EntityManager entityManager;
 
     private LearnerResultDAO learnerResultDAO;
 
     @Before
     public void setUp() {
-        learnerResultDAO = new LearnerResultDAO(projectDAO, learnerResultRepository, learnerResultStepRepository,
-                entityManager, learnerSetupDAO);
+        learnerResultDAO = new LearnerResultDAO(
+                projectDAO,
+                learnerResultRepository,
+                learnerResultStepRepository,
+                learnerSetupDAO,
+                entityManager
+        );
     }
 
     @Test
-    public void shouldSaveAValidLearnerResult() throws Exception {
+    public void shouldSaveAValidLearnerResult() {
         User user = new User();
         user.setId(USER_ID);
 
-        Project project = new Project();
-        project.setId(PROJECT_ID);
-
         LearnerResult result = createLearnerResultsList().get(0);
-        result.setProject(project);
 
+        given(projectDAO.getByID(user, PROJECT_ID)).willReturn(result.getProject());
         given(learnerResultRepository.findHighestTestNo(PROJECT_ID)).willReturn(1L);
-        given(learnerResultRepository.saveAndFlush(result)).willReturn(result);
+        given(learnerResultRepository.save(result)).willReturn(result);
 
-        try {
-            learnerResultDAO.create(user, project, result);
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-        }
+        learnerResultDAO.create(user, result.getProject().getId(), result);
 
-        verify(learnerResultRepository).saveAndFlush(result);
-        assertThat(result.getTestNo(), is(equalTo(2L)));
+        verify(learnerResultRepository).save(result);
+        assertEquals(2L, (long) result.getTestNo());
     }
 
     @Test
-    public void shouldGetAllResultsOfOneProject() throws NotFoundException {
+    public void shouldGetAllResultsOfOneProject() {
         User user = new User();
 
         List<LearnerResult> results = createLearnerResultsList();
         given(learnerResultRepository.findByProject_Id(PROJECT_ID)).willReturn(results);
         List<LearnerResult> resultsFromDAO = learnerResultDAO.getAll(user, PROJECT_ID);
 
-        assertThat(results.size(), is(equalTo(resultsFromDAO.size())));
+        assertEquals(results.size(), resultsFromDAO.size());
         for (LearnerResult r : resultsFromDAO) {
             assertTrue(results.contains(r));
         }
     }
 
     @Test
-    public void ensureThatGettingAllResultsReturnsAnEmptyListIfNoLearnerResultCouldBeFound() throws NotFoundException {
+    public void ensureThatGettingAllResultsReturnsAnEmptyListIfNoLearnerResultCouldBeFound() {
         User user = new User();
 
         given(learnerResultRepository.findByProject_Id(PROJECT_ID))
@@ -127,55 +119,61 @@ public class LearnerResultDAOTest {
     }
 
     @Test
-    public void shouldGetMultipleResults() throws NotFoundException {
-        User user = new User();
+    public void shouldGetMultipleResults() {
+        final var user = new User();
+
+        final var project = new Project();
+        project.setId(PROJECT_ID);
 
         List<LearnerResult> results = createLearnerResultsList();
+
+
         List<Long> testNos = Arrays.asList(0L, 1L, 2L);
 
-        given(learnerResultRepository.findByProject_IdAndTestNoIn(PROJECT_ID, testNos))
-                .willReturn(results);
+        given(projectDAO.getByID(user, PROJECT_ID)).willReturn(project);
+        given(learnerResultRepository.findByProject_IdAndTestNoIn(PROJECT_ID, testNos)).willReturn(results);
 
         List<LearnerResult> resultsFromDAO = learnerResultDAO.getAll(user, PROJECT_ID, testNos);
 
-        assertThat(results.size(), is(equalTo(resultsFromDAO.size())));
+        assertEquals(results.size(), resultsFromDAO.size());
         for (LearnerResult r : resultsFromDAO) {
             assertTrue(results.contains(r));
         }
     }
 
     @Test(expected = NotFoundException.class)
-    public void ensureThatGettingANonExistingResultThrowsAnException() throws NotFoundException {
+    public void ensureThatGettingANonExistingResultThrowsAnException() {
         User user = new User();
 
         given(learnerResultRepository.findOneByProject_IdAndTestNo(PROJECT_ID, 0L))
                 .willReturn(null);
 
-        learnerResultDAO.get(user, PROJECT_ID, 0L); // should fail
+        learnerResultDAO.getByTestNo(user, PROJECT_ID, 0L); // should fail
     }
 
     @Test
-    public void shouldDeleteMultipleResults() throws NotFoundException {
+    public void shouldDeleteMultipleResults() {
         List<Long> testNos = Arrays.asList(0L, 1L);
 
         given(learnerResultRepository.deleteByProject_IdAndTestNoIn(PROJECT_ID, testNos)).willReturn(2L);
 
-        learnerResultDAO.deleteAll(new User(USER_ID), PROJECT_ID, testNos);
+        learnerResultDAO.deleteByTestNos(new User(USER_ID), PROJECT_ID, testNos);
 
         verify(learnerResultRepository).deleteByProject_IdAndTestNoIn(PROJECT_ID, testNos);
     }
 
-    private List<LearnerResult> createLearnerResultsList() throws NotFoundException {
+    private List<LearnerResult> createLearnerResultsList() {
         List<LearnerResult> results = new ArrayList<>();
         for (int i = 0; i < RESULTS_AMOUNT; i++) {
             LearnerResult r = new LearnerResult();
-            Project project = new Project(1L);
+            Project project = new Project(PROJECT_ID);
             Symbol s1 = new Symbol();
             s1.setId(1L);
             s1.setProject(project);
             Symbol s2 = new Symbol();
             s2.setId(2L);
             s2.setProject(project);
+            r.setProject(project);
             results.add(r);
         }
         return results;

@@ -29,7 +29,7 @@ import javax.validation.ValidationException;
  * Implementation of a SettingsDAO using Spring Data.
  */
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class SettingsDAO {
 
     /** The SettingsRepository to use. Will be injected. */
@@ -46,7 +46,7 @@ public class SettingsDAO {
         this.settingsRepository = settingsRepository;
     }
 
-    public void create(Settings settings) throws ValidationException {
+    public void create(Settings settings) {
         if (settingsRepository.count() == 1) {
             throw new ValidationException("The settings have already been created.");
         }

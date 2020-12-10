@@ -21,12 +21,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -52,7 +52,7 @@ public class ProjectEnvironment implements Serializable {
     @NotEmpty
     private String name;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JsonIgnore
     private Project project;
 

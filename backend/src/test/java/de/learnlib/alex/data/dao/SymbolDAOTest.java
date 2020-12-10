@@ -56,11 +56,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
@@ -268,7 +265,7 @@ public class SymbolDAOTest {
 
         List<Symbol> symbolsFromDB = symbolDAO.getByIds(user, project.getId(), ids);
 
-        assertThat(symbolsFromDB.size(), is(equalTo(symbols.size())));
+        assertEquals(symbols.size(), symbolsFromDB.size());
         for (Symbol s : symbolsFromDB) {
             assertTrue(symbols.contains(s));
         }
@@ -302,7 +299,7 @@ public class SymbolDAOTest {
 
         List<Symbol> symbolsFromDB = symbolDAO.getAll(user, project.getId());
 
-        assertThat(symbolsFromDB.size(), is(equalTo(symbols.size())));
+        assertEquals(symbols.size(), symbolsFromDB.size());
         for (Symbol s : symbolsFromDB) {
             assertTrue(symbols.contains(s));
         }
@@ -493,9 +490,9 @@ public class SymbolDAOTest {
 
         symbolDAO.move(user, PROJECT_ID, SYMBOL_ID, GROUP_ID + 1);
 
-        assertThat(group1.getSymbols().size(), is(equalTo(0)));
-        assertThat(group2.getSymbols().size(), is(equalTo(1)));
-        assertThat(symbol.getGroup(), is(equalTo(group2)));
+        assertEquals(0, group1.getSymbols().size());
+        assertEquals(1, group2.getSymbols().size());
+        assertEquals(group2, symbol.getGroup());
     }
 
     @Test
@@ -522,9 +519,11 @@ public class SymbolDAOTest {
 
         symbolDAO.move(user, PROJECT_ID, symbolIds, GROUP_ID + 1);
 
-        assertThat(group1.getSymbols().size(), is(equalTo(0)));
-        assertThat(group2.getSymbols().size(), is(equalTo(symbols.size())));
-        symbols.forEach(s -> assertThat(s.getGroup(), is(equalTo(group2))));
+        assertEquals(0, group1.getSymbols().size());
+        assertEquals(symbols.size(), group2.getSymbols().size());
+        for (var symbol : symbols) {
+            assertEquals(group2, symbol.getGroup());
+        }
     }
 
     @Test(expected = NotFoundException.class)

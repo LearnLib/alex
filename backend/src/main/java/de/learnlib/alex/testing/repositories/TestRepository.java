@@ -19,7 +19,6 @@ package de.learnlib.alex.testing.repositories;
 import de.learnlib.alex.testing.entities.Test;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -36,8 +35,6 @@ public interface TestRepository extends JpaRepository<Test, Long> {
      *         The name of the test.
      * @return The test matching the name.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     Test findOneByParent_IdAndName(Long parentId, String name);
 
     /**
@@ -47,8 +44,6 @@ public interface TestRepository extends JpaRepository<Test, Long> {
      *         The id of the project.
      * @return The default test suite.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     Test findFirstByProject_IdOrderByIdAsc(Long projectId);
 
     /**
@@ -58,15 +53,9 @@ public interface TestRepository extends JpaRepository<Test, Long> {
      *         The id of the project.
      * @return The tests in the project.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     List<Test> findAllByProject_Id(Long projectId);
 
-    @Transactional
-    @SuppressWarnings("checkstyle:methodname")
     void deleteAllByProject_Id(Long projectId);
 
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     List<Test> findAllByProject_IdAndIdIn(Long projectId, List<Long> testIds);
 }

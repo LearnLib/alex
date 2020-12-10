@@ -18,62 +18,45 @@ package de.learnlib.alex.testing.services;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.dao.ProjectDAO;
-import de.learnlib.alex.data.dao.ProjectEnvironmentDAO;
-import de.learnlib.alex.data.entities.Project;
-import de.learnlib.alex.learning.services.connectors.PreparedConnectorContextHandlerFactory;
-import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.dao.TestReportDAO;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
+import de.learnlib.alex.testing.entities.TestProcessQueueItem;
 import de.learnlib.alex.testing.entities.TestQueueItem;
 import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.entities.TestStatus;
-import de.learnlib.alex.webhooks.services.WebhookService;
 import org.apache.shiro.authz.UnauthorizedException;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /** The service that executes tests. */
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class TestService {
 
-    /** Factory to create a new ContextHandler. */
-    private final PreparedConnectorContextHandlerFactory contextHandlerFactory;
+    private final ApplicationContext applicationContext;
+    private final TestReportDAO testReportDAO;
+    private final ProjectDAO projectDAO;
 
     /** The running testing threads (projectId -> TestThread). */
     private final Map<Long, TestThread> testThreads;
 
-    /** The {@link WebhookService} to use. */
-    private final WebhookService webhookService;
-
-    /** The {@link TestDAO} to use. */
-    private final TestDAO testDAO;
-
-    /** The {@link TestReportDAO} to use. */
-    private final TestReportDAO testReportDAO;
-
-    /** The {@link ProjectDAO} to use. */
-    private final ProjectDAO projectDAO;
-
-    private final ProjectEnvironmentDAO environmentDAO;
-
-    @Value("${alex.filesRootDir}")
-    private String filesRootDir;
-
-    @Inject
-    public TestService(PreparedConnectorContextHandlerFactory contextHandlerFactory, WebhookService webhookService,
-                       TestDAO testDAO, TestReportDAO testReportDAO, ProjectEnvironmentDAO environmentDAO,
-                       ProjectDAO projectDAO) {
-        this.contextHandlerFactory = contextHandlerFactory;
-        this.webhookService = webhookService;
-        this.testDAO = testDAO;
+    @Autowired
+    public TestService(
+            ApplicationContext applicationContext,
+            TestReportDAO testReportDAO,
+            ProjectDAO projectDAO
+    ) {
+        this.applicationContext = applicationContext;
         this.testReportDAO = testReportDAO;
-        this.testThreads = new HashMap<>();
         this.projectDAO = projectDAO;
-        this.environmentDAO = environmentDAO;
+
+        this.testThreads = new HashMap<>();
     }
 
     /**
@@ -81,29 +64,48 @@ public class TestService {
      *
      * @param user
      *         The user.
-     * @param project
-     *         The project.
+     * @param projectId
+     *         The ID of the project.
      * @param config
      *         The config for the tests.
      * @return A test status.
      */
-    public TestQueueItem start(User user, Project project, TestExecutionConfig config) {
-        final TestReport r = new TestReport();
+    public TestQueueItem start(User user, Long projectId, TestExecutionConfig config) {
+        final var project = projectDAO.getByID(user, projectId);
+
+        final var r = new TestReport();
         r.setEnvironment(config.getEnvironment());
+        r.setExecutedBy(user);
+        r.setProject(project);
+        r.setDescription(config.getDescription());
+
+        final var createdReport = testReportDAO.create(user, projectId, r);
+
+        final var item = new TestProcessQueueItem(
+                user.getId(),
+                project.getId(),
+                createdReport.getId(),
+                config
+        );
 
         if (testThreads.containsKey(project.getId())) {
-            final TestThread testThread = testThreads.get(project.getId());
-            return testThread.add(config);
+            final var testThread = testThreads.get(project.getId());
+            testThread.add(item);
         } else {
-            final TestThread testThread = new TestThread(user, project, webhookService, testDAO,
-                    testReportDAO, createTestExecutor(), () ->
-                this.testThreads.remove(project.getId())
-            );
+            final var testThread = applicationContext.getBean(TestThread.class);
+            testThread.onFinished(() -> this.testThreads.remove(project.getId()));
+
             this.testThreads.put(project.getId(), testThread);
-            final TestQueueItem testStatus = testThread.add(config);
+            testThread.add(item);
             testThread.start();
-            return testStatus;
         }
+
+        final var qi = new TestQueueItem();
+        qi.setConfig(config);
+        qi.setReport(createdReport);
+        qi.setResults(new HashMap<>());
+
+        return qi;
     }
 
     /**
@@ -111,17 +113,25 @@ public class TestService {
      *
      * @param user
      *         The user.
-     * @param project
-     *         The project.
+     * @param projectId
+     *         The ID of the project.
      * @return The status.
      */
-    public TestStatus getStatus(User user, Project project) {
-        final TestStatus status = new TestStatus();
-        projectDAO.checkAccess(user, project);
+    public TestStatus getStatus(User user, Long projectId) {
+        final var project = projectDAO.getByID(user, projectId);
+        final var status = new TestStatus();
 
         if (testThreads.containsKey(project.getId())) {
             final TestThread testThread = testThreads.get(project.getId());
-            status.setTestRunQueue(testThread.getTestQueue());
+            status.setTestRunQueue(testThread.getTestQueue().stream()
+                    .map(item -> {
+                        final var i = new TestQueueItem();
+                        i.setReport(testReportDAO.get(user, projectId, item.reportId));
+                        i.setConfig(item.config);
+                        return i;
+                    })
+                    .collect(Collectors.toList())
+            );
             status.setCurrentTestRun(testThread.getCurrentTest());
             status.setCurrentTest(testThread.getTestExecutor().getCurrentTest());
         }
@@ -129,22 +139,30 @@ public class TestService {
         return status;
     }
 
+    /**
+     * Abort the test process for a given report id.
+     *
+     * @param user
+     *          The user.
+     * @param projectId
+     *          The ID of the project.
+     * @param reportId
+     *          The ID of the report to abort.
+     */
     public void abort(User user, Long projectId, Long reportId) {
-        TestReport report = testReportDAO.get(user, projectId, reportId);
+        final var project = projectDAO.getByID(user, projectId);
+        final var report = testReportDAO.get(user, projectId, reportId);
 
-        if (projectDAO.getByID(user, projectId).getOwners().stream().map(User::getId).noneMatch(ownerId -> ownerId.equals(user.getId()))
-            && report.getExecutedBy() != null && !report.getExecutedBy().getId().equals(user.getId())
-        ) {
-            throw new UnauthorizedException("You are not allowed to abort this testrun.");
+        final var isOwner = project.getOwners().stream()
+                .anyMatch(u -> u.equals(user));
+
+        if (!isOwner && report.getExecutedBy() != null && !report.getExecutedBy().equals(user)) {
+            throw new UnauthorizedException("You are not allowed to abort this test run.");
         }
 
         if (testThreads.containsKey(projectId)) {
             final TestThread testThread = testThreads.get(projectId);
             testThread.abort(reportId);
         }
-    }
-
-    public TestExecutor createTestExecutor() {
-        return new TestExecutor(contextHandlerFactory, environmentDAO, filesRootDir);
     }
 }

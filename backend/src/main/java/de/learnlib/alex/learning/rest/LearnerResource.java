@@ -17,37 +17,22 @@
 package de.learnlib.alex.learning.rest;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.data.dao.ProjectDAO;
-import de.learnlib.alex.data.dao.SymbolDAO;
-import de.learnlib.alex.data.entities.ExecuteResult;
-import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
-import de.learnlib.alex.data.entities.Symbol;
-import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
-import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStatus;
-import de.learnlib.alex.learning.entities.ReadOutputConfig;
 import de.learnlib.alex.learning.entities.SeparatingWord;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.events.LearnerEvent;
-import de.learnlib.alex.learning.exceptions.LearnerException;
-import de.learnlib.alex.learning.repositories.LearnerResultRepository;
-import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;
 import de.learnlib.alex.learning.services.LearnerService;
 import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import net.automatalib.automata.transducers.impl.compact.CompactMealy;
-import net.automatalib.words.Alphabet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -58,46 +43,31 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * REST API to manage the learning.
  */
 @RestController
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 @RequestMapping("/rest/projects/{projectId}/learner")
 public class LearnerResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    /** The security context containing the user of the request. */
-    private AuthContext authContext;
-    private ProjectDAO projectDAO;
-    private SymbolDAO symbolDAO;
-    private LearnerResultDAO learnerResultDAO;
-    private LearnerResultStepRepository learnerResultStepRepository;
-    private LearnerResultRepository learnerResultRepository;
-    private LearnerService learnerService;
-    private WebhookService webhookService;
+    private final AuthContext authContext;
+    private final ProjectDAO projectDAO;
+    private final LearnerService learnerService;
+    private final WebhookService webhookService;
 
     @Autowired
     public LearnerResource(AuthContext authContext,
                            ProjectDAO projectDAO,
-                           SymbolDAO symbolDAO,
-                           LearnerResultDAO learnerResultDAO,
-                           LearnerResultStepRepository learnerResultStepRepository,
-                           LearnerResultRepository learnerResultRepository,
                            LearnerService learnerService,
-                           WebhookService webhookService) {
+                           WebhookService webhookService
+    ) {
         this.authContext = authContext;
         this.projectDAO = projectDAO;
-        this.symbolDAO = symbolDAO;
-        this.learnerResultDAO = learnerResultDAO;
-        this.learnerResultStepRepository = learnerResultStepRepository;
-        this.learnerResultRepository = learnerResultRepository;
         this.learnerService = learnerService;
         this.webhookService = webhookService;
     }
@@ -177,7 +147,7 @@ public class LearnerResource {
         final var user = authContext.getUser();
         LOGGER.traceEntry("stop() for user {}.", user);
 
-        learnerService.stop(user, projectId, testNo);
+        learnerService.abort(user, projectId, testNo);
         return ResponseEntity.ok().build();
     }
 
@@ -195,7 +165,7 @@ public class LearnerResource {
     public ResponseEntity<LearnerStatus> getStatus(@PathVariable("projectId") Long projectId) {
         final var user = authContext.getUser();
         LOGGER.traceEntry("getStatus() for user {}.", user);
-        final LearnerStatus status = learnerService.getStatus(projectId);
+        final LearnerStatus status = learnerService.getStatus(user, projectId);
         LOGGER.traceExit(status);
         return ResponseEntity.ok(status);
     }

@@ -49,7 +49,6 @@ import java.util.Objects;
         uniqueConstraints = @UniqueConstraint(columnNames = {"result_id", "stepNo"})
 )
 @JsonPropertyOrder(alphabetic = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class LearnerResultStep implements Serializable {
 
     private static final long serialVersionUID = -6932946318109366918L;
@@ -238,7 +237,7 @@ public class LearnerResultStep implements Serializable {
      *
      * @return More (internal) information of the algorithm as string.
      */
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(columnDefinition = "TEXT")
     public String getAlgorithmInformation() {
         return algorithmInformation;
     }

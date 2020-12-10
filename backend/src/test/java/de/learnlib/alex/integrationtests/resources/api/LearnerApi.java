@@ -44,7 +44,7 @@ public class LearnerApi extends AbstractApi {
     }
 
     public Response abort(Long projectId, Long testNo, String jwt) {
-        return client.target(url(projectId)+ "/" +  testNo + "/stop").request()
+        return client.target(url(projectId) + "/" + testNo + "/stop").request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .get();
     }

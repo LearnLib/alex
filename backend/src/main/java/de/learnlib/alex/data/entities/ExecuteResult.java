@@ -55,7 +55,7 @@ public class ExecuteResult implements Serializable {
     /** The output of the SUL. */
     private String message;
 
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(columnDefinition = "TEXT")
     private String trace;
 
     /** The time in ms it took to execute the step. */

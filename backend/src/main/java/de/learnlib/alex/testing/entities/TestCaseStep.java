@@ -73,7 +73,7 @@ public class TestCaseStep implements Serializable {
     private ParameterizedSymbol pSymbol;
 
     /** The expected result of the step in a natural language. */
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(columnDefinition = "TEXT")
     private String expectedResult;
 
     @NotNull

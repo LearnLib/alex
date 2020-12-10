@@ -20,7 +20,6 @@ import de.learnlib.alex.data.entities.Counter;
 import de.learnlib.alex.data.entities.Project;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -37,8 +36,6 @@ public interface CounterRepository extends JpaRepository<Counter, Long> {
      *         The ID the Project the Counter belongs to.
      * @return The Counters in the Project.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     List<Counter> findAllByProject(Project project);
 
     /**
@@ -48,8 +45,6 @@ public interface CounterRepository extends JpaRepository<Counter, Long> {
      *          The IDs of the counters.
      * @return The counters.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     List<Counter> findAllByIdIn(List<Long> ids);
 
     /**
@@ -61,8 +56,7 @@ public interface CounterRepository extends JpaRepository<Counter, Long> {
      *         The names of the Counter.
      * @return The Counter or null.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     Counter findByProjectAndName(Project project, String name);
 
+    Counter findByProject_IdAndName(Long projectId, String name);
 }

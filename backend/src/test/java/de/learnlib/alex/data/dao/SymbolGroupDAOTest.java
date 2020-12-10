@@ -35,9 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
@@ -95,7 +93,7 @@ public class SymbolGroupDAOTest {
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
         given(symbolGroupRepository.save(group)).willReturn(group);
 
-        symbolGroupDAO.create(user, group);
+        symbolGroupDAO.create(user, PROJECT_ID, group);
 
         verify(symbolGroupRepository).save(group);
     }
@@ -116,7 +114,7 @@ public class SymbolGroupDAOTest {
 
         List<SymbolGroup> allGroups = symbolGroupDAO.getAll(user, PROJECT_ID);
 
-        assertThat(allGroups.size(), is(equalTo(groups.size())));
+        assertEquals(groups.size(), allGroups.size());
         for (SymbolGroup g : allGroups) {
             assertTrue(groups.contains(g));
         }
@@ -150,7 +148,7 @@ public class SymbolGroupDAOTest {
 
         SymbolGroup g = symbolGroupDAO.get(user, PROJECT_ID, group.getId());
 
-        assertThat(g, is(equalTo(group)));
+        assertEquals(group, g);
     }
 
     @Test(expected = NotFoundException.class)

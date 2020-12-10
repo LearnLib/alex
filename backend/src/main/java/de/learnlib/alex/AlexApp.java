@@ -19,11 +19,13 @@ package de.learnlib.alex;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * The entry point to ALEX.
  */
-@SpringBootApplication()
+@SpringBootApplication
+@EnableTransactionManagement
 public class AlexApp extends SpringBootServletInitializer {
 
     /**

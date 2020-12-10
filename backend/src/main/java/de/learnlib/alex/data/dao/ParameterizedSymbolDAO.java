@@ -37,10 +37,10 @@ import java.util.stream.Collectors;
 @Transactional(rollbackFor = Exception.class)
 public class ParameterizedSymbolDAO {
 
-    private SymbolRepository symbolRepository;
-    private SymbolParameterValueRepository symbolParameterValueRepository;
-    private ParameterizedSymbolRepository parameterizedSymbolRepository;
-    private SymbolOutputMappingRepository symbolOutputMappingRepository;
+    private final SymbolRepository symbolRepository;
+    private final SymbolParameterValueRepository symbolParameterValueRepository;
+    private final ParameterizedSymbolRepository parameterizedSymbolRepository;
+    private final SymbolOutputMappingRepository symbolOutputMappingRepository;
 
     @Autowired
     public ParameterizedSymbolDAO(

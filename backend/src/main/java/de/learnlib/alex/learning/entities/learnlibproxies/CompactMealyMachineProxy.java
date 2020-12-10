@@ -28,7 +28,6 @@ import net.automatalib.words.impl.GrowingMapAlphabet;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 import java.io.IOException;
 import java.io.Serializable;
@@ -201,7 +200,7 @@ public class CompactMealyMachineProxy implements Serializable {
      *
      * @return The Edges of the machine as JSON string.
      */
-    @Column(name = "edges", columnDefinition = "MEDIUMTEXT")
+    @Column(name = "edges", columnDefinition = "TEXT")
     @JsonIgnore
     public String getEdgesDB() {
         try {

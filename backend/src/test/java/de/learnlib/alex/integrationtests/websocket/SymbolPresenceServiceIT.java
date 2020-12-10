@@ -94,7 +94,7 @@ public class SymbolPresenceServiceIT extends AbstractResourceIT {
         final Response res4 = symbolGroupApi.create(projectId1, "{\"name\":\"group2\", \"project\": " + projectId1 + ", \"parent\": " + symbolGroupId1 + "}", user1.getJwt());
         symbolGroupId2 = JsonPath.read(res4.readEntity(String.class), "id");
 
-        final Response res5 = symbolGroupApi.create(projectId2, "{\"name\":\"group3\", \"project\": " + projectId2 +  "}", user2.getJwt());
+        final Response res5 = symbolGroupApi.create(projectId2, "{\"name\":\"group3\", \"project\": " + projectId2 + "}", user2.getJwt());
         symbolGroupId3 = JsonPath.read(res5.readEntity(String.class), "id");
 
         final Response res6 = symbolApi.create(projectId1, "{\"name\":\"symbol1\", \"project\": " + projectId1 + ", \"group\": " + symbolGroupId1 + "}", user1.getJwt());

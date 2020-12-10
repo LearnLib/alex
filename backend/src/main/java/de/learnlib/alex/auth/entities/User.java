@@ -40,7 +40,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * The model for a user.
@@ -103,7 +102,7 @@ public class User implements Serializable {
         this.projectsOwner = new HashSet<>();
         this.projectsMember = new HashSet<>();
         this.webhooks = new ArrayList<>();
-        role = UserRole.REGISTERED;
+        this.role = UserRole.REGISTERED;
     }
 
     /**
@@ -112,126 +111,64 @@ public class User implements Serializable {
      * @param id The ID of the User.
      */
     public User(Long id) {
-        role = UserRole.REGISTERED;
+        this();
         this.id = id;
     }
 
-    /**
-     * @return The ID of the User in the DB.
-     */
     public Long getId() {
         return id;
     }
 
-    /**
-     * @param id The ID of the user.
-     */
     public void setId(Long id) {
         this.id = id;
     }
 
-    /**
-     * @return The current username of the user.
-     */
     public String getUsername() {
         return username;
     }
 
-    /**
-     * @param username The new username of the user.
-     */
     public void setUsername(String username) {
         this.username = username;
     }
 
-    /**
-     * @return The current EMail of the User.
-     */
     public String getEmail() {
         return email;
     }
 
-    /**
-     * @param email The new EMail of the User.
-     */
     public void setEmail(String email) {
         this.email = email;
     }
 
-    /**
-     * @return The current Role of the User.
-     */
     public UserRole getRole() {
         return role;
     }
 
-    /**
-     * @param role The new Role of the User.
-     */
     public void setRole(UserRole role) {
         this.role = role;
     }
 
-    /**
-     * @return The set of projects in which the user is an owner.
-     */
-    @JsonIgnore
     public Set<Project> getProjectsOwner() {
         return projectsOwner;
     }
 
-    /**
-     * @param projectsOwner The set of projects in which the user is an owner.
-     */
-    @JsonIgnore
     public void setProjectsOwner(Set<Project> projectsOwner) {
         this.projectsOwner = projectsOwner;
     }
 
-    /**
-     * @return The set of projects in which the user is a member.
-     */
-    @JsonIgnore
     public Set<Project> getProjectsMember() {
         return projectsMember;
     }
 
-    /**
-     * @param projectsMember The set of projects in which the user is a member.
-     */
-    @JsonIgnore
     public void setProjectsMember(Set<Project> projectsMember) {
         this.projectsMember = projectsMember;
     }
 
-    /**
-     * @return The list of ids of projects in which the user is a member.
-     */
-    @JsonIgnore
-    public List<Long> getProjectsMemberIds() {
-        return this.projectsMember.stream().map(Project::getId).collect(Collectors.toList());
-    }
-
-    /**
-     * @return The list of ids of projects in which the user is an owner.
-     */
-    @JsonIgnore
-    public List<Long> getProjectsOwnerIds() {
-        return this.projectsOwner.stream().map(Project::getId).collect(Collectors.toList());
-    }
-
-    /**
-     * @return The hashed password of the User.
-     */
     @JsonIgnore
     @JsonProperty("password")
     public String getPassword() {
         return password;
     }
 
-    /**
-     * @param password The new (already hashed) password of the User.
-     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -253,22 +190,16 @@ public class User implements Serializable {
      */
     @JsonIgnore
     public boolean isValidPassword(String plainPasswordToCheck) {
-        String hashedPassword = new Sha512Hash(plainPasswordToCheck, this.salt, HASH_ITERATIONS).toBase64();
+        final var hashedPassword = new Sha512Hash(plainPasswordToCheck, this.salt, HASH_ITERATIONS).toBase64();
         return hashedPassword.equals(this.password);
     }
 
-    /**
-     * @return The current salt to ahs the password of the user.
-     */
     @JsonIgnore
     @JsonProperty("salt")
     public String getSalt() {
         return salt;
     }
 
-    /**
-     * @param salt The new Salt to hash the password of the user.
-     */
     public void setSalt(String salt) {
         this.salt = salt;
     }
@@ -297,6 +228,11 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "<" + id + "> '" + email + "'";
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", role=" + role +
+                '}';
     }
 }

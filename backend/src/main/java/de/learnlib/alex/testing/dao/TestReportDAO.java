@@ -38,14 +38,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.zip.ZipEntry;
@@ -53,23 +54,14 @@ import java.util.zip.ZipOutputStream;
 
 /** The implementation of the test report DAO . */
 @Service
-@Transactional(rollbackOn = Exception.class)
+@Transactional(rollbackFor = Exception.class)
 public class TestReportDAO {
 
-    /** The test report repository. */
-    private TestReportRepository testReportRepository;
-
-    /** The test result repository. */
-    private TestResultRepository testResultRepository;
-
-    /** The project repository. */
-    private ProjectRepository projectRepository;
-
-    /** The project environment DAO. */
-    private ProjectEnvironmentDAO projectEnvironmentDAO;
-
-    /** The project DAO. */
-    private ProjectDAO projectDAO;
+    private final TestReportRepository testReportRepository;
+    private final TestResultRepository testResultRepository;
+    private final ProjectRepository projectRepository;
+    private final ProjectEnvironmentDAO projectEnvironmentDAO;
+    private final ProjectDAO projectDAO;
 
     @Value("${alex.filesRootDir}")
     private String filesRootDir;
@@ -94,7 +86,7 @@ public class TestReportDAO {
         this.testResultRepository = testResultRepository;
     }
 
-    public TestReport create(User user, Long projectId, TestReport testReport) throws NotFoundException {
+    public TestReport create(User user, Long projectId, TestReport testReport) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
@@ -106,7 +98,7 @@ public class TestReportDAO {
             testResult.setProject(project);
         });
 
-        final ProjectEnvironment env = projectEnvironmentDAO.getById(user, testReport.getEnvironment().getId());
+        final ProjectEnvironment env = projectEnvironmentDAO.getByID(user, testReport.getEnvironment().getId());
         testReport.setEnvironment(env);
 
         final TestReport createdTestReport = testReportRepository.save(testReport);
@@ -114,7 +106,15 @@ public class TestReportDAO {
         return createdTestReport;
     }
 
-    public Page<TestReport> getAll(User user, Long projectId, Pageable pageable) throws NotFoundException {
+    public List<TestReport> abortActiveTestReports() {
+        final List<TestReport> pendingReports = testReportRepository.findAllByStatusIn(
+                Arrays.asList(TestReport.Status.IN_PROGRESS, TestReport.Status.PENDING)
+        );
+        pendingReports.forEach(r -> r.setStatus(TestReport.Status.ABORTED));
+        return testReportRepository.saveAll(pendingReports);
+    }
+
+    public Page<TestReport> getAll(User user, Long projectId, Pageable pageable) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
@@ -123,7 +123,7 @@ public class TestReportDAO {
         return testReports;
     }
 
-    public TestReport get(User user, Long projectId, Long testReportId) throws NotFoundException {
+    public TestReport get(User user, Long projectId, Long testReportId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final TestReport testReport = testReportRepository.findById(testReportId).orElse(null);
         checkAccess(user, project, testReport);
@@ -132,7 +132,7 @@ public class TestReportDAO {
         return testReport;
     }
 
-    public TestReport getLatest(User user, Long projectId) throws NotFoundException {
+    public TestReport getLatest(User user, Long projectId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
@@ -145,7 +145,7 @@ public class TestReportDAO {
         }
     }
 
-    public TestReport update(User user, Long projectId, Long reportId, TestReport report) throws NotFoundException {
+    public TestReport update(User user, Long projectId, Long reportId, TestReport report) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final TestReport reportInDb = testReportRepository.findById(reportId).orElse(null);
         checkAccess(user, project, reportInDb);
@@ -160,7 +160,7 @@ public class TestReportDAO {
         return testReportRepository.save(reportInDb);
     }
 
-    public void delete(User user, Long projectId, Long testReportId) throws NotFoundException {
+    public void delete(User user, Long projectId, Long testReportId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final TestReport testReport = testReportRepository.findById(testReportId).orElse(null);
         checkAccess(user, project, testReport);
@@ -182,13 +182,13 @@ public class TestReportDAO {
         testReportRepository.delete(testReport);
     }
 
-    public void delete(User user, Long projectId, List<Long> testReportIds) throws NotFoundException {
+    public void delete(User user, Long projectId, List<Long> testReportIds) {
         for (Long id : testReportIds) {
             delete(user, projectId, id);
         }
     }
 
-    public File getScreenshot(User user, Long projectId, Long testReportId, String screenshotName) throws NotFoundException {
+    public File getScreenshot(User user, Long projectId, Long testReportId, String screenshotName) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final TestReport testReport = testReportRepository.findById(testReportId).orElse(null);
         checkAccess(user, project, testReport);
@@ -202,7 +202,7 @@ public class TestReportDAO {
         return screenshot;
     }
 
-    public byte[] getScreenshotsAsZip(User user, Long projectId, Long testReportId, Long resultId) throws NotFoundException, IOException {
+    public byte[] getScreenshotsAsZip(User user, Long projectId, Long testReportId, Long resultId) throws IOException {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final TestReport testReport = testReportRepository.findById(testReportId).orElse(null);
         checkAccess(user, project, testReport);
@@ -262,8 +262,28 @@ public class TestReportDAO {
         }
     }
 
-    public void checkAccess(User user, Project project, TestReport report)
-            throws NotFoundException, UnauthorizedException {
+    public TestReport updateStatus(Long reportId, TestReport.Status status) {
+        final var report = testReportRepository.findById(reportId)
+                .orElseThrow(() -> new NotFoundException("report not found."));
+
+        report.setStatus(status);
+
+        final var updatedReport = testReportRepository.save(report);
+        loadLazyRelations(updatedReport);
+
+        return updatedReport;
+    }
+
+    public TestReport getByID(Long reportId) {
+        final var report = testReportRepository.findById(reportId)
+                .orElseThrow(() -> new NotFoundException("report not found."));
+
+        loadLazyRelations(report);
+
+        return report;
+    }
+
+    public void checkAccess(User user, Project project, TestReport report) {
         projectDAO.checkAccess(user, project);
 
         if (report == null) {

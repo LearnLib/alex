@@ -32,11 +32,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static de.learnlib.alex.integrationtests.repositories.SymbolGroupRepositoryIT.createGroup;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class SymbolRepositoryIT extends AbstractRepositoryIT {
 
@@ -119,7 +117,7 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
 
         Symbol symbolFromDB = symbolRepository.findById(s1.getId()).orElse(null);
 
-        assertThat(symbolFromDB, is(equalTo(s1)));
+        assertEquals(s1, symbolFromDB);
     }
 
     @Test
@@ -134,9 +132,9 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
 
         List<Symbol> symbolsFromDB = symbolRepository.findAllByIdIn(Arrays.asList(s1.getId(), s2.getId()));
 
-        assertThat(symbolsFromDB.size(), is(equalTo(2)));
-        assertThat(symbolsFromDB, hasItem(equalTo(s1)));
-        assertThat(symbolsFromDB, hasItem(equalTo(s2)));
+        assertEquals(2, symbolsFromDB.size());
+        assertTrue(symbolsFromDB.contains(s1));
+        assertTrue(symbolsFromDB.contains(s2));
     }
 
     private Symbol createSymbol(Project project, SymbolGroup group, Long id, String name) {

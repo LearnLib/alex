@@ -45,18 +45,25 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(rollbackFor = Exception.class, readOnly = true)
 public class TestsExporter extends EntityExporter {
 
-    @Autowired
-    private TestDAO testDAO;
+    private final TestDAO testDAO;
+    private final TestRepository testRepository;
+    private final ProjectRepository projectRepository;
 
     @Autowired
-    private TestRepository testRepository;
+    public TestsExporter(
+            TestDAO testDAO,
+            TestRepository testRepository,
+            ProjectRepository projectRepository
+    ) {
+        super();
 
-    @Autowired
-    private ProjectRepository projectRepository;
+        this.testDAO = testDAO;
+        this.testRepository = testRepository;
+        this.projectRepository = projectRepository;
 
-    public TestsExporter() {
         om.addMixIn(Test.class, IgnoreFieldsForTestMixin.class);
         om.addMixIn(TestCaseStep.class, IgnoreIdFieldMixin.class);
         om.addMixIn(ParameterizedSymbol.class, IgnoreIdFieldMixin.class);
@@ -68,7 +75,6 @@ public class TestsExporter extends EntityExporter {
         om.registerModule(module);
     }
 
-    @Transactional
     public ExportableEntity export(User user, Long projectId, TestsExportConfig config) throws Exception {
         final Project project = projectRepository.findById(projectId).orElseThrow(() -> new NotFoundException("The project could not be found"));
 
@@ -82,7 +88,6 @@ public class TestsExporter extends EntityExporter {
         return exportableTests;
     }
 
-    @Transactional
     public ExportableEntity exportAll(User user, Long projectId) throws Exception {
         final Project project = projectRepository.findById(projectId).orElseThrow(() -> new NotFoundException("The project could not be found"));
         final TestSuite root = (TestSuite) testRepository.findFirstByProject_IdOrderByIdAsc(projectId);

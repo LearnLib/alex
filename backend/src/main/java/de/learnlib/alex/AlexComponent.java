@@ -19,17 +19,16 @@ package de.learnlib.alex;
 import de.learnlib.alex.auth.dao.UserDAO;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.entities.UserRole;
-import de.learnlib.alex.learning.entities.LearnerResult;
-import de.learnlib.alex.learning.repositories.LearnerResultRepository;
+import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.settings.dao.SettingsDAO;
 import de.learnlib.alex.settings.entities.DriverSettings;
 import de.learnlib.alex.settings.entities.Settings;
-import de.learnlib.alex.testing.entities.TestReport;
-import de.learnlib.alex.testing.repositories.TestReportRepository;
+import de.learnlib.alex.testing.dao.TestReportDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -39,10 +38,7 @@ import javax.validation.ValidationException;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
 
 @Component
 public class AlexComponent {
@@ -50,26 +46,27 @@ public class AlexComponent {
     private final Environment env;
     private final UserDAO userDAO;
     private final SettingsDAO settingsDAO;
-    private final TestReportRepository testReportRepository;
-    private final LearnerResultRepository learnerResultRepository;
+    private final TestReportDAO testReportDAO;
+    private final LearnerResultDAO learnerResultDAO;
 
     @Autowired
     public AlexComponent(Environment env,
                          UserDAO userDAO,
                          SettingsDAO settingsDAO,
-                         TestReportRepository testReportRepository,
-                         LearnerResultRepository learnerResultRepository) {
+                         TestReportDAO testReportDAO,
+                         LearnerResultDAO learnerResultDAO) {
         this.env = env;
         this.userDAO = userDAO;
         this.settingsDAO = settingsDAO;
-        this.testReportRepository = testReportRepository;
-        this.learnerResultRepository = learnerResultRepository;
+        this.testReportDAO = testReportDAO;
+        this.learnerResultDAO = learnerResultDAO;
     }
 
     /**
      * Create an admin at the start of th ALEX if no admin is currently in the DB.
      */
     @PostConstruct
+    @Transactional(rollbackFor = Exception.class)
     public void createDefaultAdmin() {
         if (userDAO.getAllByRole(UserRole.ADMIN).size() == 0) {
             User admin = new User();
@@ -82,21 +79,13 @@ public class AlexComponent {
     }
 
     @PostConstruct
-    public void abortPendingTestProcesses() {
-        final List<TestReport> pendingReports = testReportRepository.findAllByStatusIn(
-                Arrays.asList(TestReport.Status.IN_PROGRESS, TestReport.Status.PENDING)
-        );
-        pendingReports.forEach(r -> r.setStatus(TestReport.Status.ABORTED));
-        testReportRepository.saveAll(pendingReports);
+    public void abortActiveTestReports() {
+        testReportDAO.abortActiveTestReports();
     }
 
     @PostConstruct
-    public void abortPendingLearningProcesses() {
-        final List<LearnerResult> pendingLearnerProcesses = learnerResultRepository.findAllByStatusIn(
-                Arrays.asList(LearnerResult.Status.IN_PROGRESS, LearnerResult.Status.PENDING)
-        );
-        pendingLearnerProcesses.forEach(p -> p.setStatus(LearnerResult.Status.ABORTED));
-        learnerResultRepository.saveAll(pendingLearnerProcesses);
+    public void abortActiveLearnerResults() {
+        learnerResultDAO.abortActiveLearnerResults();
     }
 
     @PostConstruct
@@ -129,6 +118,7 @@ public class AlexComponent {
      * Initialize system properties and create the settings object if needed.
      */
     @PostConstruct
+    @Transactional
     public void initializeSettings() {
         var settings = settingsDAO.get();
 

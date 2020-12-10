@@ -19,7 +19,6 @@ package de.learnlib.alex.modelchecking.repositories;
 import de.learnlib.alex.modelchecking.entities.LtsFormula;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,9 +26,7 @@ import java.util.List;
 @Repository
 public interface LtsFormulaRepository extends JpaRepository<LtsFormula, Long> {
 
-    @Transactional(readOnly = true)
     List<LtsFormula> findAllBySuite_IdAndIdIn(Long suiteId, List<Long> formulaIds);
 
-    @Transactional(readOnly = true)
     List<LtsFormula> findAllByIdIn(List<Long> formulaIds);
 }
