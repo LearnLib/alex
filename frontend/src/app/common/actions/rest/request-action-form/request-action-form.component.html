@@ -45,62 +45,64 @@
   <input [(ngModel)]="action.timeout" class="form-control" min="0" placeholder="Timeout im ms" type="number">
 </div>
 
-<ngb-tabset>
-  <ngb-tab title="HTTP Headers">
-    <ng-template ngbTabContent>
+<nav ngbNav #nav="ngbNav" class="nav-tabs">
+  <ng-container ngbNavItem>
+    <a ngbNavLink>HTTP Headers</a>
+    <ng-template ngbNavContent>
       <br>
 
-        <form [formGroup]="headerForm" (submit)="addHeader(); $event.preventDefault()" class="d-flex flex-row">
-          <div class="form-group flex-grow-1">
-            <input
-              [formControl]="headerForm.controls.name"
-              [class.is-invalid]="formUtils.isInvalidFormControl(headerForm.controls.name)"
-              class="form-control"
-              placeholder="Header Name"
-              type="text"
-            >
-            <div class="invalid-feedback">
-              Add a header name.
-            </div>
+      <form [formGroup]="headerForm" (submit)="addHeader(); $event.preventDefault()" class="d-flex flex-row">
+        <div class="form-group flex-grow-1">
+          <input
+            [formControl]="headerForm.controls.name"
+            [class.is-invalid]="formUtils.isInvalidFormControl(headerForm.controls.name)"
+            class="form-control"
+            placeholder="Header Name"
+            type="text"
+          >
+          <div class="invalid-feedback">
+            Add a header name.
           </div>
-          <div class="form-group flex-grow-1 mx-2">
-            <input
-              [formControl]="headerForm.controls.value"
-              class="form-control"
-              placeholder="Header Value"
-              type="text"
-            >
-          </div>
-          <div>
-            <button class="btn btn-default" [disabled]="headerForm.invalid">
-              <i class="fas fa-fw fa-plus"></i>
-            </button>
-          </div>
-        </form>
+        </div>
+        <div class="form-group flex-grow-1 mx-2">
+          <input
+            [formControl]="headerForm.controls.value"
+            class="form-control"
+            placeholder="Header Value"
+            type="text"
+          >
+        </div>
+        <div>
+          <button class="btn btn-default" [disabled]="headerForm.invalid">
+            <i class="fas fa-fw fa-plus"></i>
+          </button>
+        </div>
+      </form>
 
-        <table class="table" *ngIf="action.hasHeaders()">
-          <thead>
-            <tr>
-              <th>Header</th>
-              <th>Value</th>
-              <th width="1">&nbsp;</th>
-            </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let i of action.headers | keyvalue">
-            <td><strong>{{i.key}}</strong></td>
-            <td>{{action.headers[i.key]}}</td>
-            <td>
-              <i (click)="action.removeHeader(i.key)" class="fas fa-trash fa-fw cursor-pointer"></i>
-            </td>
-          </tr>
-          </tbody>
-        </table>
+      <table class="table" *ngIf="action.hasHeaders()">
+        <thead>
+        <tr>
+          <th>Header</th>
+          <th>Value</th>
+          <th width="1">&nbsp;</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let i of action.headers | keyvalue">
+          <td><strong>{{i.key}}</strong></td>
+          <td>{{action.headers[i.key]}}</td>
+          <td>
+            <i (click)="action.removeHeader(i.key)" class="fas fa-trash fa-fw cursor-pointer"></i>
+          </td>
+        </tr>
+        </tbody>
+      </table>
 
     </ng-template>
-  </ngb-tab>
-  <ngb-tab title="Authentication">
-    <ng-template ngbTabContent>
+  </ng-container>
+  <ng-container ngbNavItem>
+    <a ngbNavLink>Authentication</a>
+    <ng-template ngbNavContent>
       <br>
 
       <div class="form-group">
@@ -113,9 +115,10 @@
       </div>
 
     </ng-template>
-  </ngb-tab>
-  <ngb-tab title="Cookies">
-    <ng-template ngbTabContent>
+  </ng-container>
+  <ng-container ngbNavItem>
+    <a ngbNavLink>Cookies</a>
+    <ng-template ngbNavContent>
 
       <br>
 
@@ -167,5 +170,7 @@
       </table>
 
     </ng-template>
-  </ngb-tab>
-</ngb-tabset>
+  </ng-container>
+</nav>
+
+<div [ngbNavOutlet]="nav"></div>

@@ -7,9 +7,10 @@
 
 <div class="modal-body">
 
-  <ngb-tabset [justify]="'fill'">
-    <ngb-tab title="Test run">
-      <ng-template ngbTabContent>
+  <nav ngbNav #nav="ngbNav" class="nav-tabs">
+    <ng-container ngbNavItem>
+      <a ngbNavLink>Test run</a>
+      <ng-template ngbNavContent>
         <br>
 
         <table class="table">
@@ -35,21 +36,25 @@
           </tr>
         </table>
       </ng-template>
-    </ngb-tab>
-    <ngb-tab title="Setup">
-      <ng-template ngbTabContent>
+    </ng-container>
+    <ng-container ngbNavItem>
+      <a ngbNavLink>Setup</a>
+      <ng-template ngbNavContent>
         <br>
 
         <learner-setup-table [setup]="result.setup"></learner-setup-table>
       </ng-template>
-    </ngb-tab>
-    <ngb-tab [title]="'Statistics' + (result.steps.length == 0 ? ' (n/a)' : '')" [disabled]="result.steps.length === 0">
-      <ng-template ngbTabContent>
+    </ng-container>
+    <ng-container ngbNavItem [disabled]="result.steps.length === 0">
+      <a ngbNavLink>{{'Statistics' + (result.steps.length == 0 ? ' (n/a)' : '')}}</a>
+      <ng-template ngbNavContent>
         <br>
 
-        <ngb-tabset [justify]="'fill'">
-          <ngb-tab *ngFor="let tab of tabs" [title]="tab.heading">
-            <ng-template ngbTabContent>
+        <nav ngbNav #navInner="ngbNav" class="nav-tabs">
+          <ng-container ngbNavItem *ngFor="let tab of tabs">
+            <a ngbNavLink>{{tab.heading}}</a>
+            <ng-template ngbNavContent>
+              <br>
 
               <table class="table">
 
@@ -91,13 +96,17 @@
                 </tr>
 
               </table>
-
             </ng-template>
-          </ngb-tab>
-        </ngb-tabset>
+          </ng-container>
+        </nav>
+
+        <div [ngbNavOutlet]="navInner"></div>
+
       </ng-template>
-    </ngb-tab>
-  </ngb-tabset>
+    </ng-container>
+  </nav>
+
+  <div [ngbNavOutlet]="nav"></div>
 
 </div>
 

@@ -8,9 +8,11 @@
   </a>
 </div>
 <div class="modal-body">
-  <ngb-tabset>
-    <ngb-tab title="From project">
-      <ng-template ngbTabContent>
+
+  <nav ngbNav #nav="ngbNav" class="nav-tabs">
+    <ng-container ngbNavItem>
+      <a ngbNavLink>From project</a>
+      <ng-template ngbNavContent>
         <br>
 
         <div *ngIf="results">
@@ -40,17 +42,20 @@
           </a>
         </div>
       </ng-template>
-    </ngb-tab>
-    <ngb-tab title="From file" *ngIf="allowFromFile">
-      <ng-template ngbTabContent>
+    </ng-container>
+    <ng-container ngbNavItem *ngIf="allowFromFile">
+      <a ngbNavLink>From file</a>
+      <ng-template ngbNavContent>
         <br>
 
         <file-dropzone (loaded)="loadResultFromFile($event)">
           Drag and drop *.json file here or click to upload.
         </file-dropzone>
       </ng-template>
-    </ngb-tab>
-  </ngb-tabset>
+    </ng-container>
+  </nav>
+
+  <div [ngbNavOutlet]="nav"></div>
 
 </div>
 <div class="modal-footer">

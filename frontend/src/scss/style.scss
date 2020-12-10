@@ -178,14 +178,6 @@ create-action-modal ngb-accordion .card-body {
   padding: 0;
 }
 
-
-learner-results-compare-view ngb-tabset {
-  .tab-content,
-  .tab-pane {
-    height: 100%;
-  }
-}
-
 a.disabled {
   pointer-events: none;
   cursor: default;

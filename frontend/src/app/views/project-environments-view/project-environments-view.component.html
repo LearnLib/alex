@@ -68,10 +68,11 @@
         </div>
         <div class="card-body">
 
-          <ngb-tabset>
-            <ngb-tab title="URLs">
-              <ng-template ngbTabContent>
-                <p></p>
+          <nav ngbNav #nav="ngbNav" class="nav-tabs">
+            <ng-container ngbNavItem>
+              <a ngbNavLink>URLs</a>
+              <ng-template ngbNavContent>
+                <br>
 
                 <table class="table mb-0">
                   <thead class="bg-light">
@@ -115,10 +116,11 @@
                   </tbody>
                 </table>
               </ng-template>
-            </ngb-tab>
-            <ngb-tab title="Variables">
-              <ng-template ngbTabContent>
-                <p></p>
+            </ng-container>
+            <ng-container ngbNavItem>
+              <a ngbNavLink>Variables</a>
+              <ng-template ngbNavContent>
+                <br>
 
                 <div *ngIf="env.variables.length === 0" class="alert alert-info mb-0">
                   No environment variables have been defined yet.
@@ -154,9 +156,10 @@
                   </tbody>
                 </table>
               </ng-template>
-            </ngb-tab>
-          </ngb-tabset>
+            </ng-container>
+          </nav>
 
+          <div [ngbNavOutlet]="nav"></div>
         </div>
       </div>
 

@@ -33,7 +33,7 @@ import { SettingsApiService } from '../../services/api/settings-api.service';
 })
 export class RootViewComponent implements OnInit {
 
-  @ViewChild('userLoginTabset', {static: false}) tabset;
+  @ViewChild('nav', {static: false}) tabset;
 
   credentials: any;
 
