@@ -25,8 +25,8 @@ import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import javax.validation.ValidationException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,13 +35,13 @@ import java.util.stream.Collectors;
  * The implementation of the {@link WebhookDAO}.
  */
 @Service
-@Transactional(rollbackOn = Exception.class)
+@Transactional(rollbackFor = Exception.class)
 public class WebhookDAO {
 
     /**
      * The repository for webhooks.
      */
-    private WebhookRepository webhookRepository;
+    private final WebhookRepository webhookRepository;
 
     /**
      * Constructor.
@@ -53,7 +53,7 @@ public class WebhookDAO {
         this.webhookRepository = webhookRepository;
     }
 
-    public Webhook create(User user, Webhook webhook) throws ValidationException {
+    public Webhook create(User user, Webhook webhook) {
         if (webhookRepository.findByUser_IdAndUrl(user.getId(), webhook.getUrl()) != null) {
             throw new ValidationException("A webhook under the given URL is already registered. "
                     + "Update the existing one instead.");
@@ -83,19 +83,19 @@ public class WebhookDAO {
         return webhooks;
     }
 
-    public void delete(User user, Long id) throws NotFoundException {
+    public void delete(User user, Long id) {
         final Webhook webhook = webhookRepository.findById(id).orElse(null);
         checkAccess(user, webhook);
         webhookRepository.delete(webhook);
     }
 
-    public void delete(User user, List<Long> ids) throws NotFoundException {
+    public void delete(User user, List<Long> ids) {
         for (Long id : ids) {
             delete(user, id);
         }
     }
 
-    public Webhook update(User user, Long webhookId, Webhook webhook) throws NotFoundException, ValidationException {
+    public Webhook update(User user, Long webhookId, Webhook webhook) {
         final Webhook webhookInDb = webhookRepository.findById(webhookId).orElse(null);
         checkAccess(user, webhookInDb);
 
@@ -112,7 +112,7 @@ public class WebhookDAO {
         return webhookRepository.save(webhookInDb);
     }
 
-    public void checkAccess(User user, Webhook webhook) throws NotFoundException, UnauthorizedException {
+    public void checkAccess(User user, Webhook webhook) {
         if (webhook == null) {
             throw new NotFoundException("The webhook does not exist.");
         }

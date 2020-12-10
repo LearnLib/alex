@@ -45,9 +45,9 @@ import static org.mockito.Mockito.verify;
 
 public class SetVariableByCookieActionTest {
 
-    private static final String VARIABLE_NAME  = "foobar";
+    private static final String VARIABLE_NAME = "foobar";
 
-    private static final String COOKIE_NAME  = "cookie";
+    private static final String COOKIE_NAME = "cookie";
     private static final String COOKIE_VALUE = "hello world";
 
     private SetVariableByCookieAction setAction;

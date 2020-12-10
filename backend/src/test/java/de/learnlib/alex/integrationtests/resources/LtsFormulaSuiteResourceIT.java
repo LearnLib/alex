@@ -137,7 +137,7 @@ public class LtsFormulaSuiteResourceIT extends AbstractResourceIT {
         assertEquals(HttpStatus.OK.value(), res.getStatus());
 
         final LtsFormulaSuite updatedSuite = res.readEntity(LtsFormulaSuite.class);
-        assertFormulaSuite(updatedSuite,"updatedName", 0);
+        assertFormulaSuite(updatedSuite, "updatedName", 0);
     }
 
     @Test
@@ -181,7 +181,8 @@ public class LtsFormulaSuiteResourceIT extends AbstractResourceIT {
 
     private int getNumberOfFormulaSuites(Long projectId, String jwt) {
         return formulaSuiteApi.getAll(projectId, jwt)
-                .readEntity(new GenericType<List<LtsFormulaSuite>>() {})
+                .readEntity(new GenericType<List<LtsFormulaSuite>>() {
+                })
                 .size();
     }
 }

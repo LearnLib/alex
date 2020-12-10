@@ -24,15 +24,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.transaction.TransactionSystemException;
 
 import javax.inject.Inject;
+import javax.validation.ValidationException;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
@@ -72,7 +70,7 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
         symbolGroupRepository.save(group); // should fail
     }
 
-    @Test(expected = TransactionSystemException.class)
+    @Test(expected = ValidationException.class)
     public void shouldFailToSaveAGroupWithoutAName() {
         SymbolGroup group = new SymbolGroup();
         group.setProject(project);
@@ -118,9 +116,9 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
 
         List<SymbolGroup> groups = symbolGroupRepository.findAllByProject_Id(project.getId());
 
-        assertThat(groups.size(), is(equalTo(3))); // our 2 + 1 default group
-        assertThat(groups, hasItem(equalTo(group1)));
-        assertThat(groups, hasItem(equalTo(group2)));
+        assertEquals(3, groups.size());
+        assertTrue(groups.contains(group1));
+        assertTrue(groups.contains(group2));
     }
 
     @Test
@@ -130,8 +128,9 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
 
         SymbolGroup groupFromDB = symbolGroupRepository.findById(group.getId()).orElse(null);
 
-        assertThat(groupFromDB.getProject(), is(equalTo(project)));
-        assertThat(groupFromDB.getId(), is(equalTo(group.getId())));
+        assertNotNull(groupFromDB.getProject());
+        assertEquals(project, groupFromDB.getProject());
+        assertEquals(group.getId(), groupFromDB.getId());
     }
 
     @Test
@@ -141,7 +140,7 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
 
         symbolGroupRepository.delete(group);
 
-        assertThat(symbolGroupRepository.count(), is(equalTo(1L))); // only default group left
+        assertEquals(1L, symbolGroupRepository.count()); // only default group left
     }
 
     @Test(expected = EmptyResultDataAccessException.class)

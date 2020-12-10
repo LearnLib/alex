@@ -19,7 +19,6 @@ package de.learnlib.alex.data.repositories;
 import de.learnlib.alex.data.entities.Symbol;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -29,18 +28,11 @@ import java.util.List;
 @Repository
 public interface SymbolRepository extends JpaRepository<Symbol, Long> {
 
-    @Transactional(readOnly = true)
     List<Symbol> findAllByIdIn(List<Long> ids);
 
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     List<Symbol> findAllByProject_idAndIdIn(Long projectId, List<Long> ids);
 
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     Symbol findOneByProject_IdAndName(Long projectId, String name);
 
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     List<Symbol> findAllByProject_Id(Long projectId);
 }

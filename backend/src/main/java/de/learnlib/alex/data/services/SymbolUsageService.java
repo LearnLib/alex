@@ -28,10 +28,10 @@ import de.learnlib.alex.learning.repositories.LearnerSetupRepository;
 import de.learnlib.alex.testing.entities.TestCase;
 import de.learnlib.alex.testing.entities.TestCaseStep;
 import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -39,19 +39,21 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional(rollbackFor = Exception.class, readOnly = true)
 public class SymbolUsageService {
 
-    private SymbolDAO symbolDAO;
-    private SymbolPSymbolStepRepository symbolPSymbolStepRepository;
-    private TestCaseStepRepository testCaseStepRepository;
-    private LearnerSetupRepository learnerSetupRepository;
+    private final SymbolDAO symbolDAO;
+    private final SymbolPSymbolStepRepository symbolPSymbolStepRepository;
+    private final TestCaseStepRepository testCaseStepRepository;
+    private final LearnerSetupRepository learnerSetupRepository;
 
-    @Inject
-    public SymbolUsageService(SymbolDAO symbolDAO,
-                              SymbolPSymbolStepRepository symbolPSymbolStepRepository,
-                              TestCaseStepRepository testCaseStepRepository,
-                              LearnerSetupRepository learnerSetupRepository) {
+    @Autowired
+    public SymbolUsageService(
+            SymbolDAO symbolDAO,
+            SymbolPSymbolStepRepository symbolPSymbolStepRepository,
+            TestCaseStepRepository testCaseStepRepository,
+            LearnerSetupRepository learnerSetupRepository
+    ) {
         this.symbolDAO = symbolDAO;
         this.symbolPSymbolStepRepository = symbolPSymbolStepRepository;
         this.testCaseStepRepository = testCaseStepRepository;

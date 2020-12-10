@@ -16,13 +16,14 @@
 
 package de.learnlib.alex.testing.services;
 
+import de.learnlib.alex.auth.dao.UserDAO;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.utils.LoggerMarkers;
+import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.dao.TestReportDAO;
-import de.learnlib.alex.testing.entities.Test;
-import de.learnlib.alex.testing.entities.TestExecutionConfig;
+import de.learnlib.alex.testing.entities.TestProcessQueueItem;
 import de.learnlib.alex.testing.entities.TestQueueItem;
 import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.entities.TestResult;
@@ -32,9 +33,16 @@ import de.learnlib.alex.webhooks.services.WebhookService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -42,111 +50,122 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 /**
  * The thread that executes tests. There should ever only be one test per project.
  */
+@Service
+@Scope("prototype")
 public class TestThread extends Thread {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
     /** Listener for when the test process finished. */
     public interface FinishedListener {
-
         /** What to do when the test process finished. */
         void handleFinished();
+
+
     }
 
-    /** The user that executes the tests. */
-    private final User user;
-
-    /** The project that is used. */
-    private final Project project;
-
-    /** The {@link WebhookService} to use. */
     private final WebhookService webhookService;
-
-    /** The {@link TestDAO} to use. */
     private final TestDAO testDAO;
-
-    /** The {@link TestReportDAO} to use. */
     private final TestReportDAO testReportDAO;
+    private final ProjectDAO projectDAO;
+    private final UserDAO userDAO;
+    private final TransactionTemplate transactionTemplate;
+
+    /** The finished listener. */
+    private FinishedListener finishedListener;
+    public void onFinished(FinishedListener listener) {
+        this.finishedListener = listener;
+    }
 
     private final TestExecutor testExecutor;
 
-    /** The finished listener. */
-    private final FinishedListener finishedListener;
+    /** The user that executes the tests. */
+    private User user;
+
+    /** The project that is used. */
+    private Project project;
+
+    /** The current test report. */
+    private TestReport report;
 
     /** The queue of tests to execute. */
-    private final Deque<TestQueueItem> testQueue = new ConcurrentLinkedDeque<>();
+    private final Deque<TestProcessQueueItem> testProcessQueue = new ConcurrentLinkedDeque<>();
 
-    private TestQueueItem currentTest;
+    /** The current test process queue item. */
+    private TestProcessQueueItem currentTestProcessQueueItem;
 
-    /**
-     * Constructor.
-     *
-     * @param user
-     *         {@link #user}.
-     * @param project
-     *         {@link #project}..
-     * @param webhookService
-     *         {@link #webhookService}.
-     * @param testDAO
-     *         {@link #testDAO}.
-     * @param testReportDAO
-     *         {@link #testReportDAO}.
-     * @param finishedListener
-     *         {@link #finishedListener}.
-     */
-    public TestThread(User user, Project project, WebhookService webhookService,
-                      TestDAO testDAO, TestReportDAO testReportDAO, TestExecutor testExecutor,
-                      FinishedListener finishedListener) {
-        this.user = user;
-        this.project = project;
+    /** Test results of the current test process. */
+    final Map<Long, TestResult> results = new HashMap<>();
+
+    @Autowired
+    public TestThread(
+            WebhookService webhookService,
+            TestDAO testDAO,
+            TestReportDAO testReportDAO,
+            ProjectDAO projectDAO,
+            UserDAO userDAO,
+            TransactionTemplate transactionTemplate,
+            ApplicationContext applicationContext
+    ) {
         this.webhookService = webhookService;
         this.testDAO = testDAO;
         this.testReportDAO = testReportDAO;
-        this.finishedListener = finishedListener;
-        this.testExecutor = testExecutor;
+        this.projectDAO = projectDAO;
+        this.userDAO = userDAO;
+        this.transactionTemplate = transactionTemplate;
+
+        this.testExecutor = applicationContext.getBean(TestExecutor.class);
     }
 
     @Override
     public void run() {
-        ThreadContext.put("userId", String.valueOf(user.getId()));
+        while (!testProcessQueue.isEmpty()) {
+            currentTestProcessQueueItem = testProcessQueue.poll();
+            results.clear();
 
-        while (!testQueue.isEmpty()) {
-            currentTest = testQueue.poll();
-            if (currentTest.getReport().getStatus().equals(TestReport.Status.ABORTED)) {
-                testReportDAO.update(user, project.getId(), currentTest.getReport().getId(), currentTest.getReport());
+            transactionTemplate.execute((t) -> {
+                user = userDAO.getByID(currentTestProcessQueueItem.userId);
+                project = projectDAO.getByID(user, currentTestProcessQueueItem.projectId);
+                report = testReportDAO.get(user, project.getId(), currentTestProcessQueueItem.reportId);
+                return null;
+            });
+
+            if (report.getStatus().equals(TestReport.Status.ABORTED)) {
                 continue;
             }
 
-            final TestExecutionConfig config = currentTest.getConfig();
-            final Map<Long, TestResult> results = currentTest.getResults();
-            TestReport report = currentTest.getReport();
-
             try {
-                final List<Test> tests = testDAO.get(user, project.getId(), config.getTestIds());
+                ThreadContext.put("userId", String.valueOf(user.getId()));
 
-                report.setStatus(TestReport.Status.IN_PROGRESS);
-                report = testReportDAO.update(user, project.getId(), report.getId(), report);
-
+                final var config = currentTestProcessQueueItem.config;
                 LOGGER.info(LoggerMarkers.LEARNER, "Start executing tests: {}", config.getTestIds());
+
+                report = testReportDAO.updateStatus(report.getId(), TestReport.Status.IN_PROGRESS);
 
                 // do not fire the event if the test is only called for testing purposes.
                 final TestExecutionStartedEventData data = new TestExecutionStartedEventData(project.getId(), config);
                 webhookService.fireEvent(user, new TestEvent.ExecutionStarted(data));
 
-                testExecutor.executeTests(user, tests, config, results);
-                report.setTestResults(new ArrayList<>(results.values()));
+                final var testsToExecute = testDAO.get(user, project.getId(), config.getTestIds());
+                testExecutor.executeTests(user, testsToExecute, config, results);
 
-                if (!report.getStatus().equals(TestReport.Status.ABORTED)) {
-                    report.setStatus(TestReport.Status.FINISHED);
-                }
+                transactionTemplate.execute((t) -> {
+                    report = testReportDAO.getByID(report.getId());
+                    report.setTestResults(new ArrayList<>(results.values()));
+                    if (!report.getStatus().equals(TestReport.Status.ABORTED)) {
+                        report.setStatus(TestReport.Status.FINISHED);
+                    }
 
-                report = testReportDAO.update(user, project.getId(), report.getId(), report);
+                    testReportDAO.update(user, project.getId(), report.getId(), report);
+
+                    return null;
+                });
+
                 webhookService.fireEvent(user, new TestEvent.ExecutionFinished(report));
 
                 LOGGER.info(LoggerMarkers.LEARNER, "Successfully executed tests");
             } catch (Exception e) {
-                report.setStatus(TestReport.Status.ABORTED);
-                testReportDAO.update(user, project.getId(), report.getId(), report);
+                testReportDAO.updateStatus(report.getId(), TestReport.Status.ABORTED);
 
                 LOGGER.info(LoggerMarkers.LEARNER, "Could not execute all tests", e);
                 e.printStackTrace();
@@ -154,57 +173,52 @@ public class TestThread extends Thread {
         }
 
         finishedListener.handleFinished();
-        testQueue.clear();
-        this.currentTest = null;
+        testProcessQueue.clear();
 
         LOGGER.info(LoggerMarkers.LEARNER, "Finished testing");
         ThreadContext.remove("userId");
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void abort(Long reportId) {
-        if (currentTest == null && this.testQueue.isEmpty()) {
-            return;
-        }
-
-        if (currentTest.getReport().getId().equals(reportId)) {
-            currentTest.getReport().setStatus(TestReport.Status.ABORTED);
-            testExecutor.abort();
-        } else {
-            this.testQueue.forEach(item -> {
-                if (item.getReport().getId().equals(reportId)) {
-                    item.getReport().setStatus(TestReport.Status.ABORTED);
+        if (report != null) {
+            if (report.getId().equals(reportId)) {
+                report = testReportDAO.updateStatus(reportId, TestReport.Status.ABORTED);
+                testExecutor.abort();
+            } else {
+                for (var item: testProcessQueue) {
+                    if (item.reportId.equals(reportId)) {
+                        testReportDAO.updateStatus(item.reportId, TestReport.Status.ABORTED);
+                    }
                 }
-            });
+            }
         }
     }
 
     /**
      * Add a test configuration to the queue.
      *
-     * @param config
+     * @param item
      *         The test configuration to add to the queue.
      */
-    public TestQueueItem add(TestExecutionConfig config) {
-        final TestReport report = new TestReport();
-        report.setProject(project);
-        report.setEnvironment(config.getEnvironment());
-        report.setDescription(config.getDescription());
-
-        final TestQueueItem queueItem = new TestQueueItem(
-                testReportDAO.create(user, project.getId(), report),
-                config
-        );
-
-        this.testQueue.addLast(queueItem);
-        return queueItem;
+    public void add(TestProcessQueueItem item) {
+        this.testProcessQueue.addLast(item);
     }
 
-    public List<TestQueueItem> getTestQueue() {
-        return new ArrayList<>(testQueue);
+    public List<TestProcessQueueItem> getTestQueue() {
+        return new ArrayList<>(testProcessQueue);
     }
 
     public TestQueueItem getCurrentTest() {
-        return currentTest;
+        if (report != null) {
+            final var item = new TestQueueItem();
+            item.setConfig(currentTestProcessQueueItem.config);
+            item.setResults(results);
+            item.setReport(report);
+            return item;
+        }
+
+        return null;
     }
 
     public TestExecutor getTestExecutor() {

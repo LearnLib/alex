@@ -49,18 +49,9 @@ public class TestReportResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    /** The security context containing the user of the request. */
-    private AuthContext authContext;
+    private final AuthContext authContext;
+    private final TestReportDAO testReportDAO;
 
-    /** The test report DAO. */
-    private TestReportDAO testReportDAO;
-
-    /**
-     * Constructor.
-     *
-     * @param testReportDAO
-     *         {@link #testReportDAO}
-     */
     @Autowired
     public TestReportResource(AuthContext authContext, TestReportDAO testReportDAO) {
         this.authContext = authContext;

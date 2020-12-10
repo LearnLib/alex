@@ -45,14 +45,12 @@ public class SymbolParameterResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    /** The security context containing the user of the request. */
-    private AuthContext authContext;
-
-    /** The {@link SymbolParameterDAO} to use. */
-    private SymbolParameterDAO symbolParameterDAO;
+    private final AuthContext authContext;
+    private final SymbolParameterDAO symbolParameterDAO;
 
     @Autowired
-    public SymbolParameterResource(AuthContext authContext, SymbolParameterDAO symbolParameterDAO) {
+    public SymbolParameterResource(AuthContext authContext,
+                                   SymbolParameterDAO symbolParameterDAO) {
         this.authContext = authContext;
         this.symbolParameterDAO = symbolParameterDAO;
     }
@@ -72,10 +70,11 @@ public class SymbolParameterResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity create(@PathVariable("projectId") Long projectId,
-                                 @PathVariable("symbolId") Long symbolId,
-                                 @RequestBody SymbolParameter parameter) {
-
+    public ResponseEntity<SymbolParameter> create(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("symbolId") Long symbolId,
+            @RequestBody SymbolParameter parameter
+    ) {
         final User user = authContext.getUser();
         LOGGER.traceEntry("create({}, {}, {}) for user {}.", projectId, symbolId, parameter, user);
 
@@ -99,10 +98,11 @@ public class SymbolParameterResource {
             value = "/{parameterId}",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity delete(@PathVariable("projectId") Long projectId,
-                                 @PathVariable("symbolId") Long symbolId,
-                                 @PathVariable("parameterId") Long parameterId) {
-
+    public ResponseEntity<?> delete(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("symbolId") Long symbolId,
+            @PathVariable("parameterId") Long parameterId
+    ) {
         final User user = authContext.getUser();
         LOGGER.traceEntry("delete({}, {}, {}) for user {}.", projectId, symbolId, parameterId, user);
 
@@ -129,11 +129,12 @@ public class SymbolParameterResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity update(@PathVariable("projectId") Long projectId,
-                                 @PathVariable("symbolId") Long symbolId,
-                                 @PathVariable("parameterId") Long parameterId,
-                                 @RequestBody SymbolParameter parameter) {
-
+    public ResponseEntity<SymbolParameter> update(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("symbolId") Long symbolId,
+            @PathVariable("parameterId") Long parameterId,
+            @RequestBody SymbolParameter parameter
+    ) {
         final User user = authContext.getUser();
         LOGGER.traceEntry("update({}, {}, {}, {}) for user {}.", projectId, symbolId, parameterId, parameter, user);
 

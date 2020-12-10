@@ -19,7 +19,6 @@ package de.learnlib.alex.data.repositories;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -36,8 +35,6 @@ public interface ParameterizedSymbolRepository extends JpaRepository<Parameteriz
      *         The ID of the symbol.
      * @return The parameterized symbols.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     List<ParameterizedSymbol> findAllBySymbol_Id(Long symbolId);
 
     /**
@@ -47,8 +44,6 @@ public interface ParameterizedSymbolRepository extends JpaRepository<Parameteriz
      *         The ID of the symbol.
      * @return The count.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     Long countAllBySymbol_Id(Long symbolId);
 
     /**
@@ -58,7 +53,5 @@ public interface ParameterizedSymbolRepository extends JpaRepository<Parameteriz
      *         The ID of the project.
      * @return The number of deleted parameterized symbols.
      */
-    @Transactional
-    @SuppressWarnings("checkstyle:methodname")
     Long deleteAllBySymbol_Project_Id(Long projectId);
 }

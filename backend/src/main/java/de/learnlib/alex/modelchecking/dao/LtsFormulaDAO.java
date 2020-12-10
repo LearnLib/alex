@@ -27,12 +27,12 @@ import net.automatalib.modelcheckers.ltsmin.LTSminLTLParser;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
-@Transactional(rollbackOn = Exception.class)
+@Transactional(rollbackFor = Exception.class)
 public class LtsFormulaDAO {
 
     private final LtsFormulaRepository ltsFormulaRepository;
@@ -48,7 +48,7 @@ public class LtsFormulaDAO {
         this.projectRepository = projectRepository;
     }
 
-    public LtsFormula create(User user, Long projectId, Long suiteId, LtsFormula formula) throws NotFoundException {
+    public LtsFormula create(User user, Long projectId, Long suiteId, LtsFormula formula) {
         LTSminLTLParser.requireValidIOFormula(formula.getFormula());
 
         final LtsFormulaSuite suite = ltsFormulaSuiteDAO.get(user, projectId, suiteId);
@@ -73,7 +73,7 @@ public class LtsFormulaDAO {
         return formulas;
     }
 
-    public LtsFormula update(User user, Long projectId, Long suiteId, LtsFormula formula) throws NotFoundException {
+    public LtsFormula update(User user, Long projectId, Long suiteId, LtsFormula formula) {
         LTSminLTLParser.requireValidIOFormula(formula.getFormula());
 
         final LtsFormulaSuite suite = ltsFormulaSuiteDAO.get(user, projectId, suiteId);
@@ -99,7 +99,7 @@ public class LtsFormulaDAO {
         return ltsFormulaRepository.saveAll(formulas);
     }
 
-    public void delete(User user, Long projectId, Long suiteId, Long formulaId) throws NotFoundException {
+    public void delete(User user, Long projectId, Long suiteId, Long formulaId) {
         final LtsFormulaSuite suite = ltsFormulaSuiteDAO.get(user, projectId, suiteId);
         final LtsFormula formula = ltsFormulaRepository.findById(formulaId).orElse(null);
         checkAccess(user, suite.getProject(), suite, formula);
@@ -107,13 +107,13 @@ public class LtsFormulaDAO {
         ltsFormulaRepository.deleteById(formulaId);
     }
 
-    public void delete(User user, Long projectId, Long suiteId, List<Long> formulaIds) throws NotFoundException {
+    public void delete(User user, Long projectId, Long suiteId, List<Long> formulaIds) {
         for (final Long id : formulaIds) {
             delete(user, projectId, suiteId, id);
         }
     }
 
-    public void checkAccess(User user, Project project, LtsFormulaSuite suite, LtsFormula formula) throws NotFoundException {
+    public void checkAccess(User user, Project project, LtsFormulaSuite suite, LtsFormula formula) {
         ltsFormulaSuiteDAO.checkAccess(user, project, suite);
 
         if (formula == null) {

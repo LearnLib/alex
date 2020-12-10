@@ -22,9 +22,8 @@ import de.learnlib.alex.data.dao.FileDAO;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.learning.entities.WebDriverConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.inject.Inject;
 
 /**
  * Factor to create a ContextHandler which knows all available connectors.
@@ -46,7 +45,7 @@ public class PreparedConnectorContextHandlerFactory {
      * @param fileDAO
      *         {@link FileDAO}.
      */
-    @Inject
+    @Autowired
     public PreparedConnectorContextHandlerFactory(CounterDAO counterDAO, FileDAO fileDAO) {
         this.counterDAO = counterDAO;
         this.fileDAO = fileDAO;

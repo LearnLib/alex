@@ -41,7 +41,7 @@ import static org.mockito.Mockito.mock;
 @RunWith(MockitoJUnitRunner.class)
 public class CheckPageTitleActionTest {
 
-    private static final long   PROJECT_ID = 1;
+    private static final long PROJECT_ID = 1;
 
     private static final String TEST_TITLE = "Awesome Title No. {{#title}}";
 
@@ -59,7 +59,7 @@ public class CheckPageTitleActionTest {
         checkNode.setSymbol(symbol);
         checkNode.setTitle(TEST_TITLE);
         checkNode.setRegexp(false);
-}
+    }
 
     @Test
     public void testJSON() throws IOException {

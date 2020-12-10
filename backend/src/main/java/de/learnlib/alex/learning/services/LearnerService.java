@@ -19,31 +19,27 @@ package de.learnlib.alex.learning.services;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.LoggerMarkers;
+import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.dao.LearnerSetupDAO;
-import de.learnlib.alex.learning.entities.LearnerOptions;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
-import de.learnlib.alex.learning.entities.LearnerSetup;
 import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStatus;
 import de.learnlib.alex.learning.entities.LearningProcessStatus;
 import de.learnlib.alex.learning.entities.ReadOutputConfig;
 import de.learnlib.alex.learning.entities.SeparatingWord;
+import de.learnlib.alex.learning.entities.WebDriverConfig;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
-import de.learnlib.alex.learning.entities.WebDriverConfig;
 import de.learnlib.alex.learning.exceptions.LearnerException;
-import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.PreparedConnectorContextHandlerFactory;
 import de.learnlib.alex.learning.services.connectors.PreparedContextHandler;
-import de.learnlib.alex.testing.dao.TestDAO;
-import de.learnlib.alex.webhooks.services.WebhookService;
 import net.automatalib.automata.transducers.impl.compact.CompactMealy;
 import net.automatalib.util.automata.Automata;
 import net.automatalib.util.automata.conformance.WpMethodTestsIterator;
@@ -51,8 +47,11 @@ import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,6 +66,7 @@ import java.util.stream.Collectors;
  * Basic class to control and monitor a learn process. This class is a high level abstraction of the LearnLib.
  */
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class LearnerService {
 
     private static final Logger logger = LogManager.getLogger();
@@ -83,10 +83,9 @@ public class LearnerService {
 
     private final LearnerSetupDAO learnerSetupDAO;
     private final LearnerResultDAO learnerResultDAO;
-    private final WebhookService webhookService;
     private final PreparedConnectorContextHandlerFactory contextHandlerFactory;
-    private final TestDAO testDAO;
-    private final LearnerResultRepository learnerResultRepository;
+    private final ProjectDAO projectDAO;
+    private final ApplicationContext applicationContext;
 
     /** The learner threads for users (userId -> thread). */
     private final Map<Long, LearnerThread> learnerThreads;
@@ -94,16 +93,14 @@ public class LearnerService {
     @Autowired
     public LearnerService(LearnerSetupDAO learnerSetupDAO,
                           LearnerResultDAO learnerResultDAO,
-                          WebhookService webhookService,
+                          ApplicationContext applicationContext,
                           PreparedConnectorContextHandlerFactory contextHandlerFactory,
-                          TestDAO testDAO,
-                          LearnerResultRepository learnerResultRepository) {
+                          ProjectDAO projectDAO) {
         this.learnerSetupDAO = learnerSetupDAO;
         this.learnerResultDAO = learnerResultDAO;
-        this.webhookService = webhookService;
         this.contextHandlerFactory = contextHandlerFactory;
-        this.testDAO = testDAO;
-        this.learnerResultRepository = learnerResultRepository;
+        this.projectDAO = projectDAO;
+        this.applicationContext = applicationContext;
 
         this.learnerThreads = new HashMap<>();
     }
@@ -125,28 +122,26 @@ public class LearnerService {
      *         If the symbols specified in the configuration could not be found.
      */
     public LearnerResult start(User user, Project project, LearnerStartConfiguration startConfiguration) {
-        final LearnerSetup setup = startConfiguration.getSetup();
-        final LearnerSetup createdSetup = setup.getId() != null ? setup : learnerSetupDAO.create(user, project.getId(), setup);
+        final var setup = startConfiguration.getSetup();
+        final var createdSetup = setup.getId() != null ? setup : learnerSetupDAO.create(user, project.getId(), setup);
 
-        final LearnerOptions options = startConfiguration.getOptions();
+        final var options = startConfiguration.getOptions();
         if (options.getComment() == null || options.getComment().trim().equals("")) {
             options.setComment(createdSetup.getName());
         }
 
-        LearnerResult result = new LearnerResult();
+        final var result = new LearnerResult();
         result.setSetup(createdSetup);
         result.setComment(startConfiguration.getOptions().getComment());
-        result = learnerResultDAO.create(user, project, result);
 
-        final PreparedContextHandler contextHandler = contextHandlerFactory
-                .createPreparedContextHandler(user, project, createdSetup.getWebDriver(), createdSetup.getPreSymbol(), createdSetup.getPostSymbol());
+        final var createdResult = learnerResultDAO.create(user, project.getId(), result);
 
-        final AbstractLearnerProcess learnThread = new StartingLearnerProcess(user, learnerResultDAO, webhookService,
-                testDAO, contextHandler, result, createdSetup);
+        enqueueLearningProcess(
+                project.getId(),
+                new StartingLearnerProcessQueueItem(user.getId(), project.getId(), createdResult.getId())
+        );
 
-        enqueueLearningProcess(project.getId(), learnThread);
-
-        return result;
+        return createdResult;
     }
 
     /**
@@ -154,21 +149,21 @@ public class LearnerService {
      *
      * @param user
      *         The user that wants to restart his latest thread.
-     * @param project
+     * @param projectId
      *         The project that is learned.
-     * @param result
+     * @param testNo
      *         The result of a previous process.
      * @param configuration
      *         The configuration to use for the next learning steps.
-     * @throws IllegalArgumentException
-     *         If the new configuration has errors.
-     * @throws IllegalStateException
-     *         If a learning process is already active or if now process to resume was found.
-     * @throws NotFoundException
-     *         If the symbols specified in the configuration could not be found.
      */
-    public void resume(User user, Project project, LearnerResult result, LearnerResumeConfiguration configuration)
-            throws IllegalArgumentException, IllegalStateException, NotFoundException {
+    public LearnerResult resume(User user, Long projectId, Long testNo, LearnerResumeConfiguration configuration) {
+        configuration.checkConfiguration();
+        var result = learnerResultDAO.getByTestNo(user, projectId, testNo);
+
+        if (configuration.getStepNo() > result.getSteps().size()) {
+            throw new IllegalArgumentException("The step number is not valid.");
+        }
+
         if (result.getSteps().get(configuration.getStepNo() - 1).isError()) {
             throw new IllegalStateException("You cannot resume from a failed step.");
         }
@@ -177,14 +172,12 @@ public class LearnerService {
             validateCounterexample(user, result, configuration);
         }
 
-        final LearnerSetup setup = result.getSetup();
-        final PreparedContextHandler contextHandler = contextHandlerFactory.createPreparedContextHandler(
-                user, project, setup.getWebDriver(), setup.getPreSymbol(), setup.getPostSymbol());
+        enqueueLearningProcess(
+                result.getProjectId(),
+                new ResumingLearnerProcessQueueItem(user.getId(), result.getProjectId(), result.getId(), configuration)
+        );
 
-        final AbstractLearnerProcess learnThread = new ResumingLearnerProcess(user, learnerResultDAO, learnerSetupDAO,
-                webhookService, testDAO, contextHandler, result, setup, configuration);
-
-        enqueueLearningProcess(project.getId(), learnThread);
+        return result;
     }
 
     /**
@@ -192,19 +185,18 @@ public class LearnerService {
      *
      * @param projectId
      *         The id of the project.
-     * @param learnerProcess
+     * @param item
      *         The thread to start.
      */
-    private void enqueueLearningProcess(Long projectId, AbstractLearnerProcess learnerProcess) {
+    private void enqueueLearningProcess(Long projectId, AbstractLearnerProcessQueueItem item) {
         if (learnerThreads.containsKey(projectId)) {
-            learnerThreads.get(projectId).enqueue(learnerProcess);
+            learnerThreads.get(projectId).enqueue(item);
         } else {
-            final LearnerThread thread = new LearnerThread(
-                    learnerResultRepository,
-                    () -> learnerThreads.remove(projectId)
-            );
-            thread.enqueue(learnerProcess);
+            final var thread = applicationContext.getBean(LearnerThread.class);
+            thread.onFinished(() -> learnerThreads.remove(projectId));
+
             learnerThreads.put(projectId, thread);
+            thread.enqueue(item);
             thread.start();
         }
     }
@@ -259,9 +251,20 @@ public class LearnerService {
      * @param projectId
      *         The id of the project that is learned.
      */
-    public void stop(Long projectId, Long testNo) {
+    public void abort(User user, Long projectId, Long testNo) {
+        final var project = projectDAO.getByID(user, projectId); // access check
+        final var result = learnerResultDAO.getByTestNo(user, projectId, testNo);
+
+        final var userIsOwner = project.getOwners().stream()
+                .map(User::getId)
+                .anyMatch(ownerId -> ownerId.equals(user.getId()));
+
+        if (!userIsOwner && (result.getExecutedBy() != null && !result.getExecutedBy().equals(user))) {
+            throw new UnauthorizedException("You are not allowed to abort this learning process.");
+        }
+
         if (isActive(projectId)) {
-            learnerThreads.get(projectId).abort(testNo);
+            learnerThreads.get(projectId).abort(result.getId());
         }
     }
 
@@ -283,19 +286,25 @@ public class LearnerService {
      *         The id of the project.
      * @return A snapshot of the Learner status.
      */
-    public LearnerStatus getStatus(Long projectId) {
+    public LearnerStatus getStatus(User user, Long projectId) {
         if (isActive(projectId)) {
-            final LearnerThread thread = learnerThreads.get(projectId);
-            final AbstractLearnerProcess process = thread.getCurrentProcess();
+            final var thread = learnerThreads.get(projectId);
+            final var process = thread.getCurrentProcess();
 
-            final LearningProcessStatus processStatus = new LearningProcessStatus();
+            final var processStatus = new LearningProcessStatus();
             processStatus.setCurrentQueries(process.getCurrentQueries());
             processStatus.setPhase(process.getLearnerPhase());
             processStatus.setResult(process.getResult());
 
-            final LearnerStatus status = new LearnerStatus();
+            final var status = new LearnerStatus();
             status.setCurrentProcess(processStatus);
-            status.setQueue(thread.getProcessQueue());
+
+            final var results = learnerResultDAO.getByIDs(user, projectId, thread.getProcessQueue().stream()
+                    .map(c -> c.resultId)
+                    .collect(Collectors.toList())
+            );
+
+            status.setQueue(results);
             return status;
         } else {
             return new LearnerStatus();

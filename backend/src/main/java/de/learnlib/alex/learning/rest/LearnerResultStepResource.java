@@ -36,11 +36,17 @@ import java.util.List;
 @Transactional(rollbackFor = Exception.class)
 public class LearnerResultStepResource {
 
-    @Autowired
-    private AuthContext authContext;
+    private final AuthContext authContext;
+    private final LearnerResultStepDAO learnerResultStepDAO;
 
     @Autowired
-    private LearnerResultStepDAO learnerResultStepDAO;
+    public LearnerResultStepResource(
+            AuthContext authContext,
+            LearnerResultStepDAO learnerResultStepDAO
+    ) {
+        this.authContext = authContext;
+        this.learnerResultStepDAO = learnerResultStepDAO;
+    }
 
     @PostMapping(
         value = "/{stepId}/hypothesis/outputs",

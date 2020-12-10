@@ -37,6 +37,7 @@ import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolStepRepository;
 import de.learnlib.alex.data.repositories.UploadableFileRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
+import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;
 import de.learnlib.alex.learning.repositories.LearnerSetupRepository;
 import de.learnlib.alex.modelchecking.dao.LtsFormulaDAO;
 import de.learnlib.alex.modelchecking.dao.LtsFormulaSuiteDAO;
@@ -104,6 +105,7 @@ public class ProjectDAO {
     private TestReportDAO testReportDAO;
     private LtsFormulaSuiteDAO ltsFormulaSuiteDAO;
     private LtsFormulaDAO ltsFormulaDAO;
+    private LearnerResultStepRepository learnerResultStepRepository;
 
     @Autowired
     public ProjectDAO(ProjectRepository projectRepository,
@@ -124,6 +126,7 @@ public class ProjectDAO {
                       SymbolParameterRepository symbolParameterRepository,
                       UploadableFileRepository uploadableFileRepository,
                       LearnerSetupRepository learnerSetupRepository,
+                      LearnerResultStepRepository learnerResultStepRepository,
                       @Lazy TestPresenceService testPresenceService,
                       @Lazy SymbolPresenceService symbolPresenceService,
                       @Lazy ProjectPresenceService projectPresenceService,
@@ -154,9 +157,10 @@ public class ProjectDAO {
         this.testReportDAO = testReportDAO;
         this.ltsFormulaSuiteDAO = ltsFormulaSuiteDAO;
         this.ltsFormulaDAO = ltsFormulaDAO;
+        this.learnerResultStepRepository = learnerResultStepRepository;
     }
 
-    public Project create(final User user, final CreateProjectForm projectForm) throws ValidationException {
+    public Project create(final User user, final CreateProjectForm projectForm) {
         LOGGER.traceEntry("create({})", projectForm);
 
         final Project project = new Project();
@@ -200,14 +204,14 @@ public class ProjectDAO {
         return projects;
     }
 
-    public Project getByID(User user, Long projectId) throws NotFoundException {
+    public Project getByID(User user, Long projectId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         checkAccess(user, project);
         loadLazyRelations(project);
         return project;
     }
 
-    public Project update(User user, Long projectId, Project project) throws NotFoundException, ValidationException {
+    public Project update(User user, Long projectId, Project project) {
         LOGGER.traceEntry("update({})", project);
 
         final Project projectInDb = projectRepository.findById(projectId).orElse(null);
@@ -227,7 +231,7 @@ public class ProjectDAO {
         return updatedProject;
     }
 
-    public void delete(User user, Long projectId) throws NotFoundException {
+    public void delete(User user, Long projectId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         checkAccess(user, project);
 
@@ -239,6 +243,7 @@ public class ProjectDAO {
         symbolStepRepository.deleteAllBySymbol_Project_Id(projectId);
         testReportRepository.deleteAllByProject_Id(projectId);
         testRepository.deleteAllByProject_Id(projectId);
+        learnerResultStepRepository.deleteAllByResult_Project_Id(projectId);
         learnerResultRepository.deleteAllByProject_Id(projectId);
         learnerSetupRepository.deleteAllByProject_Id(projectId);
         parameterizedSymbolRepository.deleteAllBySymbol_Project_Id(projectId);
@@ -273,13 +278,13 @@ public class ProjectDAO {
 
     }
 
-    public void delete(User user, List<Long> projectIds) throws NotFoundException {
+    public void delete(User user, List<Long> projectIds) {
         for (Long id: projectIds) {
             delete(user, id);
         }
     }
 
-    public Project importProject(User user, ProjectExportableEntity projectExportableEntity) throws NotFoundException {
+    public Project importProject(User user, ProjectExportableEntity projectExportableEntity) {
         final ObjectMapper om = new ObjectMapper();
 
         final Project project;
@@ -402,7 +407,7 @@ public class ProjectDAO {
         return project;
     }
 
-    public void checkAccess(User user, Project project) throws NotFoundException, UnauthorizedException {
+    public void checkAccess(User user, Project project) {
         if (project == null) {
             throw new NotFoundException("The project does not exist.");
         }
@@ -423,8 +428,8 @@ public class ProjectDAO {
         }
 
         ownerIds.forEach(ownerId -> {
-            projectInDb.removeMember(userDAO.getById(ownerId));
-            projectInDb.addOwner(userDAO.getById(ownerId));
+            projectInDb.removeMember(userDAO.getByID(ownerId));
+            projectInDb.addOwner(userDAO.getByID(ownerId));
         });
 
         checkProjectIntegrity(projectInDb);
@@ -444,8 +449,8 @@ public class ProjectDAO {
         }
 
         memberIds.forEach(memberId -> {
-            projectInDb.removeOwner(userDAO.getById(memberId));
-            projectInDb.addMember(userDAO.getById(memberId));
+            projectInDb.removeOwner(userDAO.getByID(memberId));
+            projectInDb.addMember(userDAO.getByID(memberId));
         });
 
         checkProjectIntegrity(projectInDb);
@@ -465,7 +470,7 @@ public class ProjectDAO {
         }
 
         ownerIds.forEach(ownerId -> {
-            projectInDb.removeOwner(userDAO.getById(ownerId));
+            projectInDb.removeOwner(userDAO.getByID(ownerId));
         });
 
         checkProjectIntegrity(projectInDb);
@@ -494,7 +499,7 @@ public class ProjectDAO {
         }
 
         memberIds.forEach(memberId -> {
-            projectInDb.removeMember(userDAO.getById(memberId));
+            projectInDb.removeMember(userDAO.getByID(memberId));
         });
 
         final Project updatedProject = projectRepository.save(projectInDb);

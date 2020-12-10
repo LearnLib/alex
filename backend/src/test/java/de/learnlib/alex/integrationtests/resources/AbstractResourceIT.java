@@ -16,34 +16,35 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import de.learnlib.alex.settings.entities.Settings;
+import de.learnlib.alex.auth.dao.UserDAO;
+import de.learnlib.alex.auth.repositories.UserRepository;
+import de.learnlib.alex.data.dao.ProjectDAO;
+import de.learnlib.alex.integrationtests.TestPostgresqlContainer;
+import de.learnlib.alex.settings.dao.SettingsDAO;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.containers.PostgreSQLContainer;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 public abstract class AbstractResourceIT {
+
+    @ClassRule
+    public static PostgreSQLContainer postgreSQLContainer = TestPostgresqlContainer.getInstance();
 
     protected static final String ADMIN_EMAIL = "admin@alex.example";
 
@@ -54,7 +55,20 @@ public abstract class AbstractResourceIT {
 
     protected Client client = ClientBuilder.newClient();
 
-    protected ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    protected ObjectMapper objectMapper;
+
+    @Autowired
+    protected UserDAO userDAO;
+
+    @Autowired
+    protected ProjectDAO projectDAO;
+
+    @Autowired
+    protected SettingsDAO settingsDAO;
+
+    @Autowired
+    private UserRepository userRepository;
 
     protected String baseUrl() {
         return "http://localhost:" + port + "/rest";
@@ -65,74 +79,28 @@ public abstract class AbstractResourceIT {
     }
 
     @After
+    @Transactional
     public void post() throws Exception {
-        final Response res1 = client.target(baseUrl() + "/users/login").request()
-                .post(Entity.json("{\"email\":\"" + ADMIN_EMAIL + "\",\"password\":\"" + ADMIN_PASSWORD + "\"}"));
+        final var admin = userDAO.getByID(1L);
 
-        assertEquals(HttpStatus.OK.value(), res1.getStatus());
-
-        final String token = "Bearer " + JsonPath.read(res1.readEntity(String.class), "token");
-
-        deleteAllUsersExceptTheDefaultAdmin(token);
-        deleteAllProjectsOfDefaultAdmin(token);
-        resetSettings(token);
-    }
-
-    private void resetSettings(String token) throws Exception {
-        final Settings settings = new Settings();
-        settings.setAllowUserRegistration(true);
-
-        final Response res = client.target(baseUrl() + "/settings").request()
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, token)
-                .put(Entity.json(objectMapper.writeValueAsString(settings)));
-
-        assertEquals(HttpStatus.OK.value(), res.getStatus());
-    }
-
-    private void deleteAllUsersExceptTheDefaultAdmin(String token) throws Exception {
-        final Response res2 = client.target(baseUrl() + "/users").request()
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, token)
-                .get();
-
-        final List<String> userIds = new ArrayList<>();
-
-        final JsonNode users = objectMapper.readTree(res2.readEntity(String.class));
-        users.forEach(user -> {
-            final String userId = user.get("id").asText();
-            if (!userId.equals("1")) {
-                userIds.add(userId);
+        // delete all users except the admin
+        for (var user : userRepository.findAll()) {
+            if (!user.equals(admin)) {
+                userDAO.delete(admin, user.getId());
             }
-        });
-
-        if (!userIds.isEmpty()) {
-            final Response res3 = client.target(baseUrl() + "/users/batch/" + String.join(",", userIds)).request()
-                    .header(HttpHeaders.AUTHORIZATION, token)
-                    .delete();
-
-            assertEquals(HttpStatus.NO_CONTENT.value(), res3.getStatus());
         }
+
+        // delete projects of admin
+        for (var project : projectDAO.getAll(admin)) {
+            projectDAO.delete(admin, project.getId());
+        }
+
+        final var settings = settingsDAO.get();
+        settings.setAllowUserRegistration(true);
+        settingsDAO.update(settings);
     }
 
-    private void deleteAllProjectsOfDefaultAdmin(String token) throws Exception {
-        final Response res1 = client.target(baseUrl() + "/projects").request()
-                .header(HttpHeaders.AUTHORIZATION, token)
-                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
-                .get();
-
-        final JsonNode projects = objectMapper.readTree(res1.readEntity(String.class));
-        projects.forEach(project -> {
-            final String projectId = project.get("id").asText();
-            final Response res2 = client.target(baseUrl() + "/projects/" + projectId).request()
-                    .header(HttpHeaders.AUTHORIZATION, token)
-                    .delete();
-
-            assertEquals(HttpStatus.NO_CONTENT.value(), res2.getStatus());
-        });
-    }
-
-    protected void checkIsRestError(String body) throws Exception {
+    protected void checkIsRestError(String body) {
         JsonPath.read(body, "statusCode");
         JsonPath.read(body, "statusText");
         JsonPath.read(body, "message");

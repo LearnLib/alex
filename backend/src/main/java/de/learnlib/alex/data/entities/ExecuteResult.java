@@ -24,6 +24,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
@@ -44,7 +45,7 @@ public class ExecuteResult implements Serializable {
 
     /** The id of the execute result in the db. */
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
 
@@ -54,7 +55,7 @@ public class ExecuteResult implements Serializable {
     /** The output of the SUL. */
     private String message;
 
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(columnDefinition = "TEXT")
     private String trace;
 
     /** The time in ms it took to execute the step. */

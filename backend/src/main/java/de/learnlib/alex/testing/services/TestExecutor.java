@@ -41,6 +41,10 @@ import de.learnlib.alex.testing.entities.TestSuite;
 import de.learnlib.alex.testing.entities.TestSuiteResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 
 import java.io.File;
@@ -51,24 +55,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Service
+@Scope("prototype")
 public class TestExecutor {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private final PreparedConnectorContextHandlerFactory contextHandlerFactory;
+    @Value("${alex.filesRootDir}")
+    private String filesRootDir;
     private final ProjectEnvironmentDAO projectEnvironmentDAO;
+    private final PreparedConnectorContextHandlerFactory contextHandlerFactory;
 
     private Test currentTest;
     private boolean aborted;
 
-    private final String filesRootDir;
-
-    public TestExecutor(PreparedConnectorContextHandlerFactory contextHandlerFactory,
-                        ProjectEnvironmentDAO projectEnvironmentDAO,
-                        String filesRootDir) {
+    @Autowired
+    public TestExecutor(
+            PreparedConnectorContextHandlerFactory contextHandlerFactory,
+            ProjectEnvironmentDAO projectEnvironmentDAO
+    ) {
         this.contextHandlerFactory = contextHandlerFactory;
         this.projectEnvironmentDAO = projectEnvironmentDAO;
-        this.filesRootDir = filesRootDir;
+
         this.aborted = false;
     }
 
@@ -153,8 +161,7 @@ public class TestExecutor {
         });
         final ParameterizedSymbol dummyPSymbol = new ParameterizedSymbol(dummySymbol);
 
-        final ProjectEnvironment env = projectEnvironmentDAO.getById(user, testConfig.getEnvironmentId());
-        ProjectEnvironmentDAO.loadLazyRelations(env);
+        final ProjectEnvironment env = projectEnvironmentDAO.getByID(user, testConfig.getEnvironmentId());
 
         final ConnectorContextHandler ctxHandler = contextHandlerFactory
                 .createPreparedContextHandler(user, testCase.getProject(), testConfig.getDriverConfig(), dummyPSymbol, null)
@@ -188,7 +195,11 @@ public class TestExecutor {
                 final ExecuteResult result = executeStep(connectors, step);
                 outputs.add(result);
 
-                final TestScreenshot stepScreenshot = takeAndStoreScreenshot(testCase.getProject(), connectors.getConnector(WebSiteConnector.class), step.getId().toString());
+                final TestScreenshot stepScreenshot = takeAndStoreScreenshot(
+                        testCase.getProject(),
+                        connectors.getConnector(WebSiteConnector.class),
+                        step.getId().toString()
+                );
                 result.setTestScreenshot(stepScreenshot);
 
                 if (step.getExpectedOutputMessage().equals("")) {

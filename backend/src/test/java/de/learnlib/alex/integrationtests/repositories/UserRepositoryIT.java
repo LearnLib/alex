@@ -22,17 +22,15 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.transaction.TransactionSystemException;
 
+import javax.validation.ValidationException;
 import java.util.List;
+import java.util.Optional;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class UserRepositoryIT extends AbstractRepositoryIT {
 
@@ -44,7 +42,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
         Assert.assertTrue(user.getId() > 1);
     }
 
-    @Test(expected = TransactionSystemException.class)
+    @Test(expected = ValidationException.class)
     public void shouldFailWhenSavingAnUserWithoutAnEmail() {
         User user = new User();
         user.setPassword("password");
@@ -53,7 +51,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
     }
 
 
-    @Test(expected = TransactionSystemException.class)
+    @Test(expected = ValidationException.class)
     public void shouldFailWhenSavingAnUserWithAnInvalidEmail() {
         User user = new User();
         user.setEmail("test");
@@ -62,7 +60,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
         userRepository.save(user);
     }
 
-    @Test(expected = TransactionSystemException.class)
+    @Test(expected = ValidationException.class)
     public void shouldFailWhenSavingAnUserWithoutPassword() {
         User user = new User();
         user.setEmail("test_user@test.example");
@@ -89,8 +87,8 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
         List<User> allUsersFromDB = userRepository.findAll();
 
         assertEquals(3, allUsersFromDB.size()); // 3 because of the default admin
-        assertThat(allUsersFromDB, hasItem(equalTo(user1)));
-        assertThat(allUsersFromDB, hasItem(equalTo(user2)));
+        assertTrue(allUsersFromDB.contains(user1));
+        assertTrue(allUsersFromDB.contains(user2));
     }
 
     @Test
@@ -109,8 +107,9 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
         userRepository.save(user2);
 
         List<User> allUsersFromDB = userRepository.findByRole(UserRole.REGISTERED);
-        assertThat(allUsersFromDB.size(), is(equalTo(1)));
-        assertThat(allUsersFromDB, hasItem(equalTo(user2)));
+
+        assertEquals(1, allUsersFromDB.size());
+        assertTrue(allUsersFromDB.contains(user2));
     }
 
     @Test
@@ -122,8 +121,9 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
         userRepository.save(user2);
 
         List<User> allUsersFromDB = userRepository.findByRole(UserRole.ADMIN);
-        assertThat(allUsersFromDB.size(), is(equalTo(2)));
-        assertThat(allUsersFromDB, hasItem(equalTo(user1)));
+
+        assertEquals(2, allUsersFromDB.size());
+        assertTrue(allUsersFromDB.contains(user1));
     }
 
     @Test
@@ -134,7 +134,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
         User userFromDB = userRepository.findById(user.getId()).orElse(null);
 
         assertNotNull(userFromDB);
-        assertThat(userFromDB, is(equalTo(user)));
+        assertEquals(user, userFromDB);
     }
 
     @Test
@@ -148,16 +148,17 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
         User user = createUser("test_user@test.example");
         user = userRepository.save(user);
 
-        User userFromDB = userRepository.findOneByEmail(user.getEmail());
+        Optional<User> userFromDB = userRepository.findOneByEmail(user.getEmail());
 
-        assertThat(userFromDB, is(equalTo(user)));
+        assertTrue(userFromDB.isPresent());
+        assertEquals(user, userFromDB.get());
     }
 
     @Test
     public void shouldReturnNullWhenFetchingANonExistingUsersByTheEMail() {
-        User userFromDB = userRepository.findOneByEmail("test_user@test.example");
+        Optional<User> userFromDB = userRepository.findOneByEmail("test_user@test.example");
 
-        assertNull(userFromDB);
+        assertTrue(userFromDB.isEmpty());
     }
 
     @Test

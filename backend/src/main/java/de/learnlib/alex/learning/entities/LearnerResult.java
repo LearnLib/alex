@@ -27,6 +27,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -70,6 +71,7 @@ public class LearnerResult implements Serializable {
     private LearnerSetup setup;
 
     /** The steps of the LearnerResult. */
+    @OrderBy
     private List<LearnerResultStep> steps;
 
     /** A comment to describe the intention / setting of the learn process. This field is optional. */
@@ -89,7 +91,7 @@ public class LearnerResult implements Serializable {
     }
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long getId() {
         return id;
     }
@@ -98,7 +100,7 @@ public class LearnerResult implements Serializable {
         this.id = id;
     }
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JsonIgnore
     public Project getProject() {
         return project;
@@ -130,6 +132,7 @@ public class LearnerResult implements Serializable {
 
     @OneToMany(
             mappedBy = "result",
+            cascade = {CascadeType.REMOVE},
             orphanRemoval = true
     )
     @OrderBy("stepNo ASC")

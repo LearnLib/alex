@@ -90,7 +90,7 @@ public class WebSocketServiceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void shouldIgnoreForcedDisconnectsWithNonMatchingUserIds() throws Exception {
+    public void shouldIgnoreForcedDisconnectsWithNonMatchingUserIds() {
         client.target(baseUrl() + "/ws/disconnect").request()
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, user1.getJwt())

@@ -55,12 +55,11 @@ public class SymbolResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    /** The security context containing the user of the request. */
-    private AuthContext authContext;
-    private WebhookService webhookService;
-    private SymbolDAO symbolDAO;
-    private SymbolUsageService symbolUsageService;
-    private SymbolsExporter symbolExporter;
+    private final AuthContext authContext;
+    private final WebhookService webhookService;
+    private final SymbolDAO symbolDAO;
+    private final SymbolUsageService symbolUsageService;
+    private final SymbolsExporter symbolExporter;
 
     @Autowired
     public SymbolResource(AuthContext authContext,

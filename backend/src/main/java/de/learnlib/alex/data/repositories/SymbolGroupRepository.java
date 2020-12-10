@@ -19,7 +19,6 @@ package de.learnlib.alex.data.repositories;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -36,8 +35,6 @@ public interface SymbolGroupRepository extends JpaRepository<SymbolGroup, Long> 
      *         The ID the User the SymbolGroup belongs to.
      * @return The SymbolGroups.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     List<SymbolGroup> findAllByProject_Id(Long projectId);
 
     /**
@@ -49,8 +46,6 @@ public interface SymbolGroupRepository extends JpaRepository<SymbolGroup, Long> 
      *         The id of the parent. May be null.
      * @return The symbol groups.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     List<SymbolGroup> findAllByProject_IdAndParent_id(Long projectId, Long parentId);
 
     /**
@@ -64,8 +59,6 @@ public interface SymbolGroupRepository extends JpaRepository<SymbolGroup, Long> 
      *         The name of the symbol group in the project.
      * @return The SymbolGroup or null.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     SymbolGroup findOneByProject_IdAndParent_IdAndName(Long projectId, Long parentId, String name);
 
     /**
@@ -75,7 +68,5 @@ public interface SymbolGroupRepository extends JpaRepository<SymbolGroup, Long> 
      *         The id of the project.
      * @return The default symbol group.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     SymbolGroup findFirstByProject_IdOrderByIdAsc(Long projectId);
 }

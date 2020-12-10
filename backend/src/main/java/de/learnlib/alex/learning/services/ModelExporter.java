@@ -33,10 +33,10 @@ import java.io.IOException;
 import java.io.StringWriter;
 
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class, readOnly = true)
 public class ModelExporter {
 
-    private LearnerResultDAO learnerResultDAO;
+    private final LearnerResultDAO learnerResultDAO;
 
     @Autowired
     public ModelExporter(LearnerResultDAO learnerResultDAO) {
@@ -44,7 +44,7 @@ public class ModelExporter {
     }
 
     public String exportDot(User user, Long projectId, Long testNo, Long stepNo) {
-        final LearnerResult learnerResult = learnerResultDAO.get(user, projectId, testNo);
+        final LearnerResult learnerResult = learnerResultDAO.getByTestNo(user, projectId, testNo);
 
         final LearnerResultStep step = learnerResult.getSteps().stream()
                 .filter(s -> s.getStepNo().equals(stepNo))

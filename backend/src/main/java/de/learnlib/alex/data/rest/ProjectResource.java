@@ -20,6 +20,7 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.CreateProjectForm;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.export.ExportableEntity;
 import de.learnlib.alex.data.entities.export.ProjectExportableEntity;
 import de.learnlib.alex.data.events.ProjectEvent;
 import de.learnlib.alex.data.services.export.ProjectExporter;
@@ -30,6 +31,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,11 +50,10 @@ public class ProjectResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private AuthContext authContext;
-
-    private ProjectDAO projectDAO;
-    private WebhookService webhookService;
-    private ProjectExporter projectExporter;
+    private final AuthContext authContext;
+    private final ProjectDAO projectDAO;
+    private final WebhookService webhookService;
+    private final ProjectExporter projectExporter;
 
     @Autowired
     public ProjectResource(AuthContext authContext,
@@ -76,7 +77,7 @@ public class ProjectResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity create(@RequestBody CreateProjectForm project) {
+    public ResponseEntity<Project> create(@RequestBody @Validated CreateProjectForm project) {
         final User user = authContext.getUser();
         LOGGER.traceEntry("create({}) for user {}.", project, user);
 
@@ -94,7 +95,7 @@ public class ProjectResource {
     @GetMapping(
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity getAll() {
+    public ResponseEntity<List<Project>> getAll() {
         final User user = authContext.getUser();
         LOGGER.traceEntry("getAll({}) for user {}.", user);
 
@@ -114,7 +115,7 @@ public class ProjectResource {
             value = "/{projectId}",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity get(@PathVariable("projectId") Long projectId) {
+    public ResponseEntity<Project> get(@PathVariable("projectId") Long projectId) {
         final User user = authContext.getUser();
         LOGGER.traceEntry("get({}) for user {}.", projectId, user);
 
@@ -136,7 +137,7 @@ public class ProjectResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity update(@PathVariable("projectId") Long projectId, @RequestBody Project project) {
+    public ResponseEntity<Project> update(@PathVariable("projectId") Long projectId, @RequestBody Project project) {
         final User user = authContext.getUser();
         LOGGER.traceEntry("update({}, {}) for user {}.", projectId, project, user);
 
@@ -157,7 +158,7 @@ public class ProjectResource {
             value = "/{projectId}",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity delete(@PathVariable("projectId") Long projectId) {
+    public ResponseEntity<?> delete(@PathVariable("projectId") Long projectId) {
         final User user = authContext.getUser();
         LOGGER.traceEntry("delete({}) for user {}.", projectId, user);
 
@@ -178,7 +179,7 @@ public class ProjectResource {
             value = "/batch/{projectIds}",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity delete(@PathVariable("projectIds") List<Long> projectIds) {
+    public ResponseEntity<?> delete(@PathVariable("projectIds") List<Long> projectIds) {
         final User user = authContext.getUser();
         LOGGER.traceEntry("delete({}) for user {}.", projectIds, user);
 
@@ -200,9 +201,10 @@ public class ProjectResource {
             value = "/{projectId}/export",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity exportProject(@PathVariable("projectId") Long projectId) throws Exception {
+    public ResponseEntity<ExportableEntity> exportProject(@PathVariable("projectId") Long projectId) throws Exception {
         final User user = authContext.getUser();
-        return ResponseEntity.ok(projectExporter.export(user, projectId));
+        final var export = projectExporter.export(user, projectId);
+        return ResponseEntity.ok(export);
     }
 
     /**
@@ -217,7 +219,7 @@ public class ProjectResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity importProject(@RequestBody ProjectExportableEntity project) {
+    public ResponseEntity<Project> importProject(@RequestBody ProjectExportableEntity project) {
         final User user = authContext.getUser();
         final Project importedProject = projectDAO.importProject(user, project);
         webhookService.fireEvent(user, new ProjectEvent.Created(importedProject));
@@ -229,7 +231,7 @@ public class ProjectResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity addOwners(@PathVariable("projectId") Long projectId, @RequestBody List<Long> ownerIds) {
+    public ResponseEntity<Project> addOwners(@PathVariable("projectId") Long projectId, @RequestBody List<Long> ownerIds) {
         final User user = authContext.getUser();
         final Project updatedProject = projectDAO.addOwners(user, projectId, ownerIds);
 
@@ -241,7 +243,7 @@ public class ProjectResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity addMembers(@PathVariable("projectId") Long projectId, @RequestBody List<Long> memberIds) {
+    public ResponseEntity<Project> addMembers(@PathVariable("projectId") Long projectId, @RequestBody List<Long> memberIds) {
         final User user = authContext.getUser();
         final Project updatedProject = projectDAO.addMembers(user, projectId, memberIds);
 
@@ -252,7 +254,7 @@ public class ProjectResource {
             value="/{projectId}/owners/{ownerIds}",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity removeOwner(@PathVariable("projectId") Long projectId, @PathVariable("ownerIds") List<Long> ownerIds) {
+    public ResponseEntity<Project> removeOwner(@PathVariable("projectId") Long projectId, @PathVariable("ownerIds") List<Long> ownerIds) {
         final User user = authContext.getUser();
         final Project updatedProject = projectDAO.removeOwners(user, projectId, ownerIds);
 
@@ -263,7 +265,7 @@ public class ProjectResource {
             value="/{projectId}/members/{memberIds}",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity removeMember(@PathVariable("projectId") Long projectId, @PathVariable("memberIds") List<Long> memberIds) {
+    public ResponseEntity<Project> removeMember(@PathVariable("projectId") Long projectId, @PathVariable("memberIds") List<Long> memberIds) {
         final User user = authContext.getUser();
         final Project updatedProject = projectDAO.removeMembers(user, projectId, memberIds);
 

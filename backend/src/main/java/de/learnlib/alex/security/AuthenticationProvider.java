@@ -71,7 +71,7 @@ public class AuthenticationProvider {
             }
 
             final Long userId = (Long) claims.getClaimsMap().get("id");
-            user = userDAO.getById(userId);
+            user = userDAO.getByID(userId);
         } else {
             // create guest user
             user = new User();

@@ -20,6 +20,7 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.ParameterizedSymbolDAO;
 import de.learnlib.alex.data.dao.ProjectDAO;
+import de.learnlib.alex.data.dao.ProjectEnvironmentDAO;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
@@ -83,6 +84,40 @@ public class LearnerSetupDAO {
         checkAccess(user, project, setup);
         initializeLazyRelations(setup);
         return setup;
+    }
+
+    public LearnerSetup removeSymbols(Long setupId, List<ParameterizedSymbol> symbols) {
+        final var setup = learnerSetupRepository.findById(setupId)
+                .orElseThrow(() -> new NotFoundException("setup not found."));
+
+        final var ids = symbols.stream()
+                .map(ParameterizedSymbol::getId)
+                .collect(Collectors.toList());
+
+        setup.getSymbols().removeIf(s -> ids.contains(s.getId()));
+        final var updatedSetup = learnerSetupRepository.save(setup);
+
+        for (var ps: symbols) {
+            parameterizedSymbolDAO.delete(ps);
+        }
+
+        initializeLazyRelations(updatedSetup);
+        return updatedSetup;
+    }
+
+    public LearnerSetup addSymbols(Long setupId, List<ParameterizedSymbol> symbols) {
+        final var setup = learnerSetupRepository.findById(setupId)
+                .orElseThrow(() -> new NotFoundException("setup not found."));
+
+        final var createdSymbols = symbols.stream()
+                .map(parameterizedSymbolDAO::create)
+                .collect(Collectors.toList());
+
+        setup.getSymbols().addAll(createdSymbols);
+
+        final var updatedSetup = learnerSetupRepository.save(setup);
+        initializeLazyRelations(updatedSetup);
+        return updatedSetup;
     }
 
     public LearnerSetup update(User user, Long projectId, Long setupId, LearnerSetup setup) {
@@ -204,6 +239,8 @@ public class LearnerSetupDAO {
         }
 
         Hibernate.initialize(learnerSetup.getEnvironments());
+        learnerSetup.getEnvironments().forEach(ProjectEnvironmentDAO::loadLazyRelations);
+
         Hibernate.initialize(learnerSetup.getWebDriver());
     }
 

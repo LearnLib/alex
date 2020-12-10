@@ -16,17 +16,21 @@
 
 package de.learnlib.alex.learning.services;
 
-import de.learnlib.alex.learning.entities.LearnerResult;
-import de.learnlib.alex.learning.repositories.LearnerResultRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * A learner thread runs learning processes per project and handles the process queue.
  */
+@Service
+@Scope("prototype")
 public class LearnerThread extends Thread {
 
     /**
@@ -36,71 +40,66 @@ public class LearnerThread extends Thread {
         void handleFinished();
     }
 
-    private LearnerResultRepository learnerResultRepository;
+    @Autowired
+    private ApplicationContext applicationContext;
 
     private FinishedListener finishedListener;
+    public void onFinished(FinishedListener listener) {
+        this.finishedListener = listener;
+    }
 
     /** The FIFO queue for learning processes. */
-    private Deque<AbstractLearnerProcess> processQueue = new ArrayDeque<>();
+    private final Deque<AbstractLearnerProcessQueueItem> processQueue = new ArrayDeque<>();
 
     /** The process that is currently being executed. */
-    private AbstractLearnerProcess currentProcess;
+    private AbstractLearnerProcess<? extends AbstractLearnerProcessQueueItem> currentProcess;
 
-    public LearnerThread(LearnerResultRepository learnerResultRepository, FinishedListener finishedListener) {
-        this.learnerResultRepository = learnerResultRepository;
-        this.finishedListener = finishedListener;
+    public void enqueue(AbstractLearnerProcessQueueItem item) {
+        this.processQueue.offer(item);
     }
 
-    public void enqueue(AbstractLearnerProcess learnerProcess) {
-        this.processQueue.offer(learnerProcess);
-    }
-
-    public void abort(Long testNo) {
-        if (currentProcess != null && currentProcess.getResult().getTestNo().equals(testNo)) {
-            this.currentProcess.stopLearning();
-
-            final LearnerResult learnerResult = currentProcess.getResult();
-            learnerResult.setStatus(LearnerResult.Status.ABORTED);
-            learnerResultRepository.save(learnerResult);
-        }
-
-        if (!processQueue.isEmpty()) {
-            processQueue.forEach(r -> {
-                if (r.getResult().getTestNo().equals(testNo)) {
-                    r.getResult().setStatus(LearnerResult.Status.ABORTED);
-                    learnerResultRepository.save(r.getResult());
+    public void abort(Long resultId) {
+        if (currentProcess != null) {
+            while (!currentProcess.isInitialized()) {
+                try {
+                    Thread.sleep(100);
+                } catch (Exception ignored) {
                 }
-            });
+            }
+
+            if (currentProcess.getResult().getId().equals(resultId)) {
+                this.currentProcess.abort();
+            }
         }
     }
 
     @Override
     public void run() {
         while (!processQueue.isEmpty()) {
-            currentProcess = processQueue.poll();
-            final LearnerResult learnerResult = currentProcess.getResult();
 
-            if (learnerResult.getStatus().equals(LearnerResult.Status.ABORTED)) {
-                learnerResultRepository.save(learnerResult);
-                continue;
+            final var item = processQueue.poll();
+
+            if (item instanceof StartingLearnerProcessQueueItem) {
+                currentProcess = applicationContext.getBean(StartingLearnerProcess.class);
+                ((StartingLearnerProcess) currentProcess).init((StartingLearnerProcessQueueItem) item);
+            } else if (item instanceof ResumingLearnerProcessQueueItem) {
+                currentProcess = applicationContext.getBean(ResumingLearnerProcess.class);
+                ((ResumingLearnerProcess) currentProcess).init((ResumingLearnerProcessQueueItem) item);
             }
 
-            learnerResult.setStatus(LearnerResult.Status.IN_PROGRESS);
-            learnerResultRepository.save(learnerResult);
+            if (currentProcess.isAborted()) continue;
+
             currentProcess.run();
-            learnerResult.setStatus(LearnerResult.Status.FINISHED);
-            learnerResultRepository.save(learnerResult);
         }
+
         this.finishedListener.handleFinished();
     }
 
-    public AbstractLearnerProcess getCurrentProcess() {
+    public AbstractLearnerProcess<? extends AbstractLearnerProcessQueueItem> getCurrentProcess() {
         return currentProcess;
     }
 
-    public List<LearnerResult> getProcessQueue() {
-        return processQueue.stream()
-                .map(AbstractLearnerProcess::getResult)
-                .collect(Collectors.toList());
+    public List<AbstractLearnerProcessQueueItem> getProcessQueue() {
+        return new ArrayList<>(processQueue);
     }
 }

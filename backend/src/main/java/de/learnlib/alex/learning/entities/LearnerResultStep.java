@@ -29,6 +29,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -48,7 +49,6 @@ import java.util.Objects;
         uniqueConstraints = @UniqueConstraint(columnNames = {"result_id", "stepNo"})
 )
 @JsonPropertyOrder(alphabetic = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class LearnerResultStep implements Serializable {
 
     private static final long serialVersionUID = -6932946318109366918L;
@@ -95,7 +95,7 @@ public class LearnerResultStep implements Serializable {
     }
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long getId() {
         return id;
     }
@@ -157,7 +157,7 @@ public class LearnerResultStep implements Serializable {
     /**
      * @return The current eq oracle strategy of the step.
      */
-    @Column(columnDefinition = "BLOB")
+    @Column(columnDefinition="BYTEA")
     public AbstractEquivalenceOracleProxy getEqOracle() {
         return eqOracle;
     }
@@ -237,7 +237,7 @@ public class LearnerResultStep implements Serializable {
      *
      * @return More (internal) information of the algorithm as string.
      */
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(columnDefinition = "TEXT")
     public String getAlgorithmInformation() {
         return algorithmInformation;
     }
@@ -274,7 +274,7 @@ public class LearnerResultStep implements Serializable {
         return errorText != null;
     }
 
-    @Column(columnDefinition = "BLOB")
+    @Column(columnDefinition="BYTEA")
     @JsonIgnore
     public byte[] getState() {
         return state;

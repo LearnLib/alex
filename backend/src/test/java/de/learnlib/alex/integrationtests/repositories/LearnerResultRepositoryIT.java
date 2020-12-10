@@ -22,24 +22,23 @@ import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
 
-    @Inject
+    @Autowired
     private LearnerResultRepository learnerResultRepository;
 
     private User user;
@@ -107,9 +106,9 @@ public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
         List<LearnerResult> results = learnerResultRepository
                 .findByProject_IdOrderByTestNoAsc(project.getId());
 
-        assertThat(results.size(), is(equalTo(2)));
-        assertThat(results, hasItem(equalTo(result1)));
-        assertThat(results, hasItem(equalTo(result2)));
+        assertEquals(2, results.size());
+        assertTrue(results.contains(result1));
+        assertTrue(results.contains(result2));
     }
 
     @Test
@@ -123,10 +122,10 @@ public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
 
         List<LearnerResult> results = learnerResultRepository.findByProject_IdAndTestNoIn(project.getId(), Arrays.asList(0L, 2L));
 
-        assertThat(results.size(), is(equalTo(2)));
-        assertThat(results, hasItem(equalTo(result1)));
-        assertThat(results, not(hasItem(equalTo(result2))));
-        assertThat(results, hasItem(equalTo(result3)));
+        assertEquals(2, results.size());
+        assertTrue(results.contains(result1));
+        assertFalse(results.contains(result2));
+        assertTrue(results.contains(result3));
     }
 
     @Test
@@ -138,7 +137,7 @@ public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
 
         Long highestTestNo = learnerResultRepository.findHighestTestNo(project.getId());
 
-        assertThat(highestTestNo, is(equalTo(1L)));
+        assertEquals(1L, (long) highestTestNo);
     }
 
     @Test
@@ -149,6 +148,7 @@ public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
     }
 
     @Test
+    @Transactional
     public void shouldDeleteALearnerResult() {
         LearnerResult result = createLearnerResult(project, 0L);
         learnerResultRepository.save(result);
@@ -156,8 +156,8 @@ public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
         Long deleteReturnValue = learnerResultRepository.deleteByProject_IdAndTestNoIn(
                 project.getId(), Collections.singletonList(0L));
 
-        assertThat(deleteReturnValue, is(equalTo(1L)));
-        assertThat(learnerResultRepository.count(), is(equalTo(0L)));
+        assertEquals(1L, (long) deleteReturnValue);
+        assertEquals(0L, learnerResultRepository.count());
     }
 
     @Test
@@ -165,7 +165,7 @@ public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
         Long deleteReturnValue = learnerResultRepository.deleteByProject_IdAndTestNoIn(
                 project.getId(), Collections.singletonList(-1L));
 
-        assertThat(deleteReturnValue, is(equalTo(0L)));
+        assertEquals(0L, (long) deleteReturnValue);
     }
 
     static LearnerResult createLearnerResult(Project project, Long testNo) {

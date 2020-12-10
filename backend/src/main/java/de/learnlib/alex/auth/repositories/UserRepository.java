@@ -20,9 +20,9 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.entities.UserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository to persist Users.
@@ -37,7 +37,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
      *         The role to look for.
      * @return All users with that role.
      */
-    @Transactional(readOnly = true)
     List<User> findByRole(UserRole role);
 
     /**
@@ -47,8 +46,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      *         The email to look for.
      * @return The users with that email or null.
      */
-    @Transactional(readOnly = true)
-    User findOneByEmail(String email);
+    Optional<User> findOneByEmail(String email);
 
     /**
      * Find a User by its username.
@@ -57,8 +55,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      *         The username to look for.
      * @return The users with that username or null.
      */
-    @Transactional(readOnly = true)
-    User findOneByUsername(String username);
+    Optional<User> findOneByUsername(String username);
 
     /**
      * Find multiple users by IDs.
@@ -67,7 +64,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
      *         The IDs of the users to get.
      * @return The matching users.
      */
-    @Transactional(readOnly = true)
     List<User> findAllByIdIn(List<Long> userIds);
-
 }

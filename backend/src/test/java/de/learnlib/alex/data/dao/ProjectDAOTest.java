@@ -29,6 +29,7 @@ import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolStepRepository;
 import de.learnlib.alex.data.repositories.UploadableFileRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
+import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;
 import de.learnlib.alex.learning.repositories.LearnerSetupRepository;
 import de.learnlib.alex.modelchecking.dao.LtsFormulaDAO;
 import de.learnlib.alex.modelchecking.dao.LtsFormulaSuiteDAO;
@@ -40,7 +41,6 @@ import de.learnlib.alex.testing.repositories.TestRepository;
 import de.learnlib.alex.websocket.services.ProjectPresenceService;
 import de.learnlib.alex.websocket.services.SymbolPresenceService;
 import de.learnlib.alex.websocket.services.TestPresenceService;
-import org.hamcrest.MatcherAssert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,10 +53,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -140,6 +137,9 @@ public class ProjectDAOTest {
     @Mock
     private LtsFormulaDAO ltsFormulaDAO;
 
+    @Mock
+    private LearnerResultStepRepository learnerResultStepRepository;
+
     private ProjectDAO projectDAO;
 
     private User user;
@@ -149,8 +149,9 @@ public class ProjectDAOTest {
         projectDAO = new ProjectDAO(projectRepository, learnerResultRepository, testReportRepository, fileDAO,
                 parameterizedSymbolRepository, symbolStepRepository, symbolActionRepository, environmentDAO,
                 projectUrlRepository, testExecutionConfigRepository, testDAO, userDAO, environmentRepository, symbolGroupDAO,
-                testRepository, symbolParameterRepository, uploadableFileRepository, learnerSetupRepository, testPresenceService,
-                symbolPresenceService, projectPresenceService, testReportDAO, ltsFormulaSuiteDAO, ltsFormulaDAO);
+                testRepository, symbolParameterRepository, uploadableFileRepository, learnerSetupRepository,
+                learnerResultStepRepository, testPresenceService, symbolPresenceService, projectPresenceService,
+                testReportDAO, ltsFormulaSuiteDAO, ltsFormulaDAO);
         user = new User();
         user.setId(USER_ID);
     }
@@ -165,7 +166,7 @@ public class ProjectDAOTest {
 
         List<Project> allProjects = projectDAO.getAll(user);
 
-        MatcherAssert.assertThat(allProjects.size(), is(equalTo(projects.size())));
+        assertEquals(projects.size(), allProjects.size());
         for (Project p : allProjects) {
             assertTrue(projects.contains(p));
         }

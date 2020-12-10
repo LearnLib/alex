@@ -62,23 +62,18 @@ public class UserResource {
 
     private static final int MAX_USERNAME_LENGTH = 32;
 
-    /** The security context containing the user of the request. */
-    private AuthContext authContext;
-
-    /** The UserDAO to user. */
-    private UserDAO userDAO;
-
-    /** The webhook service to use. */
-    private WebhookService webhookService;
-
-    /** The injected settings DAO. */
-    private SettingsDAO settingsDAO;
+    private final AuthContext authContext;
+    private final UserDAO userDAO;
+    private final WebhookService webhookService;
+    private final SettingsDAO settingsDAO;
 
     @Autowired
-    public UserResource(AuthContext authContext,
-                        UserDAO userDAO,
-                        WebhookService webhookService,
-                        SettingsDAO settingsDAO) {
+    public UserResource(
+            AuthContext authContext,
+            UserDAO userDAO,
+            WebhookService webhookService,
+            SettingsDAO settingsDAO
+    ) {
         this.authContext = authContext;
         this.userDAO = userDAO;
         this.webhookService = webhookService;
@@ -162,7 +157,7 @@ public class UserResource {
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.get", HttpStatus.FORBIDDEN, new UnauthorizedException("You are not allowed to get this information."));
         }
 
-        final User userById = userDAO.getById(userId);
+        final User userById = userDAO.getByID(userId);
         LOGGER.traceExit(userById);
         return ResponseEntity.ok(userById);
     }
@@ -183,7 +178,7 @@ public class UserResource {
 
         final List<User> users = new ArrayList<>();
         for (Long id: userIds) {
-            users.add(userDAO.getById(id));
+            users.add(userDAO.getByID(id));
         }
 
         LOGGER.traceExit(users);
@@ -249,7 +244,7 @@ public class UserResource {
         String oldPassword = (String) json.get("oldPassword");
         String newPassword = (String) json.get("newPassword");
 
-        User realUser = userDAO.getById(userId);
+        User realUser = userDAO.getByID(userId);
 
         // make sure that the password is valid
         if (!realUser.isValidPassword(oldPassword)) {
@@ -291,7 +286,7 @@ public class UserResource {
         }
 
         String email = (String) json.get("email");
-        User realUser = userDAO.getById(userId);
+        User realUser = userDAO.getByID(userId);
 
         if (!new EmailValidator().isValid(email, null)) {
             throw new ValidationException("The email is not valid!");
@@ -346,7 +341,7 @@ public class UserResource {
         }
 
         String username = (String) json.get("username");
-        User realUser = userDAO.getById(userId);
+        User realUser = userDAO.getByID(userId);
 
         if (username.length() > MAX_USERNAME_LENGTH || !username.matches("^[a-zA-Z][a-zA-Z0-9]*$")) {
             throw new ValidationException("The username is invalid!");
@@ -387,7 +382,7 @@ public class UserResource {
         final User user = authContext.getUser();
         LOGGER.traceEntry("update role for user {}.", userId);
 
-        final User userToUpdate = userDAO.getById(userId);
+        final User userToUpdate = userDAO.getByID(userId);
         final UserRole newRole = UserRole.valueOf((String) json.get("role"));
         switch (newRole) {
             case ADMIN:
@@ -518,7 +513,7 @@ public class UserResource {
     public ResponseEntity myself() {
         final User user = authContext.getUser();
 
-        final User myself = userDAO.getById(user.getId());
+        final User myself = userDAO.getByID(user.getId());
         return ResponseEntity.ok(myself);
     }
 }

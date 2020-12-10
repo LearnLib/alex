@@ -20,9 +20,15 @@ import de.learnlib.alex.learning.entities.LearnerResultStep;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Repository to persist LearnerResultSteps.
  */
 @Repository
 public interface LearnerResultStepRepository extends JpaRepository<LearnerResultStep, Long> {
+
+    void deleteAllByIdIn(List<Long> stepIds);
+
+    void deleteAllByResult_Project_Id(Long projectId);
 }

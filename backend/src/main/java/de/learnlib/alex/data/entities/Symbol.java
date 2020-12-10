@@ -36,6 +36,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -94,6 +95,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     private boolean hidden;
 
     /** The steps to execute when the symbol is executed. */
+    @OrderBy
     private List<SymbolStep> steps;
 
     /** The custom output if the symbol is executed successfully. */
@@ -221,7 +223,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * @return The ID.
      */
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty
     public Long getId() {
         return this.id;
@@ -261,7 +263,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     }
 
     @JsonProperty
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(columnDefinition = "TEXT")
     public String getDescription() {
         return description;
     }
@@ -272,7 +274,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     }
 
     @JsonProperty
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(columnDefinition = "TEXT")
     public String getExpectedResult() {
         return expectedResult;
     }

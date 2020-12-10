@@ -19,6 +19,7 @@ package de.learnlib.alex.integrationtests.resources;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
@@ -48,8 +49,10 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -122,7 +125,7 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
         startLearningFromSetup(options, comment);
     }
 
-    private void startLearningFromSetup(LearnerOptions options, String expectedComment) throws InterruptedException, IOException {
+    private void startLearningFromSetup(LearnerOptions options, String expectedComment) throws IOException {
         objectMapper.addMixIn(LearnerResult.class, IgnoreLearnerResultFieldsMixin.class);
         objectMapper.addMixIn(LearnerResultStep.class, IgnoreLearnerResultStepFieldsMixin.class);
 
@@ -141,12 +144,14 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
         assertTrue(result.getStatus().equals(LearnerResult.Status.IN_PROGRESS)
                 || result.getStatus().equals(LearnerResult.Status.PENDING));
 
-        while (result.getStatus() != LearnerResult.Status.FINISHED
-                && result.getStatus() != LearnerResult.Status.ABORTED) {
-            final Response res2 = learnerResultApi.get(project.getId(), result.getTestNo(), jwt);
-            result = objectMapper.readValue(res2.readEntity(String.class), LearnerResult.class);
-            Thread.sleep(3000);
-        }
+        LearnerResult finalResult = result;
+        await().atMost(10, TimeUnit.SECONDS).until(() -> {
+            final var r = getLearnerResult(project.getId(), finalResult.getTestNo(), jwt);
+            return r.getStatus().equals(LearnerResult.Status.FINISHED)
+                    || r.getStatus().equals(LearnerResult.Status.ABORTED);
+        });
+
+        result = getLearnerResult(project.getId(), result.getTestNo(), jwt);
 
         assertEquals(LearnerResult.Status.FINISHED, result.getStatus());
         assertEquals(expectedComment, result.getComment());
@@ -156,8 +161,13 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
         assertFalse(result.isError());
     }
 
+    private LearnerResult getLearnerResult(Long projectId, Long testNo, String jwt) throws JsonProcessingException {
+        final Response res = learnerResultApi.get(projectId, testNo, jwt);
+        return objectMapper.readValue(res.readEntity(String.class), LearnerResult.class);
+    }
+
     @Test
-    public void cannotCreateLearnerSetupWithoutPreSymbol() {
+    public void shouldNotCreateLearnerSetupWithoutPreSymbol() {
         LearnerSetup ls = createDefaultLearnerSetup();
         ls.setPreSymbol(null);
 
@@ -168,7 +178,7 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void cannotCreateLearnerSetupWithoutAlphabet() {
+    public void shouldNotCreateLearnerSetupWithoutAlphabet() {
         LearnerSetup ls = createDefaultLearnerSetup();
         ls.setSymbols(new ArrayList<>());
 
@@ -179,7 +189,7 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void createLearnerSetup() {
+    public void shouldCreateLearnerSetup() {
         final LearnerSetup ls = createDefaultLearnerSetup();
         final Response res = learnerSetupApi.create(project.getId(), ls, jwt);
         final LearnerSetup createdSetup = res.readEntity(LearnerSetup.class);
@@ -190,7 +200,7 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void deleteSetup() {
+    public void shouldDeleteLearnerSetup() {
         final LearnerSetup ls = learnerSetupApi.create(project.getId(), createDefaultLearnerSetup(), jwt)
                 .readEntity(LearnerSetup.class);
 
@@ -201,7 +211,7 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void copySetup() {
+    public void shouldCopyLearnerSetup() {
         final LearnerSetup ls = learnerSetupApi.create(project.getId(), createDefaultLearnerSetup(), jwt)
                 .readEntity(LearnerSetup.class);
 
@@ -230,7 +240,7 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
 
     private List<LearnerSetup> getAllSetups() {
         return learnerSetupApi.getAll(project.getId(), jwt)
-                .readEntity(new GenericType<List<LearnerSetup>>(){
+                .readEntity(new GenericType<>() {
                 });
     }
 
@@ -244,7 +254,7 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
         assertEquals(ls1.getName(), ls2.getName());
         assertEquals(ls1.isEnableCache(), ls2.isEnableCache());
         assertEquals(ls1.getPreSymbol().getSymbol().getId(), ls2.getPreSymbol().getSymbol().getId());
-        for (ParameterizedSymbol ps: ls1.getSymbols()) {
+        for (ParameterizedSymbol ps : ls1.getSymbols()) {
             assertEquals(1, ls2.getSymbols().stream()
                     .filter(s -> s.getSymbol().getId().equals(ps.getSymbol().getId()))
                     .count());
@@ -271,14 +281,22 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static abstract class IgnoreLearnerResultFieldsMixin {
-        @JsonIgnore abstract void setStatistics(Statistics statistics);
-        @JsonIgnore @JsonProperty("error") abstract void setError(Boolean error);
+        @JsonIgnore
+        abstract void setStatistics(Statistics statistics);
+
+        @JsonIgnore
+        @JsonProperty("error")
+        abstract void setError(Boolean error);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static abstract class IgnoreLearnerResultStepFieldsMixin {
-        @JsonIgnore abstract void setStatistics(Statistics statistics);
-        @JsonIgnore @JsonProperty("error") abstract void setError(boolean error);
+        @JsonIgnore
+        abstract void setStatistics(Statistics statistics);
+
+        @JsonIgnore
+        @JsonProperty("error")
+        abstract void setError(boolean error);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

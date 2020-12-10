@@ -31,6 +31,7 @@ import de.learnlib.alex.websocket.services.enums.ProjectPresenceServiceEnum;
 import de.learnlib.alex.websocket.services.enums.WebSocketServiceEnum;
 import io.reactivex.rxjava3.disposables.Disposable;
 import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,7 +54,7 @@ import java.util.stream.IntStream;
  * Service class which tracks user presences in projects.
  */
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class ProjectPresenceService {
 
     /**
@@ -83,6 +84,7 @@ public class ProjectPresenceService {
 
     private final Set<Disposable> disposables;
 
+    @Autowired
     public ProjectPresenceService(WebSocketService webSocketService,
                                   ProjectDAO projectDAO,
                                   ProjectRepository projectRepository,
@@ -148,8 +150,6 @@ public class ProjectPresenceService {
             projectDAO.checkAccess(message.getUser(), project);
 
             addSessionToProject(projectId, userId, sessionId);
-
-
         } catch (IOException e) {
             this.webSocketService.sendError(message.getSessionId(), buildError("Received malformed content.", message));
         } catch (UnauthorizedException | NotFoundException e) {
@@ -170,8 +170,6 @@ public class ProjectPresenceService {
             final String sessionId = message.getSessionId();
 
             removeSessionFromProject(projectId, userId, sessionId);
-
-
         } catch (IOException e) {
             this.webSocketService.sendError(message.getSessionId(), buildError("Received malformed content.", message));
         } catch (UnauthorizedException | NotFoundException e) {
@@ -195,7 +193,6 @@ public class ProjectPresenceService {
         } finally {
             lock.unlock();
         }
-
     }
 
     public void statusRequest(WebSocketMessage message) {
@@ -219,7 +216,6 @@ public class ProjectPresenceService {
 
             status.setContent(projects.toString());
             this.webSocketService.sendToSession(message.getSessionId(), status);
-
         } catch (IOException e) {
             this.webSocketService.sendError(message.getSessionId(), buildError("Received malformed content.", message));
         } catch (UnauthorizedException | NotFoundException e) {
@@ -296,7 +292,7 @@ public class ProjectPresenceService {
                             if (userMap.get(userId).isEmpty()) {
                                 userMap.remove(userId);
                             }
-                            sessionIds.forEach(sessionId -> sessionMap.remove(sessionId));
+                            sessionIds.forEach(sessionMap::remove);
                         });
                         // remove projectPresenceStatus
                         projectPresences.remove(projectId);
@@ -396,7 +392,7 @@ public class ProjectPresenceService {
 
         @JsonProperty("userColors")
         public Map<String, String> getUserColors() {
-            return userColors.entrySet().stream().collect(Collectors.toMap(k -> userDAO.getById(k.getKey()).getUsername(), v -> computeRGBColor(v.getValue())));
+            return userColors.entrySet().stream().collect(Collectors.toMap(k -> userDAO.getByID(k.getKey()).getUsername(), v -> computeRGBColor(v.getValue())));
         }
 
         private int nextColor() {
@@ -405,9 +401,10 @@ public class ProjectPresenceService {
 
             Set<Integer> missingColors = IntStream.rangeClosed(Collections.min(colorsInUse), Collections.max(colorsInUse)).boxed().collect(Collectors.toSet());
             missingColors.removeAll(colorsInUse);
-            int next = missingColors.stream().findFirst().orElse(Collections.max(colorsInUse) + 1);
 
-            return next;
+            return missingColors.stream()
+                    .findFirst()
+                    .orElse(Collections.max(colorsInUse) + 1);
         }
 
         private String computeRGBColor(int colorCode) {

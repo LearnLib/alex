@@ -18,19 +18,15 @@ package de.learnlib.alex.data.rest;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.dao.ProjectEnvironmentDAO;
 import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.ExecuteResult;
-import de.learnlib.alex.data.entities.ParameterizedSymbol;
-import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.ProjectEnvironmentVariable;
 import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.learning.entities.ReadOutputConfig;
-import de.learnlib.alex.learning.exceptions.LearnerException;
 import de.learnlib.alex.learning.services.LearnerService;
 import de.learnlib.alex.security.AuthContext;
 import org.apache.logging.log4j.LogManager;
@@ -50,10 +46,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.ValidationException;
 import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -94,7 +88,7 @@ public class ProjectEnvironmentResource {
             @RequestBody ReadOutputConfig config
     ) {
         final var user = authContext.getUser();
-        final var env = environmentDAO.getById(user, environmentId);
+        final var env = environmentDAO.getByID(user, environmentId);
 
         if (config.getSymbols().isEmpty()) {
             throw new ValidationException("You have to specify at least one symbol.");

@@ -25,6 +25,7 @@ import net.automatalib.words.Word;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 import java.io.IOException;
 import java.io.Serializable;
@@ -45,12 +46,15 @@ public class DefaultQueryProxy implements Serializable {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     /** The Prefix of the query as Strings. */
+    @OrderBy
     private List<String> prefix;
 
     /** The Suffix of the query as Strings. */
+    @OrderBy
     private List<String> suffix;
 
     /** The Output of the query as Strings. */
+    @OrderBy
     private List<String> output;
 
     /**
@@ -135,7 +139,7 @@ public class DefaultQueryProxy implements Serializable {
      *
      * @return The Proxy as JSON string.
      */
-    @Column(name = "counterExample", columnDefinition = "MEDIUMTEXT")
+    @Column(name = "counterExample", columnDefinition = "TEXT")
     @JsonIgnore
     public String getProxyDB() {
         try {

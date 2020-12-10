@@ -36,17 +36,17 @@ import de.learnlib.alex.learning.repositories.LearnerSetupRepository;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
-import javax.transaction.Transactional;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional(rollbackOn = Exception.class)
+@Transactional(rollbackFor = Exception.class)
 public class ProjectEnvironmentDAO {
 
     private final ProjectDAO projectDAO;
@@ -59,7 +59,7 @@ public class ProjectEnvironmentDAO {
     private final LearnerSetupRepository learnerSetupRepository;
     private final LearnerSetupDAO learnerSetupDAO;
 
-    @Inject
+    @Autowired
     public ProjectEnvironmentDAO(ProjectDAO projectDAO,
                                  ProjectRepository projectRepository,
                                  ProjectEnvironmentRepository environmentRepository,
@@ -200,7 +200,7 @@ public class ProjectEnvironmentDAO {
         return environments;
     }
 
-    public ProjectEnvironment getById(User user, Long envId) {
+    public ProjectEnvironment getByID(User user, Long envId) {
         final ProjectEnvironment env = environmentRepository.findById(envId).orElse(null);
         checkAccess(user, env.getProject(), env);
         return ProjectEnvironmentDAO.loadLazyRelations(env);

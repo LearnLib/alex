@@ -22,16 +22,12 @@ import de.learnlib.alex.data.repositories.SymbolGroupRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.transaction.TransactionSystemException;
 
 import javax.inject.Inject;
-import java.util.Collections;
+import javax.validation.ValidationException;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -56,7 +52,7 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
         assertTrue(project.getId() > 0L);
     }
 
-    @Test(expected = TransactionSystemException.class)
+    @Test(expected = ValidationException.class)
     public void shouldFailToSaveAProjectWithoutAName() {
         Project project = new Project();
         project.addOwner(user);
@@ -95,17 +91,17 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
 
         List<Project> projects = projectRepository.findAllByUser_Id(user.getId());
 
-        assertThat(projects.size(), is(equalTo(3)));
-        assertThat(projects, hasItem(equalTo(project1)));
-        assertThat(projects, hasItem(equalTo(project2)));
-        assertThat(projects, hasItem(equalTo(project4)));
+        assertEquals(3, projects.size());
+        assertTrue(projects.contains(project1));
+        assertTrue(projects.contains(project2));
+        assertTrue(projects.contains(project4));
     }
 
     @Test
     public void shouldReturnEmptyListWhenFetchingAllProjectsOfAUserWhoHasNone() {
         List<Project> projects = projectRepository.findAllByUser_Id(user.getId());
 
-        assertThat(projects, is(equalTo(Collections.EMPTY_LIST)));
+        assertEquals(0, projects.size());
     }
 
     @Test
@@ -115,7 +111,7 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
 
         Project projectFromDB = projectRepository.findById(project.getId()).orElse(null);
 
-        assertThat(projectFromDB, is(equalTo(project)));
+        assertEquals(project, projectFromDB);
     }
 
     @Test
@@ -137,12 +133,12 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
         Project project = createProject(user, "Test Project");
         project = projectRepository.save(project);
 
-        assertThat(symbolGroupRepository.count(), is(equalTo(1L)));
+        assertEquals(1L, symbolGroupRepository.count());
 
         projectRepository.delete(project);
 
-        assertThat(projectRepository.count(), is(equalTo(0L)));
-        assertThat(symbolGroupRepository.count(), is(equalTo(0L)));
+        assertEquals(0L, projectRepository.count());
+        assertEquals(0L, symbolGroupRepository.count());
     }
 
     @Test(expected = EmptyResultDataAccessException.class)

@@ -437,7 +437,8 @@ public class UserResourceIT extends AbstractResourceIT {
 
         final Response res = userApi.search("abc", adminJwt);
         assertEquals(HttpStatus.OK.value(), res.getStatus());
-        final List<User> users = res.readEntity(new GenericType<List<User>>(){});
+        final List<User> users = res.readEntity(new GenericType<List<User>>() {
+        });
         assertEquals(1, users.size());
         assertEquals("abc", users.get(0).getUsername());
     }
@@ -449,7 +450,8 @@ public class UserResourceIT extends AbstractResourceIT {
 
         final Response res = userApi.search("def@test.de", adminJwt);
         assertEquals(HttpStatus.OK.value(), res.getStatus());
-        final List<User> users = res.readEntity(new GenericType<List<User>>(){});
+        final List<User> users = res.readEntity(new GenericType<List<User>>() {
+        });
         assertEquals(1, users.size());
         assertEquals("def@test.de", users.get(0).getEmail());
     }
@@ -459,7 +461,8 @@ public class UserResourceIT extends AbstractResourceIT {
         createDemoUsers();
         final Response res = userApi.search("unknown", adminJwt);
         assertEquals(HttpStatus.OK.value(), res.getStatus());
-        final List<User> users = res.readEntity(new GenericType<List<User>>(){});
+        final List<User> users = res.readEntity(new GenericType<List<User>>() {
+        });
         assertEquals(0, users.size());
     }
 
@@ -468,7 +471,8 @@ public class UserResourceIT extends AbstractResourceIT {
         final List<User> demoUsers = createDemoUsers();
         final Response res = userApi.getAll(Arrays.asList(demoUsers.get(0).getId(), demoUsers.get(1).getId()), adminJwt);
         assertEquals(HttpStatus.OK.value(), res.getStatus());
-        final List<User> users = res.readEntity(new GenericType<List<User>>(){});
+        final List<User> users = res.readEntity(new GenericType<List<User>>() {
+        });
         assertEquals(2, users.size());
         assertTrue(users.stream().anyMatch(u -> u.getId().equals(demoUsers.get(0).getId())));
         assertTrue(users.stream().anyMatch(u -> u.getId().equals(demoUsers.get(1).getId())));

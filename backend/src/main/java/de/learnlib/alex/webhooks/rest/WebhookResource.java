@@ -48,11 +48,8 @@ public class WebhookResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    /** The security context containing the user of the request. */
-    private AuthContext authContext;
-
-    /** The {@link WebhookDAO} to use. */
-    private WebhookDAO webhookDAO;
+    private final AuthContext authContext;
+    private final WebhookDAO webhookDAO;
 
     /**
      * Constructor.
@@ -77,7 +74,7 @@ public class WebhookResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity create(@RequestBody Webhook webhook) {
+    public ResponseEntity<Webhook> create(@RequestBody Webhook webhook) {
         final User user = authContext.getUser();
         LOGGER.traceEntry("create '{}' for user '{}'", webhook, user);
 
@@ -94,7 +91,7 @@ public class WebhookResource {
     @GetMapping(
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity get() {
+    public ResponseEntity<List<Webhook>> get() {
         final User user = authContext.getUser();
         LOGGER.traceEntry("get webhooks for user '{}'", user);
         final List<Webhook> webhooks = webhookDAO.getAll(user);
@@ -116,7 +113,7 @@ public class WebhookResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity update(@PathVariable("webhookId") Long webhookId, @RequestBody Webhook webhook) {
+    public ResponseEntity<Webhook> update(@PathVariable("webhookId") Long webhookId, @RequestBody Webhook webhook) {
         final User user = authContext.getUser();
         LOGGER.traceEntry("update webhook '{}' for user '{}'", webhook, user);
 
@@ -136,7 +133,7 @@ public class WebhookResource {
             value = "/{webhookId}",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity delete(@PathVariable("webhookId") Long webhookId) {
+    public ResponseEntity<?> delete(@PathVariable("webhookId") Long webhookId) {
         final User user = authContext.getUser();
         LOGGER.traceEntry("delete webhook '{}' for user '{}'", webhookId, user);
 
@@ -156,7 +153,7 @@ public class WebhookResource {
             value = "/batch/{webhookIds}",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity delete(@PathVariable("webhookIds") List<Long> webhookIds) {
+    public ResponseEntity<?> delete(@PathVariable("webhookIds") List<Long> webhookIds) {
         final User user = authContext.getUser();
         LOGGER.traceEntry("delete webhooks '{}' for user '{}'", webhookIds, user);
 
@@ -174,7 +171,7 @@ public class WebhookResource {
             value = "/events",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity getEvents() {
+    public ResponseEntity<List<EventType>> getEvents() {
         LOGGER.traceEntry("getEvents");
         final List<EventType> eventTypes = new ArrayList<>(EnumSet.allOf(EventType.class));
         LOGGER.traceExit(eventTypes);

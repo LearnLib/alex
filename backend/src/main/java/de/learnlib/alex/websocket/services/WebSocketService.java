@@ -50,7 +50,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Predicate;
 
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class WebSocketService {
 
     private final ReentrantLock lock = new ReentrantLock(true);
@@ -74,7 +74,8 @@ public class WebSocketService {
 
     @Autowired
     public WebSocketService(SimpMessagingTemplate simpMessagingTemplate,
-                            ProjectRepository projectRepository, ObjectMapper objectMapper) {
+                            ProjectRepository projectRepository,
+                            ObjectMapper objectMapper) {
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.projectRepository = projectRepository;
         this.objectMapper = objectMapper;
@@ -305,8 +306,7 @@ public class WebSocketService {
                 .ifPresent(webSocketSession -> {
                     try {
                         webSocketSession.close();
-                    } catch (IOException e) {
-                        // Ignore
+                    } catch (IOException ignored) {
                     }
                 });
     }
@@ -318,8 +318,7 @@ public class WebSocketService {
                         if (session.getPrincipal().getName().equals(simpUsername)) {
                             try {
                                 session.close();
-                            } catch (IOException e) {
-                                // Ignore
+                            } catch (IOException ignored) {
                             }
                         }
                     });

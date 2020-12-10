@@ -20,8 +20,6 @@ import de.learnlib.alex.data.entities.SymbolOutputMapping;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
-
 @Repository
 public interface SymbolOutputMappingRepository extends JpaRepository<SymbolOutputMapping, Long> {
 
@@ -31,7 +29,5 @@ public interface SymbolOutputMappingRepository extends JpaRepository<SymbolOutpu
      * @param parameterId
      *         The id of the parameter.
      */
-    @Transactional
-    @SuppressWarnings("checkstyle:methodname")
     void removeAllByParameter_Id(Long parameterId);
 }

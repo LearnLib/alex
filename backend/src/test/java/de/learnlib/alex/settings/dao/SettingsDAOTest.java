@@ -10,21 +10,14 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.validation.ValidationException;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SettingsDAOTest {
-
-    private static final String PATH_TO_CHROME  = "path/to/chrome";
-    private static final String PATH_TO_FIREFOX = "path/to/firefox";
-    private static final String PATH_TO_EDGE = "path/to/edge";
 
     @Mock
     private SettingsRepository settingsRepository;
@@ -56,7 +49,7 @@ public class SettingsDAOTest {
         Settings settings = new Settings();
         given(settingsRepository.get()).willReturn(settings);
         Settings s = settingsDAO.get();
-        assertThat(s, is(equalTo(settings)));
+        assertEquals(settings, s);
     }
 
     @Test

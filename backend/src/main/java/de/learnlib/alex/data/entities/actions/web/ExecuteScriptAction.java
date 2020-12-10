@@ -56,7 +56,7 @@ public class ExecuteScriptAction extends SymbolAction {
 
     /** The JavaScript to execute. */
     @NotBlank
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(columnDefinition = "TEXT")
     private String script;
 
     /** If the script should be executed asynchronously. */

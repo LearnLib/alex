@@ -20,19 +20,15 @@ import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.learning.entities.LearnerSetup;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Repository
 public interface LearnerSetupRepository extends JpaRepository<LearnerSetup, Long> {
 
-    @Transactional
     List<LearnerSetup> findAllByProject_Id(Long projectId);
 
-    @Transactional
     void deleteAllByProject_Id(Long projectId);
 
-    @Transactional
     List<LearnerSetup> findAllByEnvironmentsContains(ProjectEnvironment environment);
 }

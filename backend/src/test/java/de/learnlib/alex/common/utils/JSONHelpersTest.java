@@ -19,11 +19,8 @@ package de.learnlib.alex.common.utils;
 import de.learnlib.alex.data.entities.actions.rest.CheckAttributeTypeAction.JsonType;
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
 
 public class JSONHelpersTest {
 
@@ -121,7 +118,7 @@ public class JSONHelpersTest {
 
     @Test
     public void shouldReturnCorrectTypeIfJSONIsNotStrictJSONOnGetType() {
-        assertThat(JSONHelpers.getAttributeType("{field: Test}", "field"), is(equalTo(JsonType.STRING)));
+        assertEquals(JsonType.STRING, JSONHelpers.getAttributeType("{field: Test}", "field"));
     }
 
     @Test

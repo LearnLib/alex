@@ -200,7 +200,7 @@ public class CompactMealyMachineProxy implements Serializable {
      *
      * @return The Edges of the machine as JSON string.
      */
-    @Column(name = "edges", columnDefinition = "MEDIUMTEXT")
+    @Column(name = "edges", columnDefinition = "TEXT")
     @JsonIgnore
     public String getEdgesDB() {
         try {

@@ -31,12 +31,12 @@ import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.repositories.ProjectRepository;
-import de.learnlib.alex.data.repositories.SymbolGroupRepository;
 import de.learnlib.alex.websocket.entities.WebSocketMessage;
 import de.learnlib.alex.websocket.services.enums.SymbolPresenceServiceEnum;
 import de.learnlib.alex.websocket.services.enums.WebSocketServiceEnum;
 import io.reactivex.rxjava3.disposables.Disposable;
 import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,7 +59,7 @@ import java.util.stream.Collectors;
  * Service class which tracks user presences in tests.
  */
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class SymbolPresenceService {
 
     /**
@@ -80,8 +80,6 @@ public class SymbolPresenceService {
 
     private final ProjectRepository projectRepository;
 
-    private final SymbolGroupRepository symbolGroupRepository;
-
     /** A map which stores the SymbolLock objects with the projectId and symbolId as the keys */
     private final Map<Long, Map<Long, SymbolLock>> symbolLocks;
 
@@ -96,19 +94,18 @@ public class SymbolPresenceService {
 
     private final Set<Disposable> disposables;
 
+    @Autowired
     public SymbolPresenceService(WebSocketService webSocketService,
                                  SymbolDAO symbolDAO,
                                  ProjectDAO projectDAO,
                                  UserDAO userDAO,
                                  ProjectRepository projectRepository,
-                                 SymbolGroupRepository symbolGroupRepository,
                                  ObjectMapper objectMapper) {
         this.webSocketService = webSocketService;
         this.symbolDAO = symbolDAO;
         this.projectDAO = projectDAO;
         this.userDAO = userDAO;
         this.projectRepository = projectRepository;
-        this.symbolGroupRepository = symbolGroupRepository;
         this.objectMapper = objectMapper;
 
         this.disposables = new HashSet<>();
@@ -372,7 +369,7 @@ public class SymbolPresenceService {
             userMap.computeIfAbsent(userId, k -> new HashSet<>())
                     .add(symbolLock);
 
-            SymbolGroup symbolGroup = symbolDAO.get(userDAO.getById(userId), projectId, symbolId).getGroup();
+            SymbolGroup symbolGroup = symbolDAO.get(userDAO.getByID(userId), projectId, symbolId).getGroup();
             while (symbolGroup != null) {
                 symbolGroupLocks.computeIfAbsent(projectId, k -> new HashMap<>())
                                 .computeIfAbsent(symbolGroup.getId(), k -> new SymbolGroupLock(projectId, k))
@@ -400,7 +397,7 @@ public class SymbolPresenceService {
                             }
                         }
 
-                        SymbolGroup symbolGroup = symbolDAO.get(userDAO.getById(userId), projectId, symbolId).getGroup();
+                        SymbolGroup symbolGroup = symbolDAO.get(userDAO.getByID(userId), projectId, symbolId).getGroup();
                         while (symbolGroup != null) {
 
                             final SymbolGroupLock symbolGroupLock = symbolGroupLocks.get(projectId).get(symbolGroup.getId());
@@ -561,7 +558,7 @@ public class SymbolPresenceService {
 
         @JsonProperty("username")
         public String getUsername() {
-            return userDAO.getById(lockOwner).getUsername();
+            return userDAO.getByID(lockOwner).getUsername();
         }
 
         @JsonProperty("timestamp")
@@ -629,7 +626,7 @@ public class SymbolPresenceService {
 
         @JsonProperty("locks")
         public List getLockOwnersNames() {
-            return lockOwners.stream().map(userId -> userDAO.getById(userId).getUsername()).collect(Collectors.toList());
+            return lockOwners.stream().map(userId -> userDAO.getByID(userId).getUsername()).collect(Collectors.toList());
         }
     }
 }

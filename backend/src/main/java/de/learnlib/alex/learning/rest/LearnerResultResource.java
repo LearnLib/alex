@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.util.List;
@@ -55,10 +56,10 @@ public class LearnerResultResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private AuthContext authContext;
-    private LearnerResultDAO learnerResultDAO;
-    private TestGenerator testGenerator;
-    private ModelExporter modelExporter;
+    private final AuthContext authContext;
+    private final LearnerResultDAO learnerResultDAO;
+    private final TestGenerator testGenerator;
+    private final ModelExporter modelExporter;
 
     @Autowired
     public LearnerResultResource(AuthContext authContext,
@@ -145,7 +146,7 @@ public class LearnerResultResource {
         LOGGER.trace("LearnerResultResource.getAllSteps(" + projectId + ", " + testNos + ") for user " + user + ".");
 
         if (testNos.size() == 1) {
-            final LearnerResult result = learnerResultDAO.get(user, projectId, testNos.get(0));
+            final LearnerResult result = learnerResultDAO.getByTestNo(user, projectId, testNos.get(0));
             LOGGER.traceExit();
             return ResponseEntity.ok(result);
         } else {
@@ -212,11 +213,10 @@ public class LearnerResultResource {
     )
     public ResponseEntity generateTestSuite(@PathVariable("projectId") Long projectId,
                                             @PathVariable("testNo") Long testNo,
-                                            @RequestBody TestSuiteGenerationConfig config) {
-        User user = authContext.getUser();
+                                            @RequestBody @Valid TestSuiteGenerationConfig config) {
+        final var user = authContext.getUser();
         LOGGER.traceEntry("generateTestSuite(projectId: {}, testNo: {}, config: {}) for user {}", projectId, testNo, config, user);
 
-        config.validate();
         try {
             final TestSuite testSuite = testGenerator.generate(user, projectId, testNo, config);
             LOGGER.traceExit("generateTestSuite() with status {}", HttpStatus.CREATED);
@@ -232,7 +232,7 @@ public class LearnerResultResource {
      *
      * @param projectId
      *         The project of the learn results.
-     * @param testNumbers
+     * @param testNos
      *         The test numbers of the results to delete as a comma (',') separated list. E.g. 1,2,3
      * @return On success no content will be returned.
      */
@@ -240,13 +240,13 @@ public class LearnerResultResource {
             value = "/{testNos}",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity deleteResultSet(@PathVariable("projectId") Long projectId,
-                                          @PathVariable("testNos") List<Long> testNumbers) {
+    public ResponseEntity deleteResults(@PathVariable("projectId") Long projectId,
+                                        @PathVariable("testNos") List<Long> testNos) {
         final User user = authContext.getUser();
-        LOGGER.trace("LearnerResultResource.deleteResultSet(" + projectId + ", " + testNumbers + ") "
+        LOGGER.trace("LearnerResultResource.deleteResultSet(" + projectId + ", " + testNos + ") "
                 + "for user " + user + ".");
 
-        learnerResultDAO.deleteAll(user, projectId, testNumbers);
+        learnerResultDAO.deleteByTestNos(user, projectId, testNos);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

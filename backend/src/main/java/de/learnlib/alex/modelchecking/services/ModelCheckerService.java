@@ -34,7 +34,6 @@ import net.automatalib.words.Alphabet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -76,7 +75,7 @@ public class ModelCheckerService {
         final List<LtsFormula> formulasToCheck = new ArrayList<>(config.getFormulas());
         formulasToCheck.addAll(ltsFormulaDAO.getByIds(user, projectId, config.getFormulaIds()));
 
-        final LearnerResult learnerResult = learnerResultDAO.get(user, projectId, config.getLearnerResultId());
+        final LearnerResult learnerResult = learnerResultDAO.getByTestNo(user, projectId, config.getLearnerResultId());
         final LearnerResultStep step = learnerResult.getSteps().get(config.getStepNo() - 1);
 
         final Alphabet<String> alphabet = step.getHypothesis().createAlphabet();

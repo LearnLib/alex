@@ -29,6 +29,7 @@ import org.hibernate.annotations.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -47,7 +48,7 @@ public class LearnerSetup implements Serializable {
     private static final long serialVersionUID = 4839405295048332641L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(optional = false)
@@ -78,7 +79,7 @@ public class LearnerSetup implements Serializable {
     private ParameterizedSymbol postSymbol;
 
     @NotNull
-    @Column(columnDefinition = "BLOB")
+    @Column(columnDefinition="BYTEA")
     private AbstractEquivalenceOracleProxy equivalenceOracle;
 
     @NotNull

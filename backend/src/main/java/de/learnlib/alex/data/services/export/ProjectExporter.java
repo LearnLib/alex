@@ -37,21 +37,27 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional(rollbackFor = Exception.class, readOnly = true)
 public class ProjectExporter extends EntityExporter {
 
-    @Autowired
-    private ProjectDAO projectDAO;
+    private final ProjectDAO projectDAO;
+    private final SymbolsExporter symbolsExporter;
+    private final TestsExporter testsExporter;
+    private final LtsFormulaSuitesExporter formulaSuitesExporter;
 
     @Autowired
-    private SymbolsExporter symbolsExporter;
+    public ProjectExporter(
+            ProjectDAO projectDAO,
+            SymbolsExporter symbolsExporter,
+            TestsExporter testsExporter,
+            LtsFormulaSuitesExporter formulaSuitesExporter
+    ) {
+        this.projectDAO = projectDAO;
+        this.symbolsExporter = symbolsExporter;
+        this.testsExporter = testsExporter;
+        this.formulaSuitesExporter = formulaSuitesExporter;
+    }
 
-    @Autowired
-    private TestsExporter testsExporter;
-
-    @Autowired
-    private LtsFormulaSuitesExporter formulaSuitesExporter;
-
-    @Transactional
     public ExportableEntity export(User user, Long projectId) throws Exception {
         om.addMixIn(Project.class, IgnoreFieldsForProjectMixin.class);
         om.addMixIn(ProjectEnvironment.class, IgnoreFieldsForProjectEnvironmentMixin.class);

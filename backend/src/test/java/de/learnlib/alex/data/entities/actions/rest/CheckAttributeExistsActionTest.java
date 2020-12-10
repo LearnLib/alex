@@ -85,7 +85,7 @@ public class CheckAttributeExistsActionTest extends RestActionTest {
     @Test
     public void shouldReturnOkIfAttributeExistsWithComplexStructure() {
         given(webServiceConnector.getBody()).willReturn("{\"awesome_field\": {\"foo\": \"Fooooobar.\","
-                                                                 + "\"other\": [\"Lorem Ipsum.\", \"Hello World!\"]}}");
+                + "\"other\": [\"Lorem Ipsum.\", \"Hello World!\"]}}");
         c.setAttribute("awesome_field.foo");
 
         ExecuteResult result = c.executeAction(connectors);

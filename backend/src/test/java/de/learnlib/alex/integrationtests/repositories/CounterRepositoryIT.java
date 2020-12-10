@@ -28,11 +28,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import javax.inject.Inject;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class CounterRepositoryIT extends AbstractRepositoryIT {
 
@@ -58,7 +56,7 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
         counter = counterRepository.save(counter);
 
         assertNotNull(counter.getId());
-        assertThat(counterRepository.count(), is(equalTo(1L)));
+        assertEquals(1, counterRepository.count());
     }
 
     @Test(expected = DataIntegrityViolationException.class)
@@ -98,9 +96,9 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
 
         List<Counter> counters = counterRepository.findAllByProject(project);
 
-        assertThat(counters.size(), is(equalTo(2)));
-        assertThat(counters, hasItem(equalTo(counter1)));
-        assertThat(counters, hasItem(equalTo(counter2)));
+        assertEquals(2, counters.size());
+        assertTrue(counters.contains(counter1));
+        assertTrue(counters.contains(counter2));
     }
 
     @Test
@@ -110,7 +108,7 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
 
         Counter counterFromDB = counterRepository.findByProjectAndName(project, "TestCounter1");
 
-        assertThat(counterFromDB, is(equalTo(counter)));
+        assertEquals(counter, counterFromDB);
     }
 
     @Test
@@ -120,14 +118,13 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
 
         counterRepository.deleteById(counter.getId());
 
-        assertThat(counterRepository.count(), is(equalTo(0L)));
+        assertEquals(0L, counterRepository.count());
     }
 
     @Test(expected = EmptyResultDataAccessException.class)
     public void shouldThrowAnExceptionWhenDeletingAnNonExistingCounter() {
         counterRepository.deleteById(-1L);
     }
-
 
     private Counter createCounter(Project project, String name) {
         Counter counter = new Counter();

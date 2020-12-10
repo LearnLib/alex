@@ -22,26 +22,46 @@ import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class LearnerResultStepDAO {
 
-    @Autowired
-    private ProjectDAO projectDAO;
+    private final ProjectDAO projectDAO;
+    private final LearnerResultDAO learnerResultDAO;
+    private final LearnerResultStepRepository learnerResultStepRepository;
 
-    @Autowired
-    private LearnerResultDAO learnerResultDAO;
-
-    @Autowired
-    private LearnerResultStepRepository learnerResultStepRepository;
+    public LearnerResultStepDAO(
+            ProjectDAO projectDAO,
+            LearnerResultDAO learnerResultDAO,
+            LearnerResultStepRepository learnerResultStepRepository
+    ) {
+        this.projectDAO = projectDAO;
+        this.learnerResultDAO = learnerResultDAO;
+        this.learnerResultStepRepository = learnerResultStepRepository;
+    }
 
     public LearnerResultStep getById(User user, Long projectId, Long stepId) {
         final var project = projectDAO.getByID(user, projectId);
         final var step = learnerResultStepRepository.getOne(stepId);
         checkAccess(user, project, step);
         return step;
+    }
+
+    public LearnerResultStep update(Long stepId, LearnerResultStep step) {
+        final var stepToUpdate = learnerResultStepRepository.findById(stepId)
+                .orElseThrow(() -> new NotFoundException("The step could not be found."));
+
+        stepToUpdate.setStatistics(step.getStatistics());
+        stepToUpdate.setCounterExample(step.getCounterExample());
+        stepToUpdate.setState(step.getState());
+        stepToUpdate.setAlgorithmInformation(step.getAlgorithmInformation());
+        stepToUpdate.setErrorText(step.getErrorText());
+        stepToUpdate.setEqOracle(step.getEqOracle());
+
+        return learnerResultStepRepository.save(stepToUpdate);
     }
 
     private void checkAccess(User user, Project project, LearnerResultStep step) {

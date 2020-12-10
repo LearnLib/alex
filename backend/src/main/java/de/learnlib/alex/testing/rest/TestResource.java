@@ -17,8 +17,6 @@
 package de.learnlib.alex.testing.rest;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.data.dao.ProjectDAO;
-import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.export.ExportableEntity;
 import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.testing.dao.TestDAO;
@@ -62,30 +60,29 @@ public class TestResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private AuthContext authContext;
+    private final AuthContext authContext;
     private final TestDAO testDAO;
     private final TestService testService;
     private final WebhookService webhookService;
-    private final ProjectDAO projectDAO;
     private final TestsExporter testsExporter;
 
     @Autowired
-    public TestResource(AuthContext authContext,
-                        TestDAO testDAO,
-                        TestService testService,
-                        WebhookService webhookService,
-                        ProjectDAO projectDAO,
-                        TestsExporter testsExporter) {
+    public TestResource(
+            AuthContext authContext,
+            TestDAO testDAO,
+            TestService testService,
+            WebhookService webhookService,
+            TestsExporter testsExporter
+    ) {
         this.authContext = authContext;
         this.testDAO = testDAO;
         this.testService = testService;
         this.webhookService = webhookService;
-        this.projectDAO = projectDAO;
         this.testsExporter = testsExporter;
     }
 
     /**
-     * Create a test.
+     * Create a test
      *
      * @param projectId
      *         The id of the project to create the test in.
@@ -97,9 +94,9 @@ public class TestResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity createTest(@PathVariable("projectId") Long projectId,
-                                     @RequestBody Test test) {
-        final User user = authContext.getUser();
+    public ResponseEntity<Test> createTest(@PathVariable("projectId") Long projectId,
+                                           @RequestBody Test test) {
+        final var user = authContext.getUser();
         testDAO.create(user, projectId, test);
         webhookService.fireEvent(user, new TestEvent.Created(test));
         return ResponseEntity.status(HttpStatus.CREATED).body(test);
@@ -119,10 +116,10 @@ public class TestResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity createTests(@PathVariable("projectId") Long projectId,
-                                      @RequestBody List<Test> tests) {
-        final User user = authContext.getUser();
-        final List<Test> createdTests = testDAO.create(user, projectId, tests);
+    public ResponseEntity<List<Test>> createTests(@PathVariable("projectId") Long projectId,
+                                                  @RequestBody List<Test> tests) {
+        final var user = authContext.getUser();
+        final var createdTests = testDAO.create(user, projectId, tests);
         webhookService.fireEvent(user, new TestEvent.CreatedMany(createdTests));
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTests);
     }
@@ -140,10 +137,10 @@ public class TestResource {
             value = "/{testId}",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity get(@PathVariable("projectId") Long projectId,
-                              @PathVariable("testId") Long testId) {
-        final User user = authContext.getUser();
-        final Test test = testDAO.get(user, projectId, testId);
+    public ResponseEntity<Test> get(@PathVariable("projectId") Long projectId,
+                                    @PathVariable("testId") Long testId) {
+        final var user = authContext.getUser();
+        final var test = testDAO.get(user, projectId, testId);
         return ResponseEntity.ok(test);
     }
 
@@ -158,9 +155,9 @@ public class TestResource {
             value = "/root",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity get(@PathVariable("projectId") Long projectId) {
-        final User user = authContext.getUser();
-        final Test root = testDAO.getRoot(user, projectId);
+    public ResponseEntity<Test> get(@PathVariable("projectId") Long projectId) {
+        final var user = authContext.getUser();
+        final var root = testDAO.getRoot(user, projectId);
         return ResponseEntity.ok(root);
     }
 
@@ -178,11 +175,10 @@ public class TestResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity execute(@PathVariable("projectId") Long projectId,
-                                  @RequestBody TestExecutionConfig testConfig) {
-        final User user = authContext.getUser();
-        final Project project = projectDAO.getByID(user, projectId);
-        final TestQueueItem testRun = testService.start(user, project, testConfig);
+    public ResponseEntity<TestQueueItem> execute(@PathVariable("projectId") Long projectId,
+                                                 @RequestBody TestExecutionConfig testConfig) {
+        final var user = authContext.getUser();
+        final var testRun = testService.start(user, projectId, testConfig);
         return ResponseEntity.ok(testRun);
     }
 
@@ -197,11 +193,10 @@ public class TestResource {
             value = "/status",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity status(@PathVariable("projectId") Long projectId) {
-        final User user = authContext.getUser();
+    public ResponseEntity<TestStatus> status(@PathVariable("projectId") Long projectId) {
+        final var user = authContext.getUser();
         LOGGER.traceEntry("status(projectId: {}) with user {}", projectId, user);
-        final Project project = projectDAO.getByID(user, projectId);
-        final TestStatus status = testService.getStatus(user, project);
+        final var status = testService.getStatus(user, projectId);
         LOGGER.traceExit("status() with status {}", status);
         return ResponseEntity.ok(status);
     }
@@ -211,8 +206,9 @@ public class TestResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity exportTests(@PathVariable("projectId") Long projectId,
-                                      @RequestBody TestsExportConfig config) throws Exception {
+    public ResponseEntity<ExportableEntity> exportTests(@PathVariable("projectId") Long projectId,
+                                                        @RequestBody TestsExportConfig config)
+            throws Exception {
         final User user = authContext.getUser();
         final ExportableEntity exportedTests = testsExporter.export(user, projectId, config);
         return ResponseEntity.ok(exportedTests);
@@ -223,10 +219,10 @@ public class TestResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity importTests(@PathVariable("projectId") Long projectId,
-                                      @RequestBody List<Test> tests) {
-        final User user = authContext.getUser();
-        final List<Test> importedTests = testDAO.importTests(user, projectId, tests);
+    public ResponseEntity<List<Test>> importTests(@PathVariable("projectId") Long projectId,
+                                                  @RequestBody List<Test> tests) {
+        final var user = authContext.getUser();
+        final var importedTests = testDAO.importTests(user, projectId, tests);
         return ResponseEntity.ok(importedTests);
     }
 
@@ -246,10 +242,10 @@ public class TestResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity update(@PathVariable("projectId") Long projectId,
+    public ResponseEntity<Test> update(@PathVariable("projectId") Long projectId,
                                  @PathVariable("testId") Long testId,
                                  @RequestBody Test test) {
-        final User user = authContext.getUser();
+        final var user = authContext.getUser();
         LOGGER.traceEntry("update(projectId: {}, testId: {})", projectId, testId);
 
         testDAO.update(user, projectId, test);
@@ -275,11 +271,11 @@ public class TestResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity move(@PathVariable("projectId") Long projectId,
-                               @PathVariable("testIds") List<Long> testIds,
-                               @PathVariable("targetId") Long targetId) {
-        final User user = authContext.getUser();
-        final List<Test> movedTests = testDAO.move(user, projectId, testIds, targetId);
+    public ResponseEntity<List<Test>> move(@PathVariable("projectId") Long projectId,
+                                           @PathVariable("testIds") List<Long> testIds,
+                                           @PathVariable("targetId") Long targetId) {
+        final var user = authContext.getUser();
+        final var movedTests = testDAO.move(user, projectId, testIds, targetId);
         webhookService.fireEvent(user, new TestEvent.MovedMany(movedTests));
         return ResponseEntity.ok(movedTests);
     }
@@ -297,9 +293,9 @@ public class TestResource {
             value = "/{testId}",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity delete(@PathVariable("projectId") Long projectId,
+    public ResponseEntity<?> delete(@PathVariable("projectId") Long projectId,
                                  @PathVariable("testId") Long testId) {
-        final User user = authContext.getUser();
+        final var user = authContext.getUser();
         testDAO.delete(user, projectId, testId);
         webhookService.fireEvent(user, new TestEvent.Deleted(testId));
         return ResponseEntity.noContent().build();
@@ -309,9 +305,9 @@ public class TestResource {
             value = "/abort/{reportId}",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity abort(@PathVariable("projectId") Long projectId,
+    public ResponseEntity<?> abort(@PathVariable("projectId") Long projectId,
                                 @PathVariable("reportId") Long reportId) {
-        final User user = authContext.getUser();
+        final var user = authContext.getUser();
         testService.abort(user, projectId, reportId);
         return ResponseEntity.ok().build();
     }
@@ -329,9 +325,9 @@ public class TestResource {
             value = "/batch/{testIds}",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity delete(@PathVariable("projectId") Long projectId,
+    public ResponseEntity<?> delete(@PathVariable("projectId") Long projectId,
                                  @PathVariable("testIds") List<Long> testIds) {
-        final User user = authContext.getUser();
+        final var user = authContext.getUser();
         testDAO.delete(user, projectId, testIds);
         webhookService.fireEvent(user, new TestEvent.DeletedMany(testIds));
         return ResponseEntity.noContent().build();
@@ -354,13 +350,13 @@ public class TestResource {
             value = "/{testId}/results",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity getResults(@PathVariable("projectId") Long projectId,
+    public ResponseEntity<Page<TestResult>> getResults(@PathVariable("projectId") Long projectId,
                                      @PathVariable("testId") Long testId,
                                      @RequestParam(name = "page", defaultValue = "1") int page,
                                      @RequestParam(name = "size", defaultValue = "25") int size) {
-        final User user = authContext.getUser();
-        final PageRequest pr = PageRequest.of(page, size);
-        final Page<TestResult> results = testDAO.getResults(user, projectId, testId, pr);
+        final var user = authContext.getUser();
+        final var pr = PageRequest.of(page, size);
+        final var results = testDAO.getResults(user, projectId, testId, pr);
         return ResponseEntity.ok(results);
     }
 }

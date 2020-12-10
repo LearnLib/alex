@@ -16,9 +16,14 @@
 
 package de.learnlib.alex.learning.services;
 
+import de.learnlib.alex.auth.dao.UserDAO;
 import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
+import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
+import de.learnlib.alex.learning.dao.LearnerResultStepDAO;
+import de.learnlib.alex.learning.dao.LearnerSetupDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.entities.LearnerSetup;
@@ -26,6 +31,7 @@ import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachinePro
 import de.learnlib.alex.learning.entities.learnlibproxies.DefaultQueryProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.TestSuiteEQOracleProxy;
+import de.learnlib.alex.learning.services.connectors.PreparedConnectorContextHandlerFactory;
 import de.learnlib.alex.learning.services.connectors.PreparedContextHandler;
 import de.learnlib.alex.learning.services.oracles.ContextAwareSulOracle;
 import de.learnlib.alex.learning.services.oracles.DelegationOracle;
@@ -38,7 +44,6 @@ import de.learnlib.api.algorithm.LearningAlgorithm;
 import de.learnlib.api.oracle.EquivalenceOracle;
 import de.learnlib.api.query.DefaultQuery;
 import de.learnlib.filter.cache.mealy.MealyCacheOracle;
-import de.learnlib.oracle.parallelism.DynamicParallelOracle;
 import de.learnlib.oracle.parallelism.DynamicParallelOracleBuilder;
 import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.words.Alphabet;
@@ -46,7 +51,9 @@ import net.automatalib.words.Word;
 import net.automatalib.words.impl.GrowingMapAlphabet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.transaction.support.TransactionTemplate;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -56,73 +63,103 @@ import java.util.stream.Collectors;
  * Thread to run a learning process. It needs to be a Thread so that the server can still deal with other requests. This
  * class contains the actual learning loop.
  */
-public abstract class AbstractLearnerProcess {
+public abstract class AbstractLearnerProcess<C extends AbstractLearnerProcessQueueItem> {
 
     protected static final Logger logger = LogManager.getLogger();
 
-    /** The webhook service to user. */
+    protected final UserDAO userDAO;
+    protected final ProjectDAO projectDAO;
+    protected final LearnerSetupDAO learnerSetupDAO;
+    protected final LearnerResultDAO learnerResultDAO;
+    protected final LearnerResultStepDAO learnerResultStepDAO;
+    protected final TestDAO testDAO;
     protected final WebhookService webhookService;
-
-    /** The queries that are executed at the moment. */
-    private List<DefaultQueryProxy> currentQueries;
+    protected final PreparedConnectorContextHandlerFactory contextHandlerFactory;
+    protected final TransactionTemplate transactionTemplate;
 
     /** The user who is stating the Learning Thread. */
     protected User user;
 
-    /** The DAO to remember the learn results. */
-    protected final LearnerResultDAO learnerResultDAO;
-
-    /** The learner to use during the learning. */
-    protected final LearningAlgorithm.MealyLearner<String, String> learner;
-
-    /** The phase of the learner. */
-    protected LearnerService.LearnerPhase learnerPhase;
+    /** The current project. */
+    protected Project project;
 
     /** The learner result. */
     protected LearnerResult result;
+
+    /** The learner setup. */
+    protected LearnerSetup setup;
+
+    /** The queries that are executed at the moment. */
+    private List<DefaultQueryProxy> currentQueries;
+
+    /** The learner to use during the learning. */
+    protected LearningAlgorithm.MealyLearner<String, String> learner;
+
+    /** The phase of the learner. */
+    protected LearnerService.LearnerPhase learnerPhase;
 
     /** The abstract alphabet that is used during the learning process. */
     protected Alphabet<String> abstractAlphabet;
 
     /** The membership oracle on the upmost level that all queries are posed to. */
-    protected final DelegationOracle<String, String> mqOracle;
+    protected DelegationOracle<String, String> mqOracle;
 
     /** Maps an abstract alphabet to a concrete one. */
-    protected final SymbolMapper symbolMapper;
+    protected SymbolMapper symbolMapper;
 
     /** The oracle that monitors which queries are being posed. */
-    protected final QueryMonitorOracle<String, String> monitorOracle;
+    protected QueryMonitorOracle<String, String> monitorOracle;
 
     /** The oracle that can be interrupted. */
-    protected final InterruptibleOracle<String, String> interruptOracle;
+    protected InterruptibleOracle<String, String> interruptOracle;
 
-    /** The test DAO. */
-    protected final TestDAO testDAO;
+    protected StatisticsOracle<String, Word<String>> counterOracle;
 
-    protected final StatisticsOracle<String, Word<String>> counterOracle;
+    protected PreparedContextHandler preparedContextHandler;
 
-    protected final PreparedContextHandler preparedContextHandler;
+    protected List<ContextAwareSulOracle> sulOracles;
 
-    protected final List<ContextAwareSulOracle> sulOracles;
-
-    protected MealyCacheOracle<String, String> cacheOracle = null;
-
-    protected LearnerSetup setup;
+    protected MealyCacheOracle<String, String> cacheOracle;
 
     protected AbstractEquivalenceOracleProxy equivalenceOracleProxy;
 
     protected EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> equivalenceOracle;
 
-    public AbstractLearnerProcess(User user, LearnerResultDAO learnerResultDAO, WebhookService webhookService,
-                                  TestDAO testDAO, PreparedContextHandler context, LearnerResult result,
-                                  LearnerSetup setup, AbstractEquivalenceOracleProxy equivalenceOracleProxy) {
-        this.user = user;
+    public AbstractLearnerProcess(
+            UserDAO userDAO,
+            ProjectDAO projectDAO,
+            LearnerResultDAO learnerResultDAO,
+            LearnerSetupDAO learnerSetupDAO,
+            LearnerResultStepDAO learnerResultStepDAO,
+            TestDAO testDAO,
+            WebhookService webhookService,
+            PreparedConnectorContextHandlerFactory contextHandlerFactory,
+            TransactionTemplate transactionTemplate
+    ) {
+        this.userDAO = userDAO;
+        this.projectDAO = projectDAO;
         this.learnerResultDAO = learnerResultDAO;
-        this.webhookService = webhookService;
-        this.result = result;
-        this.setup = setup;
+        this.learnerResultStepDAO = learnerResultStepDAO;
+        this.learnerSetupDAO = learnerSetupDAO;
         this.testDAO = testDAO;
-        this.equivalenceOracleProxy = equivalenceOracleProxy;
+        this.webhookService = webhookService;
+        this.contextHandlerFactory = contextHandlerFactory;
+        this.transactionTemplate = transactionTemplate;
+    }
+
+    public boolean isAborted() {
+        return result.getStatus().equals(LearnerResult.Status.ABORTED);
+    }
+
+    public boolean isInitialized() {
+        return learner != null;
+    }
+
+    protected void initInternal(C context) {
+        user = userDAO.getByID(context.userId);
+        project = projectDAO.getByID(user, context.projectId);
+        result = learnerResultDAO.getByID(user, context.projectId, context.resultId);
+        setup = learnerSetupDAO.getById(user, project.getId(), result.getSetup().getId());
 
         this.abstractAlphabet = new GrowingMapAlphabet<>(new HashSet<>(// remove duplicate names with set
                 setup.getSymbols().stream()
@@ -131,7 +168,9 @@ public abstract class AbstractLearnerProcess {
                         .collect(Collectors.toList())
         ));
 
-        this.preparedContextHandler = context;
+        this.preparedContextHandler = contextHandlerFactory.createPreparedContextHandler(
+                user, result.getProject(), setup.getWebDriver(), setup.getPreSymbol(), setup.getPostSymbol());
+
         this.currentQueries = new ArrayList<>();
         this.symbolMapper = new SymbolMapper(setup.getSymbols());
 
@@ -140,11 +179,11 @@ public abstract class AbstractLearnerProcess {
                 .map(env -> new ContextAwareSulOracle(symbolMapper, preparedContextHandler.create(env)))
                 .collect(Collectors.toList());
 
-        final DynamicParallelOracle<String, Word<String>> parallelOracle =
-                    new DynamicParallelOracleBuilder<>(sulOracles)
-                            .withBatchSize(1)
-                            .withPoolSize(setup.getEnvironments().size())
-                            .create();
+        final var parallelOracle =
+                new DynamicParallelOracleBuilder<>(sulOracles)
+                        .withBatchSize(1)
+                        .withPoolSize(setup.getEnvironments().size())
+                        .create();
 
         monitorOracle = new QueryMonitorOracle<>(parallelOracle);
         monitorOracle.addPostProcessingListener(queries -> {
@@ -158,7 +197,7 @@ public abstract class AbstractLearnerProcess {
 
         // create the concrete membership oracle.
         this.mqOracle = new DelegationOracle<>();
-        if (result.getSetup().isEnableCache()) {
+        if (setup.isEnableCache()) {
             this.cacheOracle = MealyCacheOracle.createDAGCacheOracle(this.abstractAlphabet, counterOracle);
             this.mqOracle.setDelegate(cacheOracle);
         } else {
@@ -166,8 +205,11 @@ public abstract class AbstractLearnerProcess {
         }
 
         // create the learner.
-        this.learner = result.getSetup().getAlgorithm().createLearner(abstractAlphabet, mqOracle);
+        this.learner = setup.getAlgorithm().createLearner(abstractAlphabet, mqOracle);
+    }
 
+    public void setEquivalenceOracle(AbstractEquivalenceOracleProxy equivalenceOracleProxy) {
+        this.equivalenceOracleProxy = equivalenceOracleProxy;
         if (equivalenceOracleProxy instanceof TestSuiteEQOracleProxy) {
             equivalenceOracle = ((TestSuiteEQOracleProxy) equivalenceOracleProxy).createEqOracle(mqOracle, testDAO, user, result);
         } else {
@@ -175,7 +217,7 @@ public abstract class AbstractLearnerProcess {
         }
     }
 
-    protected void startLearningLoop() throws Exception {
+    protected void startLearningLoop() {
         while (true) {
             learnerPhase = LearnerService.LearnerPhase.EQUIVALENCE_TESTING;
 
@@ -183,12 +225,21 @@ public abstract class AbstractLearnerProcess {
             final DefaultQuery<String, Word<String>> ce = equivalenceOracle.findCounterExample(learner.getHypothesisModel(), abstractAlphabet);
             final long eqOracleEndTime = System.currentTimeMillis();
 
-            final LearnerResultStep currentStep = result.getSteps().get(result.getSteps().size() -1 );
-            currentStep.getStatistics().getSymbolsUsed().setEqOracle(counterOracle.getSymbolCount());
-            currentStep.getStatistics().getMqsUsed().setEqOracle(counterOracle.getQueryCount());
-            currentStep.getStatistics().getDuration().setEqOracle(eqOracleEndTime - eqOracleStartTime);
-            currentStep.setCounterExample(ce != null ? DefaultQueryProxy.createFrom(ce) : null);
-            learnerResultDAO.updateStep(currentStep);
+            final LearnerResultStep currentStep = result.getSteps().get(result.getSteps().size() - 1);
+
+            transactionTemplate.execute(t -> {
+                final var stepToUpdate = learnerResultStepDAO.getById(user, project.getId(), currentStep.getId());
+                stepToUpdate.getStatistics().getSymbolsUsed().setEqOracle(counterOracle.getSymbolCount());
+                stepToUpdate.getStatistics().getMqsUsed().setEqOracle(counterOracle.getQueryCount());
+                stepToUpdate.getStatistics().getDuration().setEqOracle(eqOracleEndTime - eqOracleStartTime);
+                stepToUpdate.setCounterExample(ce != null ? DefaultQueryProxy.createFrom(ce) : null);
+
+                learnerResultStepDAO.update(stepToUpdate.getId(), stepToUpdate);
+                return null;
+            });
+
+            result = learnerResultDAO.getByID(user, project.getId(), result.getId());
+
             counterOracle.reset();
 
             if (ce != null) {
@@ -205,23 +256,33 @@ public abstract class AbstractLearnerProcess {
         }
     }
 
-    protected void createStep(Long endTime, Long startTime) throws Exception {
+    protected void createStep(Long endTime, Long startTime) {
         final LearnerResultStep step = new LearnerResultStep();
         step.getStatistics().getSymbolsUsed().setLearner(counterOracle.getSymbolCount());
         step.getStatistics().getMqsUsed().setLearner(counterOracle.getQueryCount());
         step.getStatistics().getDuration().setLearner(endTime - startTime);
         step.setEqOracle(equivalenceOracleProxy);
         step.setHypothesis(CompactMealyMachineProxy.createFrom(learner.getHypothesisModel(), abstractAlphabet));
-        step.setState(setup.getAlgorithm().suspend(learner));
-        step.setAlgorithmInformation(result.getSetup().getAlgorithm().getInternalData(learner));
-        learnerResultDAO.createStep(result, step);
+        try {
+            step.setState(setup.getAlgorithm().suspend(learner));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        step.setAlgorithmInformation(setup.getAlgorithm().getInternalData(learner));
         counterOracle.reset();
+        result = learnerResultDAO.addStep(result.getId(), step);
     }
+
+    abstract void init(C context);
 
     abstract void run();
 
-    public void stopLearning() {
-        this.interruptOracle.interrupt();
+    public void abort() {
+        result = learnerResultDAO.updateStatus(result.getId(), LearnerResult.Status.ABORTED);
+
+        if (isInitialized()) {
+            this.interruptOracle.interrupt();
+        }
     }
 
     public LearnerService.LearnerPhase getLearnerPhase() {
@@ -236,7 +297,13 @@ public abstract class AbstractLearnerProcess {
         return result;
     }
 
+    protected void shutdownWithErrors() {
+        result = learnerResultDAO.updateStatus(result.getId(), LearnerResult.Status.ABORTED);
+        sulOracles.forEach(ContextAwareSulOracle::shutdown);
+    }
+
     protected void shutdown() {
+        result = learnerResultDAO.updateStatus(result.getId(), LearnerResult.Status.FINISHED);
         sulOracles.forEach(ContextAwareSulOracle::shutdown);
     }
 }
