@@ -26,6 +26,8 @@ import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.export.ExportableEntity;
 import de.learnlib.alex.data.entities.export.ProjectExportableEntity;
 import de.learnlib.alex.data.entities.export.SymbolGroupsExportableEntity;
+import de.learnlib.alex.learning.entities.export.LearnerSetupExportableEntity;
+import de.learnlib.alex.learning.services.export.LearnerSetupsExporter;
 import de.learnlib.alex.modelchecking.entities.export.LtsFormulaSuitesExportableEntity;
 import de.learnlib.alex.modelchecking.services.export.LtsFormulaSuitesExporter;
 import de.learnlib.alex.testing.entities.export.TestsExportableEntity;
@@ -44,18 +46,21 @@ public class ProjectExporter extends EntityExporter {
     private final SymbolsExporter symbolsExporter;
     private final TestsExporter testsExporter;
     private final LtsFormulaSuitesExporter formulaSuitesExporter;
+    private final LearnerSetupsExporter learnerSetupsExporter;
 
     @Autowired
     public ProjectExporter(
             ProjectDAO projectDAO,
             SymbolsExporter symbolsExporter,
             TestsExporter testsExporter,
-            LtsFormulaSuitesExporter formulaSuitesExporter
+            LtsFormulaSuitesExporter formulaSuitesExporter,
+            LearnerSetupsExporter learnerSetupsExporter
     ) {
         this.projectDAO = projectDAO;
         this.symbolsExporter = symbolsExporter;
         this.testsExporter = testsExporter;
         this.formulaSuitesExporter = formulaSuitesExporter;
+        this.learnerSetupsExporter = learnerSetupsExporter;
     }
 
     public ExportableEntity export(User user, Long projectId) throws Exception {
@@ -64,12 +69,13 @@ public class ProjectExporter extends EntityExporter {
         om.addMixIn(ProjectUrl.class, IgnoreFieldsForProjectUrlMixin.class);
         om.addMixIn(ProjectEnvironmentVariable.class, IgnoreFieldsForProjectVariableMixin.class);
 
-        final Project project = projectDAO.getByID(user, projectId);
+        final var project = projectDAO.getByID(user, projectId);
 
-        final ProjectExportableEntity exportableEntity = new ProjectExportableEntity(version, om.readTree(om.writeValueAsString(project)));
+        final var exportableEntity = new ProjectExportableEntity(version, om.readTree(om.writeValueAsString(project)));
         exportableEntity.setGroups(((SymbolGroupsExportableEntity) symbolsExporter.exportAll(user, projectId)).getSymbolGroups());
         exportableEntity.setTests(((TestsExportableEntity) testsExporter.exportAll(user, projectId)).getTests());
         exportableEntity.setFormulaSuites(((LtsFormulaSuitesExportableEntity) formulaSuitesExporter.export(user, projectId)).getFormulaSuites());
+        exportableEntity.setLearnerSetups(((LearnerSetupExportableEntity) learnerSetupsExporter.export(user, projectId)).getLearnerSetups());
 
         return exportableEntity;
     }

@@ -28,6 +28,8 @@ public class ProjectExportableEntity extends ExportableEntity {
 
     private JsonNode formulaSuites;
 
+    private JsonNode learnerSetups;
+
     public ProjectExportableEntity() {
         super("-1", "project");
     }
@@ -67,5 +69,13 @@ public class ProjectExportableEntity extends ExportableEntity {
 
     public void setFormulaSuites(JsonNode formulaSuites) {
         this.formulaSuites = formulaSuites;
+    }
+
+    public JsonNode getLearnerSetups() {
+        return learnerSetups;
+    }
+
+    public void setLearnerSetups(JsonNode learnerSetups) {
+        this.learnerSetups = learnerSetups;
     }
 }

@@ -36,4 +36,6 @@ public interface ProjectEnvironmentRepository extends JpaRepository<ProjectEnvir
     ProjectEnvironment findByProject_IdAndIs_Default(Long projectId, Boolean isDefault);
 
     List<ProjectEnvironment> findAllByIdIn(List<Long> ids);
+
+    List<ProjectEnvironment> findByProject_IdAndNameIn(Long projectId, List<String> names);
 }

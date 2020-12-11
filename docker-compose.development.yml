@@ -80,16 +80,6 @@ services:
             - "127.0.0.1:4200:4200"
         networks:
             - frontend
-    alex-integration-tests-database:
-        image: postgres:10
-        environment:
-            - POSTGRES_HOST_AUTH_METHOD=trust
-            - POSTGRES_USER=sa
-            - POSTGRES_DB=alex
-        ports:
-            - "127.0.0.1:5431:5432"
-        networks:
-            - backend
 
 volumes:
   alex-backend-maven-development:

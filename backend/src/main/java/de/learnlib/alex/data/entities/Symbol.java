@@ -510,12 +510,12 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "lastUpdatedById")
     @JsonProperty("lastUpdatedBy")
-    public User getlastUpdatedBy() {
+    public User getLastUpdatedBy() {
         return this.lastUpdatedBy;
     }
 
     @JsonIgnore
-    public void setlastUpdatedBy(User user) {
+    public void setLastUpdatedBy(User user) {
         this.lastUpdatedBy = user;
     }
 

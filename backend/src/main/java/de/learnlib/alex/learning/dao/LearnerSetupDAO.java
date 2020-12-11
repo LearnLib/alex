@@ -21,15 +21,18 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.ParameterizedSymbolDAO;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.dao.ProjectEnvironmentDAO;
+import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
+import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.learning.entities.LearnerSetup;
 import de.learnlib.alex.learning.entities.WebDriverConfig;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.repositories.LearnerSetupRepository;
+import de.learnlib.alex.testing.entities.TestCaseStep;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,7 +40,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.validation.ValidationException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,6 +57,7 @@ public class LearnerSetupDAO {
     private final LearnerResultRepository learnerResultRepository;
     private final ProjectEnvironmentRepository projectEnvironmentRepository;
     private final EntityManager entityManager;
+    private final SymbolDAO symbolDAO;
 
     @Autowired
     public LearnerSetupDAO(LearnerSetupRepository learnerSetupRepository,
@@ -59,7 +66,8 @@ public class LearnerSetupDAO {
                            ProjectDAO projectDAO,
                            LearnerResultRepository learnerResultRepository,
                            ProjectEnvironmentRepository projectEnvironmentRepository,
-                           EntityManager entityManager) {
+                           EntityManager entityManager,
+                           SymbolDAO symbolDAO) {
         this.learnerSetupRepository = learnerSetupRepository;
         this.projectDAO = projectDAO;
         this.projectRepository = projectRepository;
@@ -67,6 +75,7 @@ public class LearnerSetupDAO {
         this.learnerResultRepository = learnerResultRepository;
         this.projectEnvironmentRepository = projectEnvironmentRepository;
         this.entityManager = entityManager;
+        this.symbolDAO = symbolDAO;
     }
 
     public List<LearnerSetup> getAll(User user, Long projectId) {
@@ -188,8 +197,63 @@ public class LearnerSetupDAO {
         return copiedSetup;
     }
 
+    public List<LearnerSetup> importLearnerSetups(User user, Project project, List<LearnerSetup> setups) {
+        // symbol name -> symbol
+        final var symbolMap = symbolDAO.getAll(user, project.getId()).stream()
+                .collect(Collectors.toMap(Symbol::getName, Function.identity()));
+
+        // associate symbols
+        for (var setup : setups) {
+            setup.setProject(project);
+
+            setup.setPreSymbol(importParameterizedSymbol(setup.getPreSymbol(), symbolMap));
+            setup.setSymbols(setup.getSymbols().stream()
+                    .map(ps -> importParameterizedSymbol(ps, symbolMap))
+                    .collect(Collectors.toList())
+            );
+            if (setup.getPostSymbol() != null) {
+                setup.setPostSymbol(importParameterizedSymbol(setup.getPostSymbol(), symbolMap));
+            }
+
+            setup.setEnvironments(
+                    projectEnvironmentRepository.findByProject_IdAndNameIn(project.getId(), setup.getEnvironments().stream()
+                            .map(ProjectEnvironment::getName)
+                            .collect(Collectors.toList())
+                    )
+            );
+        }
+
+        // save setups
+        final var importedSetups = learnerSetupRepository.saveAll(setups);
+        importedSetups.forEach(this::initializeLazyRelations);
+
+        return importedSetups;
+    }
+
+    private ParameterizedSymbol importParameterizedSymbol(ParameterizedSymbol pSymbol, Map<String, Symbol> symbolMap) {
+        final var symbol = symbolMap.get(pSymbol.getSymbol().getName());
+        pSymbol.setSymbol(symbol);
+        pSymbol.getParameterValues().forEach(pv -> {
+            final var param = symbol.findInputByNameAndType(
+                    pv.getParameter().getName(),
+                    pv.getParameter().getParameterType()
+            );
+            pv.setParameter(param);
+        });
+        pSymbol.getOutputMappings().forEach(om -> {
+            final var param = symbol.findOutputByNameAndType(
+                    om.getParameter().getName(),
+                    om.getParameter().getParameterType()
+            );
+            om.setParameter(param);
+        });
+        return parameterizedSymbolDAO.create(pSymbol);
+    }
+
+
+
     public LearnerSetup create(User user, Long projectId, LearnerSetup setup) {
-        final Project project = projectRepository.findById(projectId).orElse(null);
+        final var project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
         saveSymbols(setup);

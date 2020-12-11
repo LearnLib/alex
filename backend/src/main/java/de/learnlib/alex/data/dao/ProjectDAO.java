@@ -36,6 +36,8 @@ import de.learnlib.alex.data.repositories.SymbolActionRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolStepRepository;
 import de.learnlib.alex.data.repositories.UploadableFileRepository;
+import de.learnlib.alex.learning.dao.LearnerSetupDAO;
+import de.learnlib.alex.learning.entities.LearnerSetup;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;
 import de.learnlib.alex.learning.repositories.LearnerSetupRepository;
@@ -66,6 +68,7 @@ import javax.validation.ValidationException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -81,31 +84,32 @@ public class ProjectDAO {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private ProjectRepository projectRepository;
-    private LearnerResultRepository learnerResultRepository;
-    private TestReportRepository testReportRepository;
-    private ParameterizedSymbolRepository parameterizedSymbolRepository;
-    private SymbolStepRepository symbolStepRepository;
-    private SymbolActionRepository symbolActionRepository;
-    private FileDAO fileDAO;
-    private ProjectEnvironmentDAO projectEnvironmentDAO;
-    private ProjectUrlRepository projectUrlRepository;
-    private TestExecutionConfigRepository testExecutionConfigRepository;
-    private ProjectEnvironmentRepository environmentRepository;
-    private SymbolGroupDAO symbolGroupDAO;
-    private TestDAO testDAO;
-    private UserDAO userDAO;
-    private TestRepository testRepository;
-    private SymbolParameterRepository symbolParameterRepository;
-    private UploadableFileRepository uploadableFileRepository;
-    private LearnerSetupRepository learnerSetupRepository;
-    private TestPresenceService testPresenceService;
-    private SymbolPresenceService symbolPresenceService;
-    private ProjectPresenceService projectPresenceService;
-    private TestReportDAO testReportDAO;
-    private LtsFormulaSuiteDAO ltsFormulaSuiteDAO;
-    private LtsFormulaDAO ltsFormulaDAO;
-    private LearnerResultStepRepository learnerResultStepRepository;
+    private final ProjectRepository projectRepository;
+    private final LearnerResultRepository learnerResultRepository;
+    private final TestReportRepository testReportRepository;
+    private final ParameterizedSymbolRepository parameterizedSymbolRepository;
+    private final SymbolStepRepository symbolStepRepository;
+    private final SymbolActionRepository symbolActionRepository;
+    private final FileDAO fileDAO;
+    private final ProjectEnvironmentDAO projectEnvironmentDAO;
+    private final ProjectUrlRepository projectUrlRepository;
+    private final TestExecutionConfigRepository testExecutionConfigRepository;
+    private final ProjectEnvironmentRepository environmentRepository;
+    private final SymbolGroupDAO symbolGroupDAO;
+    private final TestDAO testDAO;
+    private final UserDAO userDAO;
+    private final TestRepository testRepository;
+    private final SymbolParameterRepository symbolParameterRepository;
+    private final UploadableFileRepository uploadableFileRepository;
+    private final LearnerSetupRepository learnerSetupRepository;
+    private final TestPresenceService testPresenceService;
+    private final SymbolPresenceService symbolPresenceService;
+    private final ProjectPresenceService projectPresenceService;
+    private final TestReportDAO testReportDAO;
+    private final LtsFormulaSuiteDAO ltsFormulaSuiteDAO;
+    private final LtsFormulaDAO ltsFormulaDAO;
+    private final LearnerResultStepRepository learnerResultStepRepository;
+    private final LearnerSetupDAO learnerSetupDAO;
 
     @Autowired
     public ProjectDAO(ProjectRepository projectRepository,
@@ -132,7 +136,9 @@ public class ProjectDAO {
                       @Lazy ProjectPresenceService projectPresenceService,
                       @Lazy TestReportDAO testReportDAO,
                       @Lazy LtsFormulaSuiteDAO ltsFormulaSuiteDAO,
-                      @Lazy LtsFormulaDAO ltsFormulaDAO) {
+                      @Lazy LtsFormulaDAO ltsFormulaDAO,
+                      @Lazy LearnerSetupDAO learnerSetupDAO
+    ) {
         this.projectRepository = projectRepository;
         this.learnerResultRepository = learnerResultRepository;
         this.fileDAO = fileDAO;
@@ -158,6 +164,7 @@ public class ProjectDAO {
         this.ltsFormulaSuiteDAO = ltsFormulaSuiteDAO;
         this.ltsFormulaDAO = ltsFormulaDAO;
         this.learnerResultStepRepository = learnerResultStepRepository;
+        this.learnerSetupDAO = learnerSetupDAO;
     }
 
     public Project create(final User user, final CreateProjectForm projectForm) {
@@ -291,11 +298,14 @@ public class ProjectDAO {
         final List<SymbolGroup> groups;
         final List<Test> tests;
         final List<LtsFormulaSuite> formulaSuites;
+        final List<LearnerSetup> learnerSetups;
+
         try {
             project = om.readValue(projectExportableEntity.getProject().toString(), Project.class);
             groups = new ArrayList<>(Arrays.asList(om.readValue(projectExportableEntity.getGroups().toString(), SymbolGroup[].class)));
             tests = new ArrayList<>(Arrays.asList(om.readValue(projectExportableEntity.getTests().toString(), Test[].class)));
             formulaSuites = new ArrayList<>(Arrays.asList(om.readValue(projectExportableEntity.getFormulaSuites().toString(), LtsFormulaSuite[].class)));
+            learnerSetups = new ArrayList<>(Arrays.asList(om.readValue(projectExportableEntity.getLearnerSetups().toString(), LearnerSetup[].class)));
         } catch (IOException e) {
             e.printStackTrace();
             throw new ValidationException("The input is not formatted correctly");
@@ -305,21 +315,23 @@ public class ProjectDAO {
             throw new ValidationException("There has to be a default group");
         }
 
-        check(user, project);
+        check(project);
 
-        final Project newProject = new Project();
+        final var newProject = new Project();
         newProject.setName(project.getName());
         newProject.setDescription(project.getDescription());
         newProject.addOwner(user);
 
-        final Project createdProject = projectRepository.save(newProject);
-        createdProject.getEnvironments().addAll(project.getEnvironments());
-        createdProject.getEnvironments().forEach(e -> {
-            e.setProject(createdProject);
-            e.getVariables().forEach(v -> v.setEnvironment(e));
-            e.getUrls().forEach(u -> u.setEnvironment(e));
-            environmentRepository.save(e);
-        });
+        final var createdProject = projectRepository.save(newProject);
+        createdProject.getEnvironments().addAll(project.getEnvironments().stream()
+                .map(e -> {
+                    e.setProject(createdProject);
+                    e.getVariables().forEach(v -> v.setEnvironment(e));
+                    e.getUrls().forEach(u -> u.setEnvironment(e));
+                    return environmentRepository.save(e);
+                })
+                .collect(Collectors.toList())
+        );
 
         final TestSuite testSuite = new TestSuite();
         testSuite.setName("Root");
@@ -327,6 +339,7 @@ public class ProjectDAO {
         testDAO.create(user, createdProject.getId(), testSuite);
 
         symbolGroupDAO.importGroups(user, createdProject, groups, new HashMap<>());
+
         if (!tests.isEmpty()) {
             testDAO.importTests(user, createdProject.getId(), tests);
         }
@@ -338,10 +351,15 @@ public class ProjectDAO {
             }
         }
 
+        if (!learnerSetups.isEmpty()) {
+            learnerSetupDAO.importLearnerSetups(user, createdProject, learnerSetups);
+        }
+
+        loadLazyRelations(createdProject);
         return createdProject;
     }
 
-    private void check(User user, Project project) {
+    private void check(Project project) {
         // there is a default environment
         if (project.getEnvironments().stream().filter(ProjectEnvironment::isDefault).count() != 1) {
             throw new ValidationException("There has to be exactly one environment");
@@ -363,13 +381,12 @@ public class ProjectDAO {
         if (project.getEnvironments().stream().map(e -> e.getUrls().size()).collect(Collectors.toSet()).size() > 1) {
             throw new ValidationException("Each environment has to have the same amount of URLs");
         }
-        final Set<String> urlNamesSet = new HashSet<>(project.getEnvironments().stream()
+        final Set<String> urlNamesSet = project.getEnvironments().stream()
                 .map(ProjectEnvironment::getUrls)
-                .map(urls -> urls.stream().map(ProjectUrl::getName).collect(Collectors.toList()))
-                .reduce(new ArrayList<>(), (acc, val) -> {
-                    acc.addAll(val);
-                    return acc;
-                }));
+                .flatMap(Collection::stream)
+                .map(ProjectUrl::getName)
+                .collect(Collectors.toSet());
+
         if (urlNamesSet.size() != project.getEnvironments().get(0).getUrls().size()) {
             throw new ValidationException("The names of the urls are not equal in the environments");
         }
@@ -378,13 +395,12 @@ public class ProjectDAO {
         if (project.getEnvironments().stream().map(e -> e.getVariables().size()).collect(Collectors.toSet()).size() > 1) {
             throw new ValidationException("Each environment has to have the same amount of variables");
         }
-        final Set<String> variableNamesSet = new HashSet<>(project.getEnvironments().stream()
+        final Set<String> variableNamesSet = project.getEnvironments().stream()
                 .map(ProjectEnvironment::getVariables)
-                .map(urls -> urls.stream().map(ProjectEnvironmentVariable::getName).collect(Collectors.toList()))
-                .reduce(new ArrayList<>(), (acc, val) -> {
-                    acc.addAll(val);
-                    return acc;
-                }));
+                .flatMap(Collection::stream)
+                .map(ProjectEnvironmentVariable::getName)
+                .collect(Collectors.toSet());
+
         if (variableNamesSet.size() != project.getEnvironments().get(0).getVariables().size()) {
             throw new ValidationException("The names of the variables are not equal in the environments");
         }

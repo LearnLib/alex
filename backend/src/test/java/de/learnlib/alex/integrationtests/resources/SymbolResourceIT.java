@@ -417,7 +417,7 @@ public class SymbolResourceIT extends AbstractResourceIT {
         final Symbol updatedSymbol = res.readEntity(Symbol.class);
 
         assertEquals(HttpStatus.OK.value(), res.getStatus());
-        assertEquals((long) updatedSymbol.getlastUpdatedBy().getId(), userId2);
+        assertEquals((long) updatedSymbol.getLastUpdatedBy().getId(), userId2);
     }
 
     @Test
