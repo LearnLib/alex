@@ -328,14 +328,7 @@ async function waitForLearnerToFinish(startTime, testNo) {
   }
 }
 
-
-/**
- * Start learning.
- *
- * @return {Promise<*>}
- */
-async function startLearning() {
-  console.log(chalk.white.dim(`Start learning...`));
+async function startLearningFromConfig() {
 
   // symbolId -> parameterName -> parameter
   // needed to set the ids of the parameters by name
@@ -362,12 +355,48 @@ async function startLearning() {
 
   _config.setup.environments = _project.environments;
 
-  // start learning process
   const res1 = await api.learner.start(_project.id, _config);
   await utils.assertStatus(res1, 200);
 
+  return await res1.json();
+}
+
+async function startLearningFromSetup() {
+  const setupName = program.setup;
+
+  const res1 = await api.learnerSetups.getAll(_project.id);
+  await utils.assertStatus(res1, 200);
+
+  const setups = await res1.json();
+  const setupsWithRequiredName = setups.filter(s => s.name === setupName);
+
+  if (setupsWithRequiredName.length === 0) {
+    throw `There is no learner setup with the name "${setupName}" in the project.`;
+  }
+
+  const res2 = await api.learnerSetups.execute(_project.id, setupsWithRequiredName[0].id);
+  await utils.assertStatus(res2, 200);
+
+  return await res2.json();
+}
+
+/**
+ * Start learning.
+ *
+ * @return {Promise<*>}
+ */
+async function startLearning() {
+  console.log(chalk.white.dim(`Start learning...`));
+
+  // start the learning process
+  let result;
+  if (!program.setup) {
+    result = await startLearningFromConfig();
+  } else {
+    result = await startLearningFromSetup();
+  }
+
   // poll for learner result
-  let result = await res1.json();
   const startTime = Date.now();
   result = await waitForLearnerToFinish(startTime, result.testNo);
   console.log(chalk.white.dim(`The learning process finished.`));
@@ -520,7 +549,9 @@ function processProgram() {
   _action = processors.action(program.do);
   _uri = processors.uri(program.uri);
   _user = processors.user(program.user);
-  _config = processors.config(program.config);
+  if (program.config) {
+    _config = processors.config(program.config);
+  }
 
   // initialize api with given uri
   api.init(_uri);
@@ -548,6 +579,10 @@ function processProgram() {
   }
 
   if (_action === 'test') {
+    if (!program.config) {
+      throw `You haven't specified a config file`;
+    }
+
     if (program.formulas) {
       throw 'You may not specify ltl formulas when testing.';
     }
@@ -563,6 +598,14 @@ function processProgram() {
   } else if (_action === 'learn') {
     if (program.tests) {
       throw 'You want to learn, but have specified tests.';
+    }
+
+    if (program.setup && program.config) {
+      throw 'You cannot specify a learner setup and a config file together.';
+    }
+
+    if (!program.setup && !program.config) {
+      throw `You haven't specified a learner setup or a config file.`;
     }
 
     if (program.formulas) {

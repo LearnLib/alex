@@ -185,5 +185,72 @@
       "type": "case"
     }
   ],
-  "formulaSuites": []
+  "formulaSuites": [],
+  "learnerSetups": [
+    {
+      "name": "learn google",
+      "enableCache": true,
+      "saved": true,
+      "algorithm": {
+        "name": "TTT"
+      },
+      "environments": [
+        {
+          "name": "Production",
+          "urls": [
+            {
+              "name": "Base",
+              "url": "https://www.google.com",
+              "default": true
+            }
+          ],
+          "variables": [],
+          "default": true
+        }
+      ],
+      "symbols": [
+        {
+          "parameterValues": [
+            {
+              "parameter": {
+                "type": "input",
+                "name": "term",
+                "parameterType": "STRING"
+              },
+              "value": "test"
+            }
+          ],
+          "symbol": {
+            "name": "search"
+          }
+        }
+      ],
+      "preSymbol": {
+        "parameterValues": [],
+        "symbol": {
+          "name": "reset"
+        }
+      },
+      "postSymbol": null,
+      "equivalenceOracle": {
+        "type": "random_word",
+        "batchSize": 1,
+        "minLength": 5,
+        "maxLength": 5,
+        "seed": 42,
+        "maxNoOfTests": 5
+      },
+      "webDriver": {
+        "width": 1920,
+        "height": 1080,
+        "implicitlyWait": 0,
+        "pageLoadTimeout": 10,
+        "scriptTimeout": 10,
+        "platform": "ANY",
+        "browser": "chrome",
+        "version": "",
+        "headless": false
+      }
+    }
+  ]
 }

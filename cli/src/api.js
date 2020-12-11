@@ -101,6 +101,20 @@ module.exports = {
       });
     }
   },
+  learnerSetups: {
+    getAll: async function(projectId) {
+      return fetch(`${_uri}/projects/${projectId}/learner/setups`, {
+        method: 'get',
+        headers: _getDefaultHttpHeaders()
+      });
+    },
+    execute: async function(projectId, setupId) {
+      return fetch(`${_uri}/projects/${projectId}/learner/setups/${setupId}/run`, {
+        method: 'post',
+        headers: _getDefaultHttpHeaders()
+      });
+    }
+  },
   learnerResults: {
     get: async function(projectId, resultId) {
       return fetch(`${_uri}/projects/${projectId}/results/${resultId}?embed=steps`, {

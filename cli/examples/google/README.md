@@ -32,6 +32,8 @@ node alex-cli.js \
 
 ## Learning
 
+## With a config file
+
 ```bash
 node alex-cli.js \
         --uri "http://localhost:8000" \
@@ -40,6 +42,19 @@ node alex-cli.js \
         -u "admin@alex.example:admin" \
         -s "./examples/google/symbols.json" \
         -c "./examples/google/config.learning.json" \
+        --formulas "./examples/google/formulas.json" \
+        --clean-up
+```
+
+## With a project file by setup name
+
+```bash
+node alex-cli.js \
+        --uri "http://localhost:8000" \
+        -d "learn" \
+        -u "admin@alex.example:admin" \
+        -p "./examples/google/project.json" \
+        --setup "learn google" \
         --formulas "./examples/google/formulas.json" \
         --clean-up
 ```
