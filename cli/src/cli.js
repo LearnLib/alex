@@ -22,6 +22,12 @@ const utils = require('./utils');
 const api = require('./api');
 const { VERSION } = require('./constants');
 
+const Actions = {
+  TEST: 'test',
+  LEARN: 'learn',
+  COMPARE: 'compare'
+};
+
 /**
  * The interval in ms to poll for the test status.
  *
@@ -117,6 +123,14 @@ let _action = null;
  * @private
  */
 let _files = [];
+
+/**
+ * The learned models to compare.
+ *
+ * @type {Array}
+ * @private
+ */
+let _models = [];
 
 /**
  * The LTL formulas to verify on the learned model.
@@ -460,6 +474,21 @@ async function startLearning() {
   }
 }
 
+async function startComparing() {
+  console.log(chalk.white.dim(`Comparing models...`));
+
+  const res = api.learner.calculateSeparatingWord(_models);
+  await utils.assertStatus(res, 200);
+  const separatingWord = await res.json();
+
+  if (separatingWord.input.length === 0) {
+    throw 'Could not find a difference between both models.';
+  } else {
+    console.log(chalk.white.dim(`found a difference for word ${separatingWord.input}.`));
+    writeOutputFile(JSON.stringify(separatingWord));
+  }
+}
+
 function assertCheckResults(checkResults) {
   let passed = true;
   let numFailed = 0;
@@ -556,29 +585,31 @@ function processProgram() {
   // initialize api with given uri
   api.init(_uri);
 
-  if (program.project) {
-    if (program.targets || program.symbols || program.tests) {
-      throw 'You cannot specify a project file and additional targets, symbols or tests.';
-    }
+  if (program.action !== Actions.COMPARE) {
+    if (program.project) {
+      if (program.targets || program.symbols || program.tests) {
+        throw 'You cannot specify a project file and additional targets, symbols or tests.';
+      }
 
-    _project = processors.project(program.project);
-  } else {
-    // validate target URL
-    if (!program.targets || program.targets.length === 0) {
-      throw `You haven't specified the URL of the target application.`;
-    }
-
-    // validate symbols
-    if (!program.symbols) {
-      throw `You have to specify a file that contains symbols.`;
+      _project = processors.project(program.project);
     } else {
-      const data = processors.symbols(program.symbols);
-      _symbols = data.symbols;
-      _symbolGroups = data.symbolGroups;
+      // validate target URL
+      if (!program.targets || program.targets.length === 0) {
+        throw `You haven't specified the URL of the target application.`;
+      }
+
+      // validate symbols
+      if (!program.symbols) {
+        throw `You have to specify a file that contains symbols.`;
+      } else {
+        const data = processors.symbols(program.symbols);
+        _symbols = data.symbols;
+        _symbolGroups = data.symbolGroups;
+      }
     }
   }
 
-  if (_action === 'test') {
+  if (_action === Actions.TEST) {
     if (!program.config) {
       throw `You haven't specified a config file`;
     }
@@ -595,7 +626,7 @@ function processProgram() {
         _tests = processors.tests(program.tests);
       }
     }
-  } else if (_action === 'learn') {
+  } else if (_action === Actions.LEARN) {
     if (program.tests) {
       throw 'You want to learn, but have specified tests.';
     }
@@ -611,6 +642,12 @@ function processProgram() {
     if (program.formulas) {
       _formulas = processors.formulas(program.formulas);
     }
+  } else if (_action === Actions.COMPARE) {
+    if (!program.models) {
+      throw `You haven't specified any models to compare`;
+    }
+
+    _models = processors.files(program.models);
   }
 
   if (program.files) {
@@ -643,10 +680,18 @@ module.exports = {
       await uploadFiles();
     }
 
-    if (_action === 'test') {
-      await startTesting();
-    } else {
-      await startLearning();
+    switch (_action) {
+      case Actions.TEST:
+        await startTesting();
+        break;
+      case Actions.LEARN:
+        await startLearning();
+        break;
+      case Actions.COMPARE:
+        await startComparing();
+        break;
+      default:
+        throw `Unknown action: ${_action}`;
     }
 
     if (program.cleanUp) {

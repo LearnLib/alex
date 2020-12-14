@@ -100,6 +100,24 @@ module.exports = {
   },
 
   /**
+   * Process the model files.
+   *
+   * @param {string[]} values
+   * @returns {any[]} The model files
+   */
+  models: function(values) {
+    return values
+      .map(v => v.trim())
+      .map(v => {
+        if (!fs.existsSync(v)) {
+          throw `The model file ${v} does not exist.`;
+        } else {
+          return JSON.parse(fs.readFileSync(v));
+        }
+      });
+  },
+
+  /**
    * Process the project file.
    *
    * @param value The path to the project file.

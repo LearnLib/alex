@@ -58,3 +58,15 @@ node alex-cli.js \
         --formulas "./examples/google/formulas.json" \
         --clean-up
 ```
+
+
+## Model comparison
+
+```bash
+alex-cli \
+    --uri "http://alex-backend:8000" \
+    --do "compare" \
+    --user "admin@alex.example:admin" \
+    --models "model1.json" "model2.json" \
+    --output "model-difference-${aspect}.json"
+```

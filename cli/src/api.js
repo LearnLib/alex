@@ -184,6 +184,13 @@ module.exports = {
         headers: _getDefaultHttpHeaders(),
         body: JSON.stringify(config)
       });
+    },
+    calculateSeparatingWord: async function(models) {
+      return fetch(`${_uri}/projects/0/learner/compare/separatingWord`, {
+        method: 'post',
+        headers: _getDefaultHttpHeaders(),
+        body: JSON.stringify(models)
+      });
     }
   },
   modelChecker: {
