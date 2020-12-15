@@ -19,7 +19,7 @@ import { Project } from '../../entities/project';
 import { AppStoreService } from '../../services/app-store.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbNav } from '@ng-bootstrap/ng-bootstrap';
 import { AboutModalComponent } from './about-modal/about-modal.component';
 import { SettingsApiService } from '../../services/api/settings-api.service';
 
@@ -33,7 +33,8 @@ import { SettingsApiService } from '../../services/api/settings-api.service';
 })
 export class RootViewComponent implements OnInit {
 
-  @ViewChild('nav', {static: false}) tabset;
+  @ViewChild('nav')
+  tabset: NgbNav;
 
   credentials: any;
 

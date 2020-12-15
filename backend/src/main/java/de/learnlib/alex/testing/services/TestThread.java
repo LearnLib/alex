@@ -149,16 +149,15 @@ public class TestThread extends Thread {
                 final var testsToExecute = testDAO.get(user, project.getId(), config.getTestIds());
                 testExecutor.executeTests(user, testsToExecute, config, results);
 
-                transactionTemplate.execute((t) -> {
+                report = transactionTemplate.execute((t) -> {
                     report = testReportDAO.getByID(report.getId());
                     report.setTestResults(new ArrayList<>(results.values()));
+
                     if (!report.getStatus().equals(TestReport.Status.ABORTED)) {
                         report.setStatus(TestReport.Status.FINISHED);
                     }
 
-                    testReportDAO.update(user, project.getId(), report.getId(), report);
-
-                    return null;
+                    return testReportDAO.update(user, project.getId(), report.getId(), report);
                 });
 
                 webhookService.fireEvent(user, new TestEvent.ExecutionFinished(report));

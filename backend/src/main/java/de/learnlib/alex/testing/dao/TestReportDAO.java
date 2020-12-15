@@ -62,28 +62,26 @@ public class TestReportDAO {
     private final ProjectRepository projectRepository;
     private final ProjectEnvironmentDAO projectEnvironmentDAO;
     private final ProjectDAO projectDAO;
+    private final TestResultDAO testResultDAO;
 
     @Value("${alex.filesRootDir}")
     private String filesRootDir;
 
-    /**
-     * Constructor.
-     *
-     * @param testReportRepository
-     *         {@link #testReportRepository}
-     * @param projectRepository
-     *         {@link #projectRepository}
-     * @param projectDAO
-     *         {@link #projectDAO}
-     */
     @Autowired
-    public TestReportDAO(TestReportRepository testReportRepository, ProjectRepository projectRepository,
-                         ProjectDAO projectDAO, ProjectEnvironmentDAO projectEnvironmentDAO, TestResultRepository testResultRepository) {
+    public TestReportDAO(
+            TestReportRepository testReportRepository,
+            ProjectRepository projectRepository,
+            ProjectDAO projectDAO,
+            ProjectEnvironmentDAO projectEnvironmentDAO,
+            TestResultRepository testResultRepository,
+            TestResultDAO testResultDAO
+    ) {
         this.testReportRepository = testReportRepository;
         this.projectRepository = projectRepository;
         this.projectDAO = projectDAO;
         this.projectEnvironmentDAO = projectEnvironmentDAO;
         this.testResultRepository = testResultRepository;
+        this.testResultDAO = testResultDAO;
     }
 
     public TestReport create(User user, Long projectId, TestReport testReport) {
@@ -290,7 +288,7 @@ public class TestReportDAO {
             throw new NotFoundException("The test report could not be found.");
         }
 
-        if (!report.getProject().equals(project)) {
+        if (!report.getProject().getId().equals(project.getId())) {
             throw new UnauthorizedException("You are not allowed to access the test report.");
         }
     }
@@ -317,11 +315,6 @@ public class TestReportDAO {
         Hibernate.initialize(testReport.getTestResults());
         Hibernate.initialize(testReport.getEnvironment());
         ProjectEnvironmentDAO.loadLazyRelations(testReport.getEnvironment());
-
-        testReport.getTestResults().forEach((result) -> {
-            if (result instanceof TestCaseResult) {
-                Hibernate.initialize(((TestCaseResult) result).getOutputs());
-            }
-        });
+        testReport.getTestResults().forEach(testResultDAO::loadLazyRelations);
     }
 }
