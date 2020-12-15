@@ -24,29 +24,32 @@ services:
       - HUB_PORT=4444
     networks:
       - backend
-  alex-database-production:
+  alex-database:
     image: postgres:10
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
       - POSTGRES_USER=sa
       - POSTGRES_DB=alex
     volumes:
-      - alex-database-production:/var/lib/postgresql
+      - alex-database:/var/lib/postgresql
     networks:
       - backend
     ports:
       - "127.0.0.1:5432:5432"
-  alex-backend-production:
+  alex-backend:
     build: ./backend
+    depends_on:
+      - alex-database
+      - selenium-hub
     volumes:
-      - alex-database-production:/var/alex/backend/target/postgresql
+      - alex-database:/var/alex/backend/target/postgresql
     environment:
       - REMOTE_DRIVER=http://selenium-hub:4444/wd/hub
     ports:
       - "127.0.0.1:8000:8000"
     networks:
       - backend
-  alex-frontend-production:
+  alex-frontend:
     build: ./frontend
     environment:
       - SERVER_ADDRESS=http://localhost
@@ -57,4 +60,4 @@ services:
       - frontend
 
 volumes:
-  alex-database-production:
+  alex-database:

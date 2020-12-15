@@ -30,35 +30,35 @@ services:
             - 5901:5900
         networks:
             - backend
-    alex-database-development:
+    alex-database:
         image: postgres:10
         environment:
             - POSTGRES_HOST_AUTH_METHOD=trust
             - POSTGRES_USER=sa
             - POSTGRES_DB=alex
         volumes:
-          - alex-database-development:/var/lib/postgresql
+          - alex-database:/var/lib/postgresql
         networks:
           - backend
         ports:
           - "127.0.0.1:5432:5432"
-    alex-backend-development:
+    alex-backend:
         image: maven:3-jdk-11
         depends_on:
             - selenium-hub
-            - alex-database-development
+            - alex-database
         working_dir: /var/alex/backend
         environment:
-            - DATABASE_HOST=alex-database-development
+            - DATABASE_HOST=alex-database
             - DATABASE_PORT=5432
             - DATABASE_NAME=alex
             - DATABASE_USER=sa
         volumes:
             - ./backend/src:/var/alex/backend/src:ro
             - ./backend/pom.xml:/var/alex/backend/pom.xml:ro
-            - alex-backend-maven-development:/root/.m2
-            - alex-database-development:/var/alex/backend/target/postgresql
-            - alex-backend-ltsmin-development:/var/ltsmin
+            - alex-backend-maven:/root/.m2
+            - alex-database:/var/alex/backend/target/postgresql
+            - alex-backend-ltsmin:/var/ltsmin
         command:
             bash -c "if [ ! -d "/var/ltsmin/bin" ]; then
             wget -P /var/ltsmin http://github.com/utwente-fmt/ltsmin/releases/download/v3.0.2/ltsmin-v3.0.2-linux.tgz;
@@ -70,7 +70,7 @@ services:
             - "127.0.0.1:8000:8000"
         networks:
             - backend
-    alex-frontend-development:
+    alex-frontend:
         image: node
         working_dir: /var/alex/frontend
         volumes:
@@ -82,9 +82,9 @@ services:
             - frontend
 
 volumes:
-  alex-backend-maven-development:
-  alex-database-development:
-  alex-backend-ltsmin-development:
+  alex-backend-maven:
+  alex-database:
+  alex-backend-ltsmin:
 
 
 networks:
