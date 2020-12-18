@@ -16,19 +16,10 @@
 
 package de.learnlib.alex.modelchecking.repositories;
 
-import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
+import de.learnlib.alex.modelchecking.entities.ModelCheckingResult;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Set;
-
 @Repository
-public interface LtsFormulaSuiteRepository extends JpaRepository<LtsFormulaSuite, Long> {
-
-    List<LtsFormulaSuite> findAllByProject_Id(Long projectId);
-
-    List<LtsFormulaSuite> findAllByProject_IdAndNameIn(Long projectId, Set<String> names);
-
-    LtsFormulaSuite findByProject_IdAndName(Long projectId, String name);
+public interface ModelCheckingResultRepository extends JpaRepository<ModelCheckingResult, Long> {
 }

@@ -24,7 +24,6 @@ import de.learnlib.alex.testing.entities.TestCaseResult;
 import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.entities.TestResult;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
-import de.learnlib.alex.testing.repositories.TestResultRepository;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;

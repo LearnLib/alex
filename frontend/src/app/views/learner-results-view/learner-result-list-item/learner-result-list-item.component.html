@@ -1,16 +1,21 @@
 <div class="d-flex learner-result-list-item">
   <selectable-checkbox [item]="result" [selectable]="selectable" *ngIf="selectable != null"></selectable-checkbox>
   <div class="flex-grow-1 mr-3 ml-3">
-    <span *ngIf="result.error" class="badge badge-danger float-right">Failed</span>
-    <strong>
-      <a [routerLink]="[result.id]" *ngIf="result.status !== 'IN_PROGRESS'">
-        Test No {{result.testNo}}
-      </a>
-      <a [routerLink]="['/app', 'projects', result.project, 'learner']" [queryParams]="{testNo: result.testNo}" *ngIf="result.status === 'IN_PROGRESS'">
-        Test No {{result.testNo}}
-      </a>
-    </strong>
-    [{{result.setup.algorithm.name | formatLearningAlgorithm}}]
+    <div class="d-flex flex-row align-items-center">
+      <div class="flex-grow-1">
+        <span *ngIf="result.error" class="badge badge-danger float-right">Failed</span>
+        <strong>
+          <a [routerLink]="['/app', 'projects', result.project, 'learner', 'results', result.id]" *ngIf="result.status !== 'IN_PROGRESS'">
+            Test No {{result.testNo}}
+          </a>
+          <a [routerLink]="['/app', 'projects', result.project, 'learner']" [queryParams]="{testNo: result.testNo}" *ngIf="result.status === 'IN_PROGRESS'">
+            Test No {{result.testNo}}
+          </a>
+        </strong>
+        [{{result.setup.algorithm.name | formatLearningAlgorithm}}]
+      </div>
+      <model-validation-badge [learnerResult]="result"></model-validation-badge>
+    </div>
     <div class="text-muted">
       <em>
         Started: {{result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}

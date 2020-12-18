@@ -20,6 +20,7 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.learning.repositories.LearnerSetupRepository;
 import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import de.learnlib.alex.modelchecking.repositories.LtsFormulaSuiteRepository;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -36,18 +37,23 @@ public class LtsFormulaSuiteDAO {
 
     private final ProjectDAO projectDAO;
     private final LtsFormulaSuiteRepository formulaSuiteRepository;
+    private final LearnerSetupRepository learnerSetupRepository;
 
     @Autowired
-    public LtsFormulaSuiteDAO(ProjectDAO projectDAO,
-                              LtsFormulaSuiteRepository formulaSuiteRepository) {
+    public LtsFormulaSuiteDAO(
+            ProjectDAO projectDAO,
+            LtsFormulaSuiteRepository formulaSuiteRepository,
+            LearnerSetupRepository learnerSetupRepository
+    ) {
         this.projectDAO = projectDAO;
         this.formulaSuiteRepository = formulaSuiteRepository;
+        this.learnerSetupRepository = learnerSetupRepository;
     }
 
     public List<LtsFormulaSuite> getAll(User user, Long projectId) {
         final Project project = projectDAO.getByID(user, projectId);
         final List<LtsFormulaSuite> suites = formulaSuiteRepository.findAllByProject_Id(project.getId());
-        suites.forEach(this::initLazyRelations);
+        suites.forEach(this::loadLazyRelations);
         return suites;
     }
 
@@ -55,7 +61,7 @@ public class LtsFormulaSuiteDAO {
         final Project project = projectDAO.getByID(user, projectId);
         final LtsFormulaSuite suiteInDb = formulaSuiteRepository.findById(suiteId).orElse(null);
         checkAccess(user, project, suiteInDb);
-        return initLazyRelations(suiteInDb);
+        return loadLazyRelations(suiteInDb);
     }
 
     public LtsFormulaSuite create(User user, Long projectId, LtsFormulaSuite suite) {
@@ -67,7 +73,7 @@ public class LtsFormulaSuiteDAO {
         s.setProject(project);
 
         final LtsFormulaSuite createdSuite = formulaSuiteRepository.save(s);
-        return initLazyRelations(createdSuite);
+        return loadLazyRelations(createdSuite);
     }
 
     public LtsFormulaSuite update(User user, Long projectId, Long suiteId, LtsFormulaSuite suite) {
@@ -77,11 +83,22 @@ public class LtsFormulaSuiteDAO {
         suiteInDb.setName(suite.getName());
 
         final LtsFormulaSuite updatedSuite = formulaSuiteRepository.save(suiteInDb);
-        return initLazyRelations(updatedSuite);
+        return loadLazyRelations(updatedSuite);
     }
 
     public void delete(User user, Long projectId, Long suiteId) {
         final LtsFormulaSuite suiteInDb = get(user, projectId, suiteId);
+
+        // delete references in model checking configs of learner setups
+        final var setups = learnerSetupRepository.findAllByProject_Id(projectId);
+        for (var setup: setups) {
+            var config = setup.getModelCheckingConfig();
+            if (config.getFormulaSuites().contains(suiteInDb)) {
+                config.getFormulaSuites().remove(suiteInDb);
+                learnerSetupRepository.save(setup);
+            }
+        }
+
         formulaSuiteRepository.delete(suiteInDb);
     }
 
@@ -116,7 +133,7 @@ public class LtsFormulaSuiteDAO {
         }
     }
 
-    public LtsFormulaSuite initLazyRelations(LtsFormulaSuite suite) {
+    public LtsFormulaSuite loadLazyRelations(LtsFormulaSuite suite) {
         Hibernate.initialize(suite.getFormulas());
         return suite;
     }

@@ -48,12 +48,12 @@ public class LtsFormulaSuitesExporter extends EntityExporter {
         );
     }
 
-    private static abstract class IgnoreFieldsForLtsFormulaSuiteMixin extends IgnoreIdFieldMixin {
+    public static abstract class IgnoreFieldsForLtsFormulaSuiteMixin extends IgnoreIdFieldMixin {
         @JsonIgnore
         abstract Long getProjectId();
     }
 
-    private static abstract class IgnoreFieldsForLtsFormulaMixin extends IgnoreIdFieldMixin {
+    public static abstract class IgnoreFieldsForLtsFormulaMixin extends IgnoreIdFieldMixin {
         @JsonIgnore
         abstract Long getSuiteId();
     }

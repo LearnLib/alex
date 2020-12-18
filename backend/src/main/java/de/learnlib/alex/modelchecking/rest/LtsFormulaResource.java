@@ -127,9 +127,9 @@ public class LtsFormulaResource {
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity<LtsFormula> updateSuite(@PathVariable("projectId") Long projectId,
-                                                        @PathVariable("suiteId") Long suiteId,
-                                                        @PathVariable("formulaId") Long formulaId,
-                                                        @RequestBody LtsFormulaSuite suite) {
+                                                  @PathVariable("suiteId") Long suiteId,
+                                                  @PathVariable("formulaId") Long formulaId,
+                                                  @RequestBody LtsFormulaSuite suite) {
         LOGGER.traceEntry("enter updateParent(projectId: {}, formulaId: {})", projectId, formulaId);
         final User user = authContext.getUser();
         final List<LtsFormula> updatedFormulas = ltsFormulaDAO.updateParent(user, projectId, suiteId, Collections.singletonList(formulaId), suite);

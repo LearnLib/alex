@@ -31,6 +31,9 @@ import { FormGroup } from '@angular/forms';
 import { Project } from '../../entities/project';
 import { SettingsApiService } from '../../services/api/settings-api.service';
 import { SymbolGroupApiService } from '../../services/api/symbol-group-api.service';
+import { LtlFormulaSuite } from '../../entities/ltl-formula-suite';
+import { LtsFormulaApiService } from '../../services/api/lts-formula-api.service';
+import { LtsFormulaSuiteApiService } from '../../services/api/lts-formula-suite-api.service';
 
 @Component({
   selector: 'learner-setup-form',
@@ -47,14 +50,17 @@ export class LearnerSetupFormComponent implements OnInit {
 
   groups: SymbolGroup[] = [];
   selectedLearningAlgorithm: string = learningAlgorithm.TTT;
+  formulaSuites: LtlFormulaSuite[] = [];
   selectedEnvironments = new Selectable<ProjectEnvironment, number>(e => e.id);
+  selectedFormulaSuites = new Selectable<LtlFormulaSuite, number>(e => e.id);
   form = new FormGroup({});
 
   constructor(private appStore: AppStoreService,
               private modalService: NgbModal,
               private learningAlgorithmService: LearningAlgorithmService,
               private settingsApi: SettingsApiService,
-              private symbolGroupApi: SymbolGroupApiService) { }
+              private symbolGroupApi: SymbolGroupApiService,
+              private formulaSuiteApi: LtsFormulaSuiteApiService) { }
 
   ngOnInit(): void {
     this.selectedEnvironments.addItems(this.project.environments);
@@ -62,6 +68,15 @@ export class LearnerSetupFormComponent implements OnInit {
 
     this.symbolGroupApi.getAll(this.project.id).subscribe(
       groups => this.groups = groups,
+      console.error
+    );
+
+    this.formulaSuiteApi.getAll(this.project.id).subscribe(
+      formulaSuites => {
+        this.formulaSuites = formulaSuites;
+        this.selectedFormulaSuites.addItems(this.formulaSuites);
+        this.selectedFormulaSuites.selectMany(this.setup.modelCheckingConfig.formulaSuites);
+      },
       console.error
     );
   }
@@ -100,6 +115,10 @@ export class LearnerSetupFormComponent implements OnInit {
 
   selectEnvironments(): void {
     this.setup.environments = [...this.selectedEnvironments.getSelected()];
+  }
+
+  selectFormulaSuites(): void {
+    this.setup.modelCheckingConfig.formulaSuites = [...this.selectedFormulaSuites.getSelected()];
   }
 
   get project(): Project {

@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-import { LearnerResult } from './learner-result';
+export class LtlFormula {
 
-export interface LearnerProcessStatus {
-  result: LearnerResult;
-  phase: string;
-  currentQueries: any[];
-}
+  id: number;
+  suite: number;
+  name: string;
+  formula: string;
 
-export interface LearnerStatus {
-  currentProcess: LearnerProcessStatus,
-  queue: LearnerResult[]
-  active: boolean;
+  public static fromData(data: any = {}): LtlFormula {
+    const f = new LtlFormula();
+    f.id = data.id;
+    f.suite = data.suite;
+    f.name = data.name;
+    f.formula = data.formula;
+    return f;
+  }
 }

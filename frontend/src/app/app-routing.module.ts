@@ -36,6 +36,7 @@ import { LtsFormulaSuiteViewComponent } from './views/lts-formula-suite-view/lts
 import { TestGuard } from "./guards/TestGuard";
 import { SymbolGuard } from "./guards/SymbolGuard";
 import {TestReportScreenshotsViewComponent} from "./views/test-report-screenshots-view/test-report-screenshots-view.component";
+import { ModelCheckingResultsViewComponent } from './views/model-checking-results-view/model-checking-results-view.component';
 
 const routes: Routes = [
   {
@@ -171,8 +172,18 @@ const routes: Routes = [
                       },
                       {
                         path: ':resultIds',
-                        component: LearnerResultsCompareViewComponent
-                      }
+                        children: [
+                          {
+                            path: '',
+                            component: LearnerResultsCompareViewComponent,
+                            pathMatch: 'full'
+                          },
+                          {
+                            path: 'model-checking-results',
+                            component: ModelCheckingResultsViewComponent
+                          }
+                        ]
+                      },
                     ]
                   },
                   {

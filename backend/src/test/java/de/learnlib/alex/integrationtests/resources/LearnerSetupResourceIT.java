@@ -28,6 +28,7 @@ import de.learnlib.alex.data.entities.actions.misc.SetVariableAction;
 import de.learnlib.alex.integrationtests.SpringRestError;
 import de.learnlib.alex.integrationtests.resources.api.LearnerResultApi;
 import de.learnlib.alex.integrationtests.resources.api.LearnerSetupApi;
+import de.learnlib.alex.integrationtests.resources.api.LtsFormulaSuiteApi;
 import de.learnlib.alex.integrationtests.resources.api.ProjectApi;
 import de.learnlib.alex.integrationtests.resources.api.SymbolApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
@@ -39,6 +40,7 @@ import de.learnlib.alex.learning.entities.Statistics;
 import de.learnlib.alex.learning.entities.WebDriverConfig;
 import de.learnlib.alex.learning.entities.algorithms.TTT;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
+import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
@@ -63,6 +65,7 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
 
     private LearnerSetupApi learnerSetupApi;
     private LearnerResultApi learnerResultApi;
+    private LtsFormulaSuiteApi ltsFormulaSuiteApi;
 
     private Project project;
     private List<Symbol> symbols;
@@ -76,6 +79,7 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
 
         learnerSetupApi = new LearnerSetupApi(client, port);
         learnerResultApi = new LearnerResultApi(client, port);
+        ltsFormulaSuiteApi = new LtsFormulaSuiteApi(client, port);
 
         jwt = userApi.login("admin@alex.example", "admin");
         project = projectApi.create("{\"name\":\"test\",\"url\":\"http://" + InetAddress.getLocalHost().getHostName() + " :" + port + "\"}", jwt)
@@ -113,12 +117,12 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void startLearningProcessFromSetupWithoutOptions() throws InterruptedException, IOException {
+    public void startLearningProcessFromSetupWithoutOptions() throws IOException {
         startLearningFromSetup(null, "testSetup");
     }
 
     @Test
-    public void startLearningProcessFromSetupWithOptions() throws InterruptedException, IOException {
+    public void startLearningProcessFromSetupWithOptions() throws IOException {
         final String comment = "testComment";
         final LearnerOptions options = new LearnerOptions();
         options.setComment(comment);
@@ -196,7 +200,83 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
 
         assertEquals(HttpStatus.CREATED.value(), res.getStatus());
         assertEquals(1, getAllSetups().size());
+        assertNotNull(createdSetup.getModelCheckingConfig());
         compareTo(ls, createdSetup);
+    }
+
+    @Test
+    public void shouldCreateLearnerSetupWithModelCheckingConfig() {
+        final var fs1 = createFormulaSuite(project.getId(), "suite1", jwt);
+        final var fs2 = createFormulaSuite(project.getId(), "suite2", jwt);
+
+        final var ls = createDefaultLearnerSetup();
+        ls.getModelCheckingConfig().getFormulaSuites().add(fs1);
+        ls.getModelCheckingConfig().getFormulaSuites().add(fs2);
+
+        final var res = learnerSetupApi.create(project.getId(), ls, jwt);
+        assertEquals(HttpStatus.CREATED.value(), res.getStatus());
+
+        final var createdSetup = res.readEntity(LearnerSetup.class);
+        final var config = createdSetup.getModelCheckingConfig();
+        assertNotNull(config);
+        assertEquals(2, config.getFormulaSuites().size());
+        assertTrue(config.getFormulaSuites().stream().anyMatch(fs -> fs.getName().equals("suite1")));
+        assertTrue(config.getFormulaSuites().stream().anyMatch(fs -> fs.getName().equals("suite2")));
+    }
+
+    @Test
+    public void shouldUpdateModelCheckingConfigOfLearnerSetup() {
+        final var fs1 = createFormulaSuite(project.getId(), "suite1", jwt);
+        final var fs2 = createFormulaSuite(project.getId(), "suite2", jwt);
+
+        final var ls = createDefaultLearnerSetup();
+        ls.getModelCheckingConfig().getFormulaSuites().add(fs1);
+        ls.getModelCheckingConfig().getFormulaSuites().add(fs2);
+
+        final var res = learnerSetupApi.create(project.getId(), ls, jwt);
+        final var createdSetup = res.readEntity(LearnerSetup.class);
+        final var config = createdSetup.getModelCheckingConfig();
+
+        // change properties and remove a suite
+        config.setMinUnfolds(5);
+        config.setMultiplier(0.5);
+        config.getFormulaSuites().removeIf(fs -> fs.getName().equals("suite1"));
+
+        // update
+        final var res2 = learnerSetupApi.update(project.getId(), createdSetup.getId(), createdSetup, jwt);
+        assertEquals(HttpStatus.OK.value(), res2.getStatus());
+
+        final var updatedSetup = res2.readEntity(LearnerSetup.class);
+        final var updatedConfig = updatedSetup.getModelCheckingConfig();
+
+        // verify updated properties
+        assertNotNull(updatedConfig);
+        assertEquals(5, (long) updatedConfig.getMinUnfolds());
+        assertEquals(0.5, updatedConfig.getMultiplier(), 0.0);
+        assertEquals(1, updatedConfig.getFormulaSuites().size());
+        assertTrue(updatedConfig.getFormulaSuites().stream().noneMatch(fs -> fs.getName().equals("suite1")));
+    }
+
+    private LtsFormulaSuite createFormulaSuite(Long projectId, String name, String jwt) {
+        final var fs = new LtsFormulaSuite();
+        fs.setName(name);
+
+        final var res = ltsFormulaSuiteApi.create(projectId, fs, jwt);
+        assertEquals(HttpStatus.CREATED.value(), res.getStatus());
+
+        return res.readEntity(LtsFormulaSuite.class);
+    }
+
+    @Test
+    public void shouldFailToCreateLearnerSetupWithoutModelCheckingConfig() {
+        final LearnerSetup ls = createDefaultLearnerSetup();
+        ls.setModelCheckingConfig(null);
+
+        final Response res = learnerSetupApi.create(project.getId(), ls, jwt);
+        assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
+        res.readEntity(SpringRestError.class);
+
+        assertEquals(0, getAllSetups().size());
     }
 
     @Test

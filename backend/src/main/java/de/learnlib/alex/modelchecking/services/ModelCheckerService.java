@@ -22,34 +22,54 @@ import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.modelchecking.dao.LtsFormulaDAO;
+import de.learnlib.alex.modelchecking.dao.ModelCheckingResultDAO;
 import de.learnlib.alex.modelchecking.entities.LtsCheckingConfig;
-import de.learnlib.alex.modelchecking.entities.LtsCheckingResult;
 import de.learnlib.alex.modelchecking.entities.LtsFormula;
+import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
+import de.learnlib.alex.modelchecking.entities.ModelCheckingConfig;
+import de.learnlib.alex.modelchecking.entities.ModelCheckingResult;
 import net.automatalib.automata.transducers.impl.compact.CompactMealy;
 import net.automatalib.modelcheckers.ltsmin.LTSminLTLParser;
 import net.automatalib.modelcheckers.ltsmin.ltl.LTSminLTLIO;
 import net.automatalib.modelcheckers.ltsmin.ltl.LTSminLTLIOBuilder;
-import net.automatalib.modelchecking.Lasso;
 import net.automatalib.words.Alphabet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /** Service that is used to execute model checks on learned models. */
 @Service
 public class ModelCheckerService {
 
-    private LearnerResultDAO learnerResultDAO;
-    private LtsFormulaDAO ltsFormulaDAO;
+    private final LearnerResultDAO learnerResultDAO;
+    private final LtsFormulaDAO ltsFormulaDAO;
+    private final ModelCheckingResultDAO modelCheckingResultDAO;
 
     @Autowired
     public ModelCheckerService(LearnerResultDAO learnerResultDAO,
-                               LtsFormulaDAO ltsFormulaDAO) {
+                               LtsFormulaDAO ltsFormulaDAO,
+                               ModelCheckingResultDAO modelCheckingResultDAO) {
         this.learnerResultDAO = learnerResultDAO;
         this.ltsFormulaDAO = ltsFormulaDAO;
+        this.modelCheckingResultDAO = modelCheckingResultDAO;
+    }
+
+    public List<ModelCheckingResult> check(LearnerResultStep step, ModelCheckingConfig config) {
+        final var alphabet = step.getHypothesis().createAlphabet();
+        final var hypothesis = step.getHypothesis().createMealyMachine(alphabet);
+
+        final var formulas = config.getFormulaSuites().stream()
+                .map(LtsFormulaSuite::getFormulas)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+
+        final var results = check(hypothesis, alphabet, formulas, config.getMinUnfolds(), config.getMultiplier());
+        return modelCheckingResultDAO.create(results);
     }
 
     /**
@@ -65,8 +85,8 @@ public class ModelCheckerService {
      * @throws NotFoundException
      *         If the project or a lts formula could not be found.
      */
-    public List<LtsCheckingResult> check(User user, Long projectId, LtsCheckingConfig config) throws NotFoundException {
-        for (LtsFormula formula: config.getFormulas()) {
+    public List<ModelCheckingResult> check(User user, Long projectId, LtsCheckingConfig config) throws NotFoundException {
+        for (LtsFormula formula : config.getFormulas()) {
             if (!LTSminLTLParser.isValidIOFormula(formula.getFormula())) {
                 throw new IllegalArgumentException("Formula '" + formula.getFormula() + "' is not formatted correctly");
             }
@@ -81,25 +101,26 @@ public class ModelCheckerService {
         final Alphabet<String> alphabet = step.getHypothesis().createAlphabet();
         final CompactMealy<String, String> hypothesis = step.getHypothesis().createMealyMachine(alphabet);
 
-        final LTSminLTLIO<String, String> ltsmin =
-                new LTSminLTLIOBuilder<String, String>()
-                        .withString2Input(Function.identity())
-                        .withString2Output(Function.identity())
-                        .withMinimumUnfolds(config.getMinUnfolds())
-                        .withMultiplier(config.getMultiplier())
-                        .create();
+        return check(hypothesis, alphabet, formulasToCheck, config.getMinUnfolds(), config.getMultiplier());
+    }
 
-        final List<LtsCheckingResult> results = new ArrayList<>();
+    private List<ModelCheckingResult> check(CompactMealy<String, String> model, Alphabet<String> alphabet, List<LtsFormula> formulas, int minUnfolds, double multiplier) {
+        final LTSminLTLIO<String, String> ltsmin = new LTSminLTLIOBuilder<String, String>()
+                .withString2Input(Function.identity())
+                .withString2Output(Function.identity())
+                .withMinimumUnfolds(minUnfolds)
+                .withMultiplier(multiplier)
+                .create();
 
-        for (LtsFormula formula : formulasToCheck) {
-            final Lasso.MealyLasso<String, String> ce = ltsmin.findCounterExample(hypothesis, alphabet, formula.getFormula());
+        return formulas.stream().map(f -> {
+            final var ce = ltsmin.findCounterExample(model, alphabet, f.getFormula());
+            final var result = new ModelCheckingResult();
+            result.setFormula(f);
             if (ce != null) {
-                results.add(new LtsCheckingResult(formula, learnerResult.getId(), step.getStepNo(), ce.getPrefix(), ce.getLoop()));
-            } else {
-                results.add(new LtsCheckingResult(formula, learnerResult.getId(), step.getStepNo()));
+                result.setPrefix(ce.getPrefix().asList());
+                result.setLoop(ce.getLoop().asList());
             }
-        }
-
-        return results;
+            return result;
+        }).collect(Collectors.toList());
     }
 }

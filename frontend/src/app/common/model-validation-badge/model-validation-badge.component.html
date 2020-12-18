@@ -1,0 +1,8 @@
+<ng-container *ngIf="hasModelCheckingResults">
+  <span class="badge badge-success p-2" *ngIf="passed">
+    <i class="fas fa-fw fa-check-circle mr-1"></i> Model validation passed
+  </span>
+  <span class="badge badge-danger p-2" *ngIf="!passed">
+    <i class="fas fa-fw fa-times-circle mr-1"></i> Model validation failed
+  </span>
+</ng-container>

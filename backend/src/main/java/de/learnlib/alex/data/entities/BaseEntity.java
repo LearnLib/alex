@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-import { LearnerResult } from './learner-result';
+package de.learnlib.alex.data.entities;
 
-export interface LearnerProcessStatus {
-  result: LearnerResult;
-  phase: string;
-  currentQueries: any[];
-}
+import com.vladmihalcea.hibernate.type.array.ListArrayType;
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.TypeDefs;
 
-export interface LearnerStatus {
-  currentProcess: LearnerProcessStatus,
-  queue: LearnerResult[]
-  active: boolean;
+import javax.persistence.MappedSuperclass;
+
+@MappedSuperclass
+@TypeDefs({
+        @TypeDef(name = "list-array", typeClass = ListArrayType.class)
+})
+public class BaseEntity {
 }

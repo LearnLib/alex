@@ -19,6 +19,7 @@ import { ProjectEnvironment } from './project-environment';
 import { RandomEqOracle } from './eq-oracles/random-eq-oracle';
 import { learningAlgorithm } from '../constants';
 import { WebDriverConfig } from './web-driver-config';
+import { ModelCheckingConfig } from './model-checking-config';
 
 export class LearnerSetup {
 
@@ -34,6 +35,7 @@ export class LearnerSetup {
   equivalenceOracle: any;
   webDriver: any;
   saved: boolean;
+  modelCheckingConfig: ModelCheckingConfig;
 
   constructor() {
     this.symbols = [];
@@ -45,6 +47,7 @@ export class LearnerSetup {
     this.algorithm = {
       name: learningAlgorithm.TTT
     };
+    this.modelCheckingConfig = new ModelCheckingConfig();
   }
 
   static fromData(data: any = {}): LearnerSetup {
@@ -63,6 +66,7 @@ export class LearnerSetup {
       ls.postSymbol = new ParametrizedSymbol(data.postSymbol);
     }
     ls.environments = data.environments.map(e => ProjectEnvironment.fromData(e));
+    ls.modelCheckingConfig = ModelCheckingConfig.fromData(data.modelCheckingConfig);
     return ls;
   }
 

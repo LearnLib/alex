@@ -14,16 +14,25 @@
  * limitations under the License.
  */
 
-import { LearnerResult } from './learner-result';
+import { LtlFormulaSuite } from './ltl-formula-suite';
 
-export interface LearnerProcessStatus {
-  result: LearnerResult;
-  phase: string;
-  currentQueries: any[];
-}
+export class ModelCheckingConfig {
 
-export interface LearnerStatus {
-  currentProcess: LearnerProcessStatus,
-  queue: LearnerResult[]
-  active: boolean;
+  id: number;
+  multiplier: number = 0.1;
+  minUnfolds: number = 1;
+  formulaSuites: LtlFormulaSuite[] = [];
+
+  public static fromData(data: any = {}): ModelCheckingConfig {
+    const c = new ModelCheckingConfig();
+    c.id = data.id;
+    c.minUnfolds = data.minUnfolds;
+    c.multiplier = data.multiplier;
+
+    if (data.formulaSuites !== null && data.formulaSuites.length > 0) {
+      c.formulaSuites = data.formulaSuites.map(fs => LtlFormulaSuite.fromData(fs));
+    }
+
+    return c;
+  }
 }

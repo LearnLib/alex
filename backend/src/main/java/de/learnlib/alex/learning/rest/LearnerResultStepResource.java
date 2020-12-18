@@ -49,9 +49,9 @@ public class LearnerResultStepResource {
     }
 
     @PostMapping(
-        value = "/{stepId}/hypothesis/outputs",
-        consumes = MediaType.APPLICATION_JSON,
-        produces = MediaType.APPLICATION_JSON
+            value = "/{stepId}/hypothesis/outputs",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity<?> getHypothesisOutputs(
             @PathVariable("projectId") Long projectId,
@@ -60,7 +60,7 @@ public class LearnerResultStepResource {
             @RequestBody List<String> input
     ) {
         final var user = authContext.getUser();
-        final var step = learnerResultStepDAO.getById(user, projectId, stepId);
+        final var step = learnerResultStepDAO.getById(user, projectId, resultId, stepId);
 
         if (!step.getResult().getId().equals(resultId)) {
             throw new ValidationException("The provided result ids do not match");
@@ -72,5 +72,6 @@ public class LearnerResultStepResource {
 
         return ResponseEntity.ok(output);
     }
+
 }
 

@@ -16,9 +16,8 @@
 
 package de.learnlib.alex.modelchecking.rest;
 
-import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.modelchecking.entities.LtsCheckingConfig;
-import de.learnlib.alex.modelchecking.entities.LtsCheckingResult;
+import de.learnlib.alex.modelchecking.entities.ModelCheckingResult;
 import de.learnlib.alex.modelchecking.services.ModelCheckerService;
 import de.learnlib.alex.security.AuthContext;
 import org.apache.logging.log4j.LogManager;
@@ -55,11 +54,11 @@ public class ModelCheckerResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity<List<LtsCheckingResult>> check(@PathVariable("projectId") Long projectId,
-                                                         @RequestBody LtsCheckingConfig config) {
+    public ResponseEntity<List<ModelCheckingResult>> check(@PathVariable("projectId") Long projectId,
+                                                           @RequestBody LtsCheckingConfig config) {
         LOGGER.traceEntry("enter check(projectId: {})", projectId);
-        final User user = authContext.getUser();
-        final List<LtsCheckingResult> results = modelCheckerService.check(user, projectId, config);
+        final var user = authContext.getUser();
+        final var results = modelCheckerService.check(user, projectId, config);
 
         LOGGER.traceExit("leave check()");
         return ResponseEntity.ok(results);

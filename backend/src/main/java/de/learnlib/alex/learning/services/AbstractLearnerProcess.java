@@ -38,6 +38,7 @@ import de.learnlib.alex.learning.services.oracles.DelegationOracle;
 import de.learnlib.alex.learning.services.oracles.InterruptibleOracle;
 import de.learnlib.alex.learning.services.oracles.QueryMonitorOracle;
 import de.learnlib.alex.learning.services.oracles.StatisticsOracle;
+import de.learnlib.alex.modelchecking.services.ModelCheckerService;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import de.learnlib.api.algorithm.LearningAlgorithm;
@@ -76,6 +77,7 @@ public abstract class AbstractLearnerProcess<C extends AbstractLearnerProcessQue
     protected final WebhookService webhookService;
     protected final PreparedConnectorContextHandlerFactory contextHandlerFactory;
     protected final TransactionTemplate transactionTemplate;
+    protected final ModelCheckerService modelCheckerService;
 
     /** The user who is stating the Learning Thread. */
     protected User user;
@@ -134,7 +136,8 @@ public abstract class AbstractLearnerProcess<C extends AbstractLearnerProcessQue
             TestDAO testDAO,
             WebhookService webhookService,
             PreparedConnectorContextHandlerFactory contextHandlerFactory,
-            TransactionTemplate transactionTemplate
+            TransactionTemplate transactionTemplate,
+            ModelCheckerService modelCheckerService
     ) {
         this.userDAO = userDAO;
         this.projectDAO = projectDAO;
@@ -145,6 +148,7 @@ public abstract class AbstractLearnerProcess<C extends AbstractLearnerProcessQue
         this.webhookService = webhookService;
         this.contextHandlerFactory = contextHandlerFactory;
         this.transactionTemplate = transactionTemplate;
+        this.modelCheckerService = modelCheckerService;
     }
 
     public boolean isAborted() {
@@ -228,7 +232,7 @@ public abstract class AbstractLearnerProcess<C extends AbstractLearnerProcessQue
             final LearnerResultStep currentStep = result.getSteps().get(result.getSteps().size() - 1);
 
             transactionTemplate.execute(t -> {
-                final var stepToUpdate = learnerResultStepDAO.getById(user, project.getId(), currentStep.getId());
+                final var stepToUpdate = learnerResultStepDAO.getById(user, project.getId(), result.getId(), currentStep.getId());
                 stepToUpdate.getStatistics().getSymbolsUsed().setEqOracle(counterOracle.getSymbolCount());
                 stepToUpdate.getStatistics().getMqsUsed().setEqOracle(counterOracle.getQueryCount());
                 stepToUpdate.getStatistics().getDuration().setEqOracle(eqOracleEndTime - eqOracleStartTime);
@@ -269,6 +273,7 @@ public abstract class AbstractLearnerProcess<C extends AbstractLearnerProcessQue
             e.printStackTrace();
         }
         step.setAlgorithmInformation(setup.getAlgorithm().getInternalData(learner));
+        modelCheck(step);
         counterOracle.reset();
         result = learnerResultDAO.addStep(result.getId(), step);
     }
@@ -305,5 +310,12 @@ public abstract class AbstractLearnerProcess<C extends AbstractLearnerProcessQue
     protected void shutdown() {
         result = learnerResultDAO.updateStatus(result.getId(), LearnerResult.Status.FINISHED);
         sulOracles.forEach(ContextAwareSulOracle::shutdown);
+    }
+
+    private void modelCheck(LearnerResultStep step) {
+        if (!setup.getModelCheckingConfig().getFormulaSuites().isEmpty()) {
+            final var results = modelCheckerService.check(step, setup.getModelCheckingConfig());
+            step.setModelCheckingResults(results);
+        }
     }
 }

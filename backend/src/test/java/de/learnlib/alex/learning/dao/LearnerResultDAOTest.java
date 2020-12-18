@@ -63,6 +63,9 @@ public class LearnerResultDAOTest {
     @Mock
     private EntityManager entityManager;
 
+    @Mock
+    private LearnerResultStepDAO learnerResultStepDAO;
+
     private LearnerResultDAO learnerResultDAO;
 
     @Before
@@ -72,7 +75,8 @@ public class LearnerResultDAOTest {
                 learnerResultRepository,
                 learnerResultStepRepository,
                 learnerSetupDAO,
-                entityManager
+                entityManager,
+                learnerResultStepDAO
         );
     }
 

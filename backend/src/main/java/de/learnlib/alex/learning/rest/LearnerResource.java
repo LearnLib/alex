@@ -183,8 +183,10 @@ public class LearnerResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity<SeparatingWord> separatingWord(@PathVariable("projectId") Long projectId,
-                                         @RequestBody List<CompactMealyMachineProxy> mealyMachineProxies) {
+    public ResponseEntity<SeparatingWord> separatingWord(
+            @PathVariable("projectId") Long projectId,
+            @RequestBody List<CompactMealyMachineProxy> mealyMachineProxies
+    ) {
         final var user = authContext.getUser();
         LOGGER.traceEntry("calculate separating word for models ({}) and user {}.", mealyMachineProxies, user);
 
@@ -210,8 +212,10 @@ public class LearnerResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity<CompactMealyMachineProxy> differenceTree(@PathVariable("projectId") Long projectId,
-                                         @RequestBody List<CompactMealyMachineProxy> mealyMachineProxies) {
+    public ResponseEntity<CompactMealyMachineProxy> differenceTree(
+            @PathVariable("projectId") Long projectId,
+            @RequestBody List<CompactMealyMachineProxy> mealyMachineProxies
+    ) {
         final User user = authContext.getUser();
         LOGGER.traceEntry("calculate the difference tree for models ({}) and user {}.", mealyMachineProxies, user);
 

@@ -229,6 +229,65 @@
               </div>
             </ng-template>
           </ng-container>
+          <ng-container ngbNavItem>
+            <a ngbNavLink>Model Checking</a>
+            <ng-template ngbNavContent>
+              <br>
+
+              <p class="text-muted">
+                Specify which formula suites should be used for model checking learned models.
+              </p>
+
+              <div class="list-group">
+                <div
+                  *ngFor="let suite of formulaSuites"
+                  class="list-group-item d-flex flex-row align-items-center"
+                >
+                  <div>
+                    <selectable-checkbox
+                      [item]="suite"
+                      [selectable]="selectedFormulaSuites"
+                      (change)="selectFormulaSuites()"
+                    >
+                    </selectable-checkbox>
+                  </div>
+                  <div class="w-100 ml-3">
+                    <strong>{{suite.name}}</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card mt-3">
+                <div class="card-body">
+                  <div class="form-group">
+                    <label>Min. unfolds</label>
+                    <input
+                      [(ngModel)]="setup.modelCheckingConfig.minUnfolds"
+                      class="form-control"
+                      min="1"
+                      name="model_checking_config_min_unfolds"
+                      placeholder="1"
+                      required
+                      type="number"
+                    >
+                  </div>
+
+                  <div class="form-group">
+                    <label>Multiplier</label>
+                    <input
+                      [(ngModel)]="setup.modelCheckingConfig.multiplier"
+                      class="form-control"
+                      min="0.1"
+                      name="model_checking_config_multiplier"
+                      placeholder="0.1"
+                      required
+                      type="number"
+                    >
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </ng-container>
         </nav>
 
         <div [ngbNavOutlet]="nav"></div>

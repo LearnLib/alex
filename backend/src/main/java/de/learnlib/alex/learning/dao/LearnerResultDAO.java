@@ -34,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.validation.ValidationException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,6 +51,7 @@ public class LearnerResultDAO {
     private final LearnerResultRepository learnerResultRepository;
     private final LearnerResultStepRepository learnerResultStepRepository;
     private final LearnerSetupDAO learnerSetupDAO;
+    private final LearnerResultStepDAO learnerResultStepDAO;
     
     @Autowired
     public LearnerResultDAO(
@@ -57,13 +59,15 @@ public class LearnerResultDAO {
             LearnerResultRepository learnerResultRepository,
             LearnerResultStepRepository learnerResultStepRepository,
             LearnerSetupDAO learnerSetupDAO,
-            EntityManager entityManager
+            EntityManager entityManager,
+            LearnerResultStepDAO learnerResultStepDAO
     ) {
         this.projectDAO = projectDAO;
         this.learnerResultRepository = learnerResultRepository;
         this.learnerResultStepRepository = learnerResultStepRepository;
         this.learnerSetupDAO = learnerSetupDAO;
         this.entityManager = entityManager;
+        this.learnerResultStepDAO = learnerResultStepDAO;
     }
 
     public LearnerResult create(User user, Long projectId, LearnerResult learnerResult) {
@@ -197,6 +201,7 @@ public class LearnerResultDAO {
             entityManager.detach(step);
             step.setId(null);
             step.setResult(resultToClone);
+            step.setModelCheckingResults(new ArrayList<>());
             resultToClone.getSteps().add(step);
         }
 
@@ -256,8 +261,9 @@ public class LearnerResultDAO {
     }
 
     public void initializeLazyRelations(LearnerResult result) {
-        learnerSetupDAO.initializeLazyRelations(result.getSetup());
+        learnerSetupDAO.loadLazyRelations(result.getSetup());
         Hibernate.initialize(result.getSteps());
+        result.getSteps().forEach(learnerResultStepDAO::loadLazyRelations);
     }
 
     private void checkIfResultsCanBeDeleted(List<LearnerResult> results) {

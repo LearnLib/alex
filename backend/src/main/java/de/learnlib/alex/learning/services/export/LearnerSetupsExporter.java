@@ -32,6 +32,10 @@ import de.learnlib.alex.data.services.export.SymbolsExporter;
 import de.learnlib.alex.learning.dao.LearnerSetupDAO;
 import de.learnlib.alex.learning.entities.LearnerSetup;
 import de.learnlib.alex.learning.entities.export.LearnerSetupExportableEntity;
+import de.learnlib.alex.modelchecking.entities.LtsFormula;
+import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
+import de.learnlib.alex.modelchecking.entities.ModelCheckingConfig;
+import de.learnlib.alex.modelchecking.services.export.LtsFormulaSuitesExporter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,6 +63,9 @@ public class LearnerSetupsExporter extends EntityExporter {
         om.addMixIn(ProjectEnvironment.class, IgnoreFieldsForProjectEnvironmentMixin.class);
         om.addMixIn(ProjectUrl.class, IgnoreFieldsForProjectEnvironmentUrlMixin.class);
         om.addMixIn(ProjectEnvironmentVariable.class, IgnoreFieldsForProjectEnvironmentVariableMixin.class);
+        om.addMixIn(ModelCheckingConfig.class, IgnoreIdFieldMixin.class);
+        om.addMixIn(LtsFormulaSuite.class, LtsFormulaSuitesExporter.IgnoreFieldsForLtsFormulaSuiteMixin.class);
+        om.addMixIn(LtsFormula.class, LtsFormulaSuitesExporter.IgnoreFieldsForLtsFormulaMixin.class);
 
         final var module = new SimpleModule();
         module.addSerializer(new SymbolsExporter.ParameterizedSymbolSerializer(om, ParameterizedSymbol.class));

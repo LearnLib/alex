@@ -23,6 +23,7 @@ import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.learning.entities.algorithms.AbstractLearningAlgorithm;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
+import de.learnlib.alex.modelchecking.entities.ModelCheckingConfig;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
@@ -79,18 +80,23 @@ public class LearnerSetup implements Serializable {
     private ParameterizedSymbol postSymbol;
 
     @NotNull
-    @Column(columnDefinition="BYTEA")
+    @Column(columnDefinition = "BYTEA")
     private AbstractEquivalenceOracleProxy equivalenceOracle;
 
     @NotNull
-    @OneToOne(cascade = {javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.MERGE, javax.persistence.CascadeType.REMOVE})
+    @OneToOne(cascade = javax.persistence.CascadeType.ALL)
     private WebDriverConfig webDriver;
+
+    @NotNull
+    @OneToOne(cascade = javax.persistence.CascadeType.ALL)
+    private ModelCheckingConfig modelCheckingConfig;
 
     public LearnerSetup() {
         this.environments = new ArrayList<>();
         this.symbols = new ArrayList<>();
         this.enableCache = false;
         this.saved = false;
+        this.modelCheckingConfig = new ModelCheckingConfig();
     }
 
     @Transient
@@ -206,5 +212,13 @@ public class LearnerSetup implements Serializable {
 
     public void setSaved(boolean saved) {
         this.saved = saved;
+    }
+
+    public ModelCheckingConfig getModelCheckingConfig() {
+        return modelCheckingConfig;
+    }
+
+    public void setModelCheckingConfig(ModelCheckingConfig modelCheckingConfig) {
+        this.modelCheckingConfig = modelCheckingConfig;
     }
 }

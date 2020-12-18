@@ -32,6 +32,7 @@ import de.learnlib.alex.learning.entities.Statistics;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.events.LearnerEvent;
 import de.learnlib.alex.learning.services.connectors.PreparedConnectorContextHandlerFactory;
+import de.learnlib.alex.modelchecking.services.ModelCheckerService;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import net.automatalib.SupportsGrowingAlphabet;
@@ -65,7 +66,8 @@ public class ResumingLearnerProcess extends AbstractLearnerProcess<ResumingLearn
             WebhookService webhookService,
             PreparedConnectorContextHandlerFactory contextHandlerFactory,
             TransactionTemplate transactionTemplate,
-            SymbolDAO symbolDAO
+            SymbolDAO symbolDAO,
+            ModelCheckerService modelCheckerService
     ) {
         super(
                 userDAO,
@@ -76,7 +78,8 @@ public class ResumingLearnerProcess extends AbstractLearnerProcess<ResumingLearn
                 testDAO,
                 webhookService,
                 contextHandlerFactory,
-                transactionTemplate
+                transactionTemplate,
+                modelCheckerService
         );
         this.symbolDAO = symbolDAO;
     }
@@ -169,7 +172,7 @@ public class ResumingLearnerProcess extends AbstractLearnerProcess<ResumingLearn
 
                 // if the cache is not reinitialized with the new alphabet, we will get cache errors later
                 if (setup.isEnableCache() && cacheOracle != null) {
-                   cacheOracle.addAlphabetSymbol(symbol.getAliasOrComputedName());
+                    cacheOracle.addAlphabetSymbol(symbol.getAliasOrComputedName());
                 }
 
                 // measure how much time and membership queries it takes to add the symbol

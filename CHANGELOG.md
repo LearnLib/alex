@@ -11,6 +11,9 @@
 
 * See which symbols and tests are used by other users in a project
 * Export formula suites while exporting a project
+* Export learner setups while exporting a project
+* Automated model checking of learned models
+    * Associate LTL formula suites with a learner setup
 
 # ALEX 2.0.0
 

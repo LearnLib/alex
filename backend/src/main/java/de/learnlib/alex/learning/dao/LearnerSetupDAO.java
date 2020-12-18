@@ -32,7 +32,9 @@ import de.learnlib.alex.learning.entities.LearnerSetup;
 import de.learnlib.alex.learning.entities.WebDriverConfig;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.repositories.LearnerSetupRepository;
-import de.learnlib.alex.testing.entities.TestCaseStep;
+import de.learnlib.alex.modelchecking.dao.ModelCheckingConfigDAO;
+import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
+import de.learnlib.alex.modelchecking.repositories.LtsFormulaSuiteRepository;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,7 +42,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.validation.ValidationException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -58,6 +59,8 @@ public class LearnerSetupDAO {
     private final ProjectEnvironmentRepository projectEnvironmentRepository;
     private final EntityManager entityManager;
     private final SymbolDAO symbolDAO;
+    private final LtsFormulaSuiteRepository ltsFormulaSuiteRepository;
+    private final ModelCheckingConfigDAO modelCheckingConfigDAO;
 
     @Autowired
     public LearnerSetupDAO(LearnerSetupRepository learnerSetupRepository,
@@ -67,7 +70,9 @@ public class LearnerSetupDAO {
                            LearnerResultRepository learnerResultRepository,
                            ProjectEnvironmentRepository projectEnvironmentRepository,
                            EntityManager entityManager,
-                           SymbolDAO symbolDAO) {
+                           SymbolDAO symbolDAO,
+                           LtsFormulaSuiteRepository ltsFormulaSuiteRepository,
+                           ModelCheckingConfigDAO modelCheckingConfigDAO) {
         this.learnerSetupRepository = learnerSetupRepository;
         this.projectDAO = projectDAO;
         this.projectRepository = projectRepository;
@@ -76,6 +81,8 @@ public class LearnerSetupDAO {
         this.projectEnvironmentRepository = projectEnvironmentRepository;
         this.entityManager = entityManager;
         this.symbolDAO = symbolDAO;
+        this.ltsFormulaSuiteRepository = ltsFormulaSuiteRepository;
+        this.modelCheckingConfigDAO = modelCheckingConfigDAO;
     }
 
     public List<LearnerSetup> getAll(User user, Long projectId) {
@@ -83,7 +90,7 @@ public class LearnerSetupDAO {
         projectDAO.checkAccess(user, project);
 
         final List<LearnerSetup> setups = learnerSetupRepository.findAllByProject_Id(projectId);
-        setups.forEach(this::initializeLazyRelations);
+        setups.forEach(this::loadLazyRelations);
         return setups;
     }
 
@@ -91,7 +98,7 @@ public class LearnerSetupDAO {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final LearnerSetup setup = learnerSetupRepository.findById(setupId).orElse(null);
         checkAccess(user, project, setup);
-        initializeLazyRelations(setup);
+        loadLazyRelations(setup);
         return setup;
     }
 
@@ -106,11 +113,11 @@ public class LearnerSetupDAO {
         setup.getSymbols().removeIf(s -> ids.contains(s.getId()));
         final var updatedSetup = learnerSetupRepository.save(setup);
 
-        for (var ps: symbols) {
+        for (var ps : symbols) {
             parameterizedSymbolDAO.delete(ps);
         }
 
-        initializeLazyRelations(updatedSetup);
+        loadLazyRelations(updatedSetup);
         return updatedSetup;
     }
 
@@ -125,7 +132,7 @@ public class LearnerSetupDAO {
         setup.getSymbols().addAll(createdSymbols);
 
         final var updatedSetup = learnerSetupRepository.save(setup);
-        initializeLazyRelations(updatedSetup);
+        loadLazyRelations(updatedSetup);
         return updatedSetup;
     }
 
@@ -143,6 +150,9 @@ public class LearnerSetupDAO {
         setup.getWebDriver().setId(null);
         setupInDb.setWebDriver(setup.getWebDriver());
 
+        final var updatedModelCheckingConfig = modelCheckingConfigDAO.update(user, projectId, setupInDb.getModelCheckingConfig().getId(), setup.getModelCheckingConfig());
+        setupInDb.setModelCheckingConfig(updatedModelCheckingConfig);
+
         setupInDb.setEnvironments(projectEnvironmentRepository.findAllByIdIn(setup.getEnvironments().stream()
                 .map(ProjectEnvironment::getId)
                 .collect(Collectors.toList())));
@@ -151,6 +161,7 @@ public class LearnerSetupDAO {
         setupInDb.setSymbols(setup.getSymbols().stream()
                 .map(ParameterizedSymbol::copy)
                 .collect(Collectors.toList()));
+
         if (setup.getPostSymbol() != null) {
             setupInDb.setPostSymbol(setup.getPostSymbol().copy());
         }
@@ -158,7 +169,7 @@ public class LearnerSetupDAO {
         saveSymbols(setupInDb);
 
         final LearnerSetup updatedSetup = learnerSetupRepository.save(setupInDb);
-        initializeLazyRelations(updatedSetup);
+        loadLazyRelations(updatedSetup);
         return updatedSetup;
     }
 
@@ -184,6 +195,8 @@ public class LearnerSetupDAO {
                 .map(ProjectEnvironment::getId)
                 .collect(Collectors.toList())));
 
+        newSetup.setModelCheckingConfig(modelCheckingConfigDAO.create(user, projectId, setupInDb.getModelCheckingConfig()));
+
         newSetup.setPreSymbol(setupInDb.getPreSymbol().copy());
         newSetup.setSymbols(setupInDb.getSymbols().stream()
                 .map(ParameterizedSymbol::copy)
@@ -193,7 +206,7 @@ public class LearnerSetupDAO {
         saveSymbols(newSetup);
 
         final LearnerSetup copiedSetup = learnerSetupRepository.save(newSetup);
-        initializeLazyRelations(copiedSetup);
+        loadLazyRelations(copiedSetup);
         return copiedSetup;
     }
 
@@ -221,11 +234,20 @@ public class LearnerSetupDAO {
                             .collect(Collectors.toList())
                     )
             );
+
+            setup.getModelCheckingConfig().setFormulaSuites(
+                    ltsFormulaSuiteRepository.findAllByProject_IdAndNameIn(project.getId(), setup.getModelCheckingConfig().getFormulaSuites().stream()
+                            .map(LtsFormulaSuite::getName)
+                            .collect(Collectors.toSet())
+                    )
+            );
+
+            setup.setModelCheckingConfig(modelCheckingConfigDAO.create(user, project.getId(), setup.getModelCheckingConfig()));
         }
 
         // save setups
         final var importedSetups = learnerSetupRepository.saveAll(setups);
-        importedSetups.forEach(this::initializeLazyRelations);
+        importedSetups.forEach(this::loadLazyRelations);
 
         return importedSetups;
     }
@@ -250,8 +272,6 @@ public class LearnerSetupDAO {
         return parameterizedSymbolDAO.create(pSymbol);
     }
 
-
-
     public LearnerSetup create(User user, Long projectId, LearnerSetup setup) {
         final var project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
@@ -261,14 +281,19 @@ public class LearnerSetupDAO {
         setup.setProject(project);
         setup.setId(null);
         setup.getWebDriver().setId(null);
+
+        final var modelCheckingConfig = modelCheckingConfigDAO.create(user, projectId, setup.getModelCheckingConfig());
+        setup.setModelCheckingConfig(modelCheckingConfig);
+
         final LearnerSetup createdSetup = learnerSetupRepository.save(setup);
-        initializeLazyRelations(createdSetup);
+        loadLazyRelations(createdSetup);
+
         return createdSetup;
     }
 
     public void delete(User user, Long projectId, Long setupId) {
-        final Project project = projectRepository.findById(projectId).orElse(null);
-        final LearnerSetup setup = learnerSetupRepository.findById(setupId).orElse(null);
+        final var project = projectRepository.findById(projectId).orElse(null);
+        final var setup = learnerSetupRepository.findById(setupId).orElse(null);
         checkAccess(user, project, setup);
 
         if (learnerResultRepository.countAllBySetup_Id(setupId) > 0) {
@@ -290,7 +315,7 @@ public class LearnerSetupDAO {
         }
     }
 
-    public void initializeLazyRelations(LearnerSetup learnerSetup) {
+    public void loadLazyRelations(LearnerSetup learnerSetup) {
         Hibernate.initialize(learnerSetup.getPreSymbol());
         ParameterizedSymbolDAO.loadLazyRelations(learnerSetup.getPreSymbol());
 
@@ -306,12 +331,13 @@ public class LearnerSetupDAO {
         learnerSetup.getEnvironments().forEach(ProjectEnvironmentDAO::loadLazyRelations);
 
         Hibernate.initialize(learnerSetup.getWebDriver());
+        modelCheckingConfigDAO.loadLazyRelations(learnerSetup.getModelCheckingConfig());
     }
 
     private void saveSymbols(LearnerSetup setup) {
         setup.getPreSymbol().setId(null);
         parameterizedSymbolDAO.create(setup.getPreSymbol());
-        for (ParameterizedSymbol ps: setup.getSymbols()) {
+        for (ParameterizedSymbol ps : setup.getSymbols()) {
             ps.setId(null);
             parameterizedSymbolDAO.create(ps);
         }

@@ -20,8 +20,13 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
+import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.hibernate.Hibernate;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,22 +36,27 @@ public class LearnerResultStepDAO {
 
     private final ProjectDAO projectDAO;
     private final LearnerResultDAO learnerResultDAO;
+    private final LearnerResultRepository learnerResultRepository;
     private final LearnerResultStepRepository learnerResultStepRepository;
 
     public LearnerResultStepDAO(
             ProjectDAO projectDAO,
-            LearnerResultDAO learnerResultDAO,
+            @Lazy LearnerResultDAO learnerResultDAO,
+            LearnerResultRepository learnerResultRepository,
             LearnerResultStepRepository learnerResultStepRepository
     ) {
         this.projectDAO = projectDAO;
         this.learnerResultDAO = learnerResultDAO;
         this.learnerResultStepRepository = learnerResultStepRepository;
+        this.learnerResultRepository = learnerResultRepository;
     }
 
-    public LearnerResultStep getById(User user, Long projectId, Long stepId) {
+    public LearnerResultStep getById(User user, Long projectId, Long resultId, Long stepId) {
         final var project = projectDAO.getByID(user, projectId);
+        final var result = learnerResultRepository.findById(resultId).orElse(null);
         final var step = learnerResultStepRepository.getOne(stepId);
-        checkAccess(user, project, step);
+        checkAccess(user, project, result, step);
+        loadLazyRelations(step);
         return step;
     }
 
@@ -60,15 +70,28 @@ public class LearnerResultStepDAO {
         stepToUpdate.setAlgorithmInformation(step.getAlgorithmInformation());
         stepToUpdate.setErrorText(step.getErrorText());
         stepToUpdate.setEqOracle(step.getEqOracle());
+        stepToUpdate.setModelCheckingResults(step.getModelCheckingResults());
 
-        return learnerResultStepRepository.save(stepToUpdate);
+        final var updatedStep = learnerResultStepRepository.save(stepToUpdate);
+        loadLazyRelations(updatedStep);
+
+        return updatedStep;
     }
 
-    private void checkAccess(User user, Project project, LearnerResultStep step) {
+    public void loadLazyRelations(LearnerResultStep step) {
+        Hibernate.initialize(step.getModelCheckingResults());
+        step.getModelCheckingResults().forEach(r -> Hibernate.initialize(r.getFormula()));
+    }
+
+    private void checkAccess(User user, Project project, LearnerResult result, LearnerResultStep step) {
+        learnerResultDAO.checkAccess(user, project, result);
+
         if (step == null) {
             throw new NotFoundException("The step could not be found.");
         }
 
-        learnerResultDAO.checkAccess(user, project, step.getResult());
+        if (!step.getResult().getId().equals(result.getId())) {
+            throw new UnauthorizedException("You are not allowed to access the learner step.");
+        }
     }
 }

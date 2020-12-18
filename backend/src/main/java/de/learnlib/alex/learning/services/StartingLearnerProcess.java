@@ -25,6 +25,7 @@ import de.learnlib.alex.learning.dao.LearnerSetupDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.events.LearnerEvent;
 import de.learnlib.alex.learning.services.connectors.PreparedConnectorContextHandlerFactory;
+import de.learnlib.alex.modelchecking.services.ModelCheckerService;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import org.apache.logging.log4j.ThreadContext;
@@ -48,19 +49,21 @@ public class StartingLearnerProcess extends AbstractLearnerProcess<StartingLearn
             TestDAO testDAO,
             WebhookService webhookService,
             PreparedConnectorContextHandlerFactory contextHandlerFactory,
-            TransactionTemplate transactionTemplate
+            TransactionTemplate transactionTemplate,
+            ModelCheckerService modelCheckerService
     ) {
-       super(
-               userDAO,
-               projectDAO,
-               learnerResultDAO,
-               learnerSetupDAO,
-               learnerResultStepDAO,
-               testDAO,
-               webhookService,
-               contextHandlerFactory,
-               transactionTemplate
-       );
+        super(
+                userDAO,
+                projectDAO,
+                learnerResultDAO,
+                learnerSetupDAO,
+                learnerResultStepDAO,
+                testDAO,
+                webhookService,
+                contextHandlerFactory,
+                transactionTemplate,
+                modelCheckerService
+        );
     }
 
     @Override

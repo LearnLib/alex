@@ -59,19 +59,30 @@ public class LearnerResult implements Serializable {
     }
 
     /** The id of the LearnerResult in the DB. */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /** The reference to the Project the test run belongs to. */
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @JsonIgnore
     private Project project;
 
     /** The test no. within a Project which lead to the result. */
+    @Column(nullable = false)
     private Long testNo;
 
     /** The setup that has been used for the learning process. */
+    @OneToOne(cascade = CascadeType.REMOVE)
     private LearnerSetup setup;
 
     /** The steps of the LearnerResult. */
-    @OrderBy
+    @OneToMany(
+            mappedBy = "result",
+            cascade = {CascadeType.REMOVE},
+            orphanRemoval = true
+    )
+    @OrderBy("stepNo ASC")
     private List<LearnerResultStep> steps;
 
     /** A comment to describe the intention / setting of the learn process. This field is optional. */
@@ -81,6 +92,8 @@ public class LearnerResult implements Serializable {
     private Status status;
 
     /** The user who started the learn process. */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "executedById")
     private User executedBy;
 
     /** Constructor. */
@@ -90,8 +103,6 @@ public class LearnerResult implements Serializable {
         this.status = Status.PENDING;
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long getId() {
         return id;
     }
@@ -100,8 +111,6 @@ public class LearnerResult implements Serializable {
         this.id = id;
     }
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    @JsonIgnore
     public Project getProject() {
         return project;
     }
@@ -121,7 +130,6 @@ public class LearnerResult implements Serializable {
         this.project = new Project(projectId);
     }
 
-    @Column(nullable = false)
     public Long getTestNo() {
         return testNo;
     }
@@ -130,12 +138,6 @@ public class LearnerResult implements Serializable {
         this.testNo = testNo;
     }
 
-    @OneToMany(
-            mappedBy = "result",
-            cascade = {CascadeType.REMOVE},
-            orphanRemoval = true
-    )
-    @OrderBy("stepNo ASC")
     public List<LearnerResultStep> getSteps() {
         return steps;
     }
@@ -152,7 +154,6 @@ public class LearnerResult implements Serializable {
         this.comment = comment;
     }
 
-    @OneToOne(cascade = CascadeType.REMOVE)
     public LearnerSetup getSetup() {
         return setup;
     }
@@ -199,8 +200,6 @@ public class LearnerResult implements Serializable {
         this.status = status;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "executedById")
     @JsonProperty("executedBy")
     public User getExecutedBy() {
         return executedBy;
