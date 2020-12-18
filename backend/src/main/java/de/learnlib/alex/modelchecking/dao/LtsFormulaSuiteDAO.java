@@ -38,16 +38,19 @@ public class LtsFormulaSuiteDAO {
     private final ProjectDAO projectDAO;
     private final LtsFormulaSuiteRepository formulaSuiteRepository;
     private final LearnerSetupRepository learnerSetupRepository;
+    private final LtsFormulaDAO ltsFormulaDAO;
 
     @Autowired
     public LtsFormulaSuiteDAO(
             ProjectDAO projectDAO,
             LtsFormulaSuiteRepository formulaSuiteRepository,
-            LearnerSetupRepository learnerSetupRepository
+            LearnerSetupRepository learnerSetupRepository,
+            LtsFormulaDAO ltsFormulaDAO
     ) {
         this.projectDAO = projectDAO;
         this.formulaSuiteRepository = formulaSuiteRepository;
         this.learnerSetupRepository = learnerSetupRepository;
+        this.ltsFormulaDAO = ltsFormulaDAO;
     }
 
     public List<LtsFormulaSuite> getAll(User user, Long projectId) {
@@ -98,6 +101,11 @@ public class LtsFormulaSuiteDAO {
                 learnerSetupRepository.save(setup);
             }
         }
+
+        for (var formula: suiteInDb.getFormulas()) {
+            ltsFormulaDAO.delete(projectId, formula);
+        }
+        suiteInDb.getFormulas().clear();
 
         formulaSuiteRepository.delete(suiteInDb);
     }

@@ -31,4 +31,6 @@ public interface LearnerResultStepRepository extends JpaRepository<LearnerResult
     void deleteAllByIdIn(List<Long> stepIds);
 
     void deleteAllByResult_Project_Id(Long projectId);
+
+    List<LearnerResultStep> findAllByResult_Project_Id(Long projectId);
 }

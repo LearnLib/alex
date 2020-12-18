@@ -22,4 +22,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ModelCheckingResultRepository extends JpaRepository<ModelCheckingResult, Long> {
+
+    Long deleteAllByFormula_Id(Long formulaId);
 }
