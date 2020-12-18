@@ -472,6 +472,12 @@ async function startLearning() {
     const model = result.steps[result.steps.length - 1].hypothesis;
     writeOutputFile(JSON.stringify(model));
   }
+
+  // analyze model checking results
+  const lastStep = result.steps[result.steps.length - 1];
+  if (lastStep.modelCheckingResults.length > 0) {
+    assertCheckResults(lastStep.modelCheckingResults);
+  }
 }
 
 async function startComparing() {

@@ -1,5 +1,5 @@
 {
-  "version": "2.0.0-SNAPSHOT",
+  "version": "2.0.0",
   "type": "project",
   "project": {
     "name": "google",
@@ -37,6 +37,7 @@
         {
           "description": "",
           "expectedResult": "",
+          "hidden": false,
           "inputs": [
             {
               "type": "input",
@@ -92,11 +93,13 @@
               }
             }
           ],
-          "successOutput": null
+          "successOutput": null,
+          "updatedOn": "2020-12-18T09:19:24.142+00:00"
         },
         {
           "description": "",
           "expectedResult": "",
+          "hidden": false,
           "inputs": [],
           "name": "reset",
           "outputs": [],
@@ -134,7 +137,34 @@
               }
             }
           ],
-          "successOutput": null
+          "successOutput": null,
+          "updatedOn": "2020-12-18T09:19:24.216+00:00"
+        },
+        {
+          "description": "",
+          "expectedResult": "",
+          "hidden": false,
+          "inputs": [],
+          "name": "is home",
+          "outputs": [],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_checkForNode",
+                "node": {
+                  "selector": "#gbqfbb",
+                  "type": "CSS"
+                }
+              }
+            }
+          ],
+          "successOutput": null,
+          "updatedOn": "2020-12-18T09:29:44.338+00:00"
         }
       ],
       "groups": []
@@ -142,22 +172,36 @@
   ],
   "tests": [
     {
-      "name": "test",
-      "preSteps": [],
-      "steps": [
+      "name": "search",
+      "preSteps": [
         {
+          "disabled": false,
           "expectedResult": "",
           "expectedOutputSuccess": true,
           "expectedOutputMessage": "",
           "pSymbol": {
             "parameterValues": [],
-            "outputMappings": [],
             "symbol": {
               "name": "reset"
             }
           }
+        }
+      ],
+      "steps": [
+        {
+          "disabled": false,
+          "expectedResult": "",
+          "expectedOutputSuccess": true,
+          "expectedOutputMessage": "",
+          "pSymbol": {
+            "parameterValues": [],
+            "symbol": {
+              "name": "is home"
+            }
+          }
         },
         {
+          "disabled": false,
           "expectedResult": "",
           "expectedOutputSuccess": true,
           "expectedOutputMessage": "",
@@ -169,10 +213,9 @@
                   "name": "term",
                   "parameterType": "STRING"
                 },
-                "value": "potato"
+                "value": "bananas"
               }
             ],
-            "outputMappings": [],
             "symbol": {
               "name": "search"
             }
@@ -181,11 +224,22 @@
       ],
       "postSteps": [],
       "generated": false,
+      "updatedOn": "2020-12-18T11:41:15.432+00:00",
       "status": "DONE",
       "type": "case"
     }
   ],
-  "formulaSuites": [],
+  "formulaSuites": [
+    {
+      "name": "formulas",
+      "formulas": [
+        {
+          "name": "true",
+          "formula": "[]true"
+        }
+      ]
+    }
+  ],
   "learnerSetups": [
     {
       "name": "learn google",
@@ -217,11 +271,17 @@
                 "name": "term",
                 "parameterType": "STRING"
               },
-              "value": "test"
+              "value": "bananas"
             }
           ],
           "symbol": {
             "name": "search"
+          }
+        },
+        {
+          "parameterValues": [],
+          "symbol": {
+            "name": "is home"
           }
         }
       ],
@@ -250,7 +310,23 @@
         "browser": "chrome",
         "version": "",
         "headless": false
-      }
+      },
+      "modelCheckingConfig": {
+        "formulaSuites": [
+          {
+            "name": "formulas",
+            "formulas": [
+              {
+                "name": "true",
+                "formula": "[]true"
+              }
+            ]
+          }
+        ],
+        "minUnfolds": 1,
+        "multiplier": 0.1
+      },
+      "project": 1
     }
   ]
 }
