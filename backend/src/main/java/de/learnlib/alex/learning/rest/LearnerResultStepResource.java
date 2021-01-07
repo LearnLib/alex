@@ -17,14 +17,18 @@
 package de.learnlib.alex.learning.rest;
 
 import de.learnlib.alex.learning.dao.LearnerResultStepDAO;
+import de.learnlib.alex.modelchecking.services.reporters.JUnitModelCheckingResultReporter;
 import de.learnlib.alex.security.AuthContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.ValidationException;
@@ -48,6 +52,32 @@ public class LearnerResultStepResource {
         this.learnerResultStepDAO = learnerResultStepDAO;
     }
 
+    @GetMapping(
+            value = "/{stepId}/modelCheckingResults",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity<?> getModelCheckingResults(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("resultId") Long resultId,
+            @PathVariable("stepId") Long stepId,
+            @RequestParam(name = "format", defaultValue = "json", required = false) String format
+    ) {
+        final var user = authContext.getUser();
+        final var step = learnerResultStepDAO.getById(user, projectId, resultId, stepId);
+
+        switch (format.trim().toLowerCase()) {
+            case "json":
+                return ResponseEntity.ok(step.getModelCheckingResults());
+            case "junit":
+                final var report = new JUnitModelCheckingResultReporter().createReport(step);
+                return ResponseEntity.status(HttpStatus.OK)
+                        .header("Content-Type", "application/xml")
+                        .body(report);
+            default:
+                throw new ValidationException("Invalid format. Allowed values are 'json' and 'junit'");
+        }
+    }
+
     @PostMapping(
             value = "/{stepId}/hypothesis/outputs",
             consumes = MediaType.APPLICATION_JSON,
@@ -61,10 +91,6 @@ public class LearnerResultStepResource {
     ) {
         final var user = authContext.getUser();
         final var step = learnerResultStepDAO.getById(user, projectId, resultId, stepId);
-
-        if (!step.getResult().getId().equals(resultId)) {
-            throw new ValidationException("The provided result ids do not match");
-        }
 
         final var alphabet = step.getHypothesis().createAlphabet();
         final var hypothesis = step.getHypothesis().createMealyMachine(alphabet);

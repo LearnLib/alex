@@ -24,6 +24,14 @@
             </i>
           </div>
           <div class="card-body p-0" *ngIf="!isCollapsed(step)">
+
+            <action-bar>
+              <button class="btn btn-default btn-sm" (click)="downloadModelCheckingResults(step)">
+                <i class="fas fa-fw fa-download"></i> Download
+              </button>
+            </action-bar>
+
+
             <div class="list-group list-group-flush">
               <div class="list-group-item" *ngFor="let mcResult of step.modelCheckingResults">
                 <div class="d-flex flex-row">

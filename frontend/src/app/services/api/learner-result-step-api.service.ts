@@ -16,7 +16,7 @@
 
 import { Injectable } from '@angular/core';
 import { BaseApiService } from './base-api.service';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { EnvironmentProvider } from '../../../environments/environment.provider';
 import { Observable } from 'rxjs';
 
@@ -29,5 +29,15 @@ export class LearnerResultStepApiService extends BaseApiService {
 
   getHypothesisOutput(projectId: number, learnerResultId: number, stepId: number, input: string[]): Observable<any>  {
     return this.http.post(`${this.env.apiUrl}/projects/${projectId}/results/${learnerResultId}/steps/${stepId}/hypothesis/outputs`, input, this.defaultHttpOptions);
+  }
+
+  getModelCheckingResults(projectId: number, learnerResultId: number, stepId: number, format: string = 'json'): Observable<any>  {
+    const options = {
+      headers: this.defaultHttpHeaders,
+      responseType: format === 'json' ? 'json' : 'text',
+      params: new HttpParams().append('format', format)
+    };
+
+    return this.http.get(`${this.env.apiUrl}/projects/${projectId}/results/${learnerResultId}/steps/${stepId}/modelCheckingResults`, options as any);
   }
 }

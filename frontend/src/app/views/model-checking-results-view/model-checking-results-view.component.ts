@@ -21,6 +21,9 @@ import { Project } from '../../entities/project';
 import { AppStoreService } from '../../services/app-store.service';
 import { LearnerResult } from '../../entities/learner-result';
 import { reverse } from 'lodash';
+import { LearnerResultStepApiService } from '../../services/api/learner-result-step-api.service';
+import { DownloadService } from '../../services/download.service';
+import { PromptService } from '../../services/prompt.service';
 
 @Component({
   selector: 'model-checking-results-view',
@@ -34,6 +37,9 @@ export class ModelCheckingResultsViewComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,
               private learnerResultApi: LearnerResultApiService,
+              private learnerResultStepApi: LearnerResultStepApiService,
+              private downloadService: DownloadService,
+              private promptService: PromptService,
               private appStore: AppStoreService) { }
 
   ngOnInit(): void {
@@ -49,11 +55,19 @@ export class ModelCheckingResultsViewComponent implements OnInit {
         this.sortedSteps = reverse(this.learnerResult.steps);
         this.sortedSteps.forEach(s => this.collapsedStepsMap[s.stepNo] = true);
         this.collapsedStepsMap[this.sortedSteps[0].stepNo] = false;
-
-        console.log(this.collapsedStepsMap);
       },
       res => console.error(res.error.message)
     );
+  }
+
+  downloadModelCheckingResults(step: any) {
+    this.promptService.prompt('Enter a name for the report file', {
+      defaultValue: `report-learn-run-${step.result}-step-${step.stepNo}`
+    }).then(value => {
+      this.learnerResultStepApi.getModelCheckingResults(this.project.id, step.result, step.id, 'junit').subscribe(
+        data => this.downloadService.downloadXml(data, value)
+      );
+    }).catch(() => {});
   }
 
   toggle(step: any) {

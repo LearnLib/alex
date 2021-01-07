@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.modelchecking.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.data.entities.BaseEntity;
 import org.hibernate.annotations.Type;
@@ -41,6 +42,7 @@ public class ModelCheckingResult extends BaseEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     protected Long id;
 
     @OneToOne
@@ -85,6 +87,14 @@ public class ModelCheckingResult extends BaseEntity implements Serializable {
 
     public void setLoop(List<String> loop) {
         this.loop = loop;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @JsonProperty("passed")
