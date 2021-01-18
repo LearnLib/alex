@@ -35,9 +35,11 @@ services:
       - 80:4200
   alex-backend:
     image: ghcr.io/learnlib/alex/alex-backend:unstable
+    depends_on:
+      - alex-database
+      - selenium-hub
     volumes:
-      - alex-backend-db:/var/lib/alex/target/db
-      - alex-backend-files:/var/lib/alex/target/files
+      - alex-database:/var/alex/backend/target/postgresql
     environment:
       - REMOTE_DRIVER=http://selenium-hub:4444/wd/hub
     ports:
