@@ -151,13 +151,17 @@ public class ProjectEnvironmentDAO {
             environmentRepository.save(env);
         }
 
-        // delete test reports and learner results that have been executed in the environment
+        // delete test reports that have been executed in the environment
         testReportRepository.deleteAllByEnvironment_Id(environment.getId());
+
+        // remove environment from learner setups
         final List<LearnerSetup> learnerSetups = learnerSetupRepository.findAllByEnvironmentsContains(environment);
         for (LearnerSetup learnerSetup: learnerSetups) {
             learnerSetup.getEnvironments().remove(environment);
+            // switch to default environment if the deleted one is the only one
             if (learnerSetup.getEnvironments().isEmpty()) {
-                learnerSetupDAO.delete(user, projectId, learnerSetup.getId());
+                final var defaultEnvironment = environmentRepository.findByProject_IdAndIs_Default(projectId, true);
+                learnerSetup.getEnvironments().add(defaultEnvironment);
             }
             learnerSetupRepository.save(learnerSetup);
         }
