@@ -328,13 +328,16 @@ async function startTesting() {
 async function waitForLearnerToFinish(startTime, testNo) {
   while(true) {
     const timeElapsed = Date.now() - startTime;
-    console.log(chalk.white.dim(`Wait for the learning process to finish... (${Math.floor(timeElapsed / 1000)}s elapsed)`));
+
+    process.stdout.cursorTo(0);
+    process.stdout.write(chalk.white.dim(`Wait for the learning process to finish... (${Math.floor(timeElapsed / 1000)}s elapsed)`));
 
     const res2 = await api.learnerResults.get(_project.id, testNo);
     await utils.assertStatus(res2, 200);
     let result = await res2.json();
 
     if (result.status === 'FINISHED' || result.status === 'ABORTED') {
+      process.stdout.write('\n');
       return result;
     } else {
       await utils.timeout(POLL_TIME_LEARNING);
