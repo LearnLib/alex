@@ -1,0 +1,81 @@
+version: '3.7'
+services:
+    selenium-hub:
+        image: selenium/hub:3
+        network_mode: "host"
+
+    chrome-node:
+        image: selenium/node-chrome-debug:3
+        shm_size: '2gb'
+        depends_on:
+            - selenium-hub
+        environment:
+            - HUB_HOST=selenium-hub
+            - HUB_PORT=4444
+        extra_hosts:
+            - "selenium-hub:127.0.0.1"
+        network_mode: "host"
+
+#    firefox-node:
+#        image: selenium/node-firefox-debug:3
+#        shm_size: '2gb'
+#        depends_on:
+#            - selenium-hub
+#        environment:
+#            - HUB_HOST=selenium-hub
+#            - HUB_PORT=4444
+#        extra_hosts:
+#            - "selenium-hub:127.0.0.1"
+#        network_mode: "host"
+
+    alex-database:
+        image: postgres:10
+        environment:
+            - POSTGRES_HOST_AUTH_METHOD=trust
+            - POSTGRES_USER=sa
+            - POSTGRES_DB=alex
+        volumes:
+          - alex-database:/var/lib/postgresql
+        network_mode: "host"
+
+    alex-backend:
+        image: maven:3-jdk-11
+        depends_on:
+            - selenium-hub
+            - alex-database
+        working_dir: /var/alex/backend
+        environment:
+            - DATABASE_HOST=alex-database
+            - DATABASE_PORT=5432
+            - DATABASE_NAME=alex
+            - DATABASE_USER=sa
+        volumes:
+            - ./backend/src:/var/alex/backend/src:ro
+            - ./backend/pom.xml:/var/alex/backend/pom.xml:ro
+            - alex-backend-maven:/root/.m2
+            - alex-database:/var/alex/backend/target/postgresql
+            - alex-backend-ltsmin:/var/ltsmin
+        command:
+            bash -c "if [ ! -d "/var/ltsmin/bin" ]; then
+            wget -P /var/ltsmin http://github.com/utwente-fmt/ltsmin/releases/download/v3.0.2/ltsmin-v3.0.2-linux.tgz;
+            tar -xzf /var/ltsmin/ltsmin-v3.0.2-linux.tgz -C /var/ltsmin;
+            mv /var/ltsmin/v3.0.2/* /var/ltsmin/;
+            rm -rf /var/ltsmin/v3.0.2 /var/ltsmin/ltsmin-v3.0.2-linux.tgz;
+            fi && mvn spring-boot:run -Dspring-boot.run.arguments=--ltsmin.path=/var/ltsmin/bin,--webdriver.remote.url=http://selenium-hub:4444/wd/hub,--spring.datasource.url=jdbc:postgresql://$${DATABASE_HOST}:$${DATABASE_PORT}/$${DATABASE_NAME},--spring.datasource.username=$${DATABASE_USER}"
+        extra_hosts:
+          - "alex-database:127.0.0.1"
+          - "selenium-hub:127.0.0.1"
+        network_mode: "host"
+
+    alex-frontend:
+        image: node
+        working_dir: /var/alex/frontend
+        volumes:
+            - ./frontend:/var/alex/frontend:rw
+        command: bash -c "npm install && npm run start:docker"
+        network_mode: "host"
+
+volumes:
+  alex-backend-maven:
+  alex-database:
+  alex-backend-ltsmin:
