@@ -3,7 +3,7 @@ services:
     selenium-hub:
         image: selenium/hub:3
         ports:
-            - 4444:4444
+            - "127.0.0.1:4444:4444"
         networks:
             - backend
     chrome-node:
@@ -15,7 +15,7 @@ services:
             - HUB_HOST=selenium-hub
             - HUB_PORT=4444
         ports:
-            - 5900:5900
+            - "127.0.0.1:5900:5900"
         networks:
             - backend
     firefox-node:
@@ -27,7 +27,7 @@ services:
             - HUB_HOST=selenium-hub
             - HUB_PORT=4444
         ports:
-            - 5901:5900
+            - "127.0.0.1:5901:5900"
         networks:
             - backend
     alex-database:
@@ -75,7 +75,7 @@ services:
         working_dir: /var/alex/frontend
         volumes:
             - ./frontend:/var/alex/frontend:rw
-        command: npm run start:docker
+        command: bash -c "npm install && npm run start:docker"
         ports:
             - "127.0.0.1:4200:4200"
         networks:

@@ -35,6 +35,8 @@ import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
 import de.learnlib.alex.data.repositories.SymbolStepRepository;
 import de.learnlib.alex.data.repositories.SymbolSymbolStepRepository;
+import de.learnlib.alex.learning.dao.LearnerSetupDAO;
+import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
 import de.learnlib.alex.testing.repositories.TestExecutionResultRepository;
 import de.learnlib.alex.websocket.services.SymbolPresenceService;
@@ -43,6 +45,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.boot.test.autoconfigure.jdbc.TestDatabaseAutoConfiguration;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.TransactionSystemException;
 
@@ -124,6 +127,12 @@ public class SymbolDAOTest {
     @Mock
     private SymbolPresenceService symbolPresenceService;
 
+    @Mock
+    private TestDAO testDAO;
+
+    @Mock
+    private LearnerSetupDAO learnerSetupDAO;
+
     private SymbolDAO symbolDAO;
 
     @Before
@@ -132,7 +141,7 @@ public class SymbolDAOTest {
                 symbolActionRepository, symbolGroupDAO, symbolParameterRepository, symbolStepRepository,
                 parameterizedSymbolDAO, parameterizedSymbolRepository, symbolSymbolStepRepository,
                 testCaseStepRepository, testExecutionResultRepository, projectEnvironmentRepository,
-                objectMapper, symbolParameterDAO, symbolPresenceService);
+                objectMapper, symbolParameterDAO, symbolPresenceService, testDAO, learnerSetupDAO);
     }
 
     @Test
@@ -599,6 +608,7 @@ public class SymbolDAOTest {
         Symbol symbol = new Symbol();
         symbol.setProject(project);
         symbol.setGroup(group);
+        symbol.setId(SYMBOL_ID);
 
         given(projectDAO.getByID(user, PROJECT_ID)).willReturn(project);
         given(symbolRepository.findById(SYMBOL_ID)).willReturn(Optional.of(symbol));
