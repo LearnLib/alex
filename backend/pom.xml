@@ -79,8 +79,8 @@
         <!-- plugin versions -->
         <compiler-plugin.version>3.8.0</compiler-plugin.version>
         <dependency-plugin.version>3.1.1</dependency-plugin.version>
-        <surefire-plugin.version>3.0.0-M1</surefire-plugin.version>
-        <surefire-report.version>3.0.0-M1</surefire-report.version>
+        <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
+        <surefire-report.version>3.0.0-M5</surefire-report.version>
         <war-plugin.version>3.2.2</war-plugin.version>
         <clean-plugin.version>3.0.0</clean-plugin.version>
         <exec-plugin.version>1.6.0</exec-plugin.version>
@@ -88,7 +88,8 @@
         <coveralls-plugin.version>4.3.0</coveralls-plugin.version>
         <assembly-plugin.version>3.1.0</assembly-plugin.version>
         <javadoc-plugin.version>2.10.4</javadoc-plugin.version>
-        <failsafe-plugin.version>2.19.1</failsafe-plugin.version>
+        <failsafe-plugin.version>3.0.0-M5</failsafe-plugin.version>
+        <failsafe-report.version>3.0.0-M5</failsafe-report.version>
         <jacoco-plugin.version>0.8.2</jacoco-plugin.version>
         <checkstyle.version>3.0.0</checkstyle.version>
         <findbugs.version>3.0.4</findbugs.version>
@@ -115,7 +116,7 @@
         <jaxb.version>2.4.0-b180830.0359</jaxb.version>
         <flyway.version>5.2.4</flyway.version>
         <rxjava.version>3.0.3</rxjava.version>
-        <testcontainers.postgres.version>1.15.0</testcontainers.postgres.version>
+        <testcontainers.postgres.version>1.15.2</testcontainers.postgres.version>
         <hibernate-types-52.version>2.10.1</hibernate-types-52.version>
         <awaitility.version>4.0.3</awaitility.version>
     </properties>
@@ -427,6 +428,7 @@
                 </executions>
             </plugin>
 
+            <!-- run unit tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -434,15 +436,35 @@
                 <configuration>
                     <systemProperties>
                         <property>
-                            <name>alex.dbpath</name>
-                            <value>mem:test-db</value>
-                        </property>
-                        <property>
                             <name>java.util.logging.manager</name>
                             <value>org.apache.logging.log4j.jul.LogManager</value>
                         </property>
                     </systemProperties>
                 </configuration>
+            </plugin>
+
+            <!-- run integration tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${failsafe-plugin.version}</version>
+                <configuration>
+                    <systemProperties>
+                        <property>
+                            <name>java.util.logging.manager</name>
+                            <value>org.apache.logging.log4j.LogManager</value>
+                        </property>
+                    </systemProperties>
+                    <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -480,48 +502,6 @@
     </build>
 
     <profiles>
-        <profile>
-            <id>integration-tests</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>${failsafe-plugin.version}</version>
-                        <configuration>
-                            <additionalClasspathElements>
-                                <additionalClasspathElement>${basedir}/target/classes</additionalClasspathElement>
-                            </additionalClasspathElements>
-                            <systemProperties>
-                                <property>
-                                    <name>alex.dbpath</name>
-                                    <value>mem:integration-test-db</value>
-                                </property>
-                                <property>
-                                    <name>java.util.logging.manager</name>
-                                    <value>org.apache.logging.log4j.LogManager</value>
-                                </property>
-                            </systemProperties>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>integration-test</id>
-                                <goals>
-                                    <goal>integration-test</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>verify</id>
-                                <goals>
-                                    <goal>verify</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
         <profile>
             <id>code-analysis</id>
             <build>

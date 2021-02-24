@@ -3,7 +3,7 @@ package de.learnlib.alex.integrationtests;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 public class TestPostgresqlContainer extends PostgreSQLContainer<TestPostgresqlContainer> {
-    private static final String IMAGE_VERSION = "postgres:10.1";
+    private static final String IMAGE_VERSION = "postgres:13.2";
     private static TestPostgresqlContainer container;
 
     private TestPostgresqlContainer() {
