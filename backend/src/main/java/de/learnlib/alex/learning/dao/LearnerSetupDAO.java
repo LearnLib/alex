@@ -28,24 +28,32 @@ import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
+import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerSetup;
+import de.learnlib.alex.learning.entities.LearnerStatus;
+import de.learnlib.alex.learning.entities.LearningProcessStatus;
 import de.learnlib.alex.learning.entities.WebDriverConfig;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.repositories.LearnerSetupRepository;
+import de.learnlib.alex.learning.services.LearnerService;
 import de.learnlib.alex.modelchecking.dao.ModelCheckingConfigDAO;
 import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import de.learnlib.alex.modelchecking.repositories.LtsFormulaSuiteRepository;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.validation.ValidationException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -61,6 +69,7 @@ public class LearnerSetupDAO {
     private final SymbolDAO symbolDAO;
     private final LtsFormulaSuiteRepository ltsFormulaSuiteRepository;
     private final ModelCheckingConfigDAO modelCheckingConfigDAO;
+    private final LearnerService learnerService;
 
     @Autowired
     public LearnerSetupDAO(LearnerSetupRepository learnerSetupRepository,
@@ -72,7 +81,8 @@ public class LearnerSetupDAO {
                            EntityManager entityManager,
                            SymbolDAO symbolDAO,
                            LtsFormulaSuiteRepository ltsFormulaSuiteRepository,
-                           ModelCheckingConfigDAO modelCheckingConfigDAO) {
+                           ModelCheckingConfigDAO modelCheckingConfigDAO,
+                           @Lazy LearnerService learnerService) {
         this.learnerSetupRepository = learnerSetupRepository;
         this.projectDAO = projectDAO;
         this.projectRepository = projectRepository;
@@ -83,6 +93,7 @@ public class LearnerSetupDAO {
         this.symbolDAO = symbolDAO;
         this.ltsFormulaSuiteRepository = ltsFormulaSuiteRepository;
         this.modelCheckingConfigDAO = modelCheckingConfigDAO;
+        this.learnerService = learnerService;
     }
 
     public List<LearnerSetup> getAll(User user, Long projectId) {
@@ -301,6 +312,22 @@ public class LearnerSetupDAO {
         } else {
             learnerSetupRepository.delete(setup);
         }
+    }
+
+    public List<LearnerSetup> getActiveLearnerSetups(User user, Long projectId) {
+        LearnerStatus status = learnerService.getStatus(user, projectId);
+        if (status.isActive()) {
+            List<LearnerResult> currentProcessSingletonList = Optional.ofNullable(status.getCurrentProcess())
+                    .map(LearningProcessStatus::getResult)
+                    .map(List::of)
+                    .orElse(Collections.emptyList());
+
+            return Stream.of(currentProcessSingletonList, status.getQueue())
+                    .flatMap(List::stream)
+                    .map(LearnerResult::getSetup)
+                    .collect(Collectors.toList());
+        }
+        return Collections.emptyList();
     }
 
     public void checkAccess(User user, Project project, LearnerSetup learnerSetup) {

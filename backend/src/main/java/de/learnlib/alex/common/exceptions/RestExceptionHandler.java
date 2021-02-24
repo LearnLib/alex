@@ -113,4 +113,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         final RESTError error = new RESTError(HttpStatus.BAD_REQUEST, e);
         return ResponseEntity.badRequest().body(error);
     }
+
+    @ExceptionHandler(EntityLockedException.class)
+    protected ResponseEntity<Object> handleEntityLockedException(EntityLockedException e) {
+        LOGGER.info("EntityLockedException caught.", e);
+        final RESTError error = new RESTError(HttpStatus.LOCKED, e);
+        return ResponseEntity.status(HttpStatus.LOCKED).body(error);
+    }
 }

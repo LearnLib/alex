@@ -17,6 +17,7 @@
 package de.learnlib.alex.testing.dao;
 
 import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.common.exceptions.EntityLockedException;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.ParameterizedSymbolDAO;
 import de.learnlib.alex.data.dao.ProjectDAO;
@@ -32,11 +33,16 @@ import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestCase;
 import de.learnlib.alex.testing.entities.TestCaseResult;
 import de.learnlib.alex.testing.entities.TestCaseStep;
+import de.learnlib.alex.testing.entities.TestExecutionConfig;
+import de.learnlib.alex.testing.entities.TestQueueItem;
+import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.entities.TestResult;
+import de.learnlib.alex.testing.entities.TestStatus;
 import de.learnlib.alex.testing.entities.TestSuite;
 import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
 import de.learnlib.alex.testing.repositories.TestRepository;
 import de.learnlib.alex.testing.repositories.TestResultRepository;
+import de.learnlib.alex.testing.services.TestService;
 import de.learnlib.alex.websocket.services.TestPresenceService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -53,10 +59,15 @@ import javax.validation.ValidationException;
 import java.time.ZonedDateTime;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /** The implementation of the test dao. */
 @Service
@@ -73,12 +84,13 @@ public class TestDAO {
     private final ParameterizedSymbolDAO parameterizedSymbolDAO;
     private final TestResultRepository testResultRepository;
     private final TestPresenceService testPresenceService;
+    private final TestService testService;
 
     @Autowired
     public TestDAO(ProjectDAO projectDAO, TestRepository testRepository, SymbolDAO symbolDAO,
                    TestCaseStepRepository testCaseStepRepository, ProjectRepository projectRepository,
                    ParameterizedSymbolDAO parameterizedSymbolDAO, TestResultRepository testResultRepository,
-                   @Lazy TestPresenceService testPresenceService) {
+                   @Lazy TestPresenceService testPresenceService, @Lazy TestService testService) {
         this.projectDAO = projectDAO;
         this.testRepository = testRepository;
         this.symbolDAO = symbolDAO;
@@ -87,6 +99,7 @@ public class TestDAO {
         this.parameterizedSymbolDAO = parameterizedSymbolDAO;
         this.testResultRepository = testResultRepository;
         this.testPresenceService = testPresenceService;
+        this.testService = testService;
     }
 
     public Test createByGenerate(User user, Project project, Test test) {
@@ -240,6 +253,7 @@ public class TestDAO {
     public void update(User user, Long projectId, Test test) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         checkAccess(user, project, test);
+        checkRunningTestProcess(user, project, test);
 
         // check lock status
         testPresenceService.checkLockStatus(projectId, test.getId(), user.getId());
@@ -320,6 +334,7 @@ public class TestDAO {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final Test test = testRepository.findById(testId).orElse(null);
         checkAccess(user, project, test);
+        checkRunningTestProcess(user, project, test);
 
         // check lock status
         testPresenceService.checkLockStatusStrict(projectId, testId, user.getId());
@@ -357,6 +372,7 @@ public class TestDAO {
         }
 
         final TestSuite target = (TestSuite) targetTest;
+        checkRunningTestProcess(user, project, target);
 
         for (Test test : tests) {
             checkAccess(user, project, test);
@@ -443,6 +459,63 @@ public class TestDAO {
         if (!test.getProject().equals(project)) {
             throw new UnauthorizedException("You are not allowed to access the test.");
         }
+    }
+
+    public void checkRunningTestProcess(User user, Project project, Test test) {
+        if (this.getActiveTests(user, project).stream().anyMatch(t -> t.getId().equals(test.getId()))) {
+            throw new EntityLockedException("The test is currently used in the active test process.");
+        }
+    }
+
+    public Set<Test> getActiveTests(User user, Project project) {
+        Set<Test> result = new HashSet<>();
+
+        TestStatus testStatus = this.testService.getStatus(user, project.getId());
+        if (testStatus.isActive()) {
+            Stream.of(List.of(testStatus.getCurrentTestRun()), testStatus.getTestRunQueue())
+                    .flatMap(List::stream)
+                    .filter(testQueueItem ->
+                            testQueueItem.getReport().getStatus().equals(TestReport.Status.IN_PROGRESS)
+                            || testQueueItem.getReport().getStatus().equals(TestReport.Status.PENDING))
+                    .map(TestQueueItem::getConfig)
+                    .map(TestExecutionConfig::getTestIds)
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toSet()).stream()
+                    .map(testIds -> get(user, project.getId(), testIds))
+                    .forEach(test -> {
+                        result.add(test);
+                        result.addAll(extractDescendantTests(test));
+                        result.addAll(extractAncestorTests(test));
+                    });
+        }
+
+        return result;
+    }
+
+    private Set<Test> extractDescendantTests(Test test) {
+        Set<Test> result = new HashSet<>();
+
+        if (test instanceof TestSuite) {
+            result.addAll(((TestSuite) test).getTestCases());
+            ((TestSuite) test).getTestSuites().forEach(descendant -> {
+                result.add(descendant);
+                result.addAll(extractDescendantTests(descendant));
+            });
+        }
+
+        return result;
+    }
+
+    private Set<Test> extractAncestorTests(Test test) {
+        Set<Test> result = new HashSet<>();
+
+        Optional.ofNullable(test.getParent())
+                .ifPresent(ancestor -> {
+                    result.add(ancestor);
+                    result.addAll(extractAncestorTests(ancestor));
+                });
+
+        return result;
     }
 
     private void saveTestCaseSteps(List<TestCaseStep> steps) {

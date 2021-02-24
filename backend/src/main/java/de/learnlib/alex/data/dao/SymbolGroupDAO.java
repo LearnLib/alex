@@ -18,6 +18,7 @@ package de.learnlib.alex.data.dao;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.common.exceptions.EntityLockedException;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
@@ -48,6 +49,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -79,8 +81,7 @@ public class SymbolGroupDAO {
             SymbolRepository symbolRepository,
             @Lazy SymbolDAO symbolDAO,
             ObjectMapper objectMapper,
-            @Lazy SymbolPresenceService symbolPresenceService
-    ) {
+            @Lazy SymbolPresenceService symbolPresenceService) {
         this.projectRepository = projectRepository;
         this.projectDAO = projectDAO;
         this.symbolGroupRepository = symbolGroupRepository;
@@ -327,6 +328,7 @@ public class SymbolGroupDAO {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final SymbolGroup group = symbolGroupRepository.findById(groupId).orElse(null);
         checkAccess(user, project, group);
+        checkRunningProcesses(user, project, group);
 
         // check symbolgroup lock status
         this.symbolPresenceService.checkGroupLockStatus(projectId, groupId);
@@ -370,6 +372,47 @@ public class SymbolGroupDAO {
         if (!group.getProject().equals(project)) {
             throw new UnauthorizedException("You are not allowed to access the group.");
         }
+    }
+
+    public void checkRunningProcesses(User user, Project project, SymbolGroup symbolGroup) {
+        if (this.getActiveSymbolGroups(user, project).stream().anyMatch(sg -> sg.getId().equals(symbolGroup.getId()))) {
+            throw new EntityLockedException("The SymbolGroup is currently used in the active test or learning process.");
+        }
+    }
+
+    public Set<SymbolGroup> getActiveSymbolGroups(User user, Project project) {
+        Set<SymbolGroup> result = new HashSet<>();
+
+        this.symbolDAO.getActiveSymbols(user, project).forEach(s -> {
+            result.add(s.getGroup());
+            result.addAll(extractAncestorSymbolGroups(s.getGroup()));
+            result.addAll(extractDescendantSymbolGroups(s.getGroup()));
+        });
+
+        return result;
+    }
+
+    private Set<SymbolGroup> extractDescendantSymbolGroups(SymbolGroup symbolGroup) {
+        Set<SymbolGroup> result = new HashSet<>();
+
+        symbolGroup.getGroups().forEach(descendant -> {
+            result.add(descendant);
+            result.addAll(extractDescendantSymbolGroups(descendant));
+        });
+
+        return result;
+    }
+
+    public Set<SymbolGroup> extractAncestorSymbolGroups(SymbolGroup symbolGroup) {
+        Set<SymbolGroup> result = new HashSet<>();
+
+        Optional.ofNullable(symbolGroup.getParent())
+                .ifPresent(ancestor -> {
+                    result.add(ancestor);
+                    result.addAll(extractAncestorSymbolGroups(ancestor));
+                });
+
+        return result;
     }
 
     private String createGroupName(Project project, SymbolGroup group) {

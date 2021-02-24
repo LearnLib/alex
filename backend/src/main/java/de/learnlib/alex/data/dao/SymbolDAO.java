@@ -18,7 +18,9 @@ package de.learnlib.alex.data.dao;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.common.exceptions.EntityLockedException;
 import de.learnlib.alex.common.exceptions.NotFoundException;
+import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.Symbol;
@@ -47,6 +49,10 @@ import de.learnlib.alex.data.repositories.SymbolRepository;
 import de.learnlib.alex.data.repositories.SymbolStepRepository;
 import de.learnlib.alex.data.repositories.SymbolSymbolStepRepository;
 import de.learnlib.alex.data.utils.SymbolOutputMappingUtils;
+import de.learnlib.alex.learning.dao.LearnerSetupDAO;
+import de.learnlib.alex.testing.dao.TestDAO;
+import de.learnlib.alex.testing.entities.TestCase;
+import de.learnlib.alex.testing.entities.TestCaseStep;
 import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
 import de.learnlib.alex.testing.repositories.TestExecutionResultRepository;
 import de.learnlib.alex.websocket.services.SymbolPresenceService;
@@ -75,8 +81,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Implementation of a SymbolDAO using Spring Data.
@@ -107,6 +116,8 @@ public class SymbolDAO {
     private final ObjectMapper objectMapper;
     private final SymbolParameterDAO symbolParameterDAO;
     private final SymbolPresenceService symbolPresenceService;
+    private final TestDAO testDAO;
+    private final LearnerSetupDAO learnerSetupDAO;
 
     @Autowired
     public SymbolDAO(ProjectRepository projectRepository, ProjectDAO projectDAO,
@@ -121,7 +132,9 @@ public class SymbolDAO {
                      ProjectEnvironmentRepository projectEnvironmentRepository,
                      ObjectMapper objectMapper,
                      @Lazy SymbolParameterDAO symbolParameterDAO,
-                     @Lazy SymbolPresenceService symbolPresenceService) {
+                     @Lazy SymbolPresenceService symbolPresenceService,
+                     @Lazy TestDAO testDAO,
+                     @Lazy LearnerSetupDAO learnerSetupDAO) {
         this.projectRepository = projectRepository;
         this.projectDAO = projectDAO;
         this.symbolGroupRepository = symbolGroupRepository;
@@ -139,6 +152,8 @@ public class SymbolDAO {
         this.objectMapper = objectMapper;
         this.symbolParameterDAO = symbolParameterDAO;
         this.symbolPresenceService = symbolPresenceService;
+        this.testDAO = testDAO;
+        this.learnerSetupDAO = learnerSetupDAO;
     }
 
     public List<Symbol> importSymbols(User user, Project project, List<Symbol> symbols, Map<String, SymbolImportConflictResolutionStrategy> conflictResolutions) {
@@ -491,6 +506,7 @@ public class SymbolDAO {
     private Symbol doUpdate(User user, Long projectId, Symbol symbol) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         checkAccess(user, project, symbol);
+        checkRunningProcesses(user, project, symbol);
 
         // check lock status
         this.symbolPresenceService.checkSymbolLockStatus(projectId, symbol.getId(), user.getId());
@@ -641,6 +657,7 @@ public class SymbolDAO {
         final List<Symbol> symbols = symbolRepository.findAllByIdIn(ids);
         for (Symbol symbol : symbols) {
             checkAccess(user, project, symbol);
+            checkRunningProcesses(user, project, symbol);
 
             // check symbol lock status
             this.symbolPresenceService.checkSymbolLockStatus(projectId, symbol.getId(), user.getId());
@@ -662,16 +679,19 @@ public class SymbolDAO {
     public void show(User user, Long projectId, List<Long> ids) {
         Project project = projectDAO.getByID(user, projectId); // access check
 
-        // check symbol lock status
-        for (Long symbolId : ids) {
-            this.symbolPresenceService.checkSymbolLockStatus(projectId, symbolId, user.getId());
-        }
+        // get symbols
+        List<Symbol> symbols = ids.stream().map(id -> this.get(user, project, id)).collect(Collectors.toList());
 
-        for (Long id : ids) {
-            Symbol symbol = get(user, project, id);
+        // check symbol lock status
+        symbols.forEach(symbol -> {
+            this.symbolPresenceService.checkSymbolLockStatus(projectId, symbol.getId(), user.getId());
+            checkRunningProcesses(user, project, symbol);
+        });
+
+        symbols.forEach(symbol -> {
             symbol.setHidden(false);
             symbolRepository.save(symbol);
-        }
+        });
     }
 
     public void delete(User user, Long projectId, Long symbolId) {
@@ -717,6 +737,40 @@ public class SymbolDAO {
     public static void beforeSymbolSave(Symbol symbol) {
         symbol.getInputs().forEach(i -> i.setSymbol(symbol));
         symbol.getOutputs().forEach(o -> o.setSymbol(symbol));
+    }
+
+    public void checkRunningProcesses(User user, Project project, Symbol symbol) {
+        if (this.getActiveSymbols(user, project).stream().anyMatch(s -> s.getId().equals(symbol.getId()))) {
+            throw new EntityLockedException("The symbol is currently used in the active test or learning process.");
+        }
+    }
+
+    public Set<Symbol> getActiveSymbols(User user, Project project) {
+        Set<Symbol> result = new HashSet<>();
+
+        // check running tests, ignore testSuites
+        this.testDAO.getActiveTests(user, project).stream()
+                .filter(t -> t instanceof TestCase)
+                .flatMap(t -> Stream.of(((TestCase) t).getPreSteps(), ((TestCase) t).getSteps(), ((TestCase) t).getPostSteps()))
+                .flatMap(List::stream)
+                .map(TestCaseStep::getPSymbol)
+                .filter(Objects::nonNull)
+                .map(ParameterizedSymbol::getSymbol)
+                .forEach(result::add);
+
+        // check running learning processes
+        this.learnerSetupDAO.getActiveLearnerSetups(user, project.getId()).forEach(learnerSetup -> {
+            List<ParameterizedSymbol> postSymbolSingletonList = Optional.ofNullable(learnerSetup.getPostSymbol())
+                    .map(List::of)
+                    .orElse(Collections.emptyList());
+
+            Stream.of(List.of(learnerSetup.getPreSymbol()), postSymbolSingletonList, learnerSetup.getSymbols())
+                    .flatMap(List::stream)
+                    .map(ParameterizedSymbol::getSymbol)
+                    .forEach(result::add);
+        });
+
+        return result;
     }
 
     /**
