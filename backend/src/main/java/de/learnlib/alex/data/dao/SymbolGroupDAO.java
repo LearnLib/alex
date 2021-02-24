@@ -252,7 +252,6 @@ public class SymbolGroupDAO {
         final Project project = projectRepository.findById(group.getProjectId()).orElse(null);
         final SymbolGroup groupInDB = symbolGroupRepository.findById(group.getId()).orElse(null);
         checkAccess(user, project, groupInDB);
-        checkRunningProcesses(user, project, groupInDB);
 
         // check symbolgroup lock status
         this.symbolPresenceService.checkGroupLockStatus(project.getId(), group.getId());
@@ -280,7 +279,6 @@ public class SymbolGroupDAO {
         final Project project = projectRepository.findById(group.getProjectId()).orElse(null);
         final SymbolGroup groupInDB = symbolGroupRepository.findById(group.getId()).orElse(null);
         checkAccess(user, project, groupInDB);
-        checkRunningProcesses(user, project, groupInDB);
 
         // check symbolgroup lock status
         this.symbolPresenceService.checkGroupLockStatus(project.getId(), group.getId());

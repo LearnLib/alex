@@ -583,7 +583,6 @@ public class SymbolDAO {
         final List<Symbol> symbols = symbolRepository.findAllByIdIn(symbolIds);
         for (Symbol symbol : symbols) {
             checkAccess(user, project, symbol);
-            checkRunningProcesses(user, project, symbol);
 
             // check symbol lock status
             this.symbolPresenceService.checkSymbolLockStatusStrict(projectId, symbol.getId(), user.getId());

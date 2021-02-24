@@ -59,6 +59,7 @@ import javax.validation.ValidationException;
 import java.time.ZonedDateTime;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -371,10 +372,10 @@ public class TestDAO {
         }
 
         final TestSuite target = (TestSuite) targetTest;
+        checkRunningTestProcess(user, project, target);
 
         for (Test test : tests) {
             checkAccess(user, project, test);
-            checkRunningTestProcess(user, project, test);
 
             //check lock status
             testPresenceService.checkLockStatusStrict(projectId, test.getId(), user.getId());
@@ -478,8 +479,9 @@ public class TestDAO {
                             || testQueueItem.getReport().getStatus().equals(TestReport.Status.PENDING))
                     .map(TestQueueItem::getConfig)
                     .map(TestExecutionConfig::getTestIds)
-                    .flatMap(List::stream)
-                    .map(testId -> this.get(user, project.getId(), testId))
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toSet()).stream()
+                    .map(testIds -> get(user, project.getId(), testIds))
                     .forEach(test -> {
                         result.add(test);
                         result.addAll(extractDescendantTests(test));
