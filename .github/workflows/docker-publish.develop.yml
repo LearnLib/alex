@@ -2,7 +2,9 @@ name: Docker
 
 on:
   push:
-    # Publish `developer` as Docker `unstable` image.
+    branches:
+      - developer
+  pull_request:
     branches:
       - developer
 
@@ -12,8 +14,6 @@ env:
   IMAGE_NAME_CLI: alex-cli
 
 jobs:
-  # Push image to GitHub Packages.
-  # See also https://docs.docker.com/docker-hub/builds/
   push-backend:
     runs-on: ubuntu-latest
 
@@ -32,8 +32,7 @@ jobs:
         with:
           push: true
           context: ./backend
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/alex/alex-backend:unstable
+          tags: ghcr.io/learnlib/alex/alex-backend:unstable
 
   push-frontend:
     runs-on: ubuntu-latest
@@ -53,8 +52,7 @@ jobs:
         with:
           push: true
           context: ./frontend
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/alex/alex-frontend:unstable
+          tags: ghcr.io/learnlib/alex/alex-frontend:unstable
 
   push-cli:
     runs-on: ubuntu-latest
@@ -74,5 +72,4 @@ jobs:
         with:
           push: true
           context: ./cli
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/alex/alex-cli:unstable
+          tags: ghcr.io/learnlib/alex/alex-cli:unstable
