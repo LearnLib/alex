@@ -2,7 +2,7 @@ FROM maven:3 as builder-backend
 RUN mkdir -p /backend
 WORKDIR /backend
 COPY . /backend
-RUN mvn install package
+RUN mvn install package -DskipTests
 
 FROM debian as builder-ltsmin
 RUN mkdir -p /ltsmin
