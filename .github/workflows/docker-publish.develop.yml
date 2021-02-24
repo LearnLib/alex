@@ -33,7 +33,7 @@ jobs:
           push: true
           context: ./backend
           tags: |
-            ghcr.io/${{ github.repository_owner }}/alex/$IMAGE_NAME_BACKEND:unstable
+            ghcr.io/${{ github.repository_owner }}/alex/alex-backend:unstable
 
   push-frontend:
     runs-on: ubuntu-latest
@@ -54,7 +54,7 @@ jobs:
           push: true
           context: ./frontend
           tags: |
-            ghcr.io/${{ github.repository_owner }}/alex/$IMAGE_NAME_FRONTEND:unstable
+            ghcr.io/${{ github.repository_owner }}/alex/alex-frontend:unstable
 
   push-cli:
     runs-on: ubuntu-latest
@@ -75,4 +75,4 @@ jobs:
           push: true
           context: ./cli
           tags: |
-            ghcr.io/${{ github.repository_owner }}/alex/$IMAGE_NAME_CLI:unstable
+            ghcr.io/${{ github.repository_owner }}/alex/alex-cli:unstable
