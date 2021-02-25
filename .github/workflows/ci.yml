@@ -41,6 +41,7 @@ jobs:
   package-backend:
     needs: test-backend
     runs-on: ubuntu-latest
+    if: github.event_name == "push"
     steps:
       - uses: actions/checkout@v2
 
@@ -54,6 +55,7 @@ jobs:
 
   package-frontend:
     runs-on: ubuntu-latest
+    if: github.event_name == "push"
     steps:
       - uses: actions/checkout@v2
 
@@ -67,6 +69,7 @@ jobs:
 
   package-cli:
     runs-on: ubuntu-latest
+    if: github.event_name == "push"
     steps:
       - uses: actions/checkout@v2
 
