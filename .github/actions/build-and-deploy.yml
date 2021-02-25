@@ -1,0 +1,49 @@
+inputs:
+  username:
+    description: 'GitHub username'
+    required: true
+  password:
+    description: 'GitHub password'
+    required: true
+  context:
+    description: 'Docker build context'
+    required: true
+  tag:
+    description: 'Docker image tag'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v2
+
+    - id: image-tag
+      shell: bash
+      run: |
+        BRANCH=${GITHUB_REF/#"refs/head/"}
+        TAG=
+        if [ "$BRANCH" == "developer" ]
+          then
+            TAG="unstable"
+        elif [ "$BRANCH" == "master" ]
+          then
+            TAG="latest"
+        else
+          then
+            TAG="$GITHUB_SHA"
+        fi
+        echo "::set-output name=tag::$(echo $TAG)"
+
+    - name: Login to DockerHub
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ inputs.username }}
+        password: ${{ inputs.password }}
+
+    - name: Build and push
+      uses: docker/build-push-action@v2
+      with:
+        push: true
+        context: ${{ inputs.context }}
+        tags: ghcr.io/learnlib/alex/${{ inputs.tag }}:${{ steps.image-tag.outputs.tag }}
