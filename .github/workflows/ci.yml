@@ -42,6 +42,8 @@ jobs:
     needs: test-backend
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+
       - name: Push backend to GitHub repositories
         uses: ./.github/actions/buid-and-deploy
         with:
@@ -53,6 +55,8 @@ jobs:
   package-frontend:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+
       - name: Push frontend to GitHub repositories
         uses: ./.github/actions/buid-and-deploy
         with:
@@ -64,6 +68,8 @@ jobs:
   package-cli:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+
       - name: Push CLI to GitHub repositories
         uses: ./.github/actions/buid-and-deploy
         with:
