@@ -20,7 +20,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { EnvironmentProvider } from "../../../environments/environment.provider";
+import { EnvironmentProvider } from '../../../environments/environment.provider';
 
 /**
  * The resource to handle actions with users over the API.
@@ -29,7 +29,7 @@ import { EnvironmentProvider } from "../../../environments/environment.provider"
 export class UserApiService extends BaseApiService {
 
   constructor(private http: HttpClient, private env: EnvironmentProvider) {
-    super()
+    super();
   }
 
   /**
@@ -107,10 +107,10 @@ export class UserApiService extends BaseApiService {
   }
 
   getByUsernameOrEmail(searchterm: string): Observable<User[]> {
-    return this.http.get(`${this.env.apiUrl}/users/search`, {headers: this.defaultHttpHeaders, params: {searchterm: searchterm}})
+    return this.http.get(`${this.env.apiUrl}/users/search`, {headers: this.defaultHttpHeaders, params: {searchterm}})
       .pipe(
         map((body: any) => body.map(u => User.fromData(u)))
-      )
+      );
   }
 
   /**

@@ -96,8 +96,8 @@ export class Selectable<T, K> {
   }
 
   isAnySelected() {
-    for (let item of Array.from(this.selectedItems.values())) {
-      if (item.selected) return true;
+    for (const item of Array.from(this.selectedItems.values())) {
+      if (item.selected) {return true;}
     }
     return false;
   }

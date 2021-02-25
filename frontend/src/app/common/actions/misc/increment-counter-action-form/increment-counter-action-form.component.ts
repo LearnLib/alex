@@ -24,5 +24,5 @@ import { IncrementCounterGeneralAction } from '../../../../entities/actions/misc
 export class IncrementCounterActionFormComponent {
 
   @Input()
-  action: IncrementCounterGeneralAction
+  action: IncrementCounterGeneralAction;
 }

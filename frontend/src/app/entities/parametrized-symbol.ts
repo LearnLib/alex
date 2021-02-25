@@ -17,9 +17,9 @@
 import { AlphabetSymbol } from './alphabet-symbol';
 
 export interface SymbolOutputMapping {
-  id?: number,
-  name: string,
-  parameter: any
+  id?: number;
+  name: string;
+  parameter: any;
 }
 
 /**

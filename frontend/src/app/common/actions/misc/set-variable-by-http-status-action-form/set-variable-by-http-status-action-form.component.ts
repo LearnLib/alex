@@ -24,5 +24,5 @@ import { SetVariableByHttpStatusAction } from '../../../../entities/actions/misc
 export class SetVariableByHttpStatusActionFormComponent {
 
   @Input()
-  action: SetVariableByHttpStatusAction
+  action: SetVariableByHttpStatusAction;
 }

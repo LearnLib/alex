@@ -58,7 +58,7 @@ export class ProjectEnvironmentsViewStoreService {
       environments => {
         this.environments.next(environments);
       }
-    )
+    );
   }
 
   createEnvironment(): void {
@@ -106,7 +106,7 @@ export class ProjectEnvironmentsViewStoreService {
   }
 
   makeEnvironmentDefault(env: ProjectEnvironment): void {
-    if (env.default) return;
+    if (env.default) {return;}
 
     const e = env.copy();
     e.default = true;
@@ -117,7 +117,7 @@ export class ProjectEnvironmentsViewStoreService {
   }
 
   makeUrlDefault(env: ProjectEnvironment, url: ProjectUrl): void {
-    if (url.default) return;
+    if (url.default) {return;}
 
     const u = url.copy();
     u.default = true;

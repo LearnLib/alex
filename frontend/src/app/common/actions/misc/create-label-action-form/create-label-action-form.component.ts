@@ -24,5 +24,5 @@ import { CreateLabelAction } from '../../../../entities/actions/misc/create-labe
 export class CreateLabelActionFormComponent {
 
   @Input()
-  action: CreateLabelAction
+  action: CreateLabelAction;
 }

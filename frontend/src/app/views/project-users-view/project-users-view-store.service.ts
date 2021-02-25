@@ -103,7 +103,7 @@ export class ProjectUsersViewStoreService {
   }
 
   removeUsers(users: User[]): void {
-    this.promptService.confirm("Do you really want to remove the selected users from the project?").then(() => {
+    this.promptService.confirm('Do you really want to remove the selected users from the project?').then(() => {
       if (this.members.value.includes(users[0])) {
         this.projectApi.removeMembers(this.appStore.project.id, users.map(user => user.id)).subscribe(() => {
           this.members.next(this.members.value.filter(member => !users.includes(member)));
@@ -112,7 +112,7 @@ export class ProjectUsersViewStoreService {
         },
         res => {
           this.toastService.danger(`${res.error.message}`);
-        })
+        });
       }
       if (this.owners.value.includes(users[0])) {
         this.projectApi.removeOwners(this.appStore.project.id, users.map(user => user.id)).subscribe(() => {
@@ -122,9 +122,9 @@ export class ProjectUsersViewStoreService {
         },
         res => {
           this.toastService.danger(`${res.error.message}`);
-        })
+        });
       }
-    })
+    });
   }
 
   promoteMembers(users: User[]): void {
@@ -135,14 +135,14 @@ export class ProjectUsersViewStoreService {
     },
     res => {
       this.toastService.danger(`${res.error.message}`);
-    })
+    });
   }
 
   demoteOwners(users: User[]): void {
     if (users.map(user => user.id).includes(this.currentUser.id)) {
-      this.promptService.confirm("Do you really want to remove yourself as an owner from the project?").then(() => {
+      this.promptService.confirm('Do you really want to remove yourself as an owner from the project?').then(() => {
         this.executeDemoteOwners(users, true);
-      })
+      });
     } else {
       this.executeDemoteOwners(users, false);
     }
@@ -154,11 +154,11 @@ export class ProjectUsersViewStoreService {
       this.owners.next(this.owners.value.filter(owner => !users.includes(owner)));
       this.appStore.reloadProject();
       if (redirect) {
-        this.router.navigate(['/app', 'projects', this.appStore.project.id])
+        this.router.navigate(['/app', 'projects', this.appStore.project.id]);
       }
     },
     res => {
       this.toastService.danger(`${res.error.message}`);
-    })
+    });
   }
 }

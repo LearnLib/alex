@@ -22,7 +22,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class NormalizeUpperCasePipe implements PipeTransform {
 
   transform(value: string): string {
-    let res = value.split('_').map(part => part.toLowerCase()).join(' ');
+    const res = value.split('_').map(part => part.toLowerCase()).join(' ');
     return res.charAt(0).toUpperCase() + res.slice(1);
   }
 }

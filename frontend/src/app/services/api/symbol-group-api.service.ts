@@ -20,7 +20,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { EnvironmentProvider } from "../../../environments/environment.provider";
+import { EnvironmentProvider } from '../../../environments/environment.provider';
 
 /**
  * The resource that handles http requests to the API to do CRUD operations on symbol groups.

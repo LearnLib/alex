@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { Injectable } from "@angular/core";
-import { BehaviorSubject } from "rxjs";
-import { WebSocketService } from "./websocket.service";
-import { NavigationEnd, Router } from "@angular/router";
-import { ProjectApiService } from "./api/project-api.service";
-import { AppStoreService } from "./app-store.service";
-import { ToastService } from "./toast.service";
-import { WebSocketMessage } from "../entities/websocket-message";
-import { filter } from "rxjs/operators";
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { WebSocketService } from './websocket.service';
+import { NavigationEnd, Router } from '@angular/router';
+import { ProjectApiService } from './api/project-api.service';
+import { AppStoreService } from './app-store.service';
+import { ToastService } from './toast.service';
+import { WebSocketMessage } from '../entities/websocket-message';
+import { filter } from 'rxjs/operators';
 
 @Injectable()
 export class SymbolPresenceService {
@@ -31,7 +31,7 @@ export class SymbolPresenceService {
 
   private accessedSymbolGroups = new BehaviorSubject(new Map());
 
-  private oldRoute = "";
+  private oldRoute = '';
 
   private routeRegEx = /^\/app\/projects\/\d+\/symbols\/\d+/;
 
@@ -52,15 +52,15 @@ export class SymbolPresenceService {
         projectIds.push(project.id);
       });
       this.requestStatus(projectIds);
-    })
+    });
   }
 
   private routeChange(r: any) {
     const newRoute = r.urlAfterRedirects;
-    const oldProjectId = this.oldRoute.split("/")[3];
-    const oldSymbolId = this.oldRoute.split("/")[5];
-    const newProjectId = newRoute.split("/")[3];
-    const newSymbolId = newRoute.split("/")[5];
+    const oldProjectId = this.oldRoute.split('/')[3];
+    const oldSymbolId = this.oldRoute.split('/')[5];
+    const newProjectId = newRoute.split('/')[3];
+    const newSymbolId = newRoute.split('/')[5];
 
     if (this.routeRegEx.test(newRoute)) {
       if(!this.routeRegEx.test(this.oldRoute) || oldProjectId !== newProjectId || oldSymbolId !== newSymbolId) {
@@ -81,7 +81,7 @@ export class SymbolPresenceService {
     const symbolsUpdate = this.accessedSymbols.getValue();
     const groupsUpdate = this.accessedSymbolGroups.getValue();
 
-    for (let projectId in projects) {
+    for (const projectId in projects) {
       const symbols = projects[projectId].symbols;
 
       if (!Object.keys(symbols).length) {
@@ -94,7 +94,7 @@ export class SymbolPresenceService {
           symbolsObject.clear();
         }
 
-        for (let symbolId in symbols) {
+        for (const symbolId in symbols) {
           const symbol = symbols[symbolId];
           const symbolObject= {} as SymbolLockInfo;
           symbolObject.type = symbol.type;
@@ -119,7 +119,7 @@ export class SymbolPresenceService {
           groupsObject.clear();
         }
 
-        for (let groupId in groups) {
+        for (const groupId in groups) {
           const group = groups[groupId];
           const groupObject = {} as SymbolGroupLockInfo;
           groupObject.type = group.type;
@@ -135,7 +135,7 @@ export class SymbolPresenceService {
     this.accessedSymbols.next(symbolsUpdate);
     this.accessedSymbolGroups.next(groupsUpdate);
 
-    const routeSegments = this.router.url.split("/");
+    const routeSegments = this.router.url.split('/');
     const projectId = Number(routeSegments[3]);
     const symbolId = Number(routeSegments[5]);
 
@@ -143,7 +143,7 @@ export class SymbolPresenceService {
       const symbolLock = this.accessedSymbols.getValue().get(projectId)?.get(symbolId);
       if (symbolLock && symbolLock.username !== this.appStoreService.user.username) {
         this.router.navigate(['/app', 'projects', this.appStoreService.project.id, 'symbols']);
-        this.toastService.danger("Symbol is already locked by " + symbolLock.username);
+        this.toastService.danger('Symbol is already locked by ' + symbolLock.username);
       }
     }
   }
@@ -192,11 +192,11 @@ export class SymbolPresenceService {
 }
 
 export enum SymbolPresenceServiceEnum {
-  SYMBOL_PRESENCE_SERVICE = "SYMBOL_PRESENCE_SERVICE",
-  USER_LEFT = "USER_LEFT",
-  USER_ENTERED = "USER_ENTERED",
-  STATUS_REQUEST = "STATUS_REQUEST",
-  STATUS = "STATUS"
+  SYMBOL_PRESENCE_SERVICE = 'SYMBOL_PRESENCE_SERVICE',
+  USER_LEFT = 'USER_LEFT',
+  USER_ENTERED = 'USER_ENTERED',
+  STATUS_REQUEST = 'STATUS_REQUEST',
+  STATUS = 'STATUS'
 }
 
 interface AbstractSymbolLockInfo {

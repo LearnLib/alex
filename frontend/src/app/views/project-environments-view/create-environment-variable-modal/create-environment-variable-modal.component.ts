@@ -42,8 +42,8 @@ export class CreateEnvironmentVariableModalComponent {
               private projectEnvironmentApi: ProjectEnvironmentApiService) {
     this.variable = new ProjectEnvironmentVariable();
     this.form = new FormGroup({
-      'name': new FormControl('', [Validators.required]),
-      'value': new FormControl(null, [Validators.required])
+      name: new FormControl('', [Validators.required]),
+      value: new FormControl(null, [Validators.required])
     });
   }
 

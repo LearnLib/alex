@@ -28,7 +28,7 @@ export class SetVariableByHttpResponseAction extends Action {
   /**
    * Constructor.
    *
-   * @param {object} obj The object to create the action from.
+   * @param obj The object to create the action from.
    */
   constructor(obj: any = {}) {
     super(actionType.GENERAL_SET_VARIABLE_BY_HTTP_RESPONSE, obj);

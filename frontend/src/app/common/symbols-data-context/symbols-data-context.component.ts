@@ -19,8 +19,8 @@ import { ParametrizedSymbol } from '../../entities/parametrized-symbol';
 import { uniqBy } from 'lodash';
 
 interface DataContextItem {
-  name: string,
-  parameterType: string
+  name: string;
+  parameterType: string;
 }
 
 @Component({
@@ -54,9 +54,7 @@ export class SymbolsDataContextComponent implements OnChanges {
     const dataContext: DataContextItem[] = [];
     this.parametrizedSymbols.forEach(ps => {
       ps.outputMappings.forEach(om => {
-        if (dataContext.findIndex(v => {
-          return v.name === om.name && v.parameterType === om.parameter.parameterType;
-        }) === -1) {
+        if (dataContext.findIndex(v => v.name === om.name && v.parameterType === om.parameter.parameterType) === -1) {
           dataContext.push({
             name: om.name,
             parameterType: om.parameter.parameterType

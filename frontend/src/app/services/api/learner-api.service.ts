@@ -22,7 +22,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { LearnerStatus } from '../../entities/learner-status';
 import { LearnerSetup } from '../../entities/learner-setup';
-import { EnvironmentProvider } from "../../../environments/environment.provider";
+import { EnvironmentProvider } from '../../../environments/environment.provider';
 
 /**
  * The service for interacting with the learner.
@@ -40,7 +40,7 @@ export class LearnerApiService extends BaseApiService {
    * @param projectId The id of the project of the test.
    * @param configuration The configuration to learn with.
    */
-  start(projectId: number, configuration: {setup: LearnerSetup, options?: any}): Observable<LearnerResult> {
+  start(projectId: number, configuration: {setup: LearnerSetup; options?: any}): Observable<LearnerResult> {
     return this.http.post(`${this.env.apiUrl}/projects/${projectId}/learner/start`, configuration, this.defaultHttpOptions)
       .pipe(
         map(data => new LearnerResult(data))
@@ -93,7 +93,7 @@ export class LearnerApiService extends BaseApiService {
    * @param hypB The second hypothesis.
    */
   getSeparatingWord(projectId: number, hypA: any, hypB: any): Observable<any> {
-    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/learner/compare/separatingWord`, [hypA, hypB], this.defaultHttpOptions)
+    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/learner/compare/separatingWord`, [hypA, hypB], this.defaultHttpOptions);
   }
 
   /**
@@ -105,6 +105,6 @@ export class LearnerApiService extends BaseApiService {
    * @param hypB The second hypothesis.
    */
   getDifferenceTree(projectId: number, hypA: any, hypB: any): Observable<any> {
-    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/learner/compare/differenceTree`, [hypA, hypB], this.defaultHttpOptions)
+    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/learner/compare/differenceTree`, [hypA, hypB], this.defaultHttpOptions);
   }
 }

@@ -58,7 +58,7 @@ export class FilesViewStoreService {
         this.files.next(files);
         this.filesSelectable.addItems(files);
       }
-    )
+    );
   }
 
   /**

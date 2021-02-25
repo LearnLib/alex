@@ -56,7 +56,7 @@ export class Project {
     this.owners = obj.owners;
 
     if (obj.environments != null && obj.environments.length > 0) {
-      this.environments = obj.environments.map(o => ProjectEnvironment.fromData(o))
+      this.environments = obj.environments.map(o => ProjectEnvironment.fromData(o));
     } else {
       this.environments = [];
     }

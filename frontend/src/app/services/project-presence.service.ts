@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { Injectable } from "@angular/core";
-import { WebSocketService } from "./websocket.service";
-import { BehaviorSubject } from "rxjs";
-import { WebSocketMessage } from "../entities/websocket-message";
-import { ProjectApiService } from "./api/project-api.service";
-import { NavigationEnd, Router } from "@angular/router";
+import { Injectable } from '@angular/core';
+import { WebSocketService } from './websocket.service';
+import { BehaviorSubject } from 'rxjs';
+import { WebSocketMessage } from '../entities/websocket-message';
+import { ProjectApiService } from './api/project-api.service';
+import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
 @Injectable()
@@ -27,7 +27,7 @@ export class ProjectPresenceService {
 
   private activeUsers = new BehaviorSubject(new Map());
 
-  private oldRoute = "";
+  private oldRoute = '';
 
   constructor(private webSocketService: WebSocketService,
               private router: Router,
@@ -41,17 +41,17 @@ export class ProjectPresenceService {
 
   private routeChange(r: any) {
     const newRoute = r.urlAfterRedirects;
-    const oldProjectId = this.oldRoute.split("/")[3];
-    const newProjectId = newRoute.split("/")[3];
+    const oldProjectId = this.oldRoute.split('/')[3];
+    const newProjectId = newRoute.split('/')[3];
 
-    if (newRoute.startsWith("/app") && !this.oldRoute.startsWith("/app")) {
+    if (newRoute.startsWith('/app') && !this.oldRoute.startsWith('/app')) {
       this.projectApiService.getAll().subscribe(projects => {
         const projectIds = [];
         projects.forEach(project => {
           projectIds.push(project.id);
         });
         this.requestStatus(projectIds);
-      })
+      });
     }
 
     if (/^\/app\/projects\/\d+/.test(newRoute)) {
@@ -71,7 +71,7 @@ export class ProjectPresenceService {
     const projects = msg.content;
 
     const update = this.activeUsers.getValue();
-    for (let projectKey in projects) {
+    for (const projectKey in projects) {
       const project = projects[projectKey];
 
       if (!Object.keys(project).length) {
@@ -84,7 +84,7 @@ export class ProjectPresenceService {
           projectUser.clear();
         }
 
-        for (let userName in project.userColors) {
+        for (const userName in project.userColors) {
           projectUser.set(userName, project.userColors[userName]);
         }
 
@@ -124,9 +124,9 @@ export class ProjectPresenceService {
 }
 
 export enum ProjectPresenceServiceEnum {
-  PROJECT_PRESENCE_SERVICE = "PROJECT_PRESENCE_SERVICE",
-  USER_LEFT = "USER_LEFT",
-  USER_ENTERED = "USER_ENTERED",
-  STATUS_REQUEST = "STATUS_REQUEST",
-  STATUS = "STATUS"
+  PROJECT_PRESENCE_SERVICE = 'PROJECT_PRESENCE_SERVICE',
+  USER_LEFT = 'USER_LEFT',
+  USER_ENTERED = 'USER_ENTERED',
+  STATUS_REQUEST = 'STATUS_REQUEST',
+  STATUS = 'STATUS'
 }

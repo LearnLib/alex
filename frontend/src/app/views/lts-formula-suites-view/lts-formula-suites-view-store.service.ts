@@ -52,7 +52,7 @@ export class LtsFormulaSuitesViewStoreService {
         this.formulas.next(suites);
         this.formulasSelectable.addItems(suites);
       }
-    )
+    );
   }
 
   createSuite(): void {
@@ -63,7 +63,7 @@ export class LtsFormulaSuitesViewStoreService {
             this.formulas.next([...this.formulas.value, suite]);
             this.formulasSelectable.addItem(suite);
           },
-          res => this.toastService.danger(`Failed to create formula suite. ${res.error.message}`))
+          res => this.toastService.danger(`Failed to create formula suite. ${res.error.message}`));
       });
   }
 
@@ -80,7 +80,7 @@ export class LtsFormulaSuitesViewStoreService {
             res => this.toastService.danger(`Failed to update formula suite. ${res.error.message}`)
           );
         }
-      })
+      });
   }
 
   deleteSuite(suite: any): void {

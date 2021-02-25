@@ -58,11 +58,11 @@ export class EditUserModalComponent implements OnInit {
     this.deleted = new EventEmitter<User>();
 
     this.emailForm = new FormGroup({
-      'email': new FormControl('', [Validators.required, Validators.email])
+      email: new FormControl('', [Validators.required, Validators.email])
     });
 
     this.usernameForm = new FormGroup({
-      'username': new FormControl('', [Validators.required, Validators.pattern("[a-zA-Z][a-zA-Z0-9]*"), Validators.maxLength(32)]),
+      username: new FormControl('', [Validators.required, Validators.pattern('[a-zA-Z][a-zA-Z0-9]*'), Validators.maxLength(32)]),
     });
   }
 
@@ -89,7 +89,7 @@ export class EditUserModalComponent implements OnInit {
       response => {
         this.error = response.error.message;
       }
-    )
+    );
   }
 
   /**

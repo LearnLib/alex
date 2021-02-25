@@ -18,7 +18,7 @@ import { BaseApiService } from './base-api.service';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { EnvironmentProvider } from "../../../environments/environment.provider";
+import { EnvironmentProvider } from '../../../environments/environment.provider';
 
 /** The resource for test reports. */
 @Injectable()
@@ -70,7 +70,7 @@ export class TestReportApiService extends BaseApiService {
    * @param projectId The id of the project.
    */
   getLatest(projectId: number): Observable<any> {
-    return this.http.get(`${this.env.apiUrl}/projects/${projectId}/tests/reports/latest`, this.defaultHttpOptions)
+    return this.http.get(`${this.env.apiUrl}/projects/${projectId}/tests/reports/latest`, this.defaultHttpOptions);
   }
 
   /**

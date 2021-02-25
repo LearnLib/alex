@@ -27,6 +27,7 @@ export class AlertGetTextAction extends Action {
 
   /**
    * Constructor.
+   *
    * @param obj {object}
    */
   constructor(obj: any = {}) {

@@ -103,7 +103,7 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
   private saveTest(): Observable<any> {
     const test = JSON.parse(JSON.stringify(this.testCase));
     return this.testApi.update(test).pipe(
-      tap((updatedTestCase : any) => this.testCase = updatedTestCase)
+      tap((updatedTestCase: any) => this.testCase = updatedTestCase)
     );
   }
 

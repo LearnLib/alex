@@ -57,6 +57,6 @@ export class EqOracleService {
    * @returns The created oracle.
    */
   createFromType(type: string): EqOracle {
-    return this.create({type: type});
+    return this.create({type});
   }
 }

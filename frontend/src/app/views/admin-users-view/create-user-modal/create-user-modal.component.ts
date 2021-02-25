@@ -37,11 +37,11 @@ export class CreateUserModalComponent {
               public modal: NgbActiveModal,
               public formUtils: FormUtilsService) {
     this.form = new FormGroup({
-      'username': new FormControl('', [Validators.required, Validators.pattern("[a-zA-Z][a-zA-Z0-9]*"), Validators.maxLength(32)]),
-      'email': new FormControl('', [Validators.required, Validators.email]),
-      'password': new FormControl('', [Validators.required]),
-      'role': new FormControl('REGISTERED', [Validators.required])
-    })
+      username: new FormControl('', [Validators.required, Validators.pattern('[a-zA-Z][a-zA-Z0-9]*'), Validators.maxLength(32)]),
+      email: new FormControl('', [Validators.required, Validators.email]),
+      password: new FormControl('', [Validators.required]),
+      role: new FormControl('REGISTERED', [Validators.required])
+    });
   }
 
   createUser(): void {

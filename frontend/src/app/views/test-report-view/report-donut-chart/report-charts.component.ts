@@ -70,7 +70,7 @@ export class ReportChartsComponent implements OnInit {
       .style('fill', d => d.data.color);
 
     g.append('text')
-      .attr('transform', function (d) {
+      .attr('transform', function(d) {
         const _d = arc.centroid(d);
         _d[0] *= 1.5;
         _d[1] *= 1.5;
@@ -114,7 +114,7 @@ export class ReportChartsComponent implements OnInit {
       color = '#68b75c';
     }
 
-    const data = [{'x': 70, 'r': 70, 'label': percent + '%'}];
+    const data = [{x: 70, r: 70, label: percent + '%'}];
 
     const svg = d3.select(this.el.nativeElement.querySelector('div')).append('svg')
       .attr('width', 140)

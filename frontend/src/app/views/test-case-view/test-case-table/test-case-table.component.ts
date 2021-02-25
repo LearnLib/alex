@@ -38,11 +38,9 @@ export class TestCaseTableComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.dragulaService.createGroup('STEPS', {
-      moves: (el, container, handle) => {
-        return handle.classList.contains('handle');
-      },
+      moves: (el, container, handle) => handle.classList.contains('handle'),
       removeOnSpill: false
-    })
+    });
   }
 
   ngOnDestroy(): void {

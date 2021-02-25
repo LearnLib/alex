@@ -158,7 +158,7 @@ export class ProjectsViewStoreService {
           this.projects.next(this.projects.value.filter(projectInt => projectInt.id != project.id));
           this.projectsSelectable.remove(project);
         },
-        res => this.toastService.danger(`${res.error.message}`))
+        res => this.toastService.danger(`${res.error.message}`));
     }
     if (project.owners.includes(this.appStore.user.id)) {
       this.projectApi.removeOwners(project.id, Array.of(this.appStore.user.id)).subscribe(
@@ -167,7 +167,7 @@ export class ProjectsViewStoreService {
           this.projects.next(this.projects.value.filter(projectInt => projectInt.id != project.id));
           this.projectsSelectable.remove(project);
         },
-        res => this.toastService.danger(`${res.error.message}`))
+        res => this.toastService.danger(`${res.error.message}`));
     }
   }
 }

@@ -39,7 +39,7 @@ export class EditProjectModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = new FormGroup({
-      'url': new FormControl('http://', [
+      url: new FormControl('http://', [
         Validators.required, Validators.pattern('^https?://.*?')
       ])
     });

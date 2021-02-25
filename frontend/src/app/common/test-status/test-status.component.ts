@@ -67,7 +67,7 @@ export class TestStatusComponent implements OnInit, OnDestroy {
   abort(testReport: TestReport) {
     this.testApi.abort(this.project.id, testReport.id).subscribe(() => {
       this.toastService.success('The test run has been aborted');
-    })
+    });
   }
 
   private getStatus(): void {

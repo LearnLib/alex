@@ -20,8 +20,8 @@ import { User } from '../entities/user';
 import { ClipboardService } from './clipboard.service';
 import { ProjectApiService } from './api/project-api.service';
 import { Router } from '@angular/router';
-import { WebSocketMessage } from "../entities/websocket-message";
-import { WebSocketService, WebSocketServiceEnum } from "./websocket.service";
+import { WebSocketMessage } from '../entities/websocket-message';
+import { WebSocketService, WebSocketServiceEnum } from './websocket.service';
 
 @Injectable()
 export class AppStoreService {

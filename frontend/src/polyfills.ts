@@ -63,7 +63,7 @@ import 'zone.js/dist/zone'; // Included with Angular CLI.
 import * as ace from 'brace';
 import 'brace/mode/javascript';
 import 'brace/mode/plain_text';
-import 'brace/theme/eclipse'
+import 'brace/theme/eclipse';
 
 
 /***************************************************************************************************

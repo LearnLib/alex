@@ -15,8 +15,8 @@
  */
 
 import { Component, Input } from '@angular/core';
-import { TestCaseLockInfo } from "../../../../services/test-presence.service";
-import { AppStoreService } from "../../../../services/app-store.service";
+import { TestCaseLockInfo } from '../../../../services/test-presence.service';
+import { AppStoreService } from '../../../../services/app-store.service';
 
 @Component({
   selector: 'test-case-node',

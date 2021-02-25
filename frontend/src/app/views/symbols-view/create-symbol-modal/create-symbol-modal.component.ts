@@ -71,7 +71,7 @@ export class CreateSymbolModalComponent implements OnInit {
   /**
    * Creates a new symbol but does not close the modal window.
    *
-   * @returns {*}
+   * @returns
    */
   createSymbolAndContinue(): void {
     this.errorMessage = null;

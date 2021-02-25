@@ -169,9 +169,9 @@ export class StatisticsCompareViewComponent {
   formatXTicks(value) {
 
     if (value % 1 != 0) {
-      return ""
+      return '';
     }
 
-    return "Step " + Math.trunc(value)
+    return 'Step ' + Math.trunc(value);
   }
 }

@@ -39,7 +39,7 @@ export class ClearWebAction extends Action {
   /**
    * A string representation of the action.
    *
-   * @returns {string}
+   * @returns
    */
   toString(): string {
     return `Clear input "${this.node.selector}"`;

@@ -24,5 +24,5 @@ import { SetVariableByCookieAction } from '../../../../entities/actions/misc/set
 export class SetVariableByCookieActionFormComponent {
 
   @Input()
-  action: SetVariableByCookieAction
+  action: SetVariableByCookieAction;
 }

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { BaseApiService } from "./base-api.service";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { Injectable } from "@angular/core";
-import { EnvironmentProvider } from "../../../environments/environment.provider";
+import { BaseApiService } from './base-api.service';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { EnvironmentProvider } from '../../../environments/environment.provider';
 
 @Injectable()
 export class TestResultApiService extends BaseApiService {

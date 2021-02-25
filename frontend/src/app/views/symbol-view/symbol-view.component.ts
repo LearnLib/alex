@@ -98,9 +98,7 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     document.addEventListener('keydown', this.keyDownHandler);
     this.dragulaService.createGroup('SYMBOL_STEPS', {
-      moves: (el, container, handle) => {
-        return true;
-      },
+      moves: (el, container, handle) => true,
       removeOnSpill: false
     });
   }
@@ -236,7 +234,7 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
 
   /** Copies actions to the clipboard and removes them from the scope. */
   cutSelectedSteps(): void {
-    let steps = this.selectedSteps.getSelected();
+    const steps = this.selectedSteps.getSelected();
     if (steps.length > 0) {
       const cpy = steps.map(AlphabetSymbol.stepsToJson);
       cpy.forEach(step => {
@@ -261,7 +259,7 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
    * Pastes the actions from the clipboard to the end of of the action list.
    */
   pasteSteps(): void {
-    let steps = this.clipboardService.paste(this.project.id, 'symbolSteps');
+    const steps = this.clipboardService.paste(this.project.id, 'symbolSteps');
     if (steps != null) {
       steps.forEach(step => {
         step._id = uniqueId();

@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-import { User } from "./user";
+import { User } from './user';
 
 export enum TestReportStatus {
-  PENDING = "PENDING",
-  IN_PROGRESS = "IN_PROGRESS",
-  ABORTED = "ABORTED",
-  FINISHED = "FINISHED"
+  PENDING = 'PENDING',
+  IN_PROGRESS = 'IN_PROGRESS',
+  ABORTED = 'ABORTED',
+  FINISHED = 'FINISHED'
 }
 
 export interface TestReport {
-  id: number,
+  id: number;
   executedBy: User;
-  status: TestReportStatus,
-  testResults: any[],
-  description: string
+  status: TestReportStatus;
+  testResults: any[];
+  description: string;
 }
 
 export interface TestQueueItem {
-  report: TestReport,
-  config: any,
-  results: any
+  report: TestReport;
+  config: any;
+  results: any;
 }
 
 export interface TestStatus {

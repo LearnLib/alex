@@ -9,8 +9,8 @@ export class FormatWebBrowserPipe implements PipeTransform {
   private browsers = {};
 
   constructor() {
-    for (let key in WebDriverConfig.Browsers) {
-      this.browsers[WebDriverConfig.Browsers[<string> key]] = key
+    for (const key in WebDriverConfig.Browsers) {
+      this.browsers[WebDriverConfig.Browsers[<string> key]] = key;
     }
   }
 

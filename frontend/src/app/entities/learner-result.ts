@@ -15,7 +15,7 @@
  */
 
 import { LearnerSetup } from './learner-setup';
-import {User} from "./user";
+import {User} from './user';
 
 export enum LearnerResultStatus {
   PENDING = 'PENDING',

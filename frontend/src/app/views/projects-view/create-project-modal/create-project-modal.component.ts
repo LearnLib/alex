@@ -39,7 +39,7 @@ export class CreateProjectModalComponent {
 
     this.project = new Project();
     this.form = new FormGroup({
-      'url': new FormControl('http://', [
+      url: new FormControl('http://', [
         Validators.required, Validators.pattern('^https?://.*?')
       ])
     });

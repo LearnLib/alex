@@ -19,8 +19,8 @@ import { LtlFormulaSuite } from './ltl-formula-suite';
 export class ModelCheckingConfig {
 
   id: number;
-  multiplier: number = 0.1;
-  minUnfolds: number = 1;
+  multiplier = 0.1;
+  minUnfolds = 1;
   formulaSuites: LtlFormulaSuite[] = [];
 
   public static fromData(data: any = {}): ModelCheckingConfig {

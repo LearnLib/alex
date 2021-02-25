@@ -17,7 +17,7 @@
 import { SymbolGroup } from '../../../../entities/symbol-group';
 import { Component, Input, OnInit } from '@angular/core';
 import { SymbolsViewStoreService } from '../../symbols-view-store.service';
-import { SymbolGroupLockInfo } from "../../../../services/symbol-presence.service";
+import { SymbolGroupLockInfo } from '../../../../services/symbol-presence.service';
 
 @Component({
   selector: 'symbol-group-header',
@@ -39,7 +39,7 @@ export class SymbolGroupHeaderComponent implements OnInit {
   ngOnInit() {
     this.store.groupLocks$.subscribe(value => {
       this.lockInfo = value?.get(this.group.id);
-    })
+    });
   }
 
   toggleCollapse(): void {

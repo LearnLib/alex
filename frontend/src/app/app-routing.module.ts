@@ -33,9 +33,9 @@ import { ProjectOwnerGuard } from './guards/ProjectOwnerGuard';
 import { LearnerSetupsCreateViewComponent } from './views/learner-setups-create-view/learner-setups-create-view.component';
 import { LearnerSetupsEditViewComponent } from './views/learner-setups-edit-view/learner-setups-edit-view.component';
 import { LtsFormulaSuiteViewComponent } from './views/lts-formula-suite-view/lts-formula-suite-view.component';
-import { TestGuard } from "./guards/TestGuard";
-import { SymbolGuard } from "./guards/SymbolGuard";
-import {TestReportScreenshotsViewComponent} from "./views/test-report-screenshots-view/test-report-screenshots-view.component";
+import { TestGuard } from './guards/TestGuard';
+import { SymbolGuard } from './guards/SymbolGuard';
+import {TestReportScreenshotsViewComponent} from './views/test-report-screenshots-view/test-report-screenshots-view.component';
 import { ModelCheckingResultsViewComponent } from './views/model-checking-results-view/model-checking-results-view.component';
 
 const routes: Routes = [

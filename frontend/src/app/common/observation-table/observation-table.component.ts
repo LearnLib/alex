@@ -17,11 +17,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 interface ObservationTable {
-  header: any[],
+  header: any[];
   body: {
-    s1: any[],
-    s2: any[]
-  }
+    s1: any[];
+    s2: any[];
+  };
 }
 
 @Component({

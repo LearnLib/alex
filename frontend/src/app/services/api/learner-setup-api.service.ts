@@ -21,7 +21,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { LearnerSetup } from '../../entities/learner-setup';
 import { LearnerResult } from '../../entities/learner-result';
-import { EnvironmentProvider } from "../../../environments/environment.provider";
+import { EnvironmentProvider } from '../../../environments/environment.provider';
 
 @Injectable()
 export class LearnerSetupApiService extends BaseApiService {
@@ -66,7 +66,7 @@ export class LearnerSetupApiService extends BaseApiService {
   }
 
   remove(projectId: number, setupId: number) {
-    return this.http.delete(this.url(projectId, setupId), this.defaultHttpOptions)
+    return this.http.delete(this.url(projectId, setupId), this.defaultHttpOptions);
   }
 
   run(projectId: number, setupId: number): Observable<LearnerResult> {

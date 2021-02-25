@@ -23,7 +23,7 @@ export interface LearnerProcessStatus {
 }
 
 export interface LearnerStatus {
-  currentProcess: LearnerProcessStatus,
-  queue: LearnerResult[]
+  currentProcess: LearnerProcessStatus;
+  queue: LearnerResult[];
   active: boolean;
 }

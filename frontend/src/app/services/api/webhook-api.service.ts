@@ -20,7 +20,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Webhook } from '../../entities/webhook';
 import { map } from 'rxjs/operators';
-import { EnvironmentProvider } from "../../../environments/environment.provider";
+import { EnvironmentProvider } from '../../../environments/environment.provider';
 
 /**
  * The resource for webhooks.
@@ -29,7 +29,7 @@ import { EnvironmentProvider } from "../../../environments/environment.provider"
 export class WebhookApiService extends BaseApiService {
 
   constructor(private http: HttpClient, private env: EnvironmentProvider) {
-    super()
+    super();
   }
 
   /**

@@ -45,8 +45,8 @@ export class EditEnvironmentVariableModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = new FormGroup({
-      'name': new FormControl(this.variable.name, [Validators.required]),
-      'value': new FormControl(this.variable.value, [Validators.required])
+      name: new FormControl(this.variable.name, [Validators.required]),
+      value: new FormControl(this.variable.value, [Validators.required])
     });
   }
 

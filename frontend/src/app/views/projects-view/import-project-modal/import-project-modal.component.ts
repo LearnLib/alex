@@ -33,7 +33,7 @@ export class ImportProjectModalComponent {
   /** The data to import */
   importData: any = null;
 
-  loading: boolean = false;
+  loading = false;
 
   form = new FormGroup({
     name: new FormControl('', [Validators.required])

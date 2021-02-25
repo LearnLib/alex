@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { Injectable } from "@angular/core";
-import { BehaviorSubject } from "rxjs";
-import { WebSocketService } from "./websocket.service";
-import { WebSocketMessage } from "../entities/websocket-message";
-import { NavigationEnd, Router } from "@angular/router";
-import { filter } from "rxjs/operators";
-import { ProjectApiService } from "./api/project-api.service";
-import { AppStoreService } from "./app-store.service";
-import { ToastService } from "./toast.service";
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { WebSocketService } from './websocket.service';
+import { WebSocketMessage } from '../entities/websocket-message';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs/operators';
+import { ProjectApiService } from './api/project-api.service';
+import { AppStoreService } from './app-store.service';
+import { ToastService } from './toast.service';
 
 @Injectable()
 export class TestPresenceService {
@@ -50,7 +50,7 @@ export class TestPresenceService {
         projectIds.push(project.id);
       });
       this.requestStatus(projectIds);
-    })
+    });
   }
 
   private routeChange(r: any) {
@@ -77,7 +77,7 @@ export class TestPresenceService {
     const projects = msg.content;
 
     const update = this.accessedTests.getValue();
-    for (let projectId in projects) {
+    for (const projectId in projects) {
       const tests = projects[projectId];
 
       if (!Object.keys(tests).length) {
@@ -90,7 +90,7 @@ export class TestPresenceService {
           testsObject.clear();
         }
 
-        for (let testId in tests) {
+        for (const testId in tests) {
           const test = tests[testId];
 
           let testObject;
@@ -104,7 +104,7 @@ export class TestPresenceService {
           }
           testObject.type = test.type;
 
-          testsObject.set(Number(testId), testObject)
+          testsObject.set(Number(testId), testObject);
         }
 
         update.set(Number(projectId), testsObject);
@@ -113,13 +113,13 @@ export class TestPresenceService {
 
     this.accessedTests.next(update);
 
-    const routeSegments = this.router.url.split("/");
+    const routeSegments = this.router.url.split('/');
     const projectId = Number(routeSegments[3]);
     const testId = Number(routeSegments[5]);
 
     if (!isNaN(projectId) && !isNaN(testId)) {
       const testLock = this.accessedTests.getValue().get(projectId)?.get(testId);
-      if (testLock && testLock.type === "case"  && testLock.username !== this.appStoreService.user.username) {
+      if (testLock && testLock.type === 'case'  && testLock.username !== this.appStoreService.user.username) {
         this.router.navigate(['/app', 'projects', this.appStoreService.project.id, 'tests']);
         this.toastService.danger('Test is already locked by ' + testLock.username);
       }

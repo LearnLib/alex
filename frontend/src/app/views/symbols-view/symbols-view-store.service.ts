@@ -36,7 +36,7 @@ import { ImportSymbolsModalComponent } from './import-symbols-modal/import-symbo
 import { Selectable } from '../../utils/selectable';
 import { ExportSymbolsModalComponent } from './export-symbols-modal/export-symbols-modal.component';
 import { map } from 'rxjs/operators';
-import {SymbolGroupLockInfo, SymbolLockInfo, SymbolPresenceService} from "../../services/symbol-presence.service";
+import {SymbolGroupLockInfo, SymbolLockInfo, SymbolPresenceService} from '../../services/symbol-presence.service';
 
 @Injectable()
 export class SymbolsViewStoreService {
@@ -72,7 +72,7 @@ export class SymbolsViewStoreService {
             this.groupsMap.set(g.id, g);
             this.symbolsSelectable.addItems(g.symbols);
           }, () => {
-          })
+          });
         });
       }
     );
@@ -87,7 +87,7 @@ export class SymbolsViewStoreService {
       if (this.appStore.project) {
         this.symbolLocks.next(symbolLocks.get(this.appStore.project.id));
       }
-    })
+    });
   }
 
   createSymbol(): void {
@@ -131,7 +131,7 @@ export class SymbolsViewStoreService {
             );
           },
           res => {
-            this.toastService.danger(`The symbol could not be created. ${res.error.message}`)
+            this.toastService.danger(`The symbol could not be created. ${res.error.message}`);
           }
         );
       });
@@ -186,7 +186,7 @@ export class SymbolsViewStoreService {
     this.symbolApi.removeMany(this.appStore.project.id, selectedSymbols).subscribe(
       () => selectedSymbols.forEach(s => this._deleteSymbol(s)),
       res => this.toastService.danger(`Failed to deleted symbols. ${res.error.message}`)
-    )
+    );
   }
 
   /**
@@ -278,9 +278,7 @@ export class SymbolsViewStoreService {
   }
 
   selectedContainsLockedItem(): boolean {
-    return this.symbolsSelectable.getSelected().some(value => {
-      return this.symbolLocks.getValue()?.has(value.id);
-    })
+    return this.symbolsSelectable.getSelected().some(value => this.symbolLocks.getValue()?.has(value.id));
   }
 
   isSymbolLocked(symbolId: number): boolean {

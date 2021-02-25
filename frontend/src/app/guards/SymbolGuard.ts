@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { Injectable } from "@angular/core";
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from "@angular/router";
-import { ToastService } from "../services/toast.service";
-import { AppStoreService } from "../services/app-store.service";
-import { SymbolPresenceService } from "../services/symbol-presence.service";
-import { Observable, of } from "rxjs";
+import { Injectable } from '@angular/core';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
+import { ToastService } from '../services/toast.service';
+import { AppStoreService } from '../services/app-store.service';
+import { SymbolPresenceService } from '../services/symbol-presence.service';
+import { Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'

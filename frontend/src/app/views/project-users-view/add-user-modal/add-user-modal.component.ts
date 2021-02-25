@@ -61,10 +61,10 @@ export class AddUserModalComponent {
     this.errorMessage = null;
 
     this.projectApi.addMembers(this.project.id, this.usersSelectable.getSelected().map(user => user.id)).subscribe(() => {
-      this.toastService.success("Users have been added to the project.");
+      this.toastService.success('Users have been added to the project.');
       this.modal.close(this.usersSelectable.getSelected());
     }, res => this.errorMessage = `Could not add users to project. ${res.error.message}`
-    )
+    );
   }
 
   searchUser() {
@@ -72,7 +72,7 @@ export class AddUserModalComponent {
     this.userApi.getByUsernameOrEmail(this.searchForm.controls.value.value).subscribe(users => {
       this.foundUsers = users;
       this.usersSelectable.clear();
-      this.usersSelectable.addItems(users)
-    })
+      this.usersSelectable.addItems(users);
+    });
   }
 }

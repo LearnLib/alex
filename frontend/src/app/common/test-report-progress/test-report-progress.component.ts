@@ -36,7 +36,7 @@ export class TestReportProgressComponent {
   abort() {
     this.testApi.abort(this.appStore.project.id, this.report.id).subscribe(() => {
       this.toastService.success('The test run has been aborted');
-    })
+    });
   }
 
   canAbort() {

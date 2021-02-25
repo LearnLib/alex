@@ -16,7 +16,7 @@
 
 import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { TestReportApiService } from "../../../services/api/test-report-api.service";
+import { TestReportApiService } from '../../../services/api/test-report-api.service';
 
 @Component({
   selector: 'execution-result-modal',

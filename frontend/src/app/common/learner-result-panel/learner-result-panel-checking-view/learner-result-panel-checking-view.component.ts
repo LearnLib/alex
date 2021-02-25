@@ -47,7 +47,7 @@ export class LearnerResultPanelCheckingViewComponent implements OnInit {
   formulaSuites: any[] = [];
 
   addFormulaForm = new FormGroup({
-    'formula': new FormControl('', [Validators.required])
+    formula: new FormControl('', [Validators.required])
   });
 
   tmpFormulaSuite = {

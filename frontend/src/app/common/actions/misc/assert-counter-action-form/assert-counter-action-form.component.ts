@@ -24,5 +24,5 @@ import { AssertCounterAction } from '../../../../entities/actions/misc/assert-co
 export class AssertCounterActionFormComponent {
 
   @Input()
-  action: AssertCounterAction
+  action: AssertCounterAction;
 }

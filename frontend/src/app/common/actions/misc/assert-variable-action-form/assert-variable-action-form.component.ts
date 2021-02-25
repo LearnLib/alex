@@ -24,5 +24,5 @@ import { AssertVariableAction } from '../../../../entities/actions/misc/assert-v
 export class AssertVariableActionFormComponent {
 
   @Input()
-  action: AssertVariableAction
+  action: AssertVariableAction;
 }

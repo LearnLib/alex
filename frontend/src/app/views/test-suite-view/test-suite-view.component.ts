@@ -37,7 +37,7 @@ import { TestsImportModalComponent } from './tests-import-modal/tests-import-mod
 import { TestConfigModalComponent } from '../tests-view/test-config-modal/test-config-modal.component';
 import { TestsMoveModalComponent } from './tests-move-modal/tests-move-modal.component';
 import { TestReportStatus, TestStatus } from '../../entities/test-status';
-import {TestLockInfo, TestPresenceService} from "../../services/test-presence.service";
+import {TestLockInfo, TestPresenceService} from '../../services/test-presence.service';
 import { WebDriverConfig } from '../../entities/web-driver-config';
 
 @Component({
@@ -97,7 +97,7 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
       tests: [],
       environment: this.project.getDefaultEnvironment(),
       driverConfig: new WebDriverConfig(),
-      description: ""
+      description: ''
     };
 
     this.testConfigApi.getAll(this.project.id).subscribe(
@@ -118,7 +118,7 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
 
     this.testPresenceService.accessedTests$.subscribe(tests => {
       this.lockInfo = tests;
-    })
+    });
   }
 
   ngOnDestroy(): void {
@@ -130,7 +130,7 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
       .then((name) => {
         const testSuite = {
           type: 'suite',
-          name: name,
+          name,
           project: this.project.id,
           parent: this.testSuite.id,
           tests: []
@@ -150,7 +150,7 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
     this.promptService.prompt('Enter a name for the test case.')
       .then((name) => {
         const testCase = TestCase.fromData({
-          name: name,
+          name,
           project: this.project.id,
           parent: this.testSuite.id
         });
@@ -277,7 +277,7 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
       && this.testStatus.currentTest != null
       && this.report != null
       && this.report.status === TestReportStatus.IN_PROGRESS
-      && this.testStatus.currentTest.id === test.id
+      && this.testStatus.currentTest.id === test.id;
   }
 
   private pollTestReport(reportId: number): void {
@@ -313,7 +313,7 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
    * Downloads the tests as JSON file.
    */
   exportSelectedTests(): void {
-    let tests = this.selectedTests.getSelected();
+    const tests = this.selectedTests.getSelected();
     if (!tests.length) {
       this.toastService.info('You have to select at least one test.');
     } else {
@@ -341,7 +341,7 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
   }
 
   copyTests(): void {
-    let tests = this.selectedTests.getSelected();
+    const tests = this.selectedTests.getSelected();
     if (tests.length > 0) {
       this.testApi.export(this.project.id, {testIds: tests.map(t => t.id)}).subscribe((data: any) => {
         this.clipboardService.copy(this.project.id, 'tests', data.tests);
@@ -402,9 +402,7 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
 
   selectedContainsLockedItem(): boolean {
     if (this.lockInfo.get(this.appStore.project.id)) {
-      return this.selectedTests.getSelected().some(value => {
-        return this.lockInfo.get(this.appStore.project.id).has(value.id);
-      });
+      return this.selectedTests.getSelected().some(value => this.lockInfo.get(this.appStore.project.id).has(value.id));
     }
     return false;
   }

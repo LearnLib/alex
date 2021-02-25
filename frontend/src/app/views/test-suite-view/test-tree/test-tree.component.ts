@@ -15,7 +15,7 @@
  */
 
 import { Component, Input } from '@angular/core';
-import { TestCaseLockInfo, TestSuiteLockInfo } from "../../../services/test-presence.service";
+import { TestCaseLockInfo, TestSuiteLockInfo } from '../../../services/test-presence.service';
 
 @Component({
   selector: 'test-tree',

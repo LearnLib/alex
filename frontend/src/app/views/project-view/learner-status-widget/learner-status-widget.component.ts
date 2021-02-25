@@ -20,7 +20,7 @@ import { LearnerApiService } from '../../../services/api/learner-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { AppStoreService } from '../../../services/app-store.service';
 import { LearnerStatus } from '../../../entities/learner-status';
-import { LearnerResult } from "../../../entities/learner-result";
+import { LearnerResult } from '../../../entities/learner-result';
 
 @Component({
   selector: 'learner-status-widget',

@@ -69,9 +69,7 @@ export class LearnerResultsCompareViewComponent implements OnInit {
       this.learnerResultApi.getAll(this.project.id).subscribe(
         results => {
           this.results = results;
-          this.panels = results.filter(r => {
-            return resultIds.indexOf(r.id.toString()) > -1;
-          }).map(r => ({
+          this.panels = results.filter(r => resultIds.indexOf(r.id.toString()) > -1).map(r => ({
             result: r,
             step: r.steps.length - 1
           }));
@@ -158,7 +156,7 @@ export class LearnerResultsCompareViewComponent implements OnInit {
 
   private addPanel(result: LearnerResult) {
     this.panels.push({
-      result: result,
+      result,
       step: result.steps.length - 1
     });
     this.activePanel = this.panels.length - 1;

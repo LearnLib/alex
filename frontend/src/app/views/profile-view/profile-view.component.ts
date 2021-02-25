@@ -32,12 +32,12 @@ export class ProfileViewComponent {
   user: User;
 
   passwordForm: FormGroup = new FormGroup({
-    'old': new FormControl('', [Validators.required]),
-    'new': new FormControl('', [])
+    old: new FormControl('', [Validators.required]),
+    new: new FormControl('', [])
   });
 
   emailForm: FormGroup = new FormGroup({
-    'email': new FormControl('', [Validators.required, Validators.email])
+    email: new FormControl('', [Validators.required, Validators.email])
   });
 
   constructor(private promptService: PromptService,

@@ -18,7 +18,7 @@ import { BaseApiService } from './base-api.service';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { EnvironmentProvider } from "../../../environments/environment.provider";
+import { EnvironmentProvider } from '../../../environments/environment.provider';
 
 /** The resource for symbol parameters. */
 @Injectable()

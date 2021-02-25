@@ -19,7 +19,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { SymbolsViewStoreService } from '../../symbols-view-store.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SymbolUsagesModalComponent } from '../../../../common/modals/symbol-usages-modal/symbol-usages-modal.component';
-import { SymbolLockInfo } from "../../../../services/symbol-presence.service";
+import { SymbolLockInfo } from '../../../../services/symbol-presence.service';
 
 @Component({
   selector: 'symbol-item',
@@ -41,7 +41,7 @@ export class SymbolItemComponent implements OnInit {
   ngOnInit() {
     this.store.symbolLocks$.subscribe(value => {
       this.lockInfo = value?.get(this.symbol.id);
-    })
+    });
   }
 
   showSymbolUsages() {

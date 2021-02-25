@@ -24,5 +24,5 @@ import { SetVariableByNodeGeneralAction } from '../../../../entities/actions/mis
 export class SetVariableByHtmlActionFormComponent {
 
   @Input()
-  action: SetVariableByNodeGeneralAction
+  action: SetVariableByNodeGeneralAction;
 }

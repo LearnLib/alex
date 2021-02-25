@@ -33,7 +33,7 @@ export class DriverConfigFormComponent {
 
   @Input()
   get config(): any {
-    return this.configValue
+    return this.configValue;
   }
 
   set config(val: any) {

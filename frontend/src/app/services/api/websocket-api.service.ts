@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import * as StompJS from "@stomp/stompjs";
-import { Client } from "@stomp/stompjs";
+import * as StompJS from '@stomp/stompjs';
+import { Client } from '@stomp/stompjs';
 import * as SockJS from 'sockjs-client';
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { BehaviorSubject, Subject } from "rxjs";
-import { WebSocketMessage } from "../../entities/websocket-message";
-import { EnvironmentProvider } from "../../../environments/environment.provider";
+import { BehaviorSubject, Subject } from 'rxjs';
+import { WebSocketMessage } from '../../entities/websocket-message';
+import { EnvironmentProvider } from '../../../environments/environment.provider';
 
 @Injectable()
 export class WebSocketAPIService {
@@ -36,7 +36,7 @@ export class WebSocketAPIService {
 
   constructor(private env: EnvironmentProvider) {
     this.client = new StompJS.Client({
-      debug: function (str) {
+      debug(str) {
         if (!environment.production) {
           console.log(str);
         }
@@ -46,9 +46,7 @@ export class WebSocketAPIService {
       heartbeatOutgoing: 4000,
     });
 
-    this.client.webSocketFactory = () => {
-      return new SockJS(`${this.env.apiUrl}/ws/stomp`);
-    };
+    this.client.webSocketFactory = () => new SockJS(`${this.env.apiUrl}/ws/stomp`);
 
     this.client.beforeConnect = () => {
       const jwt = localStorage.getItem('jwt');
@@ -56,7 +54,7 @@ export class WebSocketAPIService {
         this.connectStatus.next(WebSocketConnectStatus.CONNECTING);
         this.client.connectHeaders = {
           Authorization: `Bearer ${jwt}`
-        }
+        };
       } else {
         this.client.deactivate();
         this.connectStatus.next(WebSocketConnectStatus.DISCONNECTED);
@@ -70,7 +68,7 @@ export class WebSocketAPIService {
     };
 
     this.client.onStompError = (error) => {
-      console.log('Broker reported error: ' + error.headers['message']);
+      console.log('Broker reported error: ' + error.headers.message);
       console.log('Additional details: ' + error.body);
     };
 
@@ -96,7 +94,7 @@ export class WebSocketAPIService {
           Authorization: `Bearer ${jwt}`
         },
         body: `{ "sessionId": "${sessionId}" }`
-      })
+      });
     }
   }
 

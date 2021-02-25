@@ -24,5 +24,5 @@ import { SetVariableByHttpResponseAction } from '../../../../entities/actions/mi
 export class SetVariableByHttpResponseActionFormComponent {
 
   @Input()
-  action: SetVariableByHttpResponseAction
+  action: SetVariableByHttpResponseAction;
 }

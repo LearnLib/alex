@@ -17,8 +17,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 interface FormattedOutputTrace {
-  symbol: string,
-  output: string
+  symbol: string;
+  output: string;
 }
 
 @Component({
@@ -45,7 +45,7 @@ export class OutputErrorTraceComponent implements OnInit {
       const trace = this.output.trace;
       this.formattedTrace = trace.substr(1, trace.length - 2).split('] > [').map(p => {
         const parts = p.split(' / ');
-        return {symbol: parts.shift(), output: parts.join(' / ')}
+        return {symbol: parts.shift(), output: parts.join(' / ')};
       });
 
       if (!this.showFirst) {

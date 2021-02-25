@@ -10,21 +10,21 @@ export class WebDriverConfig {
   headless: true;
 
   static Browsers = {
-    'Chrome': 'chrome',
-    'Edge': 'MicrosoftEdge',
-    'Firefox': 'firefox',
+    Chrome: 'chrome',
+    Edge: 'MicrosoftEdge',
+    Firefox: 'firefox',
     'HTML Unit': 'htmlunit',
     'Internet Explorer': 'iexplore',
-    'Opera': 'operablink',
-    'Safari': 'safari'
+    Opera: 'operablink',
+    Safari: 'safari'
   };
 
   static Platforms = {
-    'Default': {
-      'Any': 'ANY'
+    Default: {
+      Any: 'ANY'
     },
-    'Windows': {
-      'Windows': 'WINDOWS',
+    Windows: {
+      Windows: 'WINDOWS',
       'Windows 10': 'WIN10',
       'Windows 8.1': 'WIN8_1',
       'Windows 8': 'WIN8',
@@ -33,16 +33,16 @@ export class WebDriverConfig {
     },
     'Mac OS': {
       'Mac OS': 'MAC',
-      'Sierra': 'SIERRA',
+      Sierra: 'SIERRA',
       'El Capitan': 'EL_CAPITAN',
-      'Yosemite': 'YOSEMITE',
-      'Mavericks': 'MAVERICKS',
+      Yosemite: 'YOSEMITE',
+      Mavericks: 'MAVERICKS',
       'Mountain Lion': 'MOUNTAIN_LION',
       'Snow Leopard': 'SNOW_LEOPARD'
     },
-    'Unix': {
-      'Linux': 'LINUX',
-      'Unix': 'UNIX'
+    Unix: {
+      Linux: 'LINUX',
+      Unix: 'UNIX'
     }
   };
 

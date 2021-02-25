@@ -47,7 +47,7 @@ export class AssertVariableAction extends Action {
   /**
    *
    *
-   * @returns {string}
+   * @returns
    */
   toString(): string {
     if (this.regexp) {

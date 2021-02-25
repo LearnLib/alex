@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Component, Input, ViewEncapsulation } from "@angular/core";
-import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
+import { Component, Input, ViewEncapsulation } from '@angular/core';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'view-screenshot-modal',

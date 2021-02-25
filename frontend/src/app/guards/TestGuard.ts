@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { Injectable } from "@angular/core";
-import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, Router, RouterStateSnapshot } from "@angular/router";
-import { TestPresenceService } from "../services/test-presence.service";
-import { Observable, of } from "rxjs";
-import { ToastService } from "../services/toast.service";
-import { AppStoreService } from "../services/app-store.service";
+import { Injectable } from '@angular/core';
+import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, Router, RouterStateSnapshot } from '@angular/router';
+import { TestPresenceService } from '../services/test-presence.service';
+import { Observable, of } from 'rxjs';
+import { ToastService } from '../services/toast.service';
+import { AppStoreService } from '../services/app-store.service';
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +38,7 @@ export class TestGuard implements CanActivate, CanActivateChild {
     const accessedTests = this.testPresenceService.accessedTestsValue;
 
     const testObject = accessedTests.get(Number(projectId))?.get(Number(testId));
-    if (testObject && testObject.type == "case" && testObject.username !== this.appStoreService.user.username) {
+    if (testObject && testObject.type == 'case' && testObject.username !== this.appStoreService.user.username) {
       this.toastService.danger('Test is already in use by ' + testObject.username);
       return of(false);
     }

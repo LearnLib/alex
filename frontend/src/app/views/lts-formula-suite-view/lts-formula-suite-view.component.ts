@@ -68,7 +68,7 @@ export class LtsFormulaSuiteViewComponent implements OnInit {
           );
         }
       }
-    )
+    );
   }
 
   createFormula(): void {

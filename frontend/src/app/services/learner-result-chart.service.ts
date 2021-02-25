@@ -50,8 +50,8 @@ export class LearnerResultChartService {
     }
     ,showXAxisLabelAreaChart: false
     ,showYAxisLabelAreaChart: false
-    ,xAxisLabelAreaChart: "Steps"
-    ,yAxisLabelAreaChart: ""
+    ,xAxisLabelAreaChart: 'Steps'
+    ,yAxisLabelAreaChart: ''
 
   };
 
@@ -60,44 +60,44 @@ export class LearnerResultChartService {
     const data = {
       mqs: [
         {
-          "name": "Total",
-          "value": result.statistics.mqsUsed.total
+          name: 'Total',
+          value: result.statistics.mqsUsed.total
         },
         {
-          "name": "Learner",
-          "value": result.statistics.mqsUsed.learner
+          name: 'Learner',
+          value: result.statistics.mqsUsed.learner
         },
         {
-          "name": "EQ Oracle",
-          "value": result.statistics.mqsUsed.eqOracle
+          name: 'EQ Oracle',
+          value: result.statistics.mqsUsed.eqOracle
         }
        ],
       symbols: [
         {
-          "name": "Total",
-          "value": result.statistics.symbolsUsed.total
+          name: 'Total',
+          value: result.statistics.symbolsUsed.total
         },
         {
-          "name": "Learner",
-          "value": result.statistics.symbolsUsed.learner
+          name: 'Learner',
+          value: result.statistics.symbolsUsed.learner
         },
         {
-          "name": "EQ Oracle",
-          "value": result.statistics.symbolsUsed.eqOracle
+          name: 'EQ Oracle',
+          value: result.statistics.symbolsUsed.eqOracle
         }
       ],
       duration: [
         {
-          "name": "Total",
-          "value": result.statistics.duration.total
+          name: 'Total',
+          value: result.statistics.duration.total
         },
         {
-          "name": "Learner",
-          "value": result.statistics.duration.learner
+          name: 'Learner',
+          value: result.statistics.duration.learner
         },
         {
-          "name": "EQ Oracle",
-          "value": result.statistics.duration.eqOracle
+          name: 'EQ Oracle',
+          value: result.statistics.duration.eqOracle
         }
       ]
     };
@@ -105,104 +105,104 @@ export class LearnerResultChartService {
     return {
       context: result,
       options: this.options,
-      data: data
+      data
     };
   }
 
   createDataSingleComplete(result: LearnerResult): any {
 
-    const mqs_total_series = [{name: 0, "value": 0}];
-    const mqs_learner_series = [{name: 0, "value": 0}];
-    const mqs_oracle_series = [{name: 0, "value": 0}];
-    const symbols_total_series = [{name: 0, "value": 0}];
-    const symbols_learner_series = [{name: 0, "value": 0}];
-    const symbols_oracle_series = [{name: 0, "value": 0}];
-    const duration_total_series = [{name: 0, "value": 0}];
-    const duration_learner_series = [{name: 0, "value": 0}];
-    const duration_oracle_series = [{name: 0, "value": 0}];
+    const mqs_total_series = [{name: 0, value: 0}];
+    const mqs_learner_series = [{name: 0, value: 0}];
+    const mqs_oracle_series = [{name: 0, value: 0}];
+    const symbols_total_series = [{name: 0, value: 0}];
+    const symbols_learner_series = [{name: 0, value: 0}];
+    const symbols_oracle_series = [{name: 0, value: 0}];
+    const duration_total_series = [{name: 0, value: 0}];
+    const duration_learner_series = [{name: 0, value: 0}];
+    const duration_oracle_series = [{name: 0, value: 0}];
 
     result.steps.forEach((step, i) => {
       i = i + 1;
 
       mqs_total_series.push({
         name: i,
-        "value": step.statistics.mqsUsed.total
+        value: step.statistics.mqsUsed.total
       });
       mqs_learner_series.push({
         name: i,
-        "value": step.statistics.mqsUsed.learner
+        value: step.statistics.mqsUsed.learner
       });
       mqs_oracle_series.push({
         name: i,
-        "value": step.statistics.mqsUsed.eqOracle
+        value: step.statistics.mqsUsed.eqOracle
       });
       symbols_total_series.push({
         name: i,
-        "value": step.statistics.symbolsUsed.total
+        value: step.statistics.symbolsUsed.total
       });
       symbols_learner_series.push({
         name: i,
-        "value": step.statistics.symbolsUsed.learner
+        value: step.statistics.symbolsUsed.learner
       });
       symbols_oracle_series.push({
         name: i,
-        "value": step.statistics.symbolsUsed.eqOracle
+        value: step.statistics.symbolsUsed.eqOracle
       });
       duration_total_series.push({
         name: i,
-        "value": step.statistics.duration.total
+        value: step.statistics.duration.total
       });
       duration_learner_series.push({
         name: i,
-        "value": step.statistics.duration.learner
+        value: step.statistics.duration.learner
       });
       duration_oracle_series.push({
         name: i,
-        "value": step.statistics.duration.eqOracle
+        value: step.statistics.duration.eqOracle
       });
     });
 
     const data = {
       mqs: [
         {
-          "name": "Total",
-          "series": mqs_total_series
+          name: 'Total',
+          series: mqs_total_series
         },
         {
-          "name": "Learner",
-          "series": mqs_learner_series
+          name: 'Learner',
+          series: mqs_learner_series
         },
         {
-          "name": "EQ Oracle",
-          "series": mqs_oracle_series
+          name: 'EQ Oracle',
+          series: mqs_oracle_series
         }
       ],
       symbols: [
         {
-          "name": "Total",
-          "series": symbols_total_series
+          name: 'Total',
+          series: symbols_total_series
         },
         {
-          "name": "Learner",
-          "series": symbols_learner_series
+          name: 'Learner',
+          series: symbols_learner_series
         },
         {
-          "name": "EQ Oracle",
-          "series": symbols_oracle_series
+          name: 'EQ Oracle',
+          series: symbols_oracle_series
         }
       ],
       duration: [
         {
-          "name": "Total",
-          "series": duration_total_series
+          name: 'Total',
+          series: duration_total_series
         },
         {
-          "name": "Learner",
-          "series": duration_learner_series
+          name: 'Learner',
+          series: duration_learner_series
         },
         {
-          "name": "EQ Oracle",
-          "series": duration_oracle_series
+          name: 'EQ Oracle',
+          series: duration_oracle_series
         }
       ]
     };
@@ -210,7 +210,7 @@ export class LearnerResultChartService {
     return {
       context: result,
       options: this.options,
-      data: data
+      data
     };
   }
 
@@ -224,25 +224,25 @@ export class LearnerResultChartService {
 
     results.forEach((result) => {
       data.mqs.push({
-        "name": "Test " + result.testNo,
-        "value": result.statistics.mqsUsed.total
+        name: 'Test ' + result.testNo,
+        value: result.statistics.mqsUsed.total
       });
       data.symbols.push({
-        "name": "Test " + result.testNo,
-        "value": result.statistics.symbolsUsed.total
+        name: 'Test ' + result.testNo,
+        value: result.statistics.symbolsUsed.total
       });
       data.duration.push({
-        "name": "Test " + result.testNo,
-        "value": result.statistics.duration.total
-      })
+        name: 'Test ' + result.testNo,
+        value: result.statistics.duration.total
+      });
     });
 
 
     return {
       context: results,
       options: this.options,
-      data: data
-    }
+      data
+    };
   }
 
   createDataMultipleComplete(results: LearnerResult[]): any {
@@ -255,9 +255,9 @@ export class LearnerResultChartService {
 
     results.forEach((result) => {
 
-      const mqs_total_series = [{name: 0, "value": 0}];
-      const symbols_total_series = [{name: 0, "value": 0}];
-      const duration_total_series = [{name: 0, "value": 0}];
+      const mqs_total_series = [{name: 0, value: 0}];
+      const symbols_total_series = [{name: 0, value: 0}];
+      const duration_total_series = [{name: 0, value: 0}];
 
       result.steps.forEach((step, i) => {
 
@@ -265,38 +265,38 @@ export class LearnerResultChartService {
 
         mqs_total_series.push({
           name: i,
-          "value": step.statistics.mqsUsed.total
+          value: step.statistics.mqsUsed.total
         });
         symbols_total_series.push({
           name: i,
-          "value": step.statistics.symbolsUsed.total
+          value: step.statistics.symbolsUsed.total
         });
         duration_total_series.push({
           name: i,
-          "value": step.statistics.duration.total
-        })
+          value: step.statistics.duration.total
+        });
 
       });
 
       data.mqs.push({
-        "name": "Test " + result.testNo,
-        "series": mqs_total_series
+        name: 'Test ' + result.testNo,
+        series: mqs_total_series
       });
       data.symbols.push({
-        "name": "Test " + result.testNo,
-        "series": symbols_total_series
+        name: 'Test ' + result.testNo,
+        series: symbols_total_series
       });
       data.duration.push({
-        "name": "Test " + result.testNo,
-        "series": duration_total_series
-      })
+        name: 'Test ' + result.testNo,
+        series: duration_total_series
+      });
 
     });
 
     return {
       context: results,
       options: this.options,
-      data: data
-    }
+      data
+    };
   }
 }

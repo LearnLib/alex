@@ -24,5 +24,5 @@ import { SetVariableByJsonAttributeGeneralAction } from '../../../../entities/ac
 export class SetVariableByJsonActionFormComponent {
 
   @Input()
-  action: SetVariableByJsonAttributeGeneralAction
+  action: SetVariableByJsonAttributeGeneralAction;
 }

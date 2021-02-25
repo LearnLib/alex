@@ -27,6 +27,7 @@ export class AlertSendKeysAction extends Action {
 
   /**
    * Constructor.
+   *
    * @param obj {object}
    */
   constructor(obj: any = {}) {

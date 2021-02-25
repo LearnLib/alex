@@ -31,8 +31,7 @@ interface IOPair {
   output: string;
 }
 
-interface Counterexample extends Array<IOPair> {
-}
+type Counterexample = Array<IOPair>;
 
 /**
  * The directive for the content of the counterexample widget that is used to create and test counterexamples.
@@ -77,9 +76,7 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.dragulaService.createGroup('CE', {
-      moves: () => {
-        return true;
-      },
+      moves: () => true,
       removeOnSpill: false
     });
 
@@ -100,7 +97,7 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
   /**
    * Removes a input output pair from the temporary counterexamples array.
    *
-   * @param {number} i - The index of the pair to remove.
+   * @param i - The index of the pair to remove.
    */
   removeInputOutputAt(i): void {
     this.counterexample.splice(i, 1);

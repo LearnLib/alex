@@ -65,7 +65,7 @@ export class CreateSymbolParameterModalComponent implements OnInit {
     this.symbolParameterApi.create(this.symbol.project, this.symbol.id, this.parameter).subscribe(
       param => this.modal.close(param),
       res => {
-        this.errorMessage = res.error.message
+        this.errorMessage = res.error.message;
       }
     );
   }

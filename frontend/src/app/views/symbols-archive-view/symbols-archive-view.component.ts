@@ -154,7 +154,7 @@ export class SymbolsArchiveViewComponent implements OnInit {
         symbols.forEach(s1 => remove(this.symbols, s2 => s2.id === s1.id));
       },
       res => {
-        this.toastService.danger(`The symbols could not be deleted. ${res.error.message}`)
+        this.toastService.danger(`The symbols could not be deleted. ${res.error.message}`);
       }
     );
   }

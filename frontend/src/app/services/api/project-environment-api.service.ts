@@ -39,7 +39,7 @@ export class ProjectEnvironmentApiService extends BaseApiService {
   }
 
   getOutput(projectId: number, envId: number, config: any): Observable<any> {
-    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/environments/${envId}/outputs`, config, this.defaultHttpOptions)
+    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/environments/${envId}/outputs`, config, this.defaultHttpOptions);
   }
 
   create(projectId: number, env: ProjectEnvironment): Observable<ProjectEnvironment> {

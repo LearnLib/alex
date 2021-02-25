@@ -85,7 +85,7 @@ export class DownloadService {
     // add entries from table row
     if (rows.length > 0) {
       for (let i = 0; i < rows.length; i++) {
-        var tds = rows[i].querySelectorAll('td');
+        const tds = rows[i].querySelectorAll('td');
         if (tds.length > 0) {
           for (let j = 0; j < tds.length; j++) {
             csv += tds[j].textContent.replace(',', ' ') + (j === tds.length - 1 ? '\n' : ',');
@@ -144,8 +144,8 @@ export class DownloadService {
     svgCopy.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
 
     svgCopy.querySelectorAll('.edge > path').forEach(p => {
-      p.setAttributeNS(null, "fill", "none");
-      p.setAttributeNS(null, "stroke", "#000");
+      p.setAttributeNS(null, 'fill', 'none');
+      p.setAttributeNS(null, 'stroke', '#000');
     });
 
     const dimension = g.getBoundingClientRect();

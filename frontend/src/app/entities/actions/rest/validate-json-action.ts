@@ -27,6 +27,7 @@ export class ValidateJsonAction extends Action {
 
   /**
    * Constructor.
+   *
    * @param obj - The action.
    */
   constructor(obj: any = {}) {

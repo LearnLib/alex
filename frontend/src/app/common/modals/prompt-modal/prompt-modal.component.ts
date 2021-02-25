@@ -52,7 +52,7 @@ export class PromptModalComponent implements OnInit {
 
   ngOnInit(): void {
     const validators = [...this.validators];
-    if (this.options.required) validators.push(Validators.required);
+    if (this.options.required) {validators.push(Validators.required);}
     this.form.controls.input.setValue(this.options.defaultValue);
     this.form.controls.input.setValidators(validators);
   }

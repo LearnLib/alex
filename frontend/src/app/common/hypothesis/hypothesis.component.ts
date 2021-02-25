@@ -18,16 +18,16 @@ import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output, S
 import { Edge as NgxGraphEdge, Node, NodePosition } from '@swimlane/ngx-graph';
 
 export interface Edge {
-  from: string,
-  to: string,
-  input: string,
-  output: string
+  from: string;
+  to: string;
+  input: string;
+  output: string;
 }
 
 export interface Hypothesis {
-  nodes: number[],
-  initNode: number,
-  edges: Edge[]
+  nodes: number[];
+  initNode: number;
+  edges: Edge[];
 }
 
 @Component({
@@ -61,7 +61,7 @@ export class HypothesisComponent implements OnChanges {
   }
 
   private stateSizeChanged(changes: SimpleChanges): boolean {
-    return changes.data.currentValue.nodes.length != changes.data.previousValue.nodes.length
+    return changes.data.currentValue.nodes.length != changes.data.previousValue.nodes.length;
   }
 
   private alphabetChanged(changes: SimpleChanges): boolean {
@@ -77,7 +77,7 @@ export class HypothesisComponent implements OnChanges {
       to: link.target,
       input: io[0],
       output: io[1]
-    })
+    });
   }
 
   init(): void {
@@ -92,14 +92,14 @@ export class HypothesisComponent implements OnChanges {
 
       const edges = {};
       this.data.edges.forEach(edge => {
-        if (edges[edge.from] == null) edges[edge.from] = {};
-        if (edges[edge.from][edge.to] == null) edges[edge.from][edge.to] = [];
+        if (edges[edge.from] == null) {edges[edge.from] = {};}
+        if (edges[edge.from][edge.to] == null) {edges[edge.from][edge.to] = [];}
         edges[edge.from][edge.to].push(`${edge.input} / ${edge.output}`);
       });
 
       this.links = [];
-      for (let from in edges) {
-        for (let to in edges[from]) {
+      for (const from in edges) {
+        for (const to in edges[from]) {
           this.links.push({
             id: `edge-${from}-${to}`,
             source: `${from}`,

@@ -45,7 +45,7 @@ export class TestConfigListComponent implements OnInit {
 
   ngOnInit(): void {
     const i = this.configs.findIndex(c => c.default);
-    if (i > -1) this.selectConfig(this.configs[i]);
+    if (i > -1) {this.selectConfig(this.configs[i]);}
   }
 
   selectConfig(config: any): void {

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { Component } from "@angular/core";
-import { TestResultApiService } from "../../services/api/test-result-api.service";
-import { ActivatedRoute } from "@angular/router";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { ViewScreenshotModalComponent } from "./view-screenshot-modal/view-screenshot-modal.component";
-import { DownloadService } from "../../services/download.service";
+import { Component } from '@angular/core';
+import { TestResultApiService } from '../../services/api/test-result-api.service';
+import { ActivatedRoute } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ViewScreenshotModalComponent } from './view-screenshot-modal/view-screenshot-modal.component';
+import { DownloadService } from '../../services/download.service';
 import { ToastService } from '../../services/toast.service';
 
 @Component({
@@ -29,7 +29,7 @@ import { ToastService } from '../../services/toast.service';
 })
 export class TestReportScreenshotsViewComponent {
 
-  testResult: any
+  testResult: any;
 
   constructor(private testResultApi: TestResultApiService,
               private route: ActivatedRoute,
@@ -53,7 +53,7 @@ export class TestReportScreenshotsViewComponent {
   downloadScreenshots() {
     this.testResultApi.getScreenshots(this.testResult.project, this.testResult.report, this.testResult.id)
       .subscribe(
-        res => this.downloadService.downloadZipFromBlob(res.body, "screenshots"),
+        res => this.downloadService.downloadZipFromBlob(res.body, 'screenshots'),
         () => this.toastService.danger('Failed to download ZIP archive')
       );
   }

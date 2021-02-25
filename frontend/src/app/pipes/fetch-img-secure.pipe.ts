@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { Pipe, PipeTransform } from "@angular/core";
-import { BaseApiService } from "../services/api/base-api.service";
-import { ImgCacheService } from "../services/img-cache.service";
-import { HttpClient } from "@angular/common/http";
-import { BehaviorSubject } from "rxjs";
-import { EnvironmentProvider } from "../../environments/environment.provider";
+import { Pipe, PipeTransform } from '@angular/core';
+import { BaseApiService } from '../services/api/base-api.service';
+import { ImgCacheService } from '../services/img-cache.service';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject } from 'rxjs';
+import { EnvironmentProvider } from '../../environments/environment.provider';
 
 @Pipe({
     name: 'fetchImgSecure'
@@ -46,10 +46,10 @@ export class FetchImgSecurePipe extends BaseApiService implements PipeTransform 
         const bSubject = new BehaviorSubject<string>('data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==');
         this.imgCacheService.put(src, bSubject);
 
-        this.http.get(`${this.env.apiUrl}${src}`, options as any).subscribe(response => {
+        this.http.get(`${this.env.apiUrl}${src}`, options as any).subscribe((response: any) => {
             const reader = new FileReader();
-            reader.readAsDataURL(response['body']);
-            reader.onloadend = function () {
+            reader.readAsDataURL(response.body);
+            reader.onloadend = function() {
                 bSubject.next(reader.result as string);
             };
         });

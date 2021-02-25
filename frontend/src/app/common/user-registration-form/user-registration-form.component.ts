@@ -33,7 +33,7 @@ export class UserRegistrationFormComponent {
   signedUp = new EventEmitter<any>();
 
   form = new FormGroup({
-    username: new FormControl('', [Validators.required, Validators.pattern("[a-zA-Z][a-zA-Z0-9]*"), Validators.maxLength(32)]),
+    username: new FormControl('', [Validators.required, Validators.pattern('[a-zA-Z][a-zA-Z0-9]*'), Validators.maxLength(32)]),
     email: new FormControl('', [Validators.email, Validators.required]),
     password: new FormControl('', [Validators.required])
   });

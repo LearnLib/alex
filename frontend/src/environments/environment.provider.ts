@@ -14,8 +14,8 @@
 * limitations under the License.
 */
 
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 interface Env {
   url: string;
@@ -34,11 +34,8 @@ export class EnvironmentProvider {
       .toPromise()
       .then(env => {
         this.apiUrl = env.url + '/rest';
-      })
+      });
   }
 }
 
-export function initEnv(env: EnvironmentProvider): () =>
-  Promise<void> {
-  return () => env.load();
-}
+export const initEnv = (env: EnvironmentProvider) => env.load();
