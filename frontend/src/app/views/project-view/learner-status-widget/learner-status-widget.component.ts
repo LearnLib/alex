@@ -28,10 +28,10 @@ import { LearnerResult } from '../../../entities/learner-result';
 })
 export class LearnerStatusWidgetComponent implements OnInit, OnDestroy {
 
-  private readonly INTERVAL_TIME = 5000;
-
   /** The status of the learner. */
   status: LearnerStatus;
+
+  private readonly INTERVAL_TIME = 5000;
 
   /** The interval handle. */
   private intervalHandle: number;
@@ -60,6 +60,12 @@ export class LearnerStatusWidgetComponent implements OnInit, OnDestroy {
     );
   }
 
+  canAbort(result: LearnerResult) {
+    return result.executedBy == null
+      || this.appStore.user.id === result.executedBy.id
+      || this.appStore.project.owners.includes(this.appStore.user.id);
+  }
+
   private getStatus(): void {
     this.learnerApi.getStatus(this.project.id).subscribe(
       status => this.status = status,
@@ -69,11 +75,5 @@ export class LearnerStatusWidgetComponent implements OnInit, OnDestroy {
 
   get project(): Project {
     return this.appStore.project;
-  }
-
-  canAbort(result: LearnerResult) {
-    return result.executedBy == null
-            || this.appStore.user.id == result.executedBy.id
-            || this.appStore.project.owners.includes(this.appStore.user.id);
   }
 }

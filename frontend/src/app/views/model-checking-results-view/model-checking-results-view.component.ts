@@ -44,19 +44,7 @@ export class ModelCheckingResultsViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(
-      map => this.loadLearnerResult(parseInt(map.get('resultIds')))
-    );
-  }
-
-  private loadLearnerResult(testNo: number) {
-    this.learnerResultApi.get(this.project.id, testNo).subscribe(
-      data => {
-        this.learnerResult = data;
-        this.sortedSteps = reverse(this.learnerResult.steps);
-        this.sortedSteps.forEach(s => this.collapsedStepsMap[s.stepNo] = true);
-        this.collapsedStepsMap[this.sortedSteps[0].stepNo] = false;
-      },
-      res => console.error(res.error.message)
+      map => this.loadLearnerResult(Number(map.get('resultIds')))
     );
   }
 
@@ -77,6 +65,18 @@ export class ModelCheckingResultsViewComponent implements OnInit {
 
   isCollapsed(step: any) {
     return this.collapsedStepsMap[step.stepNo];
+  }
+
+  private loadLearnerResult(testNo: number) {
+    this.learnerResultApi.get(this.project.id, testNo).subscribe(
+      data => {
+        this.learnerResult = data;
+        this.sortedSteps = reverse(this.learnerResult.steps);
+        this.sortedSteps.forEach(s => this.collapsedStepsMap[s.stepNo] = true);
+        this.collapsedStepsMap[this.sortedSteps[0].stepNo] = false;
+      },
+      res => console.error(res.error.message)
+    );
   }
 
   get project(): Project {

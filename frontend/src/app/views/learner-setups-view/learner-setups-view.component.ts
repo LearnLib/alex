@@ -48,7 +48,7 @@ export class LearnerSetupsViewComponent {
     this.learnerSetupApi.remove(this.project.id, setup.id).subscribe(
       () => {
         this.toastService.success('The setup has been deleted.');
-        this.learnerSetups = this.learnerSetups.filter(ls => ls.id != setup.id);
+        this.learnerSetups = this.learnerSetups.filter(ls => ls.id !== setup.id);
       },
       console.error
     );

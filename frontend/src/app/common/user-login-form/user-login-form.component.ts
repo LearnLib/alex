@@ -47,12 +47,6 @@ export class UserLoginFormComponent {
               public formUtils: FormUtilsService) {
   }
 
-  ngOnInit(): void {
-    if (this.credentials != null) {
-      this.form.setValue(this.credentials);
-    }
-  }
-
   /**
    * Logs in the user.
    */

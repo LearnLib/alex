@@ -113,9 +113,9 @@ export class CreateSymbolModalComponent implements OnInit {
     symbol.expectedResult = this.form.controls.expectedResult.value;
 
     return this.symbolApi.create(this.project.id, symbol).pipe(
-      tap((symbol: AlphabetSymbol) => {
-        this.toastService.success(`Created symbol "${symbol.name}"`);
-        this.created.emit(symbol);
+      tap((s: AlphabetSymbol) => {
+        this.toastService.success(`Created symbol "${s.name}"`);
+        this.created.emit(s);
         this.form.reset();
       })
     );

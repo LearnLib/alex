@@ -49,7 +49,7 @@ export class FileDropzoneComponent {
    * @param e The event.
    */
   onLoad(e: Event): void {
-    this.loaded.emit((<any>e.target).result);
+    this.loaded.emit((e.target as any).result);
   }
 
   /**
@@ -60,7 +60,7 @@ export class FileDropzoneComponent {
     input.setAttribute('type', 'file');
     input.setAttribute('multiple', `${this.multiple}`);
     input.addEventListener('change', e => {
-      const files = (<any>e.target).files;
+      const files = (e.target as any).files;
       this.filesLoaded.emit(files);
       this.readFiles(files);
     }, false);
@@ -86,7 +86,7 @@ export class FileDropzoneComponent {
   onDrop(e: Event): void {
     e.preventDefault();
     e.stopPropagation();
-    this.readFiles((<any>e).dataTransfer.files);
+    this.readFiles((e as any).dataTransfer.files);
   }
 
   /**
@@ -95,8 +95,8 @@ export class FileDropzoneComponent {
    * @param files The files to upload.
    */
   readFiles(files: File[]): void {
-    for (let i = 0; i < files.length; i++) {
-      this.fileReader.readAsText(files[i]);
+    for (const file of files) {
+      this.fileReader.readAsText(file);
     }
   }
 }

@@ -26,10 +26,10 @@ import { WebDriverConfig } from '../../entities/web-driver-config';
 })
 export class DriverConfigFormComponent {
 
-  configValue: any;
-
   @Output()
   configChange = new EventEmitter<any>();
+
+  configValue: any;
 
   @Input()
   get config(): any {

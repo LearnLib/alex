@@ -35,7 +35,7 @@ export class TestResultApiService extends BaseApiService {
    * @param testResultId The id of the result.
    */
   get(projectId: number, testReportId: number, testResultId: number): Observable<any> {
-    return this.http.get(`${this.env.apiUrl}/projects/${projectId}/tests/reports/${testReportId}/results/${testResultId}`, this.defaultHttpOptions);
+    return this.http.get(this.getUrl(projectId, testReportId, testResultId), this.defaultHttpOptions);
   }
 
   getScreenshot(projectId: number, testReportId: number, testResultId: number, screenshotName: string): Observable<any> {
@@ -45,7 +45,7 @@ export class TestResultApiService extends BaseApiService {
       observe: 'response'
     };
 
-    return this.http.get(`${this.env.apiUrl}/projects/${projectId}/tests/reports/${testReportId}/results/${testResultId}/screenshots/${screenshotName}`, options as any);
+    return this.http.get(`${this.getUrl(projectId, testReportId, testResultId)}/screenshots/${screenshotName}`, options as any);
   }
 
   getScreenshots(projectId: number, testReportId: number, testResultId: number): Observable<any> {
@@ -55,6 +55,10 @@ export class TestResultApiService extends BaseApiService {
       observe: 'response'
     };
 
-    return this.http.get(`${this.env.apiUrl}/projects/${projectId}/tests/reports/${testReportId}/results/${testResultId}/screenshots/batch`, options as any);
+    return this.http.get(`${this.getUrl(projectId, testReportId, testResultId)}/screenshots/batch`, options as any);
+  }
+
+  private getUrl(projectId: number, testReportId: number, testResultId: number) {
+    return `${this.env.apiUrl}/projects/${projectId}/tests/reports/${testReportId}/results/${testResultId}`;
   }
 }

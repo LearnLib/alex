@@ -111,52 +111,52 @@ export class LearnerResultChartService {
 
   createDataSingleComplete(result: LearnerResult): any {
 
-    const mqs_total_series = [{name: 0, value: 0}];
-    const mqs_learner_series = [{name: 0, value: 0}];
-    const mqs_oracle_series = [{name: 0, value: 0}];
-    const symbols_total_series = [{name: 0, value: 0}];
-    const symbols_learner_series = [{name: 0, value: 0}];
-    const symbols_oracle_series = [{name: 0, value: 0}];
-    const duration_total_series = [{name: 0, value: 0}];
-    const duration_learner_series = [{name: 0, value: 0}];
-    const duration_oracle_series = [{name: 0, value: 0}];
+    const mqsTotalSeries = [{name: 0, value: 0}];
+    const mqsLearnerSeries = [{name: 0, value: 0}];
+    const mqsOracleSeries = [{name: 0, value: 0}];
+    const symbolsTotalSeries = [{name: 0, value: 0}];
+    const symbolsLearnerSeries = [{name: 0, value: 0}];
+    const symbolsOracleSeries = [{name: 0, value: 0}];
+    const durationTotalSeries = [{name: 0, value: 0}];
+    const durationLearnerSeries = [{name: 0, value: 0}];
+    const durationOracleSeries = [{name: 0, value: 0}];
 
     result.steps.forEach((step, i) => {
       i = i + 1;
 
-      mqs_total_series.push({
+      mqsTotalSeries.push({
         name: i,
         value: step.statistics.mqsUsed.total
       });
-      mqs_learner_series.push({
+      mqsLearnerSeries.push({
         name: i,
         value: step.statistics.mqsUsed.learner
       });
-      mqs_oracle_series.push({
+      mqsOracleSeries.push({
         name: i,
         value: step.statistics.mqsUsed.eqOracle
       });
-      symbols_total_series.push({
+      symbolsTotalSeries.push({
         name: i,
         value: step.statistics.symbolsUsed.total
       });
-      symbols_learner_series.push({
+      symbolsLearnerSeries.push({
         name: i,
         value: step.statistics.symbolsUsed.learner
       });
-      symbols_oracle_series.push({
+      symbolsOracleSeries.push({
         name: i,
         value: step.statistics.symbolsUsed.eqOracle
       });
-      duration_total_series.push({
+      durationTotalSeries.push({
         name: i,
         value: step.statistics.duration.total
       });
-      duration_learner_series.push({
+      durationLearnerSeries.push({
         name: i,
         value: step.statistics.duration.learner
       });
-      duration_oracle_series.push({
+      durationOracleSeries.push({
         name: i,
         value: step.statistics.duration.eqOracle
       });
@@ -166,43 +166,43 @@ export class LearnerResultChartService {
       mqs: [
         {
           name: 'Total',
-          series: mqs_total_series
+          series: mqsTotalSeries
         },
         {
           name: 'Learner',
-          series: mqs_learner_series
+          series: mqsLearnerSeries
         },
         {
           name: 'EQ Oracle',
-          series: mqs_oracle_series
+          series: mqsOracleSeries
         }
       ],
       symbols: [
         {
           name: 'Total',
-          series: symbols_total_series
+          series: symbolsTotalSeries
         },
         {
           name: 'Learner',
-          series: symbols_learner_series
+          series: symbolsLearnerSeries
         },
         {
           name: 'EQ Oracle',
-          series: symbols_oracle_series
+          series: symbolsOracleSeries
         }
       ],
       duration: [
         {
           name: 'Total',
-          series: duration_total_series
+          series: durationTotalSeries
         },
         {
           name: 'Learner',
-          series: duration_learner_series
+          series: durationLearnerSeries
         },
         {
           name: 'EQ Oracle',
-          series: duration_oracle_series
+          series: durationOracleSeries
         }
       ]
     };
@@ -255,23 +255,23 @@ export class LearnerResultChartService {
 
     results.forEach((result) => {
 
-      const mqs_total_series = [{name: 0, value: 0}];
-      const symbols_total_series = [{name: 0, value: 0}];
-      const duration_total_series = [{name: 0, value: 0}];
+      const mqsTotalSeries = [{name: 0, value: 0}];
+      const symbolsTotalSeries = [{name: 0, value: 0}];
+      const durationTotalSeries = [{name: 0, value: 0}];
 
       result.steps.forEach((step, i) => {
 
         i = i + 1;
 
-        mqs_total_series.push({
+        mqsTotalSeries.push({
           name: i,
           value: step.statistics.mqsUsed.total
         });
-        symbols_total_series.push({
+        symbolsTotalSeries.push({
           name: i,
           value: step.statistics.symbolsUsed.total
         });
-        duration_total_series.push({
+        durationTotalSeries.push({
           name: i,
           value: step.statistics.duration.total
         });
@@ -280,15 +280,15 @@ export class LearnerResultChartService {
 
       data.mqs.push({
         name: 'Test ' + result.testNo,
-        series: mqs_total_series
+        series: mqsTotalSeries
       });
       data.symbols.push({
         name: 'Test ' + result.testNo,
-        series: symbols_total_series
+        series: symbolsTotalSeries
       });
       data.duration.push({
         name: 'Test ' + result.testNo,
-        series: duration_total_series
+        series: durationTotalSeries
       });
 
     });

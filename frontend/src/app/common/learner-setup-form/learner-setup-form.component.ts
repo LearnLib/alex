@@ -42,11 +42,11 @@ import { LtsFormulaSuiteApiService } from '../../services/api/lts-formula-suite-
 })
 export class LearnerSetupFormComponent implements OnInit {
 
-  /** The constants for learnAlgorithm names. */
-  learningAlgorithms: any = learningAlgorithm;
-
   @Input()
   setup: LearnerSetup;
+
+  /** The constants for learnAlgorithm names. */
+  learningAlgorithms: any = learningAlgorithm;
 
   groups: SymbolGroup[] = [];
   selectedLearningAlgorithm: string = learningAlgorithm.TTT;

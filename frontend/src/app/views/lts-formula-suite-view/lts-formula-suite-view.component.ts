@@ -56,7 +56,7 @@ export class LtsFormulaSuiteViewComponent implements OnInit {
           this.toastService.info('Could not find formula suite id in URL');
           redirect();
         } else {
-          this.formulaSuiteApiService.get(this.project.id, parseInt(params.get('suiteId'))).subscribe(
+          this.formulaSuiteApiService.get(this.project.id, Number(params.get('suiteId'))).subscribe(
             suite => {
               this.suite = suite;
               this.formulasSelectable.addItems(this.suite.formulas);

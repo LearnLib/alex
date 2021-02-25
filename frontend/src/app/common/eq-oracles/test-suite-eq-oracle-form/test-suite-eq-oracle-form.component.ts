@@ -29,8 +29,8 @@ export class TestSuiteEqOracleFormComponent implements OnInit {
   @Input()
   form: FormGroup;
 
-  @Input('oracle')
-  eqOracle: TestSuiteEqOracle;
+  @Input()
+  oracle: TestSuiteEqOracle;
 
   /** The root test suite. */
   root: any;
@@ -51,8 +51,8 @@ export class TestSuiteEqOracleFormComponent implements OnInit {
       root => this.root = root
     );
 
-    if (this.eqOracle.testSuiteId != null) {
-      this.testApi.get(project.id, this.eqOracle.testSuiteId).subscribe(
+    if (this.oracle.testSuiteId != null) {
+      this.testApi.get(project.id, this.oracle.testSuiteId).subscribe(
         ts => this.selectedTestSuite = ts
       );
     }
@@ -60,6 +60,6 @@ export class TestSuiteEqOracleFormComponent implements OnInit {
 
   onSelected(testSuite: any): any {
     this.selectedTestSuite = testSuite;
-    this.eqOracle.testSuiteId = testSuite.id;
+    this.oracle.testSuiteId = testSuite.id;
   }
 }

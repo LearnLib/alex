@@ -65,7 +65,7 @@ export class StatisticsCompareViewComponent {
               private promptService: PromptService) {
 
     currentRoute.paramMap.subscribe(map => {
-      this.testNos = map.get('testNos').split(',').map(t => parseInt(t));
+      this.testNos = map.get('testNos').split(',').map(t => Number(t));
       this.chartMode = this.testNos.length > 1 ? this.chartModes.MULTIPLE_FINAL : this.chartModes.SINGLE_FINAL;
       this.showInColumns = true;
       this.createChartData();
@@ -168,7 +168,7 @@ export class StatisticsCompareViewComponent {
   /** Reformat X Values to avoid floating point numbers to be displayed. */
   formatXTicks(value) {
 
-    if (value % 1 != 0) {
+    if (value % 1 !== 0) {
       return '';
     }
 

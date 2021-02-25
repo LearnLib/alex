@@ -54,9 +54,9 @@ export class CreateUserModalComponent {
     user.role = this.form.controls.role.value;
 
     this.userApi.create(user).subscribe(
-      user => {
+      createdUser => {
         this.toastService.success('The user has been created.');
-        this.modal.close(user);
+        this.modal.close(createdUser);
       },
       res => this.errorMessage = `Could not create the user. ${res.error.message}`
     );

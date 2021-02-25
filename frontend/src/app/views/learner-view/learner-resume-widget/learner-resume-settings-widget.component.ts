@@ -34,8 +34,6 @@ import { FormGroup } from '@angular/forms';
 })
 export class LearnerResumeSettingsWidgetComponent {
 
-  eqOracleTypes: any = eqOracleType;
-
   @Input()
   symbols: AlphabetSymbol[];
 
@@ -48,14 +46,15 @@ export class LearnerResumeSettingsWidgetComponent {
   @Input()
   result: LearnerResult;
 
-  /** The selected symbol to add. */
+  eqOracleTypes: any = eqOracleType;
+
   selectedSymbol: string = null;
 
   form = new FormGroup({});
 
   addSelectedSymbol(): void {
-    const id = parseInt(this.selectedSymbol);
-    const s = this.symbols.find(s => s.id === id);
+    const id = Number(this.selectedSymbol);
+    const s = this.symbols.find(s2 => s2.id === id);
     this.configuration.symbolsToAdd.push(ParametrizedSymbol.fromSymbol(s));
     this.selectedSymbol = null;
   }

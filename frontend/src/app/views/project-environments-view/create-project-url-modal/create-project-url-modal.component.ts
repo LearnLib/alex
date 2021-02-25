@@ -27,11 +27,12 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class CreateProjectUrlModalComponent {
 
-  public form: FormGroup;
-  public url: ProjectUrl;
-  public errorMessage: string;
   @Input()
-  private environment: ProjectEnvironment;
+  environment: ProjectEnvironment;
+
+  form: FormGroup;
+  url: ProjectUrl;
+  errorMessage: string;
 
   constructor(public modal: NgbActiveModal,
               private projectEnvironmentApi: ProjectEnvironmentApiService) {

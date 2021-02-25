@@ -50,9 +50,9 @@ export class LearnerResultApiService extends BaseApiService {
     options.params = {page, size};
     return this.http.get(`${this.env.apiUrl}/projects/${projectId}/results`, options)
       .pipe(
-        map((page: any) => {
-          page.content = page.content.map(lr => new LearnerResult(lr));
-          return page;
+        map((newPage: any) => {
+          newPage.content = newPage.content.map(lr => new LearnerResult(lr));
+          return newPage;
         })
       );
   }

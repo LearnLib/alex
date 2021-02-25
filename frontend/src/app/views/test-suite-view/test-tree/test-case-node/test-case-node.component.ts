@@ -25,9 +25,6 @@ import { AppStoreService } from '../../../../services/app-store.service';
 })
 export class TestCaseNodeComponent {
 
-  constructor(public appStore: AppStoreService) {
-  }
-
   @Input()
   public case: any;
 
@@ -36,6 +33,9 @@ export class TestCaseNodeComponent {
 
   @Input()
   public lockInfo: TestCaseLockInfo;
+
+  constructor(public appStore: AppStoreService) {
+  }
 
   get result(): any {
     return this.results[this.case.id];

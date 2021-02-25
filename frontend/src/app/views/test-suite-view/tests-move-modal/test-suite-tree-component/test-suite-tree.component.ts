@@ -39,7 +39,7 @@ export class TestSuiteTreeComponent implements OnInit {
   collapse = false;
 
   ngOnInit(): void {
-    this.level = this.level == null ? 0 : parseInt(this.level);
+    this.level = this.level == null ? 0 : Number(this.level);
     if (this.level > 0) {
       this.collapse = true;
     }

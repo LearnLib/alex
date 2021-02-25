@@ -36,7 +36,7 @@ export class ProjectGuard implements CanActivate, CanActivateChild {
     let curr = route;
     while (curr != null) {
       if (curr.paramMap.has('projectId')) {
-        projectId = parseInt(curr.paramMap.get('projectId'));
+        projectId = Number(curr.paramMap.get('projectId'));
         break;
       }
       curr = curr.parent;

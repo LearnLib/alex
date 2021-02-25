@@ -39,9 +39,6 @@ import { LearnerStatus } from '../../entities/learner-status';
 })
 export class LearnerViewComponent implements OnInit, OnDestroy {
 
-  /** The interval time for polling. */
-  private readonly INTERVAL_TIME = 5000;
-
   /** The interval that is used for polling. */
   intervalHandle: number;
 
@@ -55,6 +52,9 @@ export class LearnerViewComponent implements OnInit, OnDestroy {
   currentResult: LearnerResult;
 
   status: LearnerStatus;
+
+  /** The interval time for polling. */
+  private readonly INTERVAL_TIME = 5000;
 
   constructor(private appStore: AppStoreService,
               private currentRoute: ActivatedRoute,
@@ -85,7 +85,7 @@ export class LearnerViewComponent implements OnInit, OnDestroy {
 
     this.currentRoute.queryParamMap.subscribe(params => {
       if (params.has('testNo')) {
-        const testNo = parseInt(params.get('testNo'));
+        const testNo = Number(params.get('testNo'));
 
         this.learnerResultApi.get(this.project.id, testNo).subscribe(
           result => {
@@ -182,7 +182,7 @@ export class LearnerViewComponent implements OnInit, OnDestroy {
 
   canAbort() {
     return this.currentResult.executedBy == null
-            || this.appStore.user.id == this.currentResult.executedBy.id
+            || this.appStore.user.id === this.currentResult.executedBy.id
             || this.appStore.project.owners.includes(this.appStore.user.id);
   }
 }

@@ -131,7 +131,7 @@ export class LearnerResultsCompareViewComponent implements OnInit {
         if (data.edges.length === 0) {
           this.toastService.info('Cannot find a difference.');
         } else {
-          this.addPanel(<any>{
+          this.addPanel({
               steps: [{hypothesis: data}],
               testNo: `Diff ${this.panels[0].result.testNo} vs. ${this.panels[1].result.testNo}`,
               setup: {
@@ -139,7 +139,7 @@ export class LearnerResultsCompareViewComponent implements OnInit {
                   name: 'TTT'
                 }
               }
-          });
+          } as any);
         }
       },
       res => this.toastService.danger(res.error.message)

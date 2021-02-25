@@ -60,16 +60,6 @@ export class HypothesisComponent implements OnChanges {
     this.cd.detectChanges();
   }
 
-  private stateSizeChanged(changes: SimpleChanges): boolean {
-    return changes.data.currentValue.nodes.length != changes.data.previousValue.nodes.length;
-  }
-
-  private alphabetChanged(changes: SimpleChanges): boolean {
-    const curr = new Set(changes.data.currentValue.edges.map(e => e.input));
-    const prev = new Set(changes.data.previousValue.edges.map(e => e.input));
-    return curr.size != prev.size;
-  }
-
   handleEdgeClick(link: NgxGraphEdge, label: string): void {
     const io = label.split(' / ');
     this.selectEdge.emit({
@@ -99,13 +89,17 @@ export class HypothesisComponent implements OnChanges {
 
       this.links = [];
       for (const from in edges) {
-        for (const to in edges[from]) {
-          this.links.push({
-            id: `edge-${from}-${to}`,
-            source: `${from}`,
-            target: `${to}`,
-            label: edges[from][to]
-          });
+        if (edges.hasOwnProperty(from)) {
+          for (const to in edges[from]) {
+            if (edges[from].hasOwnProperty(to)) {
+              this.links.push({
+                id: `edge-${from}-${to}`,
+                source: `${from}`,
+                target: `${to}`,
+                label: edges[from][to]
+              });
+            }
+          }
         }
       }
     });
@@ -127,4 +121,15 @@ export class HypothesisComponent implements OnChanges {
   getNodeStroke(node: Node): string {
     return node.id === '0' ? 'green': 'black';
   }
+
+  private stateSizeChanged(changes: SimpleChanges): boolean {
+    return changes.data.currentValue.nodes.length !== changes.data.previousValue.nodes.length;
+  }
+
+  private alphabetChanged(changes: SimpleChanges): boolean {
+    const curr = new Set(changes.data.currentValue.edges.map(e => e.input));
+    const prev = new Set(changes.data.previousValue.edges.map(e => e.input));
+    return curr.size !== prev.size;
+  }
+
 }

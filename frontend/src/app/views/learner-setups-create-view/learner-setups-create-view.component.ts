@@ -100,10 +100,10 @@ export class LearnerSetupsCreateViewComponent implements OnInit {
 
   private createLearnerSetup(): LearnerSetup {
     const setup = this.setup.copy();
-    setup.symbols.forEach(ps => ps.symbol = <any>{id: ps.symbol.id});
-    setup.preSymbol.symbol = <any>{id: setup.preSymbol.symbol.id};
+    setup.symbols.forEach(ps => ps.symbol = {id: ps.symbol.id} as any);
+    setup.preSymbol.symbol = {id: setup.preSymbol.symbol.id} as any;
     if (setup.postSymbol != null) {
-      setup.postSymbol.symbol = <any>{id: setup.postSymbol.symbol.id};
+      setup.postSymbol.symbol = {id: setup.postSymbol.symbol.id} as any;
     }
     return setup;
   }

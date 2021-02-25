@@ -21,7 +21,6 @@ import { LearnerResult } from '../../../../entities/learner-result';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { DragulaService } from 'ng2-dragula';
 import { LearnerViewStoreService } from '../../learner-view-store.service';
-import set = Reflect.set;
 import { LearnerResultStepApiService } from '../../../../services/api/learner-result-step-api.service';
 import { ProjectEnvironmentApiService } from '../../../../services/api/project-environment-api.service';
 import { listEquals } from '../../../../utils/list-utils';
@@ -145,8 +144,8 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
       const pSymbols = setup.symbols;
       const pSymbolNames = pSymbols.map(ps => ps.getAliasOrComputedName());
 
-      for (let i = 0; i < this.counterexample.length; i++) {
-        const j = pSymbolNames.findIndex(name => name === this.counterexample[i].input);
+      for (const io of this.counterexample) {
+        const j = pSymbolNames.findIndex(name => name === io.input);
         testSymbols.push(pSymbols[j]);
       }
 

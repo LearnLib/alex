@@ -70,11 +70,11 @@ export class ReportChartsComponent implements OnInit {
       .style('fill', d => d.data.color);
 
     g.append('text')
-      .attr('transform', function(d) {
-        const _d = arc.centroid(d);
-        _d[0] *= 1.5;
-        _d[1] *= 1.5;
-        return 'translate(' + _d + ')';
+      .attr('transform', (d) => {
+        const d2 = arc.centroid(d);
+        d2[0] *= 1.5;
+        d2[1] *= 1.5;
+        return 'translate(' + d2 + ')';
       })
       .attr('dy', '.50em')
       .style('text-anchor', 'middle')

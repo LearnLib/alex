@@ -32,17 +32,17 @@ export class AdminSettingsViewComponent {
     this.init();
   }
 
-  private init(): void {
-    this.settingsApi.get().subscribe(
-      settings => this.settings = settings,
-      console.error
-    );
-  }
-
   updateSettings(): void {
     this.settingsApi.update(this.settings).subscribe(
       () => this.toastService.success('The settings have been updated.'),
       res => this.toastService.danger('<strong>Update failed!</strong> ' + res.error.message)
+    );
+  }
+
+  private init(): void {
+    this.settingsApi.get().subscribe(
+      settings => this.settings = settings,
+      console.error
     );
   }
 }

@@ -1,12 +1,12 @@
 <span
   class="badge badge-info mr-1"
-  *ngFor="let username of visibleLocks"
+  *ngFor="let username of firstNVisibleLocks"
 >
   <i class="fas fa-user-cog mr-1"></i> {{username}}
 </span>
 <span
   class="badge badge-info mr-1"
-  *ngIf="lockInfo.locks.length > n"
+  *ngIf="lockInfo.locks.length > visibleLocks"
   placement="right"
   ngbTooltip="{{hiddenLocks.join(', ')}}"
 >

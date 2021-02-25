@@ -27,7 +27,7 @@ export class RandomEqOracleFormComponent {
   @Input()
   form: FormGroup;
 
-  @Input('oracle')
-  eqOracle: RandomEqOracle;
+  @Input()
+  oracle: RandomEqOracle;
 }
 

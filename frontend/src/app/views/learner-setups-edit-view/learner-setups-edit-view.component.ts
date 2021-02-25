@@ -39,7 +39,7 @@ export class LearnerSetupsEditViewComponent implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe(
       params => {
-        const setupId = parseInt(params.get('setupId'));
+        const setupId = Number(params.get('setupId'));
         this.learnerSetupApi.get(this.appStore.project.id, setupId).subscribe(
           setup => this.setup = setup
         );

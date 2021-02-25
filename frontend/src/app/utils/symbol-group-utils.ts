@@ -44,18 +44,18 @@ export class SymbolGroupUtils {
   static findGroupById(groups: SymbolGroup[], groupId: number): SymbolGroup {
     const root = {groups};
 
-    function find(group) {
+    const find = (group) => {
       if (group.id === groupId) {
         return group;
       }
 
-      for (let i = 0; i < group.groups.length; i++) {
-        const g = find(group.groups[i]);
+      for (const gr of group.groups) {
+        const g = find(gr);
         if (g != null) {
           return g;
         }
       }
-    }
+    };
 
     const res = find(root);
     return res != null ? res : null;

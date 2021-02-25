@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TestResultApiService } from '../../services/api/test-result-api.service';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -27,7 +27,7 @@ import { ToastService } from '../../services/toast.service';
   templateUrl: './test-report-screenshots-view.component.html',
   styleUrls: ['./test-report-screenshots-view.component.scss']
 })
-export class TestReportScreenshotsViewComponent {
+export class TestReportScreenshotsViewComponent implements OnInit {
 
   testResult: any;
 
@@ -37,10 +37,11 @@ export class TestReportScreenshotsViewComponent {
               private toastService: ToastService,
               private downloadService: DownloadService) {
   }
+
   ngOnInit(): void {
     this.route.paramMap.subscribe(
-      map => this.testResultApi.get(parseInt(map.get('projectId')), parseInt(map.get('reportId')), parseInt(map.get('resultId'))).subscribe(
-        result => this.testResult = result)
+      map => this.testResultApi.get(Number(map.get('projectId')), Number(map.get('reportId')), Number(map.get('resultId')))
+        .subscribe(result => this.testResult = result)
     );
   }
 

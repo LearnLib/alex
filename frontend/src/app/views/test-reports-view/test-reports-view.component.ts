@@ -70,8 +70,8 @@ export class TestReportsViewComponent implements OnInit {
   loadTestReports(page: number = 0): void {
     this.selectedReports.clear();
     this.testReportApi.getAll(this.project.id, page).subscribe(
-      page => {
-        this.page = page;
+      newPage => {
+        this.page = newPage;
         this.reports = this.page.content;
         this.selectedReports.addItems(this.reports);
       },

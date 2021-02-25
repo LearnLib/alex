@@ -84,8 +84,8 @@ export class DownloadService {
 
     // add entries from table row
     if (rows.length > 0) {
-      for (let i = 0; i < rows.length; i++) {
-        const tds = rows[i].querySelectorAll('td');
+      for (const row of rows) {
+        const tds = row.querySelectorAll('td');
         if (tds.length > 0) {
           for (let j = 0; j < tds.length; j++) {
             csv += tds[j].textContent.replace(',', ' ') + (j === tds.length - 1 ? '\n' : ',');

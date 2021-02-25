@@ -28,17 +28,14 @@ import { ToastService } from '../../services/toast.service';
 })
 export class TestStatusComponent implements OnInit, OnDestroy {
 
-  private readonly INTERVAL_TIME = 3000;
-
   @Input()
   flush = true;
-
-  @Output('status')
-  statusChange = new EventEmitter<TestStatus>();
 
   status: TestStatus;
 
   testReportStatus: any = TestReportStatus;
+
+  private readonly INTERVAL_TIME = 3000;
 
   private interval: number;
 
@@ -60,7 +57,7 @@ export class TestStatusComponent implements OnInit, OnDestroy {
   canAbort(testReport: TestReport) {
     return [TestReportStatus.PENDING, TestReportStatus.IN_PROGRESS].includes(testReport.status)
             && (testReport.executedBy == null
-                || this.appStore.user.id == testReport.executedBy.id
+                || this.appStore.user.id === testReport.executedBy.id
                 || this.appStore.project.owners.includes(this.appStore.user.id));
   }
 
@@ -73,7 +70,6 @@ export class TestStatusComponent implements OnInit, OnDestroy {
   private getStatus(): void {
     this.testApi.getStatus(this.appStore.project.id).subscribe(status => {
       this.status = status;
-      this.statusChange.emit(this.status);
     });
   }
 

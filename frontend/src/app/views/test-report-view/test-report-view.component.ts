@@ -48,7 +48,7 @@ export class TestReportViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(
-      map => this.loadReport(parseInt(map.get('reportId')))
+      map => this.loadReport(Number(map.get('reportId')))
     );
   }
 

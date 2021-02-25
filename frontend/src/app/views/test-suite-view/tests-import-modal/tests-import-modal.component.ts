@@ -54,9 +54,10 @@ export class TestsImportModalComponent {
     try {
       const importData = JSON.parse(data);
       if (importData.type !== 'tests' || importData.tests == null || importData.tests.length === 0) {
-        throw 'The file does not seem to contain any tests';
+        this.errorMessage = 'The file does not seem to contain any tests';
+      } else {
+        this.importData = importData;
       }
-      this.importData = importData;
     } catch (exception) {
       this.errorMessage = '' + exception;
     }
@@ -71,7 +72,7 @@ export class TestsImportModalComponent {
       tests.forEach(t => t.parent = this.parent.id);
 
       this.testApi.import(this.project.id, tests).subscribe(
-        tests => this.modal.close(tests),
+        importedTests => this.modal.close(importedTests),
         res => this.errorMessage = res.error.message
       );
     } else {

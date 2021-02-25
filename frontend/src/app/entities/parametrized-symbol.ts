@@ -61,11 +61,11 @@ export class ParametrizedSymbol {
    */
   static fromSymbol(symbol: AlphabetSymbol): ParametrizedSymbol {
     const pSymbol = new ParametrizedSymbol();
-    pSymbol.symbol = <any>{
+    pSymbol.symbol = {
       id: symbol.id,
       name: symbol.name,
       expectedResult: symbol.expectedResult
-    };
+    } as any;
     pSymbol.parameterValues = symbol.inputs.map(input => ({parameter: input, value: null}));
     pSymbol.outputMappings = symbol.outputs.map(output => ({parameter: output, name: output.name}));
     return pSymbol;

@@ -24,6 +24,14 @@ import { ToastService } from './toast.service';
 import { WebSocketMessage } from '../entities/websocket-message';
 import { filter } from 'rxjs/operators';
 
+export enum SymbolPresenceServiceEnum {
+  SYMBOL_PRESENCE_SERVICE = 'SYMBOL_PRESENCE_SERVICE',
+  USER_LEFT = 'USER_LEFT',
+  USER_ENTERED = 'USER_ENTERED',
+  STATUS_REQUEST = 'STATUS_REQUEST',
+  STATUS = 'STATUS'
+}
+
 @Injectable()
 export class SymbolPresenceService {
 
@@ -44,7 +52,9 @@ export class SymbolPresenceService {
                                                  && msg.type === SymbolPresenceServiceEnum.STATUS)
       .subscribe(msg => this.processStatus(msg));
 
-    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(r => this.routeChange(r));
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(r => this.routeChange(r));
 
     this.projectApiService.getAll().subscribe(projects => {
       const projectIds = [];
@@ -82,53 +92,59 @@ export class SymbolPresenceService {
     const groupsUpdate = this.accessedSymbolGroups.getValue();
 
     for (const projectId in projects) {
-      const symbols = projects[projectId].symbols;
+      if (projects.hasOwnProperty(projectId)) {
+        const symbols = projects[projectId].symbols;
 
-      if (!Object.keys(symbols).length) {
-        symbolsUpdate.delete(Number(projectId));
-      } else {
-        let symbolsObject = symbolsUpdate.get(Number(projectId));
-        if (!symbolsObject) {
-          symbolsObject = new Map();
+        if (!Object.keys(symbols).length) {
+          symbolsUpdate.delete(Number(projectId));
         } else {
-          symbolsObject.clear();
+          let symbolsObject = symbolsUpdate.get(Number(projectId));
+          if (!symbolsObject) {
+            symbolsObject = new Map();
+          } else {
+            symbolsObject.clear();
+          }
+
+          for (const symbolId in symbols) {
+            if (symbols.hasOwnProperty(symbolId)) {
+              const symbol = symbols[symbolId];
+              const symbolObject= {} as SymbolLockInfo;
+              symbolObject.type = symbol.type;
+              symbolObject.username = symbol.username;
+              symbolObject.date = new Date(symbol.timestamp);
+
+              symbolsObject.set(Number(symbolId), symbolObject);
+            }
+          }
+
+          symbolsUpdate.set(Number(projectId), symbolsObject);
         }
 
-        for (const symbolId in symbols) {
-          const symbol = symbols[symbolId];
-          const symbolObject= {} as SymbolLockInfo;
-          symbolObject.type = symbol.type;
-          symbolObject.username = symbol.username;
-          symbolObject.date = new Date(symbol.timestamp);
+        const groups = projects[projectId].groups;
 
-          symbolsObject.set(Number(symbolId), symbolObject);
-        }
-
-        symbolsUpdate.set(Number(projectId), symbolsObject);
-      }
-
-      const groups = projects[projectId].groups;
-
-      if (!Object.keys(groups).length) {
-        groupsUpdate.delete(Number(projectId));
-      } else {
-        let groupsObject = groupsUpdate.get(Number(projectId));
-        if (!groupsObject) {
-          groupsObject = new Map();
+        if (!Object.keys(groups).length) {
+          groupsUpdate.delete(Number(projectId));
         } else {
-          groupsObject.clear();
+          let groupsObject = groupsUpdate.get(Number(projectId));
+          if (!groupsObject) {
+            groupsObject = new Map();
+          } else {
+            groupsObject.clear();
+          }
+
+          for (const groupId in groups) {
+            if (groups.hasOwnProperty(groupId)) {
+              const group = groups[groupId];
+              const groupObject = {} as SymbolGroupLockInfo;
+              groupObject.type = group.type;
+              groupObject.locks = group.locks;
+
+              groupsObject.set(Number(groupId), groupObject);
+            }
+          }
+
+          groupsUpdate.set(Number(projectId), groupsObject);
         }
-
-        for (const groupId in groups) {
-          const group = groups[groupId];
-          const groupObject = {} as SymbolGroupLockInfo;
-          groupObject.type = group.type;
-          groupObject.locks = group.locks;
-
-          groupsObject.set(Number(groupId), groupObject);
-        }
-
-        groupsUpdate.set(Number(projectId), groupsObject);
       }
     }
 
@@ -189,14 +205,6 @@ export class SymbolPresenceService {
   get accessedSymbolGroupsValue() {
     return this.accessedSymbolGroups.getValue();
   }
-}
-
-export enum SymbolPresenceServiceEnum {
-  SYMBOL_PRESENCE_SERVICE = 'SYMBOL_PRESENCE_SERVICE',
-  USER_LEFT = 'USER_LEFT',
-  USER_ENTERED = 'USER_ENTERED',
-  STATUS_REQUEST = 'STATUS_REQUEST',
-  STATUS = 'STATUS'
 }
 
 interface AbstractSymbolLockInfo {

@@ -29,9 +29,9 @@ import { orderBy } from 'lodash';
 @Injectable()
 export class CountersViewStoreService {
 
-  private counters: BehaviorSubject<Counter[]>;
-
   countersSelectable: Selectable<Counter, number>;
+
+  private counters: BehaviorSubject<Counter[]>;
 
   constructor(private appStore: AppStoreService,
               private counterApi: CounterApiService,
@@ -118,7 +118,7 @@ export class CountersViewStoreService {
     if (selectedCounters.length > 0) {
       this.counterApi.removeMany(this.appStore.project.id, selectedCounters).subscribe(
         () => {
-          const counters = this.counters.value.filter(c => selectedCounters.findIndex(c2 => c.id == c2.id) === -1);
+          const counters = this.counters.value.filter(c => selectedCounters.findIndex(c2 => c.id === c2.id) === -1);
           this.counters.next(counters);
           this.countersSelectable.removeMany(selectedCounters);
         },

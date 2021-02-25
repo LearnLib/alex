@@ -37,7 +37,7 @@ import { TestsImportModalComponent } from './tests-import-modal/tests-import-mod
 import { TestConfigModalComponent } from '../tests-view/test-config-modal/test-config-modal.component';
 import { TestsMoveModalComponent } from './tests-move-modal/tests-move-modal.component';
 import { TestReportStatus, TestStatus } from '../../entities/test-status';
-import {TestLockInfo, TestPresenceService} from '../../services/test-presence.service';
+import { TestLockInfo, TestPresenceService } from '../../services/test-presence.service';
 import { WebDriverConfig } from '../../entities/web-driver-config';
 
 @Component({
@@ -64,9 +64,9 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
 
   testStatus: TestStatus;
 
-  private pollHandle: number;
-
   lockInfo: Map<number, Map<number, TestLockInfo>>;
+
+  private pollHandle: number;
 
   constructor(private symbolGroupApi: SymbolGroupApiService,
               private appStore: AppStoreService,
@@ -280,24 +280,6 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
       && this.testStatus.currentTest.id === test.id;
   }
 
-  private pollTestReport(reportId: number): void {
-    const f = () => {
-      this.testReportApi.get(this.project.id, reportId).subscribe(
-        report => {
-          this.report = report;
-          this.testApi.getStatus(this.project.id).subscribe(testStatus => {
-            this.testStatus = testStatus;
-            if (report.status === TestReportStatus.FINISHED || report.status === TestReportStatus.ABORTED) {
-              window.clearTimeout(this.pollHandle);
-            } else {
-              this.pollHandle = window.setTimeout(() => f(), 3000);
-            }
-          });
-        });
-    };
-    f();
-  }
-
   openTestConfigModal(): void {
     const modalRef = this.modalService.open(TestConfigModalComponent);
     modalRef.componentInstance.configuration = JSON.parse(JSON.stringify(this.testConfig));
@@ -318,9 +300,9 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
       this.toastService.info('You have to select at least one test.');
     } else {
       const name = `tests-${this.testSuite.name}-${DateUtils.YYYYMMDD()}`;
-      this.promptService.prompt('Enter a name for the file', {defaultValue: name}).then(name => {
+      this.promptService.prompt('Enter a name for the file', {defaultValue: name}).then(newName => {
         this.testApi.export(this.project.id, {testIds: tests.map(t => t.id)}).subscribe(data => {
-          this.downloadService.downloadObject(data, name);
+          this.downloadService.downloadObject(data, newName);
           this.toastService.success('The tests have been exported.');
         });
       });
@@ -407,6 +389,28 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
     return false;
   }
 
+  isLocked(testId: number): boolean {
+    return this.lockInfo?.get(this.project.id)?.has(testId);
+  }
+
+  private pollTestReport(reportId: number): void {
+    const f = () => {
+      this.testReportApi.get(this.project.id, reportId).subscribe(
+        report => {
+          this.report = report;
+          this.testApi.getStatus(this.project.id).subscribe(testStatus => {
+            this.testStatus = testStatus;
+            if (report.status === TestReportStatus.FINISHED || report.status === TestReportStatus.ABORTED) {
+              window.clearTimeout(this.pollHandle);
+            } else {
+              this.pollHandle = window.setTimeout(() => f(), 3000);
+            }
+          });
+        });
+    };
+    f();
+  }
+
   get orderedTests(): any[] {
     return orderBy(this.testSuite.tests, ['type', 'name'], ['desc', 'asc']);
   }
@@ -425,7 +429,4 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
     return map;
   }
 
-  isLocked(testId: number): boolean {
-    return this.lockInfo?.get(this.project.id)?.has(testId);
-  }
 }

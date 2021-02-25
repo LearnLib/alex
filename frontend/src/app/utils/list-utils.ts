@@ -16,20 +16,20 @@
 
 import { remove } from 'lodash';
 
-export function replaceItem<T>(arr: T[], findFn: (T) => boolean, newItem: T): T[] {
+export const replaceItem = <T>(arr: T[], findFn: (T) => boolean, newItem: T): T[] => {
   const newArr = [...arr];
   const i = newArr.findIndex(findFn);
   newArr[i] = newItem;
   return newArr;
-}
+};
 
-export function removeItems<T>(arr: T[], removeFn: (T) => boolean): T[] {
+export const removeItems = <T>(arr: T[], removeFn: (T) => boolean): T[] => {
   const newArr = [...arr];
   remove(newArr, removeFn);
   return newArr;
-}
+};
 
-export function listEquals<T>(a: T[], b: T[]) {
+export const listEquals = <T>(a: T[], b: T[]) => {
   if (a == null || b == null || a.length !== b.length) {
     return false;
   }
@@ -41,4 +41,4 @@ export function listEquals<T>(a: T[], b: T[]) {
   }
 
   return true;
-}
+};

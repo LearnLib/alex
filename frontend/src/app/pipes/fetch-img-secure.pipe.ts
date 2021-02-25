@@ -49,7 +49,7 @@ export class FetchImgSecurePipe extends BaseApiService implements PipeTransform 
         this.http.get(`${this.env.apiUrl}${src}`, options as any).subscribe((response: any) => {
             const reader = new FileReader();
             reader.readAsDataURL(response.body);
-            reader.onloadend = function() {
+            reader.onloadend = () => {
                 bSubject.next(reader.result as string);
             };
         });

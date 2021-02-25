@@ -27,13 +27,13 @@ import { ActivatedRoute } from '@angular/router';
 export class TestCaseResultsViewComponent implements OnInit {
 
   /** The test. */
-  public test: any;
+  test: any;
 
   /** The results of the test. */
-  public results: any[];
+  results: any[];
 
   /** The current page object. */
-  public page: any;
+  page: any;
 
   constructor(private appStore: AppStoreService,
               private testApi: TestApiService,
@@ -49,7 +49,7 @@ export class TestCaseResultsViewComponent implements OnInit {
   ngOnInit(): void {
     this.route.paramMap.subscribe(
       map => {
-        this.testApi.get(this.project.id, parseInt(map.get('testId'))).subscribe(
+        this.testApi.get(this.project.id, Number(map.get('testId'))).subscribe(
           test => {
             this.test = test;
             this.loadTestResults();
@@ -61,10 +61,11 @@ export class TestCaseResultsViewComponent implements OnInit {
   }
 
   loadTestResults(page: number = 0): void {
-    this.testApi.getResults(this.project.id, this.test.id, page).subscribe(page => {
-      this.page = page;
-      this.results = page.content;
-    });
+    this.testApi.getResults(this.project.id, this.test.id, page)
+      .subscribe(newPage => {
+        this.page = newPage;
+        this.results = newPage.content;
+      });
   }
 
   nextPage(): void {

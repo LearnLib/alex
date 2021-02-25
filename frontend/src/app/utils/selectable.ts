@@ -79,15 +79,27 @@ export class Selectable<T, K> {
   }
 
   toggleSelect(item: T) {
-    this.isSelected(item) ? this.unselect(item) : this.select(item);
+    if (this.isSelected(item)) {
+      this.unselect(item);
+    } else {
+      this.select(item);
+    }
   }
 
   toggleSelectMany(items: T[]) {
-    this.isAnySelectedIn(items) ? this.unselectMany(items) : this.selectMany(items);
+    if (this.isAnySelectedIn(items)) {
+      this.unselectMany(items);
+    } else {
+      this.selectMany(items);
+    }
   }
 
   toggleSelectAll() {
-    this.isAnySelected() ? this.unselectAll() : this.selectAll();
+    if (this.isAnySelected()) {
+      this.unselectAll();
+    } else {
+      this.selectAll();
+    }
   }
 
   isSelected(item: T) {

@@ -11,46 +11,46 @@
   </div>
 
   <random-eq-oracle-form
-    *ngIf="eqOracle.type === types.RANDOM"
+    *ngIf="oracle.type === types.RANDOM"
     [form]="form"
-    [oracle]="eqOracle"
+    [oracle]="oracle"
   >
   </random-eq-oracle-form>
   <complete-eq-oracle-form
-    *ngIf="eqOracle.type === types.COMPLETE"
+    *ngIf="oracle.type === types.COMPLETE"
     [form]="form"
-    [oracle]="eqOracle"
+    [oracle]="oracle"
   >
   </complete-eq-oracle-form>
   <w-method-eq-oracle-form
-    *ngIf="eqOracle.type === types.WMETHOD"
+    *ngIf="oracle.type === types.WMETHOD"
     [form]="form"
-    [oracle]="eqOracle"
+    [oracle]="oracle"
   >
   </w-method-eq-oracle-form>
   <wp-method-eq-oracle-form
-    *ngIf="eqOracle.type === types.WP_METHOD"
+    *ngIf="oracle.type === types.WP_METHOD"
     [form]="form"
-    [oracle]="eqOracle"
+    [oracle]="oracle"
   >
   </wp-method-eq-oracle-form>
   <hypothesis-eq-oracle-form
-    *ngIf="eqOracle.type === types.HYPOTHESIS"
+    *ngIf="oracle.type === types.HYPOTHESIS"
     [form]="form"
-    [oracle]="eqOracle"
+    [oracle]="oracle"
   >
   </hypothesis-eq-oracle-form>
   <test-suite-eq-oracle-form
-    *ngIf="eqOracle.type === types.TEST_SUITE"
+    *ngIf="oracle.type === types.TEST_SUITE"
     [form]="form"
-    [oracle]="eqOracle"
+    [oracle]="oracle"
   >
   </test-suite-eq-oracle-form>
 
-  <div class="form-group" *ngIf="eqOracle != null">
+  <div class="form-group" *ngIf="oracle != null">
     <label>Batch size</label>
     <input
-      [(ngModel)]="eqOracle.batchSize"
+      [(ngModel)]="oracle.batchSize"
       class="form-control"
       min="0"
       name="eq_oracle_batch_size"

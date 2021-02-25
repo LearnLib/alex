@@ -28,8 +28,8 @@ export class HypothesisEqOracleFormComponent {
   @Input()
   public form: FormGroup;
 
-  @Input('oracle')
-  public eqOracle: HypothesisEqOracle;
+  @Input()
+  public oracle: HypothesisEqOracle;
 
   constructor(private toastService: ToastService) {
   }
@@ -41,7 +41,7 @@ export class HypothesisEqOracleFormComponent {
    */
   fileLoaded(data: any): void {
     try {
-      this.eqOracle.hypothesis = JSON.parse(data);
+      this.oracle.hypothesis = JSON.parse(data);
     } catch (e) {
       this.toastService.danger('Could not load model. The file is not properly formatted');
     }

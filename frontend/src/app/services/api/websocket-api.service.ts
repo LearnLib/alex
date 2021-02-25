@@ -23,6 +23,12 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import { WebSocketMessage } from '../../entities/websocket-message';
 import { EnvironmentProvider } from '../../../environments/environment.provider';
 
+export enum WebSocketConnectStatus {
+  DISCONNECTED = 'DISCONNECTED',
+  CONNECTING = 'CONNECTING',
+  CONNECTED = 'CONNECTED'
+}
+
 @Injectable()
 export class WebSocketAPIService {
 
@@ -36,7 +42,7 @@ export class WebSocketAPIService {
 
   constructor(private env: EnvironmentProvider) {
     this.client = new StompJS.Client({
-      debug(str) {
+      debug: (str) => {
         if (!environment.production) {
           console.log(str);
         }
@@ -121,10 +127,3 @@ export class WebSocketAPIService {
     return this.errors.asObservable();
   }
 }
-
-export enum WebSocketConnectStatus {
-  DISCONNECTED = 'DISCONNECTED',
-  CONNECTING = 'CONNECTING',
-  CONNECTED = 'CONNECTED'
-}
-

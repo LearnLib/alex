@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { LtsFormulaApiService } from '../../../services/api/lts-formula-api.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppStoreService } from '../../../services/app-store.service';

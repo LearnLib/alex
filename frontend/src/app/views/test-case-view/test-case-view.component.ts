@@ -100,13 +100,6 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
     window.clearTimeout(this.pollHandle);
   }
 
-  private saveTest(): Observable<any> {
-    const test = JSON.parse(JSON.stringify(this.testCase));
-    return this.testApi.update(test).pipe(
-      tap((updatedTestCase: any) => this.testCase = updatedTestCase)
-    );
-  }
-
   /**
    * Save the state of the test case.
    */
@@ -185,6 +178,13 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
       return false;
     }
   };
+
+  private saveTest(): Observable<any> {
+    const test = JSON.parse(JSON.stringify(this.testCase));
+    return this.testApi.update(test).pipe(
+      tap((updatedTestCase: any) => this.testCase = updatedTestCase)
+    );
+  }
 
   get result(): any {
     if (this.report == null || this.report.testResults.length === 0) {

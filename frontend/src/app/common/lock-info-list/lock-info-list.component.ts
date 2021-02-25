@@ -29,14 +29,14 @@ export class LockInfoListComponent {
   @Input()
   lockInfo: TestSuiteLockInfo | SymbolGroupLockInfo;
 
-  @Input('visibleLocks')
-  n = 1;
+  @Input()
+  visibleLocks = 1;
 
-  get visibleLocks() {
-    return take(this.lockInfo.locks, this.n);
+  get firstNVisibleLocks() {
+    return take(this.lockInfo.locks, this.visibleLocks);
   }
 
   get hiddenLocks() {
-    return takeRight(this.lockInfo.locks, this.lockInfo.locks.length - this.n);
+    return takeRight(this.lockInfo.locks, this.lockInfo.locks.length - this.visibleLocks);
   }
 }

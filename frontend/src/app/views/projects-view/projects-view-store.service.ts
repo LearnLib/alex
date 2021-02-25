@@ -155,7 +155,7 @@ export class ProjectsViewStoreService {
       this.projectApi.removeMembers(project.id, Array.of(this.appStore.user.id)).subscribe(
         () => {
           this.toastService.success('You have left the project.');
-          this.projects.next(this.projects.value.filter(projectInt => projectInt.id != project.id));
+          this.projects.next(this.projects.value.filter(projectInt => projectInt.id !== project.id));
           this.projectsSelectable.remove(project);
         },
         res => this.toastService.danger(`${res.error.message}`));
@@ -164,7 +164,7 @@ export class ProjectsViewStoreService {
       this.projectApi.removeOwners(project.id, Array.of(this.appStore.user.id)).subscribe(
         () => {
           this.toastService.success('You have left the project.');
-          this.projects.next(this.projects.value.filter(projectInt => projectInt.id != project.id));
+          this.projects.next(this.projects.value.filter(projectInt => projectInt.id !== project.id));
           this.projectsSelectable.remove(project);
         },
         res => this.toastService.danger(`${res.error.message}`));

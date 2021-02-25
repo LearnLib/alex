@@ -21,6 +21,14 @@ import { Subject } from 'rxjs';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
+export enum WebSocketServiceEnum {
+  WEBSOCKET_SERVICE = 'WEBSOCKET_SERVICE',
+  LOGOUT_CHECK = 'LOGOUT_CHECK',
+  LOGOUT = 'LOGOUT',
+  REQUEST_SESSION_ID = 'REQUEST_SESSION_ID',
+  SESSION_ID = 'SESSION_ID'
+}
+
 @Injectable()
 export class WebSocketService {
 
@@ -64,12 +72,6 @@ export class WebSocketService {
     };
   }
 
-  private routeChange(r: any) {
-    if (r.urlAfterRedirects.startsWith('/app')) {
-      this.connect();
-    }
-  }
-
   connect() {
     this.websocketAPIService.connect();
   }
@@ -109,18 +111,17 @@ export class WebSocketService {
     return subject;
   }
 
+  private routeChange(r: any) {
+    if (r.urlAfterRedirects.startsWith('/app')) {
+      this.connect();
+    }
+  }
+
   private requestSessionId() {
     const msg = new WebSocketMessage();
     msg.entity = WebSocketServiceEnum.WEBSOCKET_SERVICE;
     msg.type = WebSocketServiceEnum.REQUEST_SESSION_ID;
     this.send(msg);
   }
-}
 
-export enum WebSocketServiceEnum {
-  WEBSOCKET_SERVICE = 'WEBSOCKET_SERVICE',
-  LOGOUT_CHECK = 'LOGOUT_CHECK',
-  LOGOUT = 'LOGOUT',
-  REQUEST_SESSION_ID = 'REQUEST_SESSION_ID',
-  SESSION_ID = 'SESSION_ID'
 }

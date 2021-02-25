@@ -30,12 +30,12 @@ import { Router } from '@angular/router';
 @Injectable()
 export class ProjectUsersViewStoreService {
 
+  usersSelectable: Selectable<User, number>;
+
   /** All registered users. */
   private owners: BehaviorSubject<User[]>;
 
   private members: BehaviorSubject<User[]>;
-
-  usersSelectable: Selectable<User, number>;
 
   constructor(private userApi: UserApiService,
               private projectApi: ProjectApiService,
@@ -61,11 +61,11 @@ export class ProjectUsersViewStoreService {
     return this.members.asObservable();
   }
 
-  isOwnerSelected(): Boolean {
+  isOwnerSelected(): boolean {
     return this.usersSelectable.getSelected().find(user => this.owners.getValue().includes(user)) !== undefined;
   }
 
-  isMemberSelected(): Boolean {
+  isMemberSelected(): boolean {
     return this.usersSelectable.getSelected().find(user => this.members.getValue().includes(user)) !== undefined;
   }
 

@@ -49,7 +49,7 @@ export class UserRegistrationFormComponent {
   signUp(): void {
     const value = this.form.value;
 
-    this.userApi.create(<any>{username: value.username, email: value.email, password: value.password}).subscribe(
+    this.userApi.create({username: value.username, email: value.email, password: value.password} as any).subscribe(
       () => {
         this.toastService.success('Registration successful. You can now use the credentials to login.');
         this.signedUp.emit({email: value.email, password: value.password});

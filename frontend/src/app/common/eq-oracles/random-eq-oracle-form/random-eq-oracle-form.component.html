@@ -1,7 +1,7 @@
 <div class="form-group">
   <label>Min length</label>
   <input
-    [(ngModel)]="eqOracle.minLength"
+    [(ngModel)]="oracle.minLength"
     class="form-control"
     min="1"
     name="eq_oracle_random_min_length"
@@ -14,7 +14,7 @@
 <div class="form-group">
   <label>Max length</label>
   <input
-    [(ngModel)]="eqOracle.maxLength"
+    [(ngModel)]="oracle.maxLength"
     class="form-control"
     min="1"
     name="eq_oracle_random_max_length"
@@ -27,7 +27,7 @@
 <div class="form-group">
   <label>Random words</label>
   <input
-    [(ngModel)]="eqOracle.maxNoOfTests"
+    [(ngModel)]="oracle.maxNoOfTests"
     class="form-control"
     min="1"
     name="eq_oracle_random_no_words"
@@ -40,7 +40,7 @@
 <div class="form-group">
   <label>Seed</label>
   <input
-    [(ngModel)]="eqOracle.seed"
+    [(ngModel)]="oracle.seed"
     class="form-control"
     name="eq_oracle_random_seed"
     required

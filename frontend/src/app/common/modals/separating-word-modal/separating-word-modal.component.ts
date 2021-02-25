@@ -45,7 +45,7 @@ export class SeparatingWordModalComponent {
   }
 
   generateTestCase(which: number): void {
-    const result = which == 1 ? this.result1 : this.result2;
+    const result = which === 1 ? this.result1 : this.result2;
     const setup = result.setup;
     const symbolMap = {};
     setup.symbols.forEach(s => symbolMap[s.getAliasOrComputedName()] = s);

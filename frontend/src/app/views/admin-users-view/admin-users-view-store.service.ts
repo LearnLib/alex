@@ -83,9 +83,9 @@ export class AdminUsersViewStoreService {
       this.users.next(replaceItem(this.users.value, u => u.id === updatedUser.id, updatedUser));
       this.usersSelectable.update(updatedUser);
     });
-    modalRef.componentInstance.deleted.subscribe(user => {
-      this.users.next(removeItems(this.users.value, u => u.id === user.id));
-      this.usersSelectable.remove(user);
+    modalRef.componentInstance.deleted.subscribe(deletedUser => {
+      this.users.next(removeItems(this.users.value, u => u.id === deletedUser.id));
+      this.usersSelectable.remove(deletedUser);
     });
     modalRef.result
       .then(() => {

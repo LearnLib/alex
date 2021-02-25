@@ -41,7 +41,7 @@ export class TestReportProgressComponent {
 
   canAbort() {
     return this.report.executedBy == null
-            || this.report.executedBy.id == this.appStore.user.id
+            || this.report.executedBy.id === this.appStore.user.id
             || this.appStore.project.owners.includes(this.appStore.user.id);
   }
 }

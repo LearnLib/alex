@@ -45,7 +45,7 @@ export class TestsViewComponent implements OnInit {
       map => {
         this.test = null;
         if (map.has('testId')) {
-          const testId: number = parseInt(map.get('testId'));
+          const testId = Number(map.get('testId'));
           this.testApi.get(project.id, testId).subscribe(
             data => this.test = data,
             res => this.errorViewStore.navigateToErrorPage(res.error.message)

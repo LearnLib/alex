@@ -27,7 +27,7 @@ export class CompleteEqOracleFormComponent {
   @Input()
   form: FormGroup;
 
-  @Input('oracle')
-  eqOracle: CompleteEqOracle;
+  @Input()
+  oracle: CompleteEqOracle;
 }
 

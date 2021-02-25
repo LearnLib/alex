@@ -125,7 +125,7 @@ export class FilesViewStoreService {
   uploadFiles(e: Event): void {
     this.filesToUpload.clear();
 
-    const files = (<any>e.target).files as File[];
+    const files = (e.target as any).files as File[];
 
     const queue = [...files];
     const next = () => {

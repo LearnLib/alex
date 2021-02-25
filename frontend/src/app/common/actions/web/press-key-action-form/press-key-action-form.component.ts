@@ -23,7 +23,8 @@ import { Component, Input } from '@angular/core';
 })
 export class PressKeyActionFormComponent {
 
+  @Input() action;
+
   keys: any = supportedKeys;
 
-  @Input() action;
 }

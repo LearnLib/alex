@@ -27,6 +27,6 @@ export class WpMethodEqOracleFormComponent {
   @Input()
   form: FormGroup;
 
-  @Input('oracle')
-  eqOracle: WpMethodEqOracle;
+  @Input()
+  oracle: WpMethodEqOracle;
 }

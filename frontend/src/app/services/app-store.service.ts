@@ -65,8 +65,8 @@ export class AppStoreService {
       this.user = User.fromData(JSON.parse(user));
     }
 
-    this.webSocketService.register(msg => msg.entity == WebSocketServiceEnum.WEBSOCKET_SERVICE
-                                                  && msg.type == WebSocketServiceEnum.LOGOUT_CHECK)
+    this.webSocketService.register(msg => msg.entity === WebSocketServiceEnum.WEBSOCKET_SERVICE
+                                                  && msg.type === WebSocketServiceEnum.LOGOUT_CHECK)
       .subscribe(() => this.checkLogout());
   }
 

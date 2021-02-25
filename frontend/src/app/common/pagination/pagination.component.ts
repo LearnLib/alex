@@ -25,26 +25,26 @@ export class PaginationComponent {
   @Input()
   public page: any;
 
-  @Output('next')
-  public onNext: EventEmitter<void>;
+  @Output()
+  public next: EventEmitter<void>;
 
-  @Output('previous')
-  public onPrevious: EventEmitter<void>;
+  @Output()
+  public previous: EventEmitter<void>;
 
   constructor() {
-    this.onNext = new EventEmitter<void>();
-    this.onPrevious = new EventEmitter<void>();
+    this.next = new EventEmitter<void>();
+    this.previous = new EventEmitter<void>();
   }
 
-  next() {
+  handleNext() {
     if (!this.page.last) {
-      this.onNext.emit();
+      this.next.emit();
     }
   }
 
-  previous() {
+  handlePrevious() {
     if (!this.page.first) {
-      this.onPrevious.emit();
+      this.previous.emit();
     }
   }
 }

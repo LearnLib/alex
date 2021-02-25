@@ -26,17 +26,17 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 })
 export class EqOracleFormComponent implements OnInit {
 
-  /** The eq oracle types. */
-  types: any = eqOracleType;
-
   @Output()
   selected = new EventEmitter();
 
   @Input()
   form: FormGroup;
 
-  @Input('oracle')
-  eqOracle: EqOracle = null;
+  @Input()
+  oracle: EqOracle = null;
+
+  /** The eq oracle types. */
+  types: any = eqOracleType;
 
   selectedType: string = null;
 
@@ -44,8 +44,8 @@ export class EqOracleFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.eqOracle != null) {
-      this.selectedType = this.eqOracle.type;
+    if (this.oracle != null) {
+      this.selectedType = this.oracle.type;
     }
   }
 

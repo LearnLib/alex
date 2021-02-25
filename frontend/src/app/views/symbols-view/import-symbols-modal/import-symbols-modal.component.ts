@@ -82,7 +82,7 @@ export class ImportSymbolsModalComponent {
 
       const conflicts = [];
       newSymbols.forEach(symbol => {
-        const s = existingSymbols.find(s => s.name === symbol.name);
+        const s = existingSymbols.find(s2 => s2.name === symbol.name);
         if (s != null) {
           conflicts.push({
             name: s.name,

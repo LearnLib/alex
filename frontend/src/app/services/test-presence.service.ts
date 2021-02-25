@@ -24,6 +24,14 @@ import { ProjectApiService } from './api/project-api.service';
 import { AppStoreService } from './app-store.service';
 import { ToastService } from './toast.service';
 
+export enum TestPresenceServiceEnum {
+  TEST_PRESENCE_SERVICE = 'TEST_PRESENCE_SERVICE',
+  USER_LEFT = 'USER_LEFT',
+  USER_ENTERED = 'USER_ENTERED',
+  STATUS_REQUEST = 'STATUS_REQUEST',
+  STATUS = 'STATUS'
+}
+
 @Injectable()
 export class TestPresenceService {
 
@@ -42,7 +50,9 @@ export class TestPresenceService {
                                                  && msg.type === TestPresenceServiceEnum.STATUS)
       .subscribe(msg => this.processStatus(msg));
 
-    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(r => this.routeChange(r));
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(r => this.routeChange(r));
 
     this.projectApiService.getAll().subscribe(projects => {
       const projectIds = [];
@@ -53,6 +63,14 @@ export class TestPresenceService {
     });
   }
 
+  public requestStatus(projectIds: number[]) {
+    const msg = new WebSocketMessage();
+    msg.entity = TestPresenceServiceEnum.TEST_PRESENCE_SERVICE;
+    msg.type = TestPresenceServiceEnum.STATUS_REQUEST;
+    msg.content = '{"projectIds":[' + projectIds.toString() + ']}';
+    this.webSocketService.send(msg);
+  }
+
   private routeChange(r: any) {
     const newRoute = r.urlAfterRedirects;
     const oldProjectId = this.oldRoute.split('/')[3];
@@ -61,7 +79,7 @@ export class TestPresenceService {
     const newTestId = newRoute.split('/')[5];
 
     if (this.routeRegEx.test(newRoute)) {
-      if(!this.routeRegEx.test(this.oldRoute) || oldProjectId !== newProjectId || oldTestId != newTestId) {
+      if(!this.routeRegEx.test(this.oldRoute) || oldProjectId !== newProjectId || oldTestId !== newTestId) {
         this.userEnteredTest(Number(newProjectId), Number(newTestId));
       }
     } else {
@@ -78,36 +96,40 @@ export class TestPresenceService {
 
     const update = this.accessedTests.getValue();
     for (const projectId in projects) {
-      const tests = projects[projectId];
+      if (projects.hasOwnProperty(projectId)) {
+        const tests = projects[projectId];
 
-      if (!Object.keys(tests).length) {
-        update.delete(Number(projectId));
-      } else {
-        let testsObject = update.get(Number(projectId));
-        if (!testsObject) {
-          testsObject = new Map();
+        if (!Object.keys(tests).length) {
+          update.delete(Number(projectId));
         } else {
-          testsObject.clear();
-        }
-
-        for (const testId in tests) {
-          const test = tests[testId];
-
-          let testObject;
-          if (test.type === 'case') {
-            testObject = {} as TestCaseLockInfo;
-            testObject.username = test.username;
-            testObject.date = new Date(test.timestamp);
+          let testsObject = update.get(Number(projectId));
+          if (!testsObject) {
+            testsObject = new Map();
           } else {
-            testObject = {} as TestSuiteLockInfo;
-            testObject.locks = test.locks;
+            testsObject.clear();
           }
-          testObject.type = test.type;
 
-          testsObject.set(Number(testId), testObject);
+          for (const testId in tests) {
+            if (tests.hasOwnProperty(testId)) {
+              const test = tests[testId];
+
+              let testObject;
+              if (test.type === 'case') {
+                testObject = {} as TestCaseLockInfo;
+                testObject.username = test.username;
+                testObject.date = new Date(test.timestamp);
+              } else {
+                testObject = {} as TestSuiteLockInfo;
+                testObject.locks = test.locks;
+              }
+              testObject.type = test.type;
+
+              testsObject.set(Number(testId), testObject);
+            }
+          }
+
+          update.set(Number(projectId), testsObject);
         }
-
-        update.set(Number(projectId), testsObject);
       }
     }
 
@@ -144,14 +166,6 @@ export class TestPresenceService {
     this.webSocketService.send(msg);
   }
 
-  public requestStatus(projectIds: number[]) {
-    const msg = new WebSocketMessage();
-    msg.entity = TestPresenceServiceEnum.TEST_PRESENCE_SERVICE;
-    msg.type = TestPresenceServiceEnum.STATUS_REQUEST;
-    msg.content = '{"projectIds":[' + projectIds.toString() + ']}';
-    this.webSocketService.send(msg);
-  }
-
   get accessedTests$() {
     return this.accessedTests.asObservable();
   }
@@ -159,14 +173,6 @@ export class TestPresenceService {
   get accessedTestsValue() {
     return this.accessedTests.getValue();
   }
-}
-
-export enum TestPresenceServiceEnum {
-  TEST_PRESENCE_SERVICE = 'TEST_PRESENCE_SERVICE',
-  USER_LEFT = 'USER_LEFT',
-  USER_ENTERED = 'USER_ENTERED',
-  STATUS_REQUEST = 'STATUS_REQUEST',
-  STATUS = 'STATUS'
 }
 
 export interface TestLockInfo {

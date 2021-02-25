@@ -1,13 +1,4 @@
 export class WebDriverConfig {
-  width = 0;
-  height = 0;
-  implicitlyWait = 0;
-  pageLoadTimeout = 10;
-  scriptTimeout = 10;
-  platform = 'ANY';
-  browser = '';
-  version = '';
-  headless: true;
 
   static Browsers = {
     Chrome: 'chrome',
@@ -45,6 +36,16 @@ export class WebDriverConfig {
       Unix: 'UNIX'
     }
   };
+
+  width = 0;
+  height = 0;
+  implicitlyWait = 0;
+  pageLoadTimeout = 10;
+  scriptTimeout = 10;
+  platform = 'ANY';
+  browser = '';
+  version = '';
+  headless: true;
 
   static fromData(data: any = {}): WebDriverConfig {
     const c = new WebDriverConfig();
