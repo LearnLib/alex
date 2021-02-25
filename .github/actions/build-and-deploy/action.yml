@@ -1,3 +1,6 @@
+name: build-and-deply
+description: build and deploy docker images
+
 inputs:
   username:
     description: 'GitHub username'
@@ -9,41 +12,36 @@ inputs:
     description: 'Docker build context'
     required: true
   tag:
-    description: 'Docker image tag'
+    description: 'Docker image name'
     required: true
 
 runs:
   using: "composite"
   steps:
-    - uses: actions/checkout@v2
+    - name: Build Docker Image
+      shell: bash
+      run: docker build ${{ inputs.context }} --file ${{ inputs.context }}/Dockerfile --tag ${{ inputs.tag }}
 
-    - id: image-tag
+    - name: Login to GitHub Container Registry
+      shell: bash
+      run: echo "${{ inputs.password }}" | docker login https://ghcr.io -u ${{ inputs.username }} --password-stdin
+
+    - name: Push to GitHub Container Registry
       shell: bash
       run: |
+        IMAGE_ID=ghcr.io/learnlib/alex/${{ inputs.tag }}
         BRANCH=${GITHUB_REF/#"refs/head/"}
-        TAG=
+        VERSION=
         if [ "$BRANCH" == "developer" ]
           then
-            TAG="unstable"
+            VERSION="unstable"
         elif [ "$BRANCH" == "master" ]
           then
-            TAG="latest"
+            VERSION="latest"
         else
           then
-            TAG="$GITHUB_SHA"
+            VERSION="$GITHUB_SHA"
         fi
-        echo "::set-output name=tag::$(echo $TAG)"
 
-    - name: Login to DockerHub
-      uses: docker/login-action@v1
-      with:
-        registry: ghcr.io
-        username: ${{ inputs.username }}
-        password: ${{ inputs.password }}
-
-    - name: Build and push
-      uses: docker/build-push-action@v2
-      with:
-        push: true
-        context: ${{ inputs.context }}
-        tags: ghcr.io/learnlib/alex/${{ inputs.tag }}:${{ steps.image-tag.outputs.tag }}
+        docker tag ${{ inputs.tag }} $IMAGE_ID:$VERSION
+        docker push $IMAGE_ID:$VERSION
