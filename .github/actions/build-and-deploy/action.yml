@@ -30,10 +30,8 @@ runs:
       shell: bash
       run: |
         IMAGE_ID=ghcr.io/learnlib/alex/${{ inputs.tag }}
-        BRANCH=${GITHUB_REF/#"refs/head/"}
+        BRANCH=${GITHUB_REF#"refs/heads/"}
         VERSION=
-
-        echo $BRANCH
 
         if [ "$BRANCH" == "developer" ]
         then
@@ -44,8 +42,6 @@ runs:
         else
           VERSION="$GITHUB_SHA"
         fi
-
-        echo $VERSION
 
         docker tag ${{ inputs.tag }} $IMAGE_ID:$VERSION
         docker push $IMAGE_ID:$VERSION
