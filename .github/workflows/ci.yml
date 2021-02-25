@@ -61,7 +61,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '14'
-      - run: npm run lint
+      - run: cd ./frontend && npm ci && npm run lint
 
   package-frontend:
     needs: lint-frontend
