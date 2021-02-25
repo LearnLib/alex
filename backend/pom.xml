@@ -456,6 +456,9 @@
                         </property>
                     </systemProperties>
                     <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+                    <excludes>
+                        <exclude>**/integrationtests/websocket/**/*.java</exclude>
+                    </excludes>
                 </configuration>
                 <executions>
                     <execution>
