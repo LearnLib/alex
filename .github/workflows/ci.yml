@@ -45,7 +45,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Push backend to GitHub repositories
-        uses: ./.github/actions/buid-and-deploy
+        uses: ./.github/actions/build-and-deploy
         with:
           username: ${{ github.actor }}
           password: ${{ secrets.CR_PAT }}
@@ -58,7 +58,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Push frontend to GitHub repositories
-        uses: ./.github/actions/buid-and-deploy
+        uses: ./.github/actions/build-and-deploy
         with:
           username: ${{ github.actor }}
           password: ${{ secrets.CR_PAT }}
@@ -71,7 +71,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Push CLI to GitHub repositories
-        uses: ./.github/actions/buid-and-deploy
+        uses: ./.github/actions/build-and-deploy
         with:
           username: ${{ github.actor }}
           password: ${{ secrets.CR_PAT }}
