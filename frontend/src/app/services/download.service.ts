@@ -84,7 +84,7 @@ export class DownloadService {
 
     // add entries from table row
     if (rows.length > 0) {
-      for (const row of rows) {
+      for (const row of Array.from(rows)) {
         const tds = row.querySelectorAll('td');
         if (tds.length > 0) {
           for (let j = 0; j < tds.length; j++) {

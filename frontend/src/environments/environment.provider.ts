@@ -38,4 +38,4 @@ export class EnvironmentProvider {
   }
 }
 
-export const initEnv = (env: EnvironmentProvider) => env.load();
+export const initEnv = (env: EnvironmentProvider) => () => env.load();
