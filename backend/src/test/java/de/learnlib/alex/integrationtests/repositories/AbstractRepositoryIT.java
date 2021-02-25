@@ -63,12 +63,6 @@ public abstract class AbstractRepositoryIT {
     @After
     @Transactional
     public void tearDown() {
-        userDAO.getAll().forEach(u -> {
-            System.out.println("id: " + u.getId());
-            System.out.println("mail: " + u.getEmail());
-            System.out.println("role: " + u.getRole());
-        });
-
         final var admin = userDAO.getByID(1L);
 
         // delete all users except the admin

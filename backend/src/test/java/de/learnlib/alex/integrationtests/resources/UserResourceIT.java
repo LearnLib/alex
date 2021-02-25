@@ -330,7 +330,6 @@ public class UserResourceIT extends AbstractResourceIT {
         final String jwt = userApi.login(user.getEmail(), "test");
 
         final Response res = userApi.changePassword(user.getId(), "test", "new", jwt);
-        System.out.println(res.readEntity(String.class));
         assertEquals(HttpStatus.OK.value(), res.getStatus());
 
         shouldNotLoginWith400("test@test.de", "test");

@@ -76,7 +76,6 @@ public class UserTest {
 
         final String userString = om.writeValueAsString(user);
         final String expectedUserString = "{\"id\":1, \"username\": \"user1\", \"email\": \"admin@alex.com\", \"role\": \"ADMIN\"}";
-        System.out.println(userString);
         JSONAssert.assertEquals(expectedUserString, userString, true);
     }
 
