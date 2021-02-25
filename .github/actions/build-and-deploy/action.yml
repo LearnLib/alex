@@ -33,14 +33,13 @@ runs:
         BRANCH=${GITHUB_REF/#"refs/head/"}
         VERSION=
         if [ "$BRANCH" == "developer" ]
-          then
-            VERSION="unstable"
+        then
+          VERSION="unstable"
         elif [ "$BRANCH" == "master" ]
-          then
-            VERSION="latest"
+        then
+          VERSION="latest"
         else
-          then
-            VERSION="$GITHUB_SHA"
+          VERSION="$GITHUB_SHA"
         fi
 
         docker tag ${{ inputs.tag }} $IMAGE_ID:$VERSION
