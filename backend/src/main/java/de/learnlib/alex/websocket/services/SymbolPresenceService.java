@@ -35,12 +35,6 @@ import de.learnlib.alex.websocket.entities.WebSocketMessage;
 import de.learnlib.alex.websocket.services.enums.SymbolPresenceServiceEnum;
 import de.learnlib.alex.websocket.services.enums.WebSocketServiceEnum;
 import io.reactivex.rxjava3.disposables.Disposable;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -54,6 +48,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
+import javax.annotation.PreDestroy;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service class which tracks user presences in tests.
@@ -86,10 +85,10 @@ public class SymbolPresenceService {
     /** A map which stores the SymbolGroupLock objects with the projectId and symbolGroupId as the keys */
     private final Map<Long, Map<Long, SymbolGroupLock>> symbolGroupLocks;
 
-    /** Shortcut mapping for easier access given the corresponding sessionId.*/
+    /** Shortcut mapping for easier access given the corresponding sessionId. */
     private final Map<String, SymbolLock> sessionMap;
 
-    /** Shortcut mapping for easier access given the corresponding userId.*/
+    /** Shortcut mapping for easier access given the corresponding userId. */
     private final Map<Long, Set<SymbolLock>> userMap;
 
     private final Set<Disposable> disposables;
@@ -155,7 +154,7 @@ public class SymbolPresenceService {
             Optional.ofNullable(sessionMap.get(sessionId))
                     .ifPresent(symbolLock -> {
                         if (symbolLock.getSymbolId() != symbolId)
-                        releaseSymbolLock(symbolLock.getProjectId(), symbolLock.getSymbolId(), userId, sessionId);
+                            releaseSymbolLock(symbolLock.getProjectId(), symbolLock.getSymbolId(), userId, sessionId);
                     });
 
             /* check access */
@@ -372,8 +371,8 @@ public class SymbolPresenceService {
             SymbolGroup symbolGroup = symbolDAO.get(userDAO.getByID(userId), projectId, symbolId).getGroup();
             while (symbolGroup != null) {
                 symbolGroupLocks.computeIfAbsent(projectId, k -> new HashMap<>())
-                                .computeIfAbsent(symbolGroup.getId(), k -> new SymbolGroupLock(projectId, k))
-                                .addSession(userId, sessionId);
+                        .computeIfAbsent(symbolGroup.getId(), k -> new SymbolGroupLock(projectId, k))
+                        .addSession(userId, sessionId);
 
                 symbolGroup = symbolGroup.getParent();
             }

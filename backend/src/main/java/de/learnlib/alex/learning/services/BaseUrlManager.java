@@ -19,7 +19,6 @@ package de.learnlib.alex.learning.services;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.actions.Credentials;
-
 import java.util.HashMap;
 import java.util.Map;
 

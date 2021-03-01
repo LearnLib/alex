@@ -54,7 +54,7 @@ public class WebSocketMessage {
     }
 
     public void setType(String type) {
-       this.type = type;
+        this.type = type;
     }
 
     public String getEntity() {

@@ -18,6 +18,11 @@ package de.learnlib.alex.common.exceptions;
 
 import de.learnlib.alex.common.utils.RESTError;
 import de.learnlib.alex.learning.exceptions.LearnerException;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.persistence.EntityNotFoundException;
+import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -30,12 +35,6 @@ import org.springframework.transaction.TransactionSystemException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
-import javax.persistence.EntityNotFoundException;
-import javax.validation.ConstraintViolationException;
-import javax.validation.ValidationException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * ExceptionMapper that will catch all {@link DataIntegrityViolationException}s thrown by the REST resources.
@@ -60,6 +59,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
+    @ExceptionHandler(ForbiddenOperationException.class)
+    protected ResponseEntity<Object> handleForbiddenOperationException(ForbiddenOperationException e) {
+        LOGGER.info("ForbiddenOperationException caught.", e);
+        final RESTError error = new RESTError(HttpStatus.FORBIDDEN, e);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+    }
+
     @ExceptionHandler(NotFoundException.class)
     protected ResponseEntity<Object> handleNotFoundException(NotFoundException e) {
         LOGGER.info("NotFoundException caught.", e);
@@ -68,7 +74,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    protected ResponseEntity<Object> handleNotFoundException(EntityNotFoundException e) {
+    protected ResponseEntity<Object> handleEntityNotFoundException(EntityNotFoundException e) {
         LOGGER.info("EntityNotFoundException caught.", e);
         final RESTError error = new RESTError(HttpStatus.NOT_FOUND, e);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
@@ -94,7 +100,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(UnauthorizedException.class)
-    protected ResponseEntity<Object> handleUnauthorized(UnauthorizedException e) {
+    protected ResponseEntity<Object> handleUnauthorizedException(UnauthorizedException e) {
         LOGGER.info("UnauthorizedException caught.", e);
         final RESTError error = new RESTError(HttpStatus.UNAUTHORIZED, e);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);

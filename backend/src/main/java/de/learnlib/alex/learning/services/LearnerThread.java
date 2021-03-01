@@ -16,15 +16,14 @@
 
 package de.learnlib.alex.learning.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 /**
  * A learner thread runs learning processes per project and handles the process queue.
@@ -44,6 +43,7 @@ public class LearnerThread extends Thread {
     private ApplicationContext applicationContext;
 
     private FinishedListener finishedListener;
+
     public void onFinished(FinishedListener listener) {
         this.finishedListener = listener;
     }

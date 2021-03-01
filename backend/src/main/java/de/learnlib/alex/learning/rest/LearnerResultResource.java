@@ -25,6 +25,10 @@ import de.learnlib.alex.learning.services.ModelExporter;
 import de.learnlib.alex.learning.services.TestGenerator;
 import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.testing.entities.TestSuite;
+import java.io.IOException;
+import java.util.List;
+import javax.validation.Valid;
+import javax.ws.rs.core.MediaType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,11 +45,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-import javax.ws.rs.core.MediaType;
-import java.io.IOException;
-import java.util.List;
 
 /**
  * REST API to fetch the test results.

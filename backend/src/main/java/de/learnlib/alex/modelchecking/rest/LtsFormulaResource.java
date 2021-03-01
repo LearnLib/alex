@@ -23,6 +23,9 @@ import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import de.learnlib.alex.modelchecking.events.ModelCheckerEvent;
 import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.webhooks.services.WebhookService;
+import java.util.Collections;
+import java.util.List;
+import javax.ws.rs.core.MediaType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,10 +38,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.ws.rs.core.MediaType;
-import java.util.Collections;
-import java.util.List;
 
 @RestController
 @RequestMapping("/rest/projects/{projectId}/ltsFormulaSuites/{suiteId}/ltsFormulas")

@@ -17,10 +17,9 @@
 package de.learnlib.alex.settings.entities;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
-import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
+import javax.persistence.Embeddable;
 
 /**
  * The entity for web driver settings.

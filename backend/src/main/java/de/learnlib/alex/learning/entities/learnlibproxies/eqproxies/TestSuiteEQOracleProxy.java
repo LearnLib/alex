@@ -23,10 +23,6 @@ import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.api.oracle.EquivalenceOracle;
 import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.api.query.DefaultQuery;
-import net.automatalib.automata.transducers.MealyMachine;
-import net.automatalib.words.Word;
-
-import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.Collection;
@@ -34,6 +30,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
+import net.automatalib.automata.transducers.MealyMachine;
+import net.automatalib.words.Word;
 
 /**
  * Use tests in a test suite as equivalence oracle.
@@ -82,7 +81,7 @@ public class TestSuiteEQOracleProxy extends AbstractEquivalenceOracleProxy
      *         How many membership queries can be posed together.
      */
     public TestSuiteEQOracleProxy(Long testSuiteId, TestDAO testDAO, User user, LearnerResult result,
-            MembershipOracle<String, Word<String>> oracle, int batchSize) {
+                                  MembershipOracle<String, Word<String>> oracle, int batchSize) {
         this();
         this.testSuiteId = testSuiteId;
         this.oracle = oracle;
@@ -142,7 +141,7 @@ public class TestSuiteEQOracleProxy extends AbstractEquivalenceOracleProxy
     @Nullable
     @Override
     public DefaultQuery<String, Word<String>> findCounterExample(MealyMachine<?, String, ?, String> hyp,
-            Collection<? extends String> alphabet) {
+                                                                 Collection<? extends String> alphabet) {
 
         while (!testCases.isEmpty()) {
             try {

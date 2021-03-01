@@ -19,6 +19,10 @@ package de.learnlib.alex.security;
 import de.learnlib.alex.auth.dao.UserDAO;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.entities.UserRole;
+import java.security.Principal;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Pattern;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.jose4j.jwt.consumer.JwtConsumer;
@@ -27,11 +31,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
-
-import java.security.Principal;
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Pattern;
 
 @Component
 public class AuthenticationProvider {

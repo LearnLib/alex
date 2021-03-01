@@ -26,6 +26,8 @@ import de.learnlib.alex.data.events.ProjectEvent;
 import de.learnlib.alex.data.services.export.ProjectExporter;
 import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.webhooks.services.WebhookService;
+import java.util.List;
+import javax.ws.rs.core.MediaType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +42,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.ws.rs.core.MediaType;
-import java.util.List;
 
 @RestController
 @RequestMapping("/rest/projects")
@@ -227,7 +226,7 @@ public class ProjectResource {
     }
 
     @PostMapping(
-            value="/{projectId}/owners",
+            value = "/{projectId}/owners",
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
@@ -239,7 +238,7 @@ public class ProjectResource {
     }
 
     @PostMapping(
-            value="/{projectId}/members",
+            value = "/{projectId}/members",
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
@@ -251,7 +250,7 @@ public class ProjectResource {
     }
 
     @DeleteMapping(
-            value="/{projectId}/owners/{ownerIds}",
+            value = "/{projectId}/owners/{ownerIds}",
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity<Project> removeOwner(@PathVariable("projectId") Long projectId, @PathVariable("ownerIds") List<Long> ownerIds) {
@@ -262,7 +261,7 @@ public class ProjectResource {
     }
 
     @DeleteMapping(
-            value="/{projectId}/members/{memberIds}",
+            value = "/{projectId}/members/{memberIds}",
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity<Project> removeMember(@PathVariable("projectId") Long projectId, @PathVariable("memberIds") List<Long> memberIds) {

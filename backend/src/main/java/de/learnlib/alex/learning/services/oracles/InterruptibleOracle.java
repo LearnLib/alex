@@ -19,9 +19,8 @@ package de.learnlib.alex.learning.services.oracles;
 import de.learnlib.alex.common.exceptions.LearnerInterruptedException;
 import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.api.query.Query;
-import net.automatalib.words.Word;
-
 import java.util.Collection;
+import net.automatalib.words.Word;
 
 /**
  * Membership oracle that can be interrupted to pose queries to a delegate.

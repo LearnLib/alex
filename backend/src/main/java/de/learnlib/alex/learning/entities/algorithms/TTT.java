@@ -24,13 +24,12 @@ import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealy;
 import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealyBuilder;
 import de.learnlib.api.algorithm.LearningAlgorithm;
 import de.learnlib.api.oracle.MembershipOracle;
-import net.automatalib.words.Alphabet;
-import net.automatalib.words.Word;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import net.automatalib.words.Alphabet;
+import net.automatalib.words.Word;
 
 /**
  * Class that provides the LearnLib implementation of the TTT algorithm for ALEX.
@@ -42,7 +41,7 @@ public class TTT extends AbstractLearningAlgorithm<String, String> implements Se
 
     @Override
     public LearningAlgorithm.MealyLearner<String, String> createLearner(Alphabet<String> sigma,
-            MembershipOracle<String, Word<String>> oracle) {
+                                                                        MembershipOracle<String, Word<String>> oracle) {
         return new TTTLearnerMealyBuilder<String, String>()
                 .withAlphabet(sigma)
                 .withOracle(oracle)

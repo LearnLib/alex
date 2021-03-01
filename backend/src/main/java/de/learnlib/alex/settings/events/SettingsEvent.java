@@ -28,7 +28,8 @@ public class SettingsEvent {
         /**
          * Constructor.
          *
-         * @param settings The updated settings.
+         * @param settings
+         *         The updated settings.
          */
         public Updated(Settings settings) {
             super(settings, EventType.SETTINGS_UPDATED);

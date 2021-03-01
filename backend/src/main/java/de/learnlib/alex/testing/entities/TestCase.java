@@ -21,7 +21,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.Constants;
-
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -32,9 +34,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.OrderColumn;
 import javax.persistence.Transient;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 /** Test case. */
 @Entity

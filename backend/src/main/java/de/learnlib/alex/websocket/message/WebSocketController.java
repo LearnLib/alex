@@ -23,6 +23,9 @@ import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.websocket.entities.WebSocketMessage;
 import de.learnlib.alex.websocket.services.WebSocketService;
 import de.learnlib.alex.websocket.services.enums.WebSocketServiceEnum;
+import java.io.IOException;
+import java.security.Principal;
+import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -32,10 +35,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import javax.ws.rs.core.MediaType;
-import java.io.IOException;
-import java.security.Principal;
 
 @Controller
 public class WebSocketController {

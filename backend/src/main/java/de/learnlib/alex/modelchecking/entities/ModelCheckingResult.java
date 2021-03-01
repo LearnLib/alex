@@ -19,8 +19,10 @@ package de.learnlib.alex.modelchecking.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.data.entities.BaseEntity;
-import org.hibernate.annotations.Type;
-
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,10 +32,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import org.hibernate.annotations.Type;
 
 @Entity
 public class ModelCheckingResult extends BaseEntity implements Serializable {

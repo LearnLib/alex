@@ -21,14 +21,13 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.CounterDAO;
 import de.learnlib.alex.data.entities.Counter;
 import de.learnlib.alex.data.entities.Project;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Connector to store and manage counters.
@@ -177,6 +176,7 @@ public class CounterStoreConnector implements Connector {
 
     /**
      * Get the store as read only map.
+     *
      * @return The store.
      */
     public Map<String, Integer> getStore() {

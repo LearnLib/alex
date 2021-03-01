@@ -32,11 +32,10 @@ import de.learnlib.alex.modelchecking.entities.export.LtsFormulaSuitesExportable
 import de.learnlib.alex.modelchecking.services.export.LtsFormulaSuitesExporter;
 import de.learnlib.alex.testing.entities.export.TestsExportableEntity;
 import de.learnlib.alex.testing.services.export.TestsExporter;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(rollbackFor = Exception.class, readOnly = true)
@@ -80,20 +79,27 @@ public class ProjectExporter extends EntityExporter {
         return exportableEntity;
     }
 
-    private static abstract class IgnoreFieldsForProjectMixin extends IgnoreIdFieldMixin {
-        @JsonIgnore abstract Long getUserId();
-        @JsonIgnore abstract List<Long> getMemberIds();
-        @JsonIgnore abstract List<Long> getOwnerIds();
+    private abstract static class IgnoreFieldsForProjectMixin extends IgnoreIdFieldMixin {
+        @JsonIgnore
+        abstract Long getUserId();
+
+        @JsonIgnore
+        abstract List<Long> getMemberIds();
+
+        @JsonIgnore
+        abstract List<Long> getOwnerIds();
     }
 
-    private static abstract class IgnoreFieldsForProjectEnvironmentMixin extends IgnoreIdFieldMixin {
-        @JsonIgnore abstract Long getProjectId();
+    private abstract static class IgnoreFieldsForProjectEnvironmentMixin extends IgnoreIdFieldMixin {
+        @JsonIgnore
+        abstract Long getProjectId();
     }
 
-    private static abstract class IgnoreFieldsForProjectUrlMixin extends IgnoreIdFieldMixin {
-        @JsonIgnore abstract Long getEnvironmentId();
+    private abstract static class IgnoreFieldsForProjectUrlMixin extends IgnoreIdFieldMixin {
+        @JsonIgnore
+        abstract Long getEnvironmentId();
     }
 
-    private static abstract class IgnoreFieldsForProjectVariableMixin extends IgnoreFieldsForProjectUrlMixin {
+    private abstract static class IgnoreFieldsForProjectVariableMixin extends IgnoreFieldsForProjectUrlMixin {
     }
 }

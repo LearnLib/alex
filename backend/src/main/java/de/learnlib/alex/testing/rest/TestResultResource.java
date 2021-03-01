@@ -21,6 +21,12 @@ import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.testing.dao.TestReportDAO;
 import de.learnlib.alex.testing.dao.TestResultDAO;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
@@ -31,13 +37,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
 
 @RestController
 @RequestMapping("/rest/projects/{projectId}/tests/reports/{reportId}/results")

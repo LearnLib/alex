@@ -22,7 +22,6 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.learnlib.alex.common.utils.SearchHelper;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
-
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;

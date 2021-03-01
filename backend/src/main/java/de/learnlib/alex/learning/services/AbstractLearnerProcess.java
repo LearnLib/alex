@@ -46,6 +46,11 @@ import de.learnlib.api.oracle.EquivalenceOracle;
 import de.learnlib.api.query.DefaultQuery;
 import de.learnlib.filter.cache.mealy.MealyCacheOracle;
 import de.learnlib.oracle.parallelism.DynamicParallelOracleBuilder;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
 import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
@@ -53,12 +58,6 @@ import net.automatalib.words.impl.GrowingMapAlphabet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Thread to run a learning process. It needs to be a Thread so that the server can still deal with other requests. This

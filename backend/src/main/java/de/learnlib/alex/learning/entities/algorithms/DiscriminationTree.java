@@ -25,13 +25,12 @@ import de.learnlib.api.algorithm.LearningAlgorithm;
 import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.datastructure.discriminationtree.model.AbstractWordBasedDTNode;
 import de.learnlib.datastructure.discriminationtree.model.AbstractWordBasedDiscriminationTree;
-import net.automatalib.words.Alphabet;
-import net.automatalib.words.Word;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import net.automatalib.words.Alphabet;
+import net.automatalib.words.Word;
 
 /**
  * Class that provides the LearnLib implementation of the Discrimination Tree algorithm for ALEX.
@@ -43,7 +42,7 @@ public class DiscriminationTree extends AbstractLearningAlgorithm<String, String
 
     @Override
     public LearningAlgorithm.MealyLearner<String, String> createLearner(Alphabet<String> sigma,
-            MembershipOracle<String, Word<String>> oracle) {
+                                                                        MembershipOracle<String, Word<String>> oracle) {
         return new DTLearnerMealyBuilder<String, String>()
                 .withAlphabet(sigma)
                 .withOracle(oracle)

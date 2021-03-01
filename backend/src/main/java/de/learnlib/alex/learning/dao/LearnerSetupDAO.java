@@ -39,14 +39,6 @@ import de.learnlib.alex.learning.services.LearnerService;
 import de.learnlib.alex.modelchecking.dao.ModelCheckingConfigDAO;
 import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import de.learnlib.alex.modelchecking.repositories.LtsFormulaSuiteRepository;
-import org.hibernate.Hibernate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.validation.ValidationException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +46,13 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.persistence.EntityManager;
+import javax.validation.ValidationException;
+import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(rollbackFor = Exception.class)

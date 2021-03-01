@@ -20,7 +20,6 @@ package de.learnlib.alex.data.utils;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
-
 import java.util.HashMap;
 import java.util.Map;
 

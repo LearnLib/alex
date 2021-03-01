@@ -25,6 +25,16 @@ import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.websocket.entities.WebSocketMessage;
 import de.learnlib.alex.websocket.services.enums.WebSocketServiceEnum;
 import io.reactivex.rxjava3.subjects.PublishSubject;
+import java.io.IOException;
+import java.security.Principal;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpAttributesContextHolder;
@@ -37,17 +47,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
-
-import java.io.IOException;
-import java.security.Principal;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Predicate;
 
 @Service
 @Transactional(rollbackFor = Exception.class)

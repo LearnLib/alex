@@ -38,9 +38,9 @@ public class RESTError {
      * Constructor.
      *
      * @param status
-     *            The status of the error.
+     *         The status of the error.
      * @param exception
-     *            The exception that caused the error, could be null.
+     *         The exception that caused the error, could be null.
      */
     public RESTError(HttpStatus status, Exception exception) {
         this.status = status;

@@ -18,10 +18,9 @@ package de.learnlib.alex.data.repositories;
 
 import de.learnlib.alex.data.entities.Counter;
 import de.learnlib.alex.data.entities.Project;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 /**
  * Repository to persist Counters.
@@ -42,7 +41,7 @@ public interface CounterRepository extends JpaRepository<Counter, Long> {
      * Get counters by their IDs.
      *
      * @param ids
-     *          The IDs of the counters.
+     *         The IDs of the counters.
      * @return The counters.
      */
     List<Counter> findAllByIdIn(List<Long> ids);

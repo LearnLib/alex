@@ -23,12 +23,11 @@ import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
 import de.learnlib.alex.data.repositories.SymbolOutputMappingRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterValueRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
+import java.util.stream.Collectors;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.stream.Collectors;
 
 /**
  * The implementation of the {@link ParameterizedSymbolDAO}.

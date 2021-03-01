@@ -18,7 +18,6 @@ package de.learnlib.alex.data.entities;
 
 import de.learnlib.alex.learning.entities.LearnerSetup;
 import de.learnlib.alex.testing.entities.TestCase;
-
 import java.util.HashSet;
 import java.util.Set;
 

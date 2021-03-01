@@ -30,16 +30,6 @@ import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
 import de.learnlib.alex.websocket.services.SymbolPresenceService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.hibernate.Hibernate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.validation.ValidationException;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -52,6 +42,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.validation.ValidationException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Implementation of a SymbolGroupDAO using Spring Data.
@@ -98,14 +97,20 @@ public class SymbolGroupDAO {
         projectDAO.checkAccess(user, project);
 
         try {
-            final SymbolGroup[] symbolGroups = objectMapper.readValue(importableEntity.getSymbolGroups().toString(), SymbolGroup[].class);
+            final var symbolGroupsAsString = importableEntity.getSymbolGroups().toString();
+            final var symbolGroups = objectMapper.readValue(symbolGroupsAsString, SymbolGroup[].class);
             return importGroups(user, project, Arrays.asList(symbolGroups), importableEntity.getConflictResolutions());
         } catch (IOException e) {
             throw new ValidationException("The input could not be parsed");
         }
     }
 
-    public List<SymbolGroup> importGroups(User user, Project project, List<SymbolGroup> groups, Map<String, SymbolImportConflictResolutionStrategy> conflictResolutions) {
+    public List<SymbolGroup> importGroups(
+            User user,
+            Project project,
+            List<SymbolGroup> groups,
+            Map<String, SymbolImportConflictResolutionStrategy> conflictResolutions
+    ) {
         LOGGER.traceEntry("import({})", groups);
         projectDAO.checkAccess(user, project);
 
@@ -135,9 +140,15 @@ public class SymbolGroupDAO {
         return importedGroups;
     }
 
-    private List<SymbolGroup> importGroups(User user, Project project, List<SymbolGroup> groups, SymbolGroup parent, Map<String, SymbolImportConflictResolutionStrategy> conflictResolutions) {
+    private List<SymbolGroup> importGroups(
+            User user,
+            Project project,
+            List<SymbolGroup> groups,
+            SymbolGroup parent, Map<String,
+            SymbolImportConflictResolutionStrategy> conflictResolutions
+    ) {
         final List<SymbolGroup> importedGroups = new ArrayList<>();
-        for (SymbolGroup group: groups) {
+        for (SymbolGroup group : groups) {
             final List<SymbolGroup> children = group.getGroups();
             final Set<Symbol> symbols = group.getSymbols();
 
@@ -156,8 +167,8 @@ public class SymbolGroupDAO {
             });
             symbolDAO.importSymbols(user, project, new ArrayList<>(symbols), conflictResolutions);
 
-            final List<SymbolGroup> createdChildren = importGroups(user, project, children, createdGroup, conflictResolutions);
-            createdGroup.setGroups(createdChildren);
+            final var createdChildGroups = importGroups(user, project, children, createdGroup, conflictResolutions);
+            createdGroup.setGroups(createdChildGroups);
             importedGroups.add(createdGroup);
         }
         return importedGroups;
@@ -230,7 +241,7 @@ public class SymbolGroupDAO {
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
-        final List<SymbolGroup> groups = symbolGroupRepository.findAllByProject_IdAndParent_id(projectId, null);
+        final var groups = symbolGroupRepository.findAllByProject_IdAndParent_id(projectId, null);
         for (SymbolGroup group : groups) {
             loadLazyRelations(group);
         }
@@ -430,7 +441,7 @@ public class SymbolGroupDAO {
         Hibernate.initialize(group.getSymbols());
         group.getSymbols().forEach(SymbolDAO::loadLazyRelations);
 
-        for (SymbolGroup g: group.getGroups()) {
+        for (SymbolGroup g : group.getGroups()) {
             loadLazyRelations(g);
         }
     }

@@ -36,12 +36,6 @@ import de.learnlib.alex.websocket.entities.WebSocketMessage;
 import de.learnlib.alex.websocket.services.enums.TestPresenceServiceEnum;
 import de.learnlib.alex.websocket.services.enums.WebSocketServiceEnum;
 import io.reactivex.rxjava3.disposables.Disposable;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -55,6 +49,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
+import javax.annotation.PreDestroy;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service class which tracks user presences in tests.
@@ -84,10 +83,10 @@ public class TestPresenceService {
     /** A map which stores the TestLock objects with the projectId and testId as the keys */
     private final Map<Long, Map<Long, TestLock>> testLocks;
 
-    /** Shortcut mapping for easier access given the corresponding sessionId.*/
+    /** Shortcut mapping for easier access given the corresponding sessionId. */
     private final Map<String, TestCaseLock> sessionMap;
 
-    /** Shortcut mapping for easier access given the corresponding userId.*/
+    /** Shortcut mapping for easier access given the corresponding userId. */
     private final Map<Long, Set<TestCaseLock>> userMap;
 
     private final Set<Disposable> disposables;
@@ -307,7 +306,7 @@ public class TestPresenceService {
                             tmpSessionSet.forEach(sessionId -> {
                                 releaseTestLock(testCaseLock.getProjectId(), testCaseLock.getTestId(), userId, sessionId);
                             });
-                        } );
+                        });
                     });
         } finally {
             lock.unlock();
@@ -375,7 +374,7 @@ public class TestPresenceService {
         Optional.ofNullable(testLocks.get(projectId))
                 .map(m -> m.get(testId))
                 .ifPresent(testCaseLock -> {
-                    if (((TestCaseLock)testCaseLock).removeSession(sessionId)) {
+                    if (((TestCaseLock) testCaseLock).removeSession(sessionId)) {
                         sessionMap.remove(sessionId);
 
                         if (!((TestCaseLock) testCaseLock).isLocked()) {
@@ -591,8 +590,10 @@ public class TestPresenceService {
         }
 
         @JsonProperty("locks")
-        public List getLockOwnersNames() {
-            return lockOwners.stream().map(userId -> userDAO.getByID(userId).getUsername()).collect(Collectors.toList());
+        public List<String> getLockOwnersNames() {
+            return lockOwners.stream()
+                    .map(userId -> userDAO.getByID(userId).getUsername())
+                    .collect(Collectors.toList());
         }
     }
- }
+}

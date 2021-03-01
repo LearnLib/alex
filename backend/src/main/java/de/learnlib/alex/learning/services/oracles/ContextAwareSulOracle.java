@@ -27,11 +27,12 @@ import de.learnlib.mapper.ContextExecutableInputSUL;
 import de.learnlib.mapper.SULMappers;
 import de.learnlib.mapper.api.ContextExecutableInput;
 import de.learnlib.oracle.membership.SULOracle;
+import java.util.Collection;
 import net.automatalib.words.Word;
 
-import java.util.Collection;
-
-/** Wrapper for a {@link SULOracle} that knows its context. */
+/**
+ * Wrapper for a {@link SULOracle} that knows its context.
+ */
 public class ContextAwareSulOracle implements MembershipOracle<String, Word<String>> {
 
     /** The oracle to pose queries to. */

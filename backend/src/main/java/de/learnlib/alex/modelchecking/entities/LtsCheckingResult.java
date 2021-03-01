@@ -17,9 +17,8 @@
 package de.learnlib.alex.modelchecking.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import net.automatalib.words.Word;
-
 import java.util.List;
+import net.automatalib.words.Word;
 
 /** The counterexample of a model check. */
 public class LtsCheckingResult {

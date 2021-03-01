@@ -22,13 +22,12 @@ import de.learnlib.alex.data.entities.Counter;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.repositories.CounterRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
+import java.util.List;
+import javax.validation.ValidationException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.validation.ValidationException;
-import java.util.List;
 
 /**
  * Implementation of a CounterDAO using Hibernate.

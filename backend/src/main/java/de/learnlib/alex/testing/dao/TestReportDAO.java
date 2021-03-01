@@ -30,17 +30,6 @@ import de.learnlib.alex.testing.entities.TestResult;
 import de.learnlib.alex.testing.entities.TestSuiteResult;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
 import de.learnlib.alex.testing.repositories.TestResultRepository;
-import org.apache.commons.io.FileUtils;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.hibernate.Hibernate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.ws.rs.BadRequestException;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -51,6 +40,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import javax.ws.rs.BadRequestException;
+import org.apache.commons.io.FileUtils;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /** The implementation of the test report DAO . */
 @Service
@@ -228,7 +227,7 @@ public class TestReportDAO {
         for (int i = 0; i < outputs.size(); i++) {
             if (outputs.get(i).getTestScreenshot() != null) {
                 File screenshot = this.getScreenshot(user, projectId, testReportId, outputs.get(i).getTestScreenshot().getFilename());
-                writeToZipFile(screenshot, String.format("%03d" , i+1) + "__" + outputs.get(i).getSymbol().getName().replaceAll("\\s", "_") + "__" + outputs.get(i).getOutput().replaceAll("\\s", "_") + ".png", zos);
+                writeToZipFile(screenshot, String.format("%03d", i + 1) + "__" + outputs.get(i).getSymbol().getName().replaceAll("\\s", "_") + "__" + outputs.get(i).getOutput().replaceAll("\\s", "_") + ".png", zos);
             }
         }
 
@@ -293,7 +292,7 @@ public class TestReportDAO {
         }
     }
 
-     private void writeToZipFile(File file, String targetPath, ZipOutputStream zos)
+    private void writeToZipFile(File file, String targetPath, ZipOutputStream zos)
             throws IOException {
 
         FileInputStream fis = new FileInputStream(file);

@@ -17,10 +17,9 @@
 package de.learnlib.alex.data.repositories;
 
 import de.learnlib.alex.data.entities.SymbolPSymbolStep;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface SymbolPSymbolStepRepository extends JpaRepository<SymbolPSymbolStep, Long> {

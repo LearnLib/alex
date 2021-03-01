@@ -17,7 +17,6 @@
 package de.learnlib.alex.learning.services.connectors;
 
 import de.learnlib.alex.data.entities.ProjectEnvironment;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;

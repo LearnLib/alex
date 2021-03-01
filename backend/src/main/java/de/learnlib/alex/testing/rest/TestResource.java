@@ -31,6 +31,8 @@ import de.learnlib.alex.testing.events.TestEvent;
 import de.learnlib.alex.testing.services.TestService;
 import de.learnlib.alex.testing.services.export.TestsExporter;
 import de.learnlib.alex.webhooks.services.WebhookService;
+import java.util.List;
+import javax.ws.rs.core.MediaType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,9 +49,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.ws.rs.core.MediaType;
-import java.util.List;
 
 /**
  * REST endpoints for working with tests.
@@ -243,8 +242,8 @@ public class TestResource {
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity<Test> update(@PathVariable("projectId") Long projectId,
-                                 @PathVariable("testId") Long testId,
-                                 @RequestBody Test test) {
+                                       @PathVariable("testId") Long testId,
+                                       @RequestBody Test test) {
         final var user = authContext.getUser();
         LOGGER.traceEntry("update(projectId: {}, testId: {})", projectId, testId);
 
@@ -294,7 +293,7 @@ public class TestResource {
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity<?> delete(@PathVariable("projectId") Long projectId,
-                                 @PathVariable("testId") Long testId) {
+                                    @PathVariable("testId") Long testId) {
         final var user = authContext.getUser();
         testDAO.delete(user, projectId, testId);
         webhookService.fireEvent(user, new TestEvent.Deleted(testId));
@@ -306,7 +305,7 @@ public class TestResource {
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity<?> abort(@PathVariable("projectId") Long projectId,
-                                @PathVariable("reportId") Long reportId) {
+                                   @PathVariable("reportId") Long reportId) {
         final var user = authContext.getUser();
         testService.abort(user, projectId, reportId);
         return ResponseEntity.ok().build();
@@ -326,7 +325,7 @@ public class TestResource {
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity<?> delete(@PathVariable("projectId") Long projectId,
-                                 @PathVariable("testIds") List<Long> testIds) {
+                                    @PathVariable("testIds") List<Long> testIds) {
         final var user = authContext.getUser();
         testDAO.delete(user, projectId, testIds);
         webhookService.fireEvent(user, new TestEvent.DeletedMany(testIds));
@@ -351,9 +350,9 @@ public class TestResource {
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity<Page<TestResult>> getResults(@PathVariable("projectId") Long projectId,
-                                     @PathVariable("testId") Long testId,
-                                     @RequestParam(name = "page", defaultValue = "1") int page,
-                                     @RequestParam(name = "size", defaultValue = "25") int size) {
+                                                       @PathVariable("testId") Long testId,
+                                                       @RequestParam(name = "page", defaultValue = "1") int page,
+                                                       @RequestParam(name = "size", defaultValue = "25") int size) {
         final var user = authContext.getUser();
         final var pr = PageRequest.of(page, size);
         final var results = testDAO.getResults(user, projectId, testId, pr);

@@ -20,7 +20,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.learnlib.alex.auth.entities.User;
-
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -32,10 +35,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * Webhook.
@@ -127,8 +126,12 @@ public class Webhook implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Webhook)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Webhook)) {
+            return false;
+        }
         Webhook webhook = (Webhook) o;
         return Objects.equals(id, webhook.id);
     }

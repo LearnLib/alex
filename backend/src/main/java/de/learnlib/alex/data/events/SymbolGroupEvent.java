@@ -19,7 +19,6 @@ package de.learnlib.alex.data.events;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.webhooks.entities.Event;
 import de.learnlib.alex.webhooks.entities.EventType;
-
 import java.util.List;
 
 /** Symbol group events. */
@@ -31,7 +30,8 @@ public class SymbolGroupEvent {
         /**
          * Constructor.
          *
-         * @param symbolGroup The created symbol group .
+         * @param symbolGroup
+         *         The created symbol group .
          */
         public Created(SymbolGroup symbolGroup) {
             super(symbolGroup, EventType.SYMBOL_GROUP_CREATED);
@@ -44,7 +44,8 @@ public class SymbolGroupEvent {
         /**
          * Constructor.
          *
-         * @param symbolGroups The created symbol group .
+         * @param symbolGroups
+         *         The created symbol group .
          */
         public CreatedMany(List<SymbolGroup> symbolGroups) {
             super(symbolGroups, EventType.SYMBOL_GROUPS_CREATED);
@@ -57,7 +58,8 @@ public class SymbolGroupEvent {
         /**
          * Constructor.
          *
-         * @param id The id of the deleted symbol group .
+         * @param id
+         *         The id of the deleted symbol group .
          */
         public Deleted(Long id) {
             super(id, EventType.SYMBOL_GROUP_DELETED);
@@ -70,7 +72,8 @@ public class SymbolGroupEvent {
         /**
          * Constructor.
          *
-         * @param symbolGroup The updated symbol group .
+         * @param symbolGroup
+         *         The updated symbol group .
          */
         public Updated(SymbolGroup symbolGroup) {
             super(symbolGroup, EventType.SYMBOL_GROUP_UPDATED);
@@ -83,7 +86,8 @@ public class SymbolGroupEvent {
         /**
          * Constructor.
          *
-         * @param symbolGroup The moved symbol group .
+         * @param symbolGroup
+         *         The moved symbol group .
          */
         public Moved(SymbolGroup symbolGroup) {
             super(symbolGroup, EventType.SYMBOL_GROUP_MOVED);

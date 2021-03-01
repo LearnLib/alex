@@ -21,12 +21,11 @@ import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.learning.exceptions.LearnerException;
 import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.api.query.Query;
+import java.util.Collection;
+import javax.annotation.ParametersAreNonnullByDefault;
 import net.automatalib.words.Word;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Collection;
 
 /**
  * Oracle that delegates queries to another oracle that can be exchanged.

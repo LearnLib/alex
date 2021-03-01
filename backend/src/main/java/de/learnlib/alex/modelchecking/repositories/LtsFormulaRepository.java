@@ -17,10 +17,9 @@
 package de.learnlib.alex.modelchecking.repositories;
 
 import de.learnlib.alex.modelchecking.entities.LtsFormula;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 /** Repository for lts formulas. */
 @Repository

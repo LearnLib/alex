@@ -30,13 +30,7 @@ import de.learnlib.alex.websocket.entities.WebSocketMessage;
 import de.learnlib.alex.websocket.services.enums.ProjectPresenceServiceEnum;
 import de.learnlib.alex.websocket.services.enums.WebSocketServiceEnum;
 import io.reactivex.rxjava3.disposables.Disposable;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.PreDestroy;
-import java.awt.*;
+import java.awt.Color;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,6 +43,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import javax.annotation.PreDestroy;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service class which tracks user presences in projects.
@@ -73,13 +72,13 @@ public class ProjectPresenceService {
 
     private final UserDAO userDAO;
 
-    /** A map which stores the ProjectPresenceStatus objects with the projectId as the key */
+    /** A map which stores the ProjectPresenceStatus objects with the projectId as the key. */
     private final Map<Long, ProjectPresenceStatus> projectPresences;
 
-    /** Shortcut mapping for easier access given the corresponding sessionId.*/
+    /** Shortcut mapping for easier access given the corresponding sessionId. */
     private final Map<String, ProjectPresenceStatus> sessionMap;
 
-    /** Shortcut mapping for easier access given the corresponding userId.*/
+    /** Shortcut mapping for easier access given the corresponding userId. */
     private final Map<Long, Set<ProjectPresenceStatus>> userMap;
 
     private final Set<Disposable> disposables;
@@ -409,10 +408,10 @@ public class ProjectPresenceService {
 
         private String computeRGBColor(int colorCode) {
             float h = 0.5f;
-            float golden_ratio_a = 0.618033988749895f;
+            float goldenRatioA = 0.618033988749895f;
 
-            for(int i = 1; i < colorCode; i++) {
-                h += golden_ratio_a;
+            for (int i = 1; i < colorCode; i++) {
+                h += goldenRatioA;
                 h %= 1;
             }
 

@@ -17,7 +17,6 @@
 package de.learnlib.alex.testing.entities;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;

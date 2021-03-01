@@ -18,9 +18,7 @@ package de.learnlib.alex.data.events;
 
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.webhooks.entities.Event;
-
 import java.util.List;
-
 import static de.learnlib.alex.webhooks.entities.EventType.SYMBOLS_CREATED;
 import static de.learnlib.alex.webhooks.entities.EventType.SYMBOLS_DELETED;
 import static de.learnlib.alex.webhooks.entities.EventType.SYMBOLS_UPDATED;
@@ -37,7 +35,8 @@ public class SymbolEvent {
         /**
          * Constructor.
          *
-         * @param symbol The created symbol.
+         * @param symbol
+         *         The created symbol.
          */
         public Created(Symbol symbol) {
             super(symbol, SYMBOL_CREATED);
@@ -50,7 +49,8 @@ public class SymbolEvent {
         /**
          * Constructor.
          *
-         * @param symbols The created symbols.
+         * @param symbols
+         *         The created symbols.
          */
         public CreatedMany(List<Symbol> symbols) {
             super(symbols, SYMBOLS_CREATED);
@@ -63,7 +63,8 @@ public class SymbolEvent {
         /**
          * Constructor.
          *
-         * @param symbol The updated symbol.
+         * @param symbol
+         *         The updated symbol.
          */
         public Updated(Symbol symbol) {
             super(symbol, SYMBOL_UPDATED);
@@ -76,7 +77,8 @@ public class SymbolEvent {
         /**
          * Constructor.
          *
-         * @param symbols The updated symbols.
+         * @param symbols
+         *         The updated symbols.
          */
         public UpdatedMany(List<Symbol> symbols) {
             super(symbols, SYMBOLS_UPDATED);

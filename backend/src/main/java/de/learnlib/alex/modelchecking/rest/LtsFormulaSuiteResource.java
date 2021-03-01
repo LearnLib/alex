@@ -20,6 +20,8 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.modelchecking.dao.LtsFormulaSuiteDAO;
 import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import de.learnlib.alex.security.AuthContext;
+import java.util.List;
+import javax.ws.rs.core.MediaType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +36,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.ws.rs.core.MediaType;
-import java.util.List;
 
 /** The lts formula endpoints for the REST API. */
 @RestController

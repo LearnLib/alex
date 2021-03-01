@@ -25,7 +25,6 @@ import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.learning.entities.WebDriverConfig;
-
 import java.util.ArrayList;
 import java.util.List;
 

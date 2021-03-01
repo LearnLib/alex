@@ -16,11 +16,9 @@
 
 package de.learnlib.alex.data.entities;
 
-import org.hibernate.validator.constraints.Length;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-
+import org.hibernate.validator.constraints.Length;
 import static de.learnlib.alex.data.entities.Project.MAX_DESCRIPTION_LENGTH;
 
 public class CreateProjectForm {

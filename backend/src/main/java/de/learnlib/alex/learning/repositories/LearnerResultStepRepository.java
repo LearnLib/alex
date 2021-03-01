@@ -17,10 +17,9 @@
 package de.learnlib.alex.learning.repositories;
 
 import de.learnlib.alex.learning.entities.LearnerResultStep;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 /**
  * Repository to persist LearnerResultSteps.

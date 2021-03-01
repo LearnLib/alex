@@ -21,13 +21,12 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.WebDriver;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.WebDriver;
 
 /**
  * Action to submit a specific element.
@@ -83,7 +82,7 @@ public class SwitchToAction extends WebSymbolAction {
                     wd.switchTo().frame(connector.getLastFrame());
                     break;
                 case WINDOW:
-                    for (final String handle: wd.getWindowHandles()) {
+                    for (final String handle : wd.getWindowHandles()) {
                         wd.switchTo().window(handle);
                     }
                     break;

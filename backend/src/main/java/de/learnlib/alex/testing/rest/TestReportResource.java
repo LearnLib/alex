@@ -23,6 +23,9 @@ import de.learnlib.alex.testing.dao.TestReportDAO;
 import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.services.reporters.JUnitTestResultReporter;
 import de.learnlib.alex.testing.services.reporters.TestResultReporter;
+import java.util.List;
+import javax.validation.ValidationException;
+import javax.ws.rs.core.MediaType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +40,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.ValidationException;
-import javax.ws.rs.core.MediaType;
-import java.util.List;
 
 /** The resource for test reports. */
 @RestController

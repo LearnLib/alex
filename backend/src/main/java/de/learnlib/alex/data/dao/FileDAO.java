@@ -22,15 +22,6 @@ import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.UploadableFile;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.UploadableFileRepository;
-import org.apache.commons.io.FileUtils;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -39,6 +30,14 @@ import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import javax.annotation.PostConstruct;
+import org.apache.commons.io.FileUtils;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Simple implementation of a FileDAO.
@@ -144,11 +143,11 @@ public class FileDAO {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final List<UploadableFile> files = fileRepository.findAllByIdIn(fileIds);
 
-        for (UploadableFile f: files) {
+        for (UploadableFile f : files) {
             checkAccess(user, project, f);
         }
 
-        for (UploadableFile f: files) {
+        for (UploadableFile f : files) {
             final File fileToDelete = getFileInternal(user, project, f);
             fileToDelete.delete();
             fileRepository.deleteById(f.getId());

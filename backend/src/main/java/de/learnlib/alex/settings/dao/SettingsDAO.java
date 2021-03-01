@@ -19,11 +19,10 @@ package de.learnlib.alex.settings.dao;
 import de.learnlib.alex.settings.entities.DriverSettings;
 import de.learnlib.alex.settings.entities.Settings;
 import de.learnlib.alex.settings.repositories.SettingsRepository;
+import javax.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.validation.ValidationException;
 
 /**
  * Implementation of a SettingsDAO using Spring Data.

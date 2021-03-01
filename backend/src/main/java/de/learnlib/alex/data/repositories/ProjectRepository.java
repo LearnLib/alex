@@ -17,12 +17,11 @@
 package de.learnlib.alex.data.repositories;
 
 import de.learnlib.alex.data.entities.Project;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 /**
  * Repository to persist Projects.
@@ -37,18 +36,13 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
      *         The ID the User the Projects belongs to.
      * @return The Projects of the User.
      */
-    @Query(value =  "select p from Project p where " +
-                    "       p in (select p from Project p Join p.owners o where o.id = :id)" +
-                    "    or p in (select p from Project p Join p.members m where m.id = :id)")
+    @Query(value = "select p from Project p where "
+            + "       p in (select p from Project p Join p.owners o where o.id = :id)"
+            + "    or p in (select p from Project p Join p.members m where m.id = :id)")
     List<Project> findAllByUser_Id(@Param("id") Long userId);
 
-    @Query(value =  "select p from Project p where " +
-                    "       p in (select p from Project p Join p.owners o where o.id = :id and p.name = :name)" +
-                    "    or p in (select p from Project p Join p.members m where m.id = :id and p.name = :name)")
-    Project findByUser_IdAndName(@Param("id") Long userId, @Param("name") String name);
-
-    @Query(value =  "select p from Project p where " +
-                    "       p in (select p from Project p Join p.owners o where o.id = :id and p.name = :name and p.id <> :projectId)" +
-                    "    or p in (select p from Project p Join p.members m where m.id = :id and p.name = :name and p.id <> :projectId)")
+    @Query(value = "select p from Project p where "
+            + "       p in (select p from Project p Join p.owners o where o.id = :id and p.name = :name and p.id <> :projectId)"
+            + "    or p in (select p from Project p Join p.members m where m.id = :id and p.name = :name and p.id <> :projectId)")
     Project findByUser_IdAndNameAndIdNot(@Param("id") Long userId, @Param("name") String name, @Param("projectId") Long projectId);
 }

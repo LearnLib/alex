@@ -20,6 +20,7 @@ import de.learnlib.alex.auth.dao.UserDAO;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.entities.UserRole;
 import de.learnlib.alex.auth.events.UserEvent;
+import de.learnlib.alex.common.exceptions.ForbiddenOperationException;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.security.AuthContext;
@@ -27,6 +28,10 @@ import de.learnlib.alex.security.JwtHelper;
 import de.learnlib.alex.settings.dao.SettingsDAO;
 import de.learnlib.alex.settings.entities.Settings;
 import de.learnlib.alex.webhooks.services.WebhookService;
+import java.util.ArrayList;
+import java.util.List;
+import javax.validation.ValidationException;
+import javax.ws.rs.core.MediaType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -45,11 +50,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.ValidationException;
-import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * REST resource to handle users.
@@ -165,7 +165,8 @@ public class UserResource {
     /**
      * Get the account information about multiple users.
      *
-     * @param userIds The ids of the users.
+     * @param userIds
+     *         The ids of the users.
      * @return Detailed information about the users.
      */
     @GetMapping(
@@ -177,7 +178,7 @@ public class UserResource {
         LOGGER.traceEntry("get({}) for user {}.", userIds, user);
 
         final List<User> users = new ArrayList<>();
-        for (Long id: userIds) {
+        for (Long id : userIds) {
             users.add(userDAO.getByID(id));
         }
 
@@ -213,7 +214,8 @@ public class UserResource {
             } else {
                 users.add(userDAO.getByUsername(searchterm));
             }
-        } catch (NotFoundException ignored) {};
+        } catch (NotFoundException ignored) {
+        }
         LOGGER.traceExit(users);
         return ResponseEntity.ok(users);
     }
@@ -281,8 +283,7 @@ public class UserResource {
 
         if (!user.getId().equals(userId) && !user.getRole().equals(UserRole.ADMIN)) {
             LOGGER.traceExit("Only the user or an admin is allowed to change the email.");
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.changePassword", HttpStatus.FORBIDDEN,
-                    new UnauthorizedException("You are not allowed to do this."));
+            throw new UnauthorizedException("You are not allowed to do this.");
         }
 
         String email = (String) json.get("email");
@@ -291,6 +292,7 @@ public class UserResource {
         if (!new EmailValidator().isValid(email, null)) {
             throw new ValidationException("The email is not valid!");
         }
+
         if (email.equals(user.getEmail())) {
             throw new ValidationException("The email is the same as the current one!");
         }
@@ -319,10 +321,12 @@ public class UserResource {
 
     /**
      * Changes the username of the user. This can only be invoked if you are an administrator.
-     * Please also note: Your new username must not be your current one and no other user should already have this username.
+     * Your new username must not be your current one and no other user should already have this username.
      *
-     * @param userId The id of the user.
-     * @param json The json with a property 'username'.
+     * @param userId
+     *         The id of the user.
+     * @param json
+     *         The json with a property 'username'.
      * @return The updated user.
      */
     @PutMapping(
@@ -336,8 +340,7 @@ public class UserResource {
 
         if (!user.getRole().equals(UserRole.ADMIN)) {
             LOGGER.traceExit("Only the admin is allowed to change the username.");
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.changeUsername", HttpStatus.FORBIDDEN,
-                    new UnauthorizedException("You are not allowed to do this."));
+            throw new ForbiddenOperationException("You are not allowed to do this.");
         }
 
         String username = (String) json.get("username");
@@ -426,9 +429,9 @@ public class UserResource {
         LOGGER.traceEntry("delete({}) for user {}.", userId, user);
 
         if (!user.getId().equals(userId) && !user.getRole().equals(UserRole.ADMIN)) {
-            UnauthorizedException e = new UnauthorizedException("You are not allowed to delete this user");
+            final var e = new ForbiddenOperationException("You are not allowed to delete this user.");
             LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", HttpStatus.FORBIDDEN, e);
+            throw e;
         }
 
         // the event is not fired if we do it after the user is deleted in the next line
@@ -456,9 +459,9 @@ public class UserResource {
         LOGGER.traceEntry("delete({}) for user {}.", ids, user);
 
         if (ids.contains(user.getId())) {
-            Exception e = new Exception("You cannot delete your own account this way.");
+            final var e = new IllegalArgumentException("You cannot delete your own account this way.");
             LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", HttpStatus.BAD_REQUEST, e);
+            throw e;
         }
 
         userDAO.delete(user, ids);
@@ -497,7 +500,7 @@ public class UserResource {
             return ResponseEntity.ok(json);
         } catch (JoseException e) {
             LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", HttpStatus.UNAUTHORIZED, e);
+            throw new UnauthorizedException();
         }
     }
 
@@ -510,7 +513,7 @@ public class UserResource {
             value = "/myself",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity myself() {
+    public ResponseEntity<User> myself() {
         final User user = authContext.getUser();
 
         final User myself = userDAO.getByID(user.getId());

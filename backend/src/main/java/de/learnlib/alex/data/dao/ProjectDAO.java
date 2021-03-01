@@ -55,16 +55,6 @@ import de.learnlib.alex.testing.repositories.TestRepository;
 import de.learnlib.alex.websocket.services.ProjectPresenceService;
 import de.learnlib.alex.websocket.services.SymbolPresenceService;
 import de.learnlib.alex.websocket.services.TestPresenceService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.hibernate.Hibernate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.validation.ValidationException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,6 +63,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.validation.ValidationException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Implementation of a ProjectDAO using Spring Data.
@@ -285,7 +284,7 @@ public class ProjectDAO {
     }
 
     public void delete(User user, List<Long> projectIds) {
-        for (Long id: projectIds) {
+        for (Long id : projectIds) {
             delete(user, id);
         }
     }
@@ -343,9 +342,9 @@ public class ProjectDAO {
             testDAO.importTests(user, createdProject.getId(), tests);
         }
 
-        for (LtsFormulaSuite suite: formulaSuites) {
+        for (LtsFormulaSuite suite : formulaSuites) {
             final LtsFormulaSuite createdSuite = ltsFormulaSuiteDAO.create(user, createdProject.getId(), suite);
-            for (LtsFormula formula: suite.getFormulas()) {
+            for (LtsFormula formula : suite.getFormulas()) {
                 ltsFormulaDAO.create(user, createdProject.getId(), createdSuite.getId(), formula);
             }
         }
@@ -365,7 +364,7 @@ public class ProjectDAO {
         }
 
         // each environment has default url
-        for (ProjectEnvironment env: project.getEnvironments()) {
+        for (ProjectEnvironment env : project.getEnvironments()) {
             if (env.getUrls().stream().filter(ProjectUrl::isDefault).count() != 1) {
                 throw new ValidationException("An environment needs a default URL");
             }

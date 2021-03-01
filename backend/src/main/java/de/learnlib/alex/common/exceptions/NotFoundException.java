@@ -27,7 +27,9 @@ public class NotFoundException extends RuntimeException {
 
     /**
      * Constructor.
-     * @param message The message of the exception.
+     *
+     * @param message
+     *         The message of the exception.
      */
     public NotFoundException(String message) {
         super(message);
@@ -35,8 +37,11 @@ public class NotFoundException extends RuntimeException {
 
     /**
      * Constructor.
-     * @param message The message of the exception.
-     * @param cause The cause of the exception.
+     *
+     * @param message
+     *         The message of the exception.
+     * @param cause
+     *         The cause of the exception.
      */
     public NotFoundException(String message, Throwable cause) {
         super(message, cause);

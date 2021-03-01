@@ -16,6 +16,10 @@
 
 package de.learnlib.alex.modelchecking.entities;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -24,10 +28,6 @@ import javax.persistence.ManyToMany;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 @Entity
 public class ModelCheckingConfig implements Serializable {
@@ -93,9 +93,9 @@ public class ModelCheckingConfig implements Serializable {
         if (this == o) return true;
         if (!(o instanceof ModelCheckingConfig)) return false;
         ModelCheckingConfig that = (ModelCheckingConfig) o;
-        return id.equals(that.id) &&
-                minUnfolds.equals(that.minUnfolds) &&
-                multiplier.equals(that.multiplier);
+        return id.equals(that.id)
+                && minUnfolds.equals(that.minUnfolds)
+                && multiplier.equals(that.multiplier);
     }
 
     @Override

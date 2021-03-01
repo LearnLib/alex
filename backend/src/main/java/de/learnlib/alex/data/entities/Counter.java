@@ -19,7 +19,7 @@ package de.learnlib.alex.data.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
+import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -31,14 +31,13 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.io.Serializable;
 
 /**
  * A simple counter class.
  */
 @Entity
 @Table(
-    uniqueConstraints = @UniqueConstraint(columnNames = {"project_id", "name"})
+        uniqueConstraints = @UniqueConstraint(columnNames = {"project_id", "name"})
 )
 @JsonPropertyOrder(alphabetic = true)
 public class Counter implements Serializable {
@@ -98,7 +97,7 @@ public class Counter implements Serializable {
      * Set the ID of the {@link Project} the Symbol belongs to.
      *
      * @param projectId
-     *            The new parent Project.
+     *         The new parent Project.
      */
     @JsonProperty("project")
     public void setProjectId(Long projectId) {

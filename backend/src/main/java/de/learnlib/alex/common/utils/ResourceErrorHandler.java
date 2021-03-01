@@ -40,11 +40,11 @@ public final class ResourceErrorHandler {
      * This method also logs the error in the 'info' space.
      *
      * @param context
-     *            The context this method was called in. Recommended: 'Class.method'.
+     *         The context this method was called in. Recommended: 'Class.method'.
      * @param status
-     *            The HTTP status this error belong to.
+     *         The HTTP status this error belong to.
      * @param e
-     *            The exception that cause the error, could be null.
+     *         The exception that cause the error, could be null.
      * @return A Response object containing a JSON error message and the proper status code.
      */
     public static ResponseEntity createRESTErrorMessage(String context, HttpStatus status, Exception e) {

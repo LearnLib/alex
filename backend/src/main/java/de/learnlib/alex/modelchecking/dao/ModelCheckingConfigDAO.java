@@ -23,13 +23,12 @@ import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import de.learnlib.alex.modelchecking.entities.ModelCheckingConfig;
 import de.learnlib.alex.modelchecking.repositories.LtsFormulaSuiteRepository;
 import de.learnlib.alex.modelchecking.repositories.ModelCheckingConfigRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)

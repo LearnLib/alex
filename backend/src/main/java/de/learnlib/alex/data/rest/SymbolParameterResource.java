@@ -20,6 +20,8 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.dao.SymbolParameterDAO;
 import de.learnlib.alex.data.entities.SymbolParameter;
 import de.learnlib.alex.security.AuthContext;
+import javax.validation.ValidationException;
+import javax.ws.rs.core.MediaType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +34,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.ValidationException;
-import javax.ws.rs.core.MediaType;
 
 /**
  * The resource for symbol parameters.

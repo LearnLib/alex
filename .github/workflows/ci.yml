@@ -24,8 +24,19 @@ jobs:
       - name: Build with Maven
         run: mvn clean install -DskipTests package --file ./backend/pom.xml
 
-  test-backend:
+  lint-backend:
     needs: build-backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 12
+      - name: Lint Java Code
+        run: mvn checkstyle:checkstyle -Pcode-analysis --file ./backend/pom.xml
+
+  test-backend:
+    needs: lint-backend
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

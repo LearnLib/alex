@@ -20,6 +20,9 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.dao.CounterDAO;
 import de.learnlib.alex.data.entities.Counter;
 import de.learnlib.alex.security.AuthContext;
+import java.util.Collections;
+import java.util.List;
+import javax.ws.rs.core.MediaType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +36,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.ws.rs.core.MediaType;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Resource to read and delete Counters.
@@ -140,7 +139,7 @@ public class CounterResource {
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity<?> deleteCounter(@PathVariable("projectId") Long projectId,
-                                        @PathVariable("counterId") Long counterId) {
+                                           @PathVariable("counterId") Long counterId) {
         final User user = authContext.getUser();
         LOGGER.traceEntry("deleteCounter({}, {}) for user {}.", projectId, counterId, user);
 
@@ -164,7 +163,7 @@ public class CounterResource {
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity<?> deleteCounter(@PathVariable("projectId") Long projectId,
-                                        @PathVariable("counterIds") List<Long> counterIds) {
+                                           @PathVariable("counterIds") List<Long> counterIds) {
         final User user = authContext.getUser();
         LOGGER.traceEntry("deleteCounter({}, {}) for user {}.", projectId, counterIds, user);
 

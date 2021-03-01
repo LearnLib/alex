@@ -39,13 +39,12 @@ import de.learnlib.alex.data.entities.export.SymbolsExportConfig;
 import de.learnlib.alex.data.entities.export.SymbolsExportableEntity;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(rollbackFor = Exception.class, readOnly = true)
@@ -86,13 +85,13 @@ public class SymbolsExporter extends EntityExporter {
     public ExportableEntity export(User user, Long projectId, SymbolsExportConfig config) throws Exception {
         if (config.isSymbolsOnly()) {
             final List<Symbol> symbols = symbolRepository.findAllByProject_idAndIdIn(projectId, config.getSymbolIds());
-            for (Symbol s: symbols) {
+            for (Symbol s : symbols) {
                 symbolDAO.checkAccess(user, s.getProject(), s);
             }
             return new SymbolsExportableEntity(version, om.readTree(om.writeValueAsString(symbols)));
         } else {
             final List<SymbolGroup> groups = symbolGroupRepository.findAllByProject_IdAndParent_id(projectId, null);
-            for (SymbolGroup g: groups) {
+            for (SymbolGroup g : groups) {
                 symbolGroupDAO.checkAccess(user, g.getProject(), g);
             }
             final List<SymbolGroup> groupsToExport = getExportableGroups(groups, config);
@@ -102,7 +101,7 @@ public class SymbolsExporter extends EntityExporter {
 
     public ExportableEntity exportAll(User user, Long projectId) throws Exception {
         final List<SymbolGroup> groups = symbolGroupRepository.findAllByProject_IdAndParent_id(projectId, null);
-        for (SymbolGroup g: groups) {
+        for (SymbolGroup g : groups) {
             symbolGroupDAO.checkAccess(user, g.getProject(), g);
         }
         return new SymbolGroupsExportableEntity(version, om.readTree(om.writeValueAsString(groups)));
@@ -139,20 +138,31 @@ public class SymbolsExporter extends EntityExporter {
         }
     }
 
-    private static abstract class IgnoreFieldsForSymbolGroupMixin extends IgnoreIdFieldMixin {
-        @JsonIgnore abstract Long getProjectId();
-        @JsonIgnore abstract Long getParentId();
+    private abstract static class IgnoreFieldsForSymbolGroupMixin extends IgnoreIdFieldMixin {
+        @JsonIgnore
+        abstract Long getProjectId();
+
+        @JsonIgnore
+        abstract Long getParentId();
     }
 
-    private static abstract class IgnoreFieldsForSymbolMixin extends IgnoreIdFieldMixin {
-        @JsonIgnore abstract Long getProjectId();
-        @JsonIgnore abstract Long getGroupId();
-        @JsonIgnore abstract User getLastUpdatedBy();
+    private abstract static class IgnoreFieldsForSymbolMixin extends IgnoreIdFieldMixin {
+        @JsonIgnore
+        abstract Long getProjectId();
+
+        @JsonIgnore
+        abstract Long getGroupId();
+
+        @JsonIgnore
+        abstract User getLastUpdatedBy();
     }
 
-    private static abstract class IgnoreFieldsForSymbolStepMixin extends IgnoreIdFieldMixin {
-        @JsonIgnore abstract Long getPosition();
-        @JsonIgnore abstract Long getSymbolId();
+    private abstract static class IgnoreFieldsForSymbolStepMixin extends IgnoreIdFieldMixin {
+        @JsonIgnore
+        abstract Long getPosition();
+
+        @JsonIgnore
+        abstract Long getSymbolId();
     }
 
 }

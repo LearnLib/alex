@@ -24,15 +24,14 @@ import de.learnlib.alex.testing.entities.TestProcessQueueItem;
 import de.learnlib.alex.testing.entities.TestQueueItem;
 import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.entities.TestStatus;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /** The service that executes tests. */
 @Service
@@ -143,11 +142,11 @@ public class TestService {
      * Abort the test process for a given report id.
      *
      * @param user
-     *          The user.
+     *         The user.
      * @param projectId
-     *          The ID of the project.
+     *         The ID of the project.
      * @param reportId
-     *          The ID of the report to abort.
+     *         The ID of the report to abort.
      */
     public void abort(User user, Long projectId, Long reportId) {
         final var project = projectDAO.getByID(user, projectId);

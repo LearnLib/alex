@@ -197,61 +197,8 @@ public class SymbolDAOTest {
         symbolDAO.create(user, PROJECT_ID, symbol); // should fail
     }
 
-    @Test(expected = ValidationException.class)
-    public void shouldHandleDataIntegrityViolationExceptionOnSymbolCreationGracefully() throws NotFoundException {
-        User user = new User();
-        user.setId(USER_ID);
-
-        Project project = new Project();
-        project.addOwner(user);
-        project.setId(PROJECT_ID);
-
-        SymbolGroup group = new SymbolGroup();
-        group.setId(GROUP_ID);
-
-        Symbol symbol = new Symbol();
-        symbol.setProject(project);
-        symbol.setGroup(group);
-
-        given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
-        given(symbolGroupRepository.findById(GROUP_ID)).willReturn(Optional.of(group));
-        given(symbolRepository.save(symbol)).willThrow(DataIntegrityViolationException.class);
-
-        symbolDAO.create(user, PROJECT_ID, symbol); // should fail
-    }
-
-    @Test(expected = ValidationException.class)
-    public void shouldHandleTransactionSystemExceptionOnGroupCreationGracefully() throws NotFoundException {
-        User user = new User();
-        user.setId(USER_ID);
-
-        Project project = new Project();
-        project.addOwner(user);
-        project.setId(PROJECT_ID);
-
-        SymbolGroup group = new SymbolGroup();
-        group.setId(GROUP_ID);
-
-        Symbol symbol = new Symbol();
-        symbol.setProject(project);
-        symbol.setGroup(group);
-
-        ConstraintViolationException constraintViolationException;
-        constraintViolationException = new ConstraintViolationException("Project is not valid!", new HashSet<>());
-        RollbackException rollbackException = new RollbackException("RollbackException", constraintViolationException);
-        TransactionSystemException transactionSystemException;
-        transactionSystemException = new TransactionSystemException("Spring TransactionSystemException",
-                rollbackException);
-
-        given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
-        given(symbolGroupRepository.findById(GROUP_ID)).willReturn(Optional.of(group));
-        given(symbolRepository.save(symbol)).willThrow(transactionSystemException);
-
-        symbolDAO.create(user, PROJECT_ID, symbol); // should fail
-    }
-
     @Test
-    public void shouldGetAllRequestedSymbolsByIdRevPairs() throws NotFoundException {
+    public void shouldGetAllRequestedSymbolsByIds() throws NotFoundException {
         User user = new User();
         user.setId(USER_ID);
 
@@ -281,7 +228,7 @@ public class SymbolDAOTest {
     }
 
     @Test
-    public void shouldGetNoSymbolIfIdRevParisIsEmpty() throws NotFoundException {
+    public void shouldGetNoSymbolIfIdListIsEmpty() throws NotFoundException {
         User user = new User();
         Project project = new Project();
         List<Long> ids = Collections.emptyList();

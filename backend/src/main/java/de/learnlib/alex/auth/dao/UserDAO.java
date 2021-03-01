@@ -25,6 +25,10 @@ import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.websocket.services.WebSocketService;
+import java.io.IOException;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.validation.ValidationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
@@ -32,11 +36,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.validation.ValidationException;
-import java.io.IOException;
-import java.util.List;
 
 /**
  * Implementation of a UserDAO using Hibernate.
@@ -110,13 +109,13 @@ public class UserDAO {
 
     public User getByEmail(String email) {
         return userRepository.findOneByEmail(email).orElseThrow(() ->
-                        new NotFoundException("Could not find the user with the email '" + email + "'!")
+                new NotFoundException("Could not find the user with the email '" + email + "'!")
         );
     }
 
     public User getByUsername(String username) {
         return userRepository.findOneByUsername(username).orElseThrow(() ->
-                        new NotFoundException("Could not find the user with username'" + username + "'!")
+                new NotFoundException("Could not find the user with username'" + username + "'!")
         );
     }
 
@@ -151,13 +150,13 @@ public class UserDAO {
         }
 
         // remove user from all projects in which he is a member
-        for (final Project project: user.getProjectsMember()) {
+        for (final Project project : user.getProjectsMember()) {
             project.getMembers().removeIf(u -> u.getId().equals(user.getId()));
             projectRepository.save(project);
         }
 
         // remove user from all projects in which he is an owner
-        for (final Project project: user.getProjectsOwner()) {
+        for (final Project project : user.getProjectsOwner()) {
             project.getOwners().removeIf(u -> u.getId().equals(user.getId()));
             projectRepository.save(project);
 

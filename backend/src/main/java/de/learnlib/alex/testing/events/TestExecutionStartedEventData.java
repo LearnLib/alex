@@ -27,8 +27,10 @@ public class TestExecutionStartedEventData extends TestExecutionConfig {
     /**
      * Constructor.
      *
-     * @param projectId {@link #projectId}.
-     * @param config    The configuration to use.
+     * @param projectId
+     *         {@link #projectId}.
+     * @param config
+     *         The configuration to use.
      */
     public TestExecutionStartedEventData(Long projectId, TestExecutionConfig config) {
         this.projectId = projectId;

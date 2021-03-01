@@ -17,7 +17,6 @@
 package de.learnlib.alex.learning.entities;
 
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
-
 import java.util.ArrayList;
 import java.util.List;
 

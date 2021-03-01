@@ -16,11 +16,10 @@
 
 package de.learnlib.alex.learning.services.connectors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Connector to hold and manage variables.
@@ -97,6 +96,7 @@ public class VariableStoreConnector implements Connector {
 
     /**
      * Get the store as read only map.
+     *
      * @return The store.
      */
     public Map<String, String> getStore() {

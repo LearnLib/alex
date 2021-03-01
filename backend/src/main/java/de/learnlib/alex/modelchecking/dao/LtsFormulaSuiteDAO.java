@@ -23,13 +23,12 @@ import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.learning.repositories.LearnerSetupRepository;
 import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import de.learnlib.alex.modelchecking.repositories.LtsFormulaSuiteRepository;
+import java.util.List;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -94,7 +93,7 @@ public class LtsFormulaSuiteDAO {
 
         // delete references in model checking configs of learner setups
         final var setups = learnerSetupRepository.findAllByProject_Id(projectId);
-        for (var setup: setups) {
+        for (var setup : setups) {
             var config = setup.getModelCheckingConfig();
             if (config.getFormulaSuites().contains(suiteInDb)) {
                 config.getFormulaSuites().remove(suiteInDb);
@@ -102,7 +101,7 @@ public class LtsFormulaSuiteDAO {
             }
         }
 
-        for (var formula: suiteInDb.getFormulas()) {
+        for (var formula : suiteInDb.getFormulas()) {
             ltsFormulaDAO.delete(projectId, formula);
         }
         suiteInDb.getFormulas().clear();
@@ -111,15 +110,15 @@ public class LtsFormulaSuiteDAO {
     }
 
     public void delete(User user, Long projectId, List<Long> suiteIds) {
-        for (Long id: suiteIds) {
+        for (Long id : suiteIds) {
             delete(user, projectId, id);
         }
     }
 
     public void checkSuiteNameIsUnique(Long projectId, String name) {
-       if (formulaSuiteRepository.findByProject_IdAndName(projectId, name) != null) {
-           throw new IllegalArgumentException("The name of the formula suite is not unique.");
-       }
+        if (formulaSuiteRepository.findByProject_IdAndName(projectId, name) != null) {
+            throw new IllegalArgumentException("The name of the formula suite is not unique.");
+        }
     }
 
     public void checkSuiteNameIsUnique(Long projectId, Long suiteId, String name) {

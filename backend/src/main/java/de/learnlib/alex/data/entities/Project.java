@@ -26,8 +26,14 @@ import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
 import de.learnlib.alex.testing.entities.TestReport;
-import org.hibernate.validator.constraints.Length;
-
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -39,14 +45,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
+import org.hibernate.validator.constraints.Length;
 
 /**
  * Representation of a testing project with different symbols.
@@ -217,7 +216,8 @@ public class Project implements Serializable {
     /**
      * Constructor which set the ID.
      *
-     * @param projectId The ID.
+     * @param projectId
+     *         The ID.
      */
 
     public Project(Long projectId) {
@@ -247,7 +247,8 @@ public class Project implements Serializable {
     /**
      * Set the ID of this project.
      *
-     * @param id The new ID.
+     * @param id
+     *         The new ID.
      */
     public void setId(Long id) {
         this.id = id;
@@ -266,7 +267,8 @@ public class Project implements Serializable {
     /**
      * Add an user as an owner to the project.
      *
-     * @param owner The user who will be added as an owner.
+     * @param owner
+     *         The user who will be added as an owner.
      */
     @JsonIgnore
     public void addOwner(User owner) {
@@ -276,7 +278,8 @@ public class Project implements Serializable {
     /**
      * Set a list of users as the owners of the project.
      *
-     * @param owners The new list of owners.
+     * @param owners
+     *         The new list of owners.
      */
     @JsonIgnore
     public void setOwners(List<User> owners) {
@@ -288,7 +291,8 @@ public class Project implements Serializable {
     /**
      * Remove an owner from the project.
      *
-     * @param owner The user user who will be removed from the list of owners.
+     * @param owner
+     *         The user user who will be removed from the list of owners.
      * @return True if the user was successfully removed
      */
     @JsonIgnore
@@ -340,7 +344,8 @@ public class Project implements Serializable {
     /**
      * Set a new name for the project. The name must be there and be unique.
      *
-     * @param name The new name.
+     * @param name
+     *         The new name.
      */
     public void setName(String name) {
         this.name = name;
@@ -358,7 +363,8 @@ public class Project implements Serializable {
     /**
      * Set the description of this project.
      *
-     * @param description The new description.
+     * @param description
+     *         The new description.
      */
     public void setDescription(String description) {
         this.description = description;
@@ -376,7 +382,8 @@ public class Project implements Serializable {
     /**
      * Set a new set of groups that are used in the project.
      *
-     * @param groups The new set of groups.
+     * @param groups
+     *         The new set of groups.
      */
     public void setGroups(Set<SymbolGroup> groups) {
         this.groups = groups;
@@ -385,7 +392,8 @@ public class Project implements Serializable {
     /**
      * Add one group to the project.
      *
-     * @param group The group to add.
+     * @param group
+     *         The group to add.
      */
     public void addGroup(SymbolGroup group) {
         this.groups.add(group);
@@ -403,7 +411,8 @@ public class Project implements Serializable {
     }
 
     /**
-     * @param symbols the symbols to set
+     * @param symbols
+     *         the symbols to set
      */
     @JsonIgnore
     public void setSymbols(Set<Symbol> symbols) {
@@ -423,7 +432,8 @@ public class Project implements Serializable {
      * This only establishes the bidirectional relation does nothing else,
      * e.g. it does not take care of the right id.
      *
-     * @param symbol The Symbol to add.
+     * @param symbol
+     *         The Symbol to add.
      */
     public void addSymbol(Symbol symbol) {
         this.symbols.add(symbol);
@@ -460,7 +470,8 @@ public class Project implements Serializable {
     }
 
     /**
-     * @param counters The new set of counters for the project.
+     * @param counters
+     *         The new set of counters for the project.
      */
     @JsonIgnore
     public void setCounters(Set<Counter> counters) {

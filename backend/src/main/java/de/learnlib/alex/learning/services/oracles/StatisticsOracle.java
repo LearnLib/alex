@@ -18,7 +18,6 @@ package de.learnlib.alex.learning.services.oracles;
 
 import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.api.query.Query;
-
 import java.util.Collection;
 
 public class StatisticsOracle<I, D> implements MembershipOracle<I, D> {

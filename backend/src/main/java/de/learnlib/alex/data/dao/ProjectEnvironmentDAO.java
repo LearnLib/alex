@@ -34,16 +34,15 @@ import de.learnlib.alex.learning.dao.LearnerSetupDAO;
 import de.learnlib.alex.learning.entities.LearnerSetup;
 import de.learnlib.alex.learning.repositories.LearnerSetupRepository;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.validation.ValidationException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.validation.ValidationException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -107,7 +106,7 @@ public class ProjectEnvironmentDAO {
         projectRepository.save(project);
 
         final List<ProjectUrl> createdUrls = new ArrayList<>();
-        for (ProjectUrl url: urls) {
+        for (ProjectUrl url : urls) {
             final ProjectUrl u = new ProjectUrl();
             u.setName(url.getName());
             u.setEnvironment(projectEnvironment);
@@ -119,7 +118,7 @@ public class ProjectEnvironmentDAO {
         projectEnvironment.getUrls().addAll(createdUrls);
 
         final List<ProjectEnvironmentVariable> createdVariables = new ArrayList<>();
-        for (ProjectEnvironmentVariable var: variables) {
+        for (ProjectEnvironmentVariable var : variables) {
             final ProjectEnvironmentVariable v = new ProjectEnvironmentVariable();
             v.setEnvironment(projectEnvironment);
             v.setName(var.getName());
@@ -156,7 +155,7 @@ public class ProjectEnvironmentDAO {
 
         // remove environment from learner setups
         final List<LearnerSetup> learnerSetups = learnerSetupRepository.findAllByEnvironmentsContains(environment);
-        for (LearnerSetup learnerSetup: learnerSetups) {
+        for (LearnerSetup learnerSetup : learnerSetups) {
             learnerSetup.getEnvironments().remove(environment);
             // switch to default environment if the deleted one is the only one
             if (learnerSetup.getEnvironments().isEmpty()) {
@@ -185,7 +184,7 @@ public class ProjectEnvironmentDAO {
 
         // switch default environment
         if (env.isDefault() && !envInDb.isDefault()) {
-            final ProjectEnvironment defaultEnv = environmentRepository.findByProject_IdAndIs_Default(projectId, true);
+            final var defaultEnv = environmentRepository.findByProject_IdAndIs_Default(projectId, true);
             defaultEnv.setDefault(false);
             environmentRepository.save(defaultEnv);
             envInDb.setDefault(true);
@@ -210,7 +209,12 @@ public class ProjectEnvironmentDAO {
         return ProjectEnvironmentDAO.loadLazyRelations(env);
     }
 
-    public ProjectEnvironmentVariable createVariable(User user, Long projectId, Long environmentId, ProjectEnvironmentVariable variable) {
+    public ProjectEnvironmentVariable createVariable(
+            User user,
+            Long projectId,
+            Long environmentId,
+            ProjectEnvironmentVariable variable
+    ) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final ProjectEnvironment env = environmentRepository.findById(environmentId).orElse(null);
         checkAccess(user, project, env);
@@ -222,7 +226,7 @@ public class ProjectEnvironmentDAO {
 
         final List<ProjectEnvironmentVariable> variablesToCreate = new ArrayList<>();
         final List<ProjectEnvironment> envs = environmentRepository.findAllByProject_Id(projectId);
-        for (ProjectEnvironment e: envs) {
+        for (ProjectEnvironment e : envs) {
             final ProjectEnvironmentVariable v = new ProjectEnvironmentVariable();
             v.setName(variable.getName());
             v.setValue(variable.getValue());
@@ -245,7 +249,13 @@ public class ProjectEnvironmentDAO {
         variableRepository.deleteAllByEnvironment_Project_IdAndName(projectId, variable.getName());
     }
 
-    public ProjectEnvironmentVariable updateVariable(User user, Long projectId, Long environmentId, Long variableId, ProjectEnvironmentVariable variable) {
+    public ProjectEnvironmentVariable updateVariable(
+            User user,
+            Long projectId,
+            Long environmentId,
+            Long variableId,
+            ProjectEnvironmentVariable variable
+    ) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final ProjectEnvironment env = environmentRepository.findById(environmentId).orElse(null);
         final ProjectEnvironmentVariable variableInDb = variableRepository.findById(variableId).orElse(null);
@@ -256,8 +266,8 @@ public class ProjectEnvironmentDAO {
             throw new ValidationException("The name of the variable already exists");
         }
 
-        final List<ProjectEnvironmentVariable> variables = variableRepository.findAllByEnvironment_Project_IdAndName(projectId, variableInDb.getName());
-        for (ProjectEnvironmentVariable v: variables) {
+        final var variables = variableRepository.findAllByEnvironment_Project_IdAndName(projectId, variableInDb.getName());
+        for (ProjectEnvironmentVariable v : variables) {
             v.setName(variable.getName());
         }
         if (!variables.isEmpty()) {
@@ -282,7 +292,7 @@ public class ProjectEnvironmentDAO {
         // create the url for each environment
         final List<ProjectUrl> urlsToCreate = new ArrayList<>();
         final List<ProjectEnvironment> envs = environmentRepository.findAllByProject_Id(projectId);
-        for (ProjectEnvironment e: envs) {
+        for (ProjectEnvironment e : envs) {
             final ProjectUrl u = new ProjectUrl();
             u.setName(url.getName());
             u.setEnvironment(e);
@@ -301,12 +311,16 @@ public class ProjectEnvironmentDAO {
         checkPermissions(user, project);
 
         final List<ProjectEnvironment> envs = environmentRepository.findAllByProject_Id(projectId);
-        for (ProjectEnvironment e: envs) {
+        for (ProjectEnvironment e : envs) {
             if (e.getUrls().size() == 1) {
                 throw new ValidationException("Environments require at least one URL.");
             }
 
-            e.setUrls(e.getUrls().stream().filter(u -> !u.getName().equals(url.getName())).collect(Collectors.toList()));
+            final var urls = e.getUrls().stream()
+                    .filter(u -> !u.getName().equals(url.getName()))
+                    .collect(Collectors.toList());
+
+            e.setUrls(urls);
             urlRepository.deleteByEnvironment_IdAndName(e.getId(), url.getName());
 
             // make new default url
@@ -320,7 +334,7 @@ public class ProjectEnvironmentDAO {
 
         // set base url of actions that reference url to the new base url
         final List<SymbolAction> actions = symbolActionRepository.findAllWithBaseUrl(projectId, url.getName());
-        for (final SymbolAction a: actions) {
+        for (final SymbolAction a : actions) {
             if (a instanceof CallAction) {
                 ((CallAction) a).setBaseUrl(env.getDefaultUrl().getName());
             } else if (a instanceof GotoAction) {
@@ -362,8 +376,8 @@ public class ProjectEnvironmentDAO {
         // update the name of all other urls if the name changed
         if (!url.getName().equals(originalName)) {
             final List<ProjectEnvironment> envs = environmentRepository.findAllByProject_Id(projectId);
-            for (ProjectEnvironment e: envs) {
-                for (ProjectUrl u: e.getUrls()) {
+            for (ProjectEnvironment e : envs) {
+                for (ProjectUrl u : e.getUrls()) {
                     if (u.getName().equals(originalName)) {
                         u.setName(url.getName());
                         updatedUrls.add(urlRepository.save(u));
@@ -373,7 +387,7 @@ public class ProjectEnvironmentDAO {
 
             // update actions that reference the base url
             final List<SymbolAction> actions = symbolActionRepository.findAllWithBaseUrl(projectId, originalName);
-            for (final SymbolAction a: actions) {
+            for (final SymbolAction a : actions) {
                 if (a instanceof CallAction) {
                     ((CallAction) a).setBaseUrl(url.getName());
                 } else if (a instanceof GotoAction) {
@@ -426,7 +440,7 @@ public class ProjectEnvironmentDAO {
     }
 
     public void checkPermissions(User user, Project project) {
-        if(project.getOwners().stream().noneMatch(u -> u.getId().equals(user.getId()))) {
+        if (project.getOwners().stream().noneMatch(u -> u.getId().equals(user.getId()))) {
             throw new UnauthorizedException("You need to be an owner to do that.");
         }
     }

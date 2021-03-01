@@ -18,13 +18,12 @@ package de.learnlib.alex.settings.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
+import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * The settings entity.
@@ -108,9 +107,9 @@ public class Settings implements Serializable {
         if (this == o) return true;
         if (!(o instanceof Settings)) return false;
         Settings settings = (Settings) o;
-        return allowUserRegistration == settings.allowUserRegistration &&
-                Objects.equals(id, settings.id) &&
-                Objects.equals(driverSettings, settings.driverSettings);
+        return allowUserRegistration == settings.allowUserRegistration
+                && Objects.equals(id, settings.id)
+                && Objects.equals(driverSettings, settings.driverSettings);
     }
 
     @Override

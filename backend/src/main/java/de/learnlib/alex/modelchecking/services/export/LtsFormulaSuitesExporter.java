@@ -24,10 +24,9 @@ import de.learnlib.alex.modelchecking.dao.LtsFormulaSuiteDAO;
 import de.learnlib.alex.modelchecking.entities.LtsFormula;
 import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import de.learnlib.alex.modelchecking.entities.export.LtsFormulaSuitesExportableEntity;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class LtsFormulaSuitesExporter extends EntityExporter {
@@ -48,12 +47,12 @@ public class LtsFormulaSuitesExporter extends EntityExporter {
         );
     }
 
-    public static abstract class IgnoreFieldsForLtsFormulaSuiteMixin extends IgnoreIdFieldMixin {
+    public abstract static class IgnoreFieldsForLtsFormulaSuiteMixin extends IgnoreIdFieldMixin {
         @JsonIgnore
         abstract Long getProjectId();
     }
 
-    public static abstract class IgnoreFieldsForLtsFormulaMixin extends IgnoreIdFieldMixin {
+    public abstract static class IgnoreFieldsForLtsFormulaMixin extends IgnoreIdFieldMixin {
         @JsonIgnore
         abstract Long getSuiteId();
     }

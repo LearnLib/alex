@@ -19,7 +19,8 @@ package de.learnlib.alex.webhooks.entities;
 /**
  * The event.
  *
- * @param <T> The type of the data that is passed by the event.
+ * @param <T>
+ *         The type of the data that is passed by the event.
  */
 public abstract class Event<T> {
 
@@ -32,8 +33,10 @@ public abstract class Event<T> {
     /**
      * Constructor.
      *
-     * @param data      {@link #data}
-     * @param eventType {@link #eventType}
+     * @param data
+     *         {@link #data}
+     * @param eventType
+     *         {@link #eventType}
      */
     public Event(T data, EventType eventType) {
         this.data = data;

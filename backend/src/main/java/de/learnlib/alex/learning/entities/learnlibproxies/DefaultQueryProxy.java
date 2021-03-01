@@ -21,17 +21,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.api.query.DefaultQuery;
-import net.automatalib.words.Word;
-
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.OrderBy;
-import javax.persistence.Transient;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.OrderBy;
+import javax.persistence.Transient;
+import net.automatalib.words.Word;
 
 /**
  * Proxy around a {@link DefaultQuery}.
@@ -96,7 +95,8 @@ public class DefaultQueryProxy implements Serializable {
     }
 
     /**
-     * @param prefix The new prefix of the Proxy.
+     * @param prefix
+     *         The new prefix of the Proxy.
      */
     public void setPrefix(List<String> prefix) {
         this.prefix = prefix;
@@ -112,7 +112,8 @@ public class DefaultQueryProxy implements Serializable {
     }
 
     /**
-     * @param suffix The new suffix of the Proxy.
+     * @param suffix
+     *         The new suffix of the Proxy.
      */
     public void setSuffix(List<String> suffix) {
         this.suffix = suffix;
@@ -128,7 +129,8 @@ public class DefaultQueryProxy implements Serializable {
     }
 
     /**
-     * @param output The new output of the Proxy.
+     * @param output
+     *         The new output of the Proxy.
      */
     public void setOutput(List<String> output) {
         this.output = output;
@@ -186,9 +188,9 @@ public class DefaultQueryProxy implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DefaultQueryProxy that = (DefaultQueryProxy) o;
-        return Objects.equals(prefix, that.prefix) &&
-                Objects.equals(suffix, that.suffix) &&
-                Objects.equals(output, that.output);
+        return Objects.equals(prefix, that.prefix)
+                && Objects.equals(suffix, that.suffix)
+                && Objects.equals(output, that.output);
     }
 
     @Override

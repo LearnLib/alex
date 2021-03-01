@@ -30,7 +30,8 @@ public class TestScreenshot {
 
     private String filename;
 
-    public TestScreenshot() {};
+    public TestScreenshot() {
+    }
 
     public TestScreenshot(String filename) {
         this.filename = filename;

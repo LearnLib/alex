@@ -20,7 +20,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.learning.entities.WebDriverConfig;
-
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -33,11 +37,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * The configuration class for running multiple tests in a batch.
@@ -190,10 +189,13 @@ public class TestExecutionConfig implements Serializable {
     }
 
     @Override
-    @SuppressWarnings("checkstyle:needbraces")
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof TestExecutionConfig)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof TestExecutionConfig)) {
+            return false;
+        }
         TestExecutionConfig that = (TestExecutionConfig) o;
         return Objects.equals(getId(), that.getId());
     }

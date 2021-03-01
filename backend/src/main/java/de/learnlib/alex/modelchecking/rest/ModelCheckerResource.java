@@ -20,6 +20,8 @@ import de.learnlib.alex.modelchecking.entities.LtsCheckingConfig;
 import de.learnlib.alex.modelchecking.entities.ModelCheckingResult;
 import de.learnlib.alex.modelchecking.services.ModelCheckerService;
 import de.learnlib.alex.security.AuthContext;
+import java.util.List;
+import javax.ws.rs.core.MediaType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +31,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.ws.rs.core.MediaType;
-import java.util.List;
 
 @RestController
 @RequestMapping("/rest/projects/{projectId}/modelChecker")

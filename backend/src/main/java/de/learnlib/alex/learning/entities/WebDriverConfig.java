@@ -17,14 +17,9 @@
 package de.learnlib.alex.learning.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.Platform;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteWebDriver;
-
+import java.io.Serializable;
+import java.net.URL;
+import java.util.concurrent.TimeUnit;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -32,9 +27,13 @@ import javax.persistence.Id;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.net.URL;
-import java.util.concurrent.TimeUnit;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.Platform;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
  * The abstract web driver configuration class.
@@ -80,7 +79,7 @@ public class WebDriverConfig implements Serializable {
     @NotNull
     private Platform platform;
 
-    /**  The browser to run the tests in. */
+    /** The browser to run the tests in. */
     @NotBlank
     private String browser;
 

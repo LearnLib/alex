@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.data.repositories;
+package de.learnlib.alex.common.exceptions;
 
-import de.learnlib.alex.data.entities.UploadableFile;
-import java.util.List;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+public class ForbiddenOperationException extends RuntimeException {
 
-@Repository
-public interface UploadableFileRepository extends JpaRepository<UploadableFile, Long> {
+    public ForbiddenOperationException() {
+    }
 
-    List<UploadableFile> findAllByProject_Id(Long projectId);
+    public ForbiddenOperationException(String message) {
+        super(message);
+    }
 
-    UploadableFile findByProject_IdAndName(Long projectId, String name);
-
-    List<UploadableFile> findAllByIdIn(List<Long> fileIds);
-
-    void deleteAllByProject_Id(Long projectId);
+    public ForbiddenOperationException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

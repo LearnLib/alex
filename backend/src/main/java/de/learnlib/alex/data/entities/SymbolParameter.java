@@ -19,7 +19,8 @@ package de.learnlib.alex.data.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
+import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,8 +28,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * Symbol parameter class.
@@ -104,10 +103,13 @@ public abstract class SymbolParameter implements Serializable {
     }
 
     @Override
-    @SuppressWarnings({"checkstyle:needbraces", "checkstyle:operatorwrap"})
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof SymbolParameter)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SymbolParameter)) {
+            return false;
+        }
         SymbolParameter parameter = (SymbolParameter) o;
         return Objects.equals(getId(), parameter.getId());
     }

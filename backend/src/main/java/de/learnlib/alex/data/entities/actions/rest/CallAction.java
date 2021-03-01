@@ -22,11 +22,10 @@ import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.actions.Credentials;
 import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.hibernate.annotations.Type;
-import org.springframework.util.SerializationUtils;
-
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
@@ -36,10 +35,10 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.Cookie;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.annotations.Type;
+import org.springframework.util.SerializationUtils;
 
 /**
  * RESTSymbolAction to make a request to the API.
@@ -105,8 +104,8 @@ public class CallAction extends RESTSymbolAction {
      * conform (e.g. Accept: text/html,application/xml).
      */
     @Lob
-    @Column(columnDefinition="BYTEA")
-    @Type(type="org.hibernate.type.BinaryType")
+    @Column(columnDefinition = "BYTEA")
+    @Type(type = "org.hibernate.type.BinaryType")
     private byte[] headers;
 
     /**
@@ -120,8 +119,8 @@ public class CallAction extends RESTSymbolAction {
      * things easier.
      */
     @Lob
-    @Column(columnDefinition="BYTEA")
-    @Type(type="org.hibernate.type.BinaryType")
+    @Column(columnDefinition = "BYTEA")
+    @Type(type = "org.hibernate.type.BinaryType")
     private byte[] cookies; // OM NOM NOM NOM!!!
 
     /**

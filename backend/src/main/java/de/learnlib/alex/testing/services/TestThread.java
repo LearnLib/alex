@@ -30,6 +30,12 @@ import de.learnlib.alex.testing.entities.TestResult;
 import de.learnlib.alex.testing.events.TestEvent;
 import de.learnlib.alex.testing.events.TestExecutionStartedEventData;
 import de.learnlib.alex.webhooks.services.WebhookService;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
@@ -39,13 +45,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
  * The thread that executes tests. There should ever only be one test per project.
@@ -73,6 +72,7 @@ public class TestThread extends Thread {
 
     /** The finished listener. */
     private FinishedListener finishedListener;
+
     public void onFinished(FinishedListener listener) {
         this.finishedListener = listener;
     }
@@ -185,7 +185,7 @@ public class TestThread extends Thread {
                 report = testReportDAO.updateStatus(reportId, TestReport.Status.ABORTED);
                 testExecutor.abort();
             } else {
-                for (var item: testProcessQueue) {
+                for (var item : testProcessQueue) {
                     if (item.reportId.equals(reportId)) {
                         testReportDAO.updateStatus(item.reportId, TestReport.Status.ABORTED);
                     }

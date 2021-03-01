@@ -29,6 +29,8 @@ import de.learnlib.alex.learning.events.LearnerEvent;
 import de.learnlib.alex.learning.services.LearnerService;
 import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.webhooks.services.WebhookService;
+import java.util.List;
+import javax.ws.rs.core.MediaType;
 import net.automatalib.automata.transducers.impl.compact.CompactMealy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,9 +43,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.ws.rs.core.MediaType;
-import java.util.List;
 
 /**
  * REST API to manage the learning.

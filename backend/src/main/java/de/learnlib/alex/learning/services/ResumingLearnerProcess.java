@@ -35,16 +35,15 @@ import de.learnlib.alex.learning.services.connectors.PreparedConnectorContextHan
 import de.learnlib.alex.modelchecking.services.ModelCheckerService;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.webhooks.services.WebhookService;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 import net.automatalib.SupportsGrowingAlphabet;
 import org.apache.logging.log4j.ThreadContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /** The learner thread that is used for resuming an old experiment from a given step. */
 @Service

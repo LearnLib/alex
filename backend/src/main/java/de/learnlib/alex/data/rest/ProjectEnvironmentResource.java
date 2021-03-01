@@ -29,6 +29,11 @@ import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.learning.entities.ReadOutputConfig;
 import de.learnlib.alex.learning.services.LearnerService;
 import de.learnlib.alex.security.AuthContext;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.validation.ValidationException;
+import javax.ws.rs.core.MediaType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,12 +48,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.ValidationException;
-import javax.ws.rs.core.MediaType;
-import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/rest/projects/{projectId}/environments")

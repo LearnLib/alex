@@ -29,7 +29,8 @@ public class UserEvent {
         /**
          * Constructor.
          *
-         * @param id The id of the user that has been deleted.
+         * @param id
+         *         The id of the user that has been deleted.
          */
         public Deleted(Long id) {
             super(id, EventType.USER_DELETED);
@@ -42,7 +43,8 @@ public class UserEvent {
         /**
          * Constructor.
          *
-         * @param id The id of the user whose credentials have changed.
+         * @param id
+         *         The id of the user whose credentials have changed.
          */
         public CredentialsUpdated(Long id) {
             super(id, EventType.USER_CREDENTIALS_UPDATED);
@@ -55,7 +57,8 @@ public class UserEvent {
         /**
          * Constructor.
          *
-         * @param user The user whose role has changed.
+         * @param user
+         *         The user whose role has changed.
          */
         public RoleUpdated(User user) {
             super(user, EventType.USER_ROLE_UPDATED);

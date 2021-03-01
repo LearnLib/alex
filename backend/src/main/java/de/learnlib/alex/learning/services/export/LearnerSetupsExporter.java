@@ -36,12 +36,11 @@ import de.learnlib.alex.modelchecking.entities.LtsFormula;
 import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import de.learnlib.alex.modelchecking.entities.ModelCheckingConfig;
 import de.learnlib.alex.modelchecking.services.export.LtsFormulaSuitesExporter;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class, readOnly = true)
@@ -81,24 +80,33 @@ public class LearnerSetupsExporter extends EntityExporter {
     }
 
     private abstract static class IgnoreFieldsForProjectMixin extends IgnoreIdFieldMixin {
-        @JsonIgnore abstract Long getProjectId();
-        @JsonIgnore abstract List<Long> getOwnerIds();
-        @JsonIgnore abstract List<Long> getMemberIds();
+        @JsonIgnore
+        abstract Long getProjectId();
+
+        @JsonIgnore
+        abstract List<Long> getOwnerIds();
+
+        @JsonIgnore
+        abstract List<Long> getMemberIds();
     }
 
     private abstract static class IgnoreFieldsForLearnerSetupMixin extends IgnoreIdFieldMixin {
-        @JsonIgnore abstract Project getProject();
+        @JsonIgnore
+        abstract Project getProject();
     }
 
     private abstract static class IgnoreFieldsForProjectEnvironmentMixin extends IgnoreIdFieldMixin {
-        @JsonIgnore abstract Long getProjectId();
+        @JsonIgnore
+        abstract Long getProjectId();
     }
 
     private abstract static class IgnoreFieldsForProjectEnvironmentUrlMixin extends IgnoreIdFieldMixin {
-        @JsonIgnore abstract Long getEnvironmentId();
+        @JsonIgnore
+        abstract Long getEnvironmentId();
     }
 
     private abstract static class IgnoreFieldsForProjectEnvironmentVariableMixin extends IgnoreIdFieldMixin {
-        @JsonIgnore abstract Long getEnvironmentId();
+        @JsonIgnore
+        abstract Long getEnvironmentId();
     }
 }

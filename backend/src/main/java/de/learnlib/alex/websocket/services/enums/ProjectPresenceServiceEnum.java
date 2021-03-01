@@ -16,6 +16,6 @@
 
 package de.learnlib.alex.websocket.services.enums;
 
- public enum ProjectPresenceServiceEnum {
-     PROJECT_PRESENCE_SERVICE, USER_LEFT, USER_ENTERED, STATUS_REQUEST, STATUS, ERROR
+public enum ProjectPresenceServiceEnum {
+    PROJECT_PRESENCE_SERVICE, USER_LEFT, USER_ENTERED, STATUS_REQUEST, STATUS, ERROR
 }

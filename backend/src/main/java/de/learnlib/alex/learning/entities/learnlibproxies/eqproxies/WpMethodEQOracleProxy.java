@@ -20,10 +20,9 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.api.oracle.EquivalenceOracle;
 import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.oracle.equivalence.WpMethodEQOracle;
+import java.io.Serializable;
 import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.words.Word;
-
-import java.io.Serializable;
 
 /**
  * Proxy around a {@link de.learnlib.oracle.equivalence.WMethodEQOracle}.

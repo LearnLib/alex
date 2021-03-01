@@ -34,7 +34,8 @@ public abstract class EntityExporter {
     }
 
     /** Ignores 'id' fields in JSON documents. */
-    protected static abstract class IgnoreIdFieldMixin {
-        @JsonIgnore abstract Long getId();
+    protected abstract static class IgnoreIdFieldMixin {
+        @JsonIgnore
+        abstract Long getId();
     }
 }

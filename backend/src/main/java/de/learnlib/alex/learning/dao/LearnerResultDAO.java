@@ -24,6 +24,12 @@ import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.persistence.EntityManager;
+import javax.validation.ValidationException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,13 +37,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.validation.ValidationException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Implementation of a LearnerResultDAO using Spring Data.
@@ -52,7 +51,7 @@ public class LearnerResultDAO {
     private final LearnerResultStepRepository learnerResultStepRepository;
     private final LearnerSetupDAO learnerSetupDAO;
     private final LearnerResultStepDAO learnerResultStepDAO;
-    
+
     @Autowired
     public LearnerResultDAO(
             ProjectDAO projectDAO,
@@ -73,7 +72,7 @@ public class LearnerResultDAO {
     public LearnerResult create(User user, Long projectId, LearnerResult learnerResult) {
         final var project = projectDAO.getByID(user, projectId);
         projectDAO.checkAccess(user, project);
-        
+
         learnerResult.setProject(project);
         learnerResult.setExecutedBy(user);
 
@@ -93,13 +92,13 @@ public class LearnerResultDAO {
 
     public List<LearnerResult> getByIDs(User user, Long projectId, List<Long> resultIds) {
         final var project = projectDAO.getByID(user, projectId);
-        
+
         final var results = learnerResultRepository.findByIdIn(resultIds);
-        for (var result: results) {
+        for (var result : results) {
             checkAccess(user, project, result);
             initializeLazyRelations(result);
         }
-        
+
         return results;
     }
 
@@ -116,7 +115,7 @@ public class LearnerResultDAO {
         final var project = projectDAO.getByID(user, projectId); // access check
 
         final var results = learnerResultRepository.findByProject_IdAndTestNoIn(projectId, testNos);
-        for (var result: results) {
+        for (var result : results) {
             checkAccess(user, project, result);
             initializeLazyRelations(result);
         }
@@ -197,7 +196,7 @@ public class LearnerResultDAO {
         resultToClone.setSetup(learnerSetupDAO.copy(user, projectId, result.getSetup().getId(), false));
         learnerResultRepository.save(resultToClone);
 
-        for (var step: result.getSteps()) {
+        for (var step : result.getSteps()) {
             entityManager.detach(step);
             step.setId(null);
             step.setResult(resultToClone);
@@ -251,7 +250,7 @@ public class LearnerResultDAO {
         final var project = projectDAO.getByID(user, projectId);
         final var results = learnerResultRepository.findByProject_IdAndTestNoIn(projectId, testNos);
 
-        for (LearnerResult result: results) {
+        for (LearnerResult result : results) {
             checkAccess(user, project, result);
         }
 

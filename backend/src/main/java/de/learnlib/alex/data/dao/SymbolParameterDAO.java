@@ -33,14 +33,13 @@ import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterValueRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
 import de.learnlib.alex.websocket.services.SymbolPresenceService;
+import java.time.ZonedDateTime;
+import java.util.List;
+import javax.validation.ValidationException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.validation.ValidationException;
-import java.time.ZonedDateTime;
-import java.util.List;
 
 /** The concrete DAO for symbol parameters. */
 @Service

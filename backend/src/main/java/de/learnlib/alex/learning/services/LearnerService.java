@@ -40,6 +40,14 @@ import de.learnlib.alex.learning.exceptions.LearnerException;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.PreparedConnectorContextHandlerFactory;
 import de.learnlib.alex.learning.services.connectors.PreparedContextHandler;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import net.automatalib.automata.transducers.impl.compact.CompactMealy;
 import net.automatalib.util.automata.Automata;
 import net.automatalib.util.automata.conformance.WpMethodTestsIterator;
@@ -52,15 +60,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Basic class to control and monitor a learn process. This class is a high level abstraction of the LearnLib.

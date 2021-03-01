@@ -25,7 +25,8 @@ public interface Connector {
      * Method called during the reset of the SUL.
      * Set the connector back to the initial state.
      *
-     * @throws Exception If an exception occurred while the reset.
+     * @throws Exception
+     *         If an exception occurred while the reset.
      */
     void reset() throws Exception;
 

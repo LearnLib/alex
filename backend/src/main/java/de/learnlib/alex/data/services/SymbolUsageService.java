@@ -28,15 +28,14 @@ import de.learnlib.alex.learning.repositories.LearnerSetupRepository;
 import de.learnlib.alex.testing.entities.TestCase;
 import de.learnlib.alex.testing.entities.TestCaseStep;
 import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(rollbackFor = Exception.class, readOnly = true)
@@ -79,13 +78,13 @@ public class SymbolUsageService {
 
         final Set<LearnerSetup> foundInLearnerSetup = new HashSet<>();
         final List<LearnerSetup> setups = learnerSetupRepository.findAllByProject_Id(symbol.getProjectId());
-        for (LearnerSetup s: setups) {
+        for (LearnerSetup s : setups) {
             if (s.getPreSymbol().getSymbol().getId().equals(symbolId)
                     || (s.getPostSymbol() != null && s.getPostSymbol().getSymbol().getId().equals(symbolId))) {
                 foundInLearnerSetup.add(s);
                 continue;
             }
-            for (ParameterizedSymbol ps: s.getSymbols()) {
+            for (ParameterizedSymbol ps : s.getSymbols()) {
                 if (ps.getSymbol().getId().equals(symbolId)) {
                     foundInLearnerSetup.add(s);
                     break;

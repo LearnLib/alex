@@ -20,12 +20,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 /**
  * Entity to hold the information needed to resume a learning process.

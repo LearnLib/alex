@@ -21,10 +21,9 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.learnlib.api.oracle.EquivalenceOracle;
 import de.learnlib.api.oracle.MembershipOracle;
+import java.io.Serializable;
 import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.words.Word;
-
-import java.io.Serializable;
 
 /**
  * Base class for Proxies around a the different EquivalenceOracles from the LearnLib. The Proxy is needed to make it

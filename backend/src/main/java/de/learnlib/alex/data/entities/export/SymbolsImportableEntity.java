@@ -17,7 +17,6 @@
 package de.learnlib.alex.data.entities.export;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import java.util.HashMap;
 import java.util.Map;
 

@@ -21,12 +21,11 @@ import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachinePro
 import de.learnlib.api.oracle.EquivalenceOracle;
 import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.oracle.equivalence.SimulatorEQOracle;
+import java.io.Serializable;
 import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.automata.transducers.impl.compact.CompactMealy;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
-
-import java.io.Serializable;
 
 /**
  * Proxy around a {@link de.learnlib.oracle.equivalence.SimulatorEQOracle}.
@@ -48,7 +47,8 @@ public class HypothesisEQOracleProxy extends AbstractEquivalenceOracleProxy impl
     }
 
     /**
-     * @param hypothesis The new Hypothesis to check against.
+     * @param hypothesis
+     *         The new Hypothesis to check against.
      */
     public void setHypothesis(CompactMealyMachineProxy hypothesis) {
         this.hypothesis = hypothesis;

@@ -17,7 +17,6 @@
 package de.learnlib.alex.data.entities;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-
 import javax.persistence.Entity;
 
 /** The output parameter. */

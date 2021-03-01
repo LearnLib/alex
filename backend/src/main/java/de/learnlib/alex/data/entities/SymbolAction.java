@@ -77,7 +77,8 @@ import de.learnlib.alex.data.entities.actions.web.WaitForTextAction;
 import de.learnlib.alex.data.entities.actions.web.WaitForTitleAction;
 import de.learnlib.alex.data.entities.actions.web.WebSymbolAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
-
+import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
@@ -92,8 +93,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * Abstract super type of how a Action for Symbols should look & work like.

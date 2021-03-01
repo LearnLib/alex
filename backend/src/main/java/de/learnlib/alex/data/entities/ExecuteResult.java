@@ -19,7 +19,8 @@ package de.learnlib.alex.data.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.testing.entities.TestScreenshot;
-
+import java.io.Serializable;
+import java.util.StringJoiner;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,8 +29,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
-import java.io.Serializable;
-import java.util.StringJoiner;
 
 /** Class to determine if a symbol has been executed successfully. */
 @Entity

@@ -20,19 +20,18 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.webhooks.dao.WebhookDAO;
 import de.learnlib.alex.webhooks.entities.Event;
 import de.learnlib.alex.webhooks.entities.Webhook;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.client.ClientProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * The service that emits events to all remote subscribers.
@@ -59,7 +58,8 @@ public class WebhookService {
     /**
      * Constructor.
      *
-     * @param webhookDAO The injected webhook DAO.
+     * @param webhookDAO
+     *         The injected webhook DAO.
      */
     @Autowired
     public WebhookService(WebhookDAO webhookDAO) {
@@ -74,9 +74,12 @@ public class WebhookService {
     /**
      * Sends the event to all subscribers.
      *
-     * @param user  The user under which the event occurred.
-     * @param event The event that occurred.
-     * @param <T>   The type of the event.
+     * @param user
+     *         The user under which the event occurred.
+     * @param event
+     *         The event that occurred.
+     * @param <T>
+     *         The type of the event.
      */
     public <T> void fireEvent(User user, Event<T> event) {
         LOGGER.traceEntry();
@@ -88,8 +91,10 @@ public class WebhookService {
     /**
      * Sends the event to all subscribers.
      *
-     * @param event The event that occurred.
-     * @param <T>   The type of the event.
+     * @param event
+     *         The event that occurred.
+     * @param <T>
+     *         The type of the event.
      */
     public <T> void fireEvent(Event<T> event) {
         LOGGER.traceEntry();

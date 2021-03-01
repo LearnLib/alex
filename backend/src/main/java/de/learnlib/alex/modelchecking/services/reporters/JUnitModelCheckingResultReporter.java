@@ -19,9 +19,9 @@ package de.learnlib.alex.modelchecking.services.reporters;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import de.learnlib.alex.modelchecking.entities.ModelCheckingResult;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -29,9 +29,8 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Map;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class JUnitModelCheckingResultReporter {
 
@@ -55,7 +54,7 @@ public class JUnitModelCheckingResultReporter {
             var totalTests = step.getModelCheckingResults().size();
             var totalFailures = 0;
 
-            for (var result: step.getModelCheckingResults()) {
+            for (var result : step.getModelCheckingResults()) {
                 final var suite = result.getFormula().getSuite();
 
                 idToFormulaSuiteMap.putIfAbsent(suite.getId(), suite);
@@ -68,7 +67,8 @@ public class JUnitModelCheckingResultReporter {
                     idToNumFailures.put(suite.getId(), idToNumFailures.get(suite.getId()) + 1);
                     totalFailures++;
                 }
-            };
+            }
+            ;
 
             // create xml elements for test suites and add them to the root element
             final Map<Long, Element> testSuiteElements = new HashMap<>();

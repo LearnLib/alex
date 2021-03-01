@@ -17,10 +17,9 @@
 package de.learnlib.alex.data.repositories;
 
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 /**
  * The JPA repository for parameterized symbols {@link ParameterizedSymbol}.

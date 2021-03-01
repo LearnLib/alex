@@ -37,12 +37,11 @@ import de.learnlib.alex.testing.entities.TestSuite;
 import de.learnlib.alex.testing.entities.export.TestsExportConfig;
 import de.learnlib.alex.testing.entities.export.TestsExportableEntity;
 import de.learnlib.alex.testing.repositories.TestRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class, readOnly = true)
@@ -79,7 +78,7 @@ public class TestsExporter extends EntityExporter {
         final Project project = projectRepository.findById(projectId).orElseThrow(() -> new NotFoundException("The project could not be found"));
 
         final List<Test> tests = testRepository.findAllByProject_IdAndIdIn(projectId, config.getTestIds());
-        for (Test test: tests) {
+        for (Test test : tests) {
             testDAO.checkAccess(user, project, test);
         }
 
@@ -107,8 +106,13 @@ public class TestsExporter extends EntityExporter {
     }
 
     private abstract static class IgnoreFieldsForTestMixin extends IgnoreIdFieldMixin {
-        @JsonIgnore abstract Long getProjectId();
-        @JsonIgnore abstract Long getParentId();
-        @JsonIgnore abstract User getLastUpdatedBy();
+        @JsonIgnore
+        abstract Long getProjectId();
+
+        @JsonIgnore
+        abstract Long getParentId();
+
+        @JsonIgnore
+        abstract User getLastUpdatedBy();
     }
 }

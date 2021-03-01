@@ -20,11 +20,10 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.api.oracle.EquivalenceOracle;
 import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.oracle.equivalence.RandomWordsEQOracle;
-import net.automatalib.automata.transducers.MealyMachine;
-import net.automatalib.words.Word;
-
 import java.io.Serializable;
 import java.util.Random;
+import net.automatalib.automata.transducers.MealyMachine;
+import net.automatalib.words.Word;
 
 @JsonTypeName("random_word")
 public class MealyRandomWordsEQOracleProxy extends AbstractEquivalenceOracleProxy implements Serializable {

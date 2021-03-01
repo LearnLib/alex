@@ -23,6 +23,8 @@ import de.learnlib.alex.data.entities.export.SymbolGroupsImportableEntity;
 import de.learnlib.alex.data.events.SymbolGroupEvent;
 import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.webhooks.services.WebhookService;
+import java.util.List;
+import javax.ws.rs.core.MediaType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +38,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.ws.rs.core.MediaType;
-import java.util.List;
 
 /**
  * REST API to manage groups.
@@ -197,8 +196,8 @@ public class SymbolGroupResource {
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity<SymbolGroup> update(@PathVariable("projectId") Long projectId,
-                                 @PathVariable("groupId") Long groupId,
-                                 @RequestBody SymbolGroup group) {
+                                              @PathVariable("groupId") Long groupId,
+                                              @RequestBody SymbolGroup group) {
         final User user = authContext.getUser();
         LOGGER.traceEntry("update({}, {}, {}) for user {}.", projectId, groupId, group, user);
 
@@ -227,8 +226,8 @@ public class SymbolGroupResource {
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity<SymbolGroup> move(@PathVariable("projectId") Long projectId,
-                               @PathVariable("groupId") Long groupId,
-                               @RequestBody SymbolGroup group) {
+                                            @PathVariable("groupId") Long groupId,
+                                            @RequestBody SymbolGroup group) {
         final User user = authContext.getUser();
         LOGGER.traceEntry("move({}, {}, {}) for user {}.", projectId, groupId, group, user);
 

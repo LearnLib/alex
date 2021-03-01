@@ -21,15 +21,14 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.webhooks.entities.EventType;
 import de.learnlib.alex.webhooks.entities.Webhook;
 import de.learnlib.alex.webhooks.repositories.WebhookRepository;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.validation.ValidationException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.validation.ValidationException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * The implementation of the {@link WebhookDAO}.
@@ -46,7 +45,8 @@ public class WebhookDAO {
     /**
      * Constructor.
      *
-     * @param webhookRepository The injected repository for webhooks.
+     * @param webhookRepository
+     *         The injected repository for webhooks.
      */
     @Autowired
     public WebhookDAO(WebhookRepository webhookRepository) {

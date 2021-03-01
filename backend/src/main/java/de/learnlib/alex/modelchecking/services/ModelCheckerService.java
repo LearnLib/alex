@@ -28,6 +28,11 @@ import de.learnlib.alex.modelchecking.entities.LtsFormula;
 import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import de.learnlib.alex.modelchecking.entities.ModelCheckingConfig;
 import de.learnlib.alex.modelchecking.entities.ModelCheckingResult;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import net.automatalib.automata.transducers.impl.compact.CompactMealy;
 import net.automatalib.modelcheckers.ltsmin.LTSminLTLParser;
 import net.automatalib.modelcheckers.ltsmin.ltl.LTSminLTLIO;
@@ -35,12 +40,6 @@ import net.automatalib.modelcheckers.ltsmin.ltl.LTSminLTLIOBuilder;
 import net.automatalib.words.Alphabet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /** Service that is used to execute model checks on learned models. */
 @Service

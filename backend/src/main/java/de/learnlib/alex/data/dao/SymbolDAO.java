@@ -56,20 +56,6 @@ import de.learnlib.alex.testing.entities.TestCaseStep;
 import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
 import de.learnlib.alex.testing.repositories.TestExecutionResultRepository;
 import de.learnlib.alex.websocket.services.SymbolPresenceService;
-import net.automatalib.graphs.base.compact.CompactSimpleGraph;
-import net.automatalib.util.graphs.scc.SCCs;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.hibernate.Hibernate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionSystemException;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.validation.ValidationException;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -86,6 +72,19 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.validation.ValidationException;
+import net.automatalib.graphs.base.compact.CompactSimpleGraph;
+import net.automatalib.util.graphs.scc.SCCs;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionSystemException;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Implementation of a SymbolDAO using Spring Data.
@@ -156,15 +155,21 @@ public class SymbolDAO {
         this.learnerSetupDAO = learnerSetupDAO;
     }
 
-    public List<Symbol> importSymbols(User user, Project project, List<Symbol> symbols, Map<String, SymbolImportConflictResolutionStrategy> conflictResolutions) {
+    public List<Symbol> importSymbols(
+            User user,
+            Project project,
+            List<Symbol> symbols,
+            Map<String, SymbolImportConflictResolutionStrategy> conflictResolutions
+    ) {
         final List<Symbol> importedSymbols = new ArrayList<>();
 
-        for (Symbol symbol: symbols) {
+        for (Symbol symbol : symbols) {
             if (!symbolExistsInProject(project, symbol)) {
                 importedSymbols.add(create(user, project.getId(), symbol));
             } else {
                 if (!conflictResolutions.containsKey(symbol.getName())) {
-                    throw new ValidationException("Symbol " + symbol.getName() + " exists but no conflict resolution strategy is specified.");
+                    throw new ValidationException("Symbol " + symbol.getName() + " exists but no conflict resolution "
+                            + "strategy is specified.");
                 }
 
                 switch (conflictResolutions.get(symbol.getName())) {
@@ -187,6 +192,19 @@ public class SymbolDAO {
         return importedSymbols;
     }
 
+    public List<Symbol> importSymbols(User user, Long projectId, SymbolsImportableEntity symbolsImportableEntity) {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        projectDAO.checkAccess(user, project);
+
+        try {
+            final var conflictResolutions = symbolsImportableEntity.getConflictResolutions();
+            final var symbols = objectMapper.readValue(symbolsImportableEntity.getSymbols().toString(), Symbol[].class);
+            return importSymbols(user, project, Arrays.asList(symbols), conflictResolutions);
+        } catch (IOException e) {
+            throw new ValidationException("Failed to parse input data.");
+        }
+    }
+
     public Symbol create(User user, Long projectId, Symbol symbol) {
         LOGGER.traceEntry("create({})", symbol);
         try {
@@ -195,28 +213,31 @@ public class SymbolDAO {
             symbolStepMap.put(createdSymbol.getId(), symbol.getSteps());
             saveSymbolSteps(projectId, Collections.singletonList(createdSymbol), symbolStepMap);
             return createdSymbol;
-        } catch (DataIntegrityViolationException e) {
+        } catch (Exception e) {
             LOGGER.info("Symbol creation failed:", e);
-            throw new ValidationException("Symbol could not be created.", e);
-        } catch (TransactionSystemException | org.hibernate.exception.ConstraintViolationException | javax.validation.ConstraintViolationException e) {
-            throw new ValidationException("Symbol could not be created created: ", e);
-        } catch (IllegalStateException e) {
-            throw new ValidationException("Could not create symbol because it was invalid.", e);
+            throw e;
         } finally {
             LOGGER.traceExit(symbol);
         }
     }
 
-    public List<Symbol> importSymbols(User user, Long projectId, SymbolsImportableEntity symbolsImportableEntity) {
-        final Project project = projectRepository.findById(projectId).orElse(null);
-        projectDAO.checkAccess(user, project);
-
+    public List<Symbol> create(User user, Long projectId, List<Symbol> symbols) {
         try {
-            final Map<String, SymbolImportConflictResolutionStrategy> conflictResolutions = symbolsImportableEntity.getConflictResolutions();
-            final Symbol[] symbols = objectMapper.readValue(symbolsImportableEntity.getSymbols().toString(), Symbol[].class);
-            return importSymbols(user, project, Arrays.asList(symbols), conflictResolutions);
-        } catch (IOException e) {
-            throw new ValidationException("Failed to parse input data.");
+            final List<Symbol> createdSymbols = new ArrayList<>();
+            final Map<Long, List<SymbolStep>> symbolStepMap = new HashMap<>();
+            for (Symbol symbol : symbols) {
+                final Symbol createdSymbol = createOne(user, projectId, symbol);
+                createdSymbols.add(createdSymbol);
+                symbolStepMap.put(createdSymbol.getId(), symbol.getSteps());
+            }
+
+            saveSymbolSteps(projectId, createdSymbols, symbolStepMap);
+            return createdSymbols;
+        } catch (Exception e) {
+            LOGGER.info("Symbols creation failed:", e);
+            throw e;
+        } finally {
+            LOGGER.traceExit();
         }
     }
 
@@ -227,28 +248,28 @@ public class SymbolDAO {
         final Symbol updatedSymbol = update(user, project.getId(), symbol);
 
         // delete removed inputs
-        for (SymbolInputParameter input: updatedSymbol.getInputs()) {
+        for (SymbolInputParameter input : updatedSymbol.getInputs()) {
             if (symbol.findInputByNameAndType(input.getName(), input.getParameterType()) == null) {
                 symbolParameterDAO.delete(user, project.getId(), updatedSymbol.getId(), input.getId());
             }
         }
 
         // delete removed outputs
-        for (SymbolOutputParameter output: updatedSymbol.getOutputs()) {
+        for (SymbolOutputParameter output : updatedSymbol.getOutputs()) {
             if (symbol.findOutputByNameAndType(output.getName(), output.getParameterType()) == null) {
                 symbolParameterDAO.delete(user, project.getId(), updatedSymbol.getId(), output.getId());
             }
         }
 
         // add new inputs
-        for (SymbolInputParameter input: symbol.getInputs()) {
+        for (SymbolInputParameter input : symbol.getInputs()) {
             if (updatedSymbol.findInputByNameAndType(input.getName(), input.getParameterType()) == null) {
                 symbolParameterDAO.create(user, project.getId(), updatedSymbol.getId(), input);
             }
         }
 
         // add new outputs
-        for (SymbolOutputParameter output: symbol.getOutputs()) {
+        for (SymbolOutputParameter output : symbol.getOutputs()) {
             if (updatedSymbol.findOutputByNameAndType(output.getName(), output.getParameterType()) == null) {
                 symbolParameterDAO.create(user, project.getId(), updatedSymbol.getId(), output);
             }
@@ -272,28 +293,6 @@ public class SymbolDAO {
 
     private boolean symbolExistsInProject(Project project, Symbol symbol) {
         return symbolRepository.findOneByProject_IdAndName(project.getId(), symbol.getName()) != null;
-    }
-
-    public List<Symbol> create(User user, Long projectId, List<Symbol> symbols) {
-        try {
-            final List<Symbol> createdSymbols = new ArrayList<>();
-            final Map<Long, List<SymbolStep>> symbolStepMap = new HashMap<>();
-            for (Symbol symbol : symbols) {
-                final Symbol createdSymbol = createOne(user, projectId, symbol);
-                createdSymbols.add(createdSymbol);
-                symbolStepMap.put(createdSymbol.getId(), symbol.getSteps());
-            }
-
-            saveSymbolSteps(projectId, createdSymbols, symbolStepMap);
-            return createdSymbols;
-        } catch (DataIntegrityViolationException e) {
-            LOGGER.info("Symbols creation failed:", e);
-            throw new ValidationException("Symbols could not be created.", e);
-        } catch (javax.validation.ConstraintViolationException | org.hibernate.exception.ConstraintViolationException e) {
-            throw new ValidationException("Symbols were not created: ", e);
-        } catch (IllegalStateException e) {
-            throw new ValidationException("Could not create symbols because at least one was invalid.", e);
-        }
     }
 
     private Symbol createOne(User user, Long projectId, Symbol symbol) {
@@ -343,7 +342,11 @@ public class SymbolDAO {
         return createdSymbol;
     }
 
-    public void saveSymbolSteps(Long projectId, List<Symbol> createdSymbols, Map<Long, List<SymbolStep>> symbolStepMap) {
+    public void saveSymbolSteps(
+            Long projectId,
+            List<Symbol> createdSymbols,
+            Map<Long, List<SymbolStep>> symbolStepMap
+    ) {
         final List<Symbol> allSymbols = symbolRepository.findAllByProject_Id(projectId);
         final Map<String, Symbol> symbolMap = new HashMap<>();
         allSymbols.forEach(symbol -> symbolMap.put(symbol.getName(), symbol));
@@ -454,6 +457,20 @@ public class SymbolDAO {
         }
     }
 
+    public List<Symbol> update(User user, Long projectId, List<Symbol> symbols) {
+        try {
+            final List<Symbol> updatedSymbols = new ArrayList<>();
+            for (Symbol symbol : symbols) {
+                updatedSymbols.add(doUpdate(user, projectId, symbol));
+            }
+            return updatedSymbols;
+        } catch (IllegalStateException e) {
+            throw new ValidationException("Could not update the Symbols because one is not valid.", e);
+        } catch (NotFoundException e) {
+            throw new NotFoundException("Could not update the Symbol because it was nowhere to be found.", e);
+        }
+    }
+
     private void checkLabelsConsistency(Symbol symbol) {
         final List<String> labels = symbol.getSteps().stream()
                 .filter(s -> s instanceof SymbolActionStep)
@@ -473,7 +490,7 @@ public class SymbolDAO {
                 .map(a -> ((JumpToLabelAction) a).getLabel())
                 .collect(Collectors.toList());
 
-        for (String label: labelsToJumpTo) {
+        for (String label : labelsToJumpTo) {
             if (!labels.contains(label)) {
                 throw new ValidationException("Label " + label + " has not been created.");
             }
@@ -487,20 +504,6 @@ public class SymbolDAO {
                 .forEach(s -> oms.addAll(((SymbolPSymbolStep) s).getPSymbol().getOutputMappings()));
 
         SymbolOutputMappingUtils.checkIfMappedNamesAreUnique(oms);
-    }
-
-    public List<Symbol> update(User user, Long projectId, List<Symbol> symbols) {
-        try {
-            final List<Symbol> updatedSymbols = new ArrayList<>();
-            for (Symbol symbol : symbols) {
-                updatedSymbols.add(doUpdate(user, projectId, symbol));
-            }
-            return updatedSymbols;
-        } catch (IllegalStateException e) {
-            throw new ValidationException("Could not update the Symbols because one is not valid.", e);
-        } catch (NotFoundException e) {
-            throw new NotFoundException("Could not update the Symbol because it was nowhere to be found.", e);
-        }
     }
 
     private Symbol doUpdate(User user, Long projectId, Symbol symbol) {
@@ -723,7 +726,7 @@ public class SymbolDAO {
     }
 
     public void delete(User user, Long projectId, List<Long> symbolIds) {
-        for (Long id: symbolIds) {
+        for (Long id : symbolIds) {
             delete(user, projectId, id);
         }
     }
@@ -751,7 +754,10 @@ public class SymbolDAO {
         // check running tests, ignore testSuites
         this.testDAO.getActiveTests(user, project).stream()
                 .filter(t -> t instanceof TestCase)
-                .flatMap(t -> Stream.of(((TestCase) t).getPreSteps(), ((TestCase) t).getSteps(), ((TestCase) t).getPostSteps()))
+                .flatMap(t -> Stream.of(
+                        ((TestCase) t).getPreSteps(),
+                        ((TestCase) t).getSteps(),
+                        ((TestCase) t).getPostSteps()))
                 .flatMap(List::stream)
                 .map(TestCaseStep::getPSymbol)
                 .filter(Objects::nonNull)

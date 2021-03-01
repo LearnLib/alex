@@ -18,8 +18,10 @@ package de.learnlib.alex.learning.services.connectors;
 
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.learning.services.BaseUrlManager;
-import org.glassfish.jersey.client.ClientProperties;
-
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Map;
+import java.util.Set;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -29,10 +31,7 @@ import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Map;
-import java.util.Set;
+import org.glassfish.jersey.client.ClientProperties;
 
 /**
  * A Wrapper around a @{link WebTarget}.
@@ -176,7 +175,7 @@ public class WebServiceConnector implements Connector {
      *         The amount of time in ms before the request is canceled.
      */
     public void post(String baseUrl, String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies, String data,
-            int timeout) throws Exception {
+                     int timeout) throws Exception {
         final Entity body = getBody(requestHeaders, data);
         final Response response = getRequestObject(baseUrl, path, requestHeaders, requestCookies, timeout).post(body);
         rememberResponseComponents(response);
@@ -198,7 +197,7 @@ public class WebServiceConnector implements Connector {
      *         The amount of time in ms before the request is canceled.
      */
     public void put(String baseUrl, String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies,
-            String data, int timeout) throws Exception {
+                    String data, int timeout) throws Exception {
         final Entity body = getBody(requestHeaders, data);
         final Response response = getRequestObject(baseUrl, path, requestHeaders, requestCookies, timeout).put(body);
         rememberResponseComponents(response);
@@ -279,7 +278,7 @@ public class WebServiceConnector implements Connector {
      * @return The request object.
      */
     private Invocation.Builder getRequestObject(String baseUrl, String path, Map<String, String> requestHeaders,
-            Set<Cookie> requestCookies, int timeout) throws Exception {
+                                                Set<Cookie> requestCookies, int timeout) throws Exception {
         final String[] splitPath = path.split("\\?");
 
         final String url = baseUrlManager.getAbsoluteUrl(baseUrl, splitPath[0]);

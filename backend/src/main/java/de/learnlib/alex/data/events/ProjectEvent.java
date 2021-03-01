@@ -29,7 +29,8 @@ public class ProjectEvent {
         /**
          * Constructor.
          *
-         * @param project The created project.
+         * @param project
+         *         The created project.
          */
         public Created(Project project) {
             super(project, EventType.PROJECT_CREATED);
@@ -42,7 +43,8 @@ public class ProjectEvent {
         /**
          * Constructor.
          *
-         * @param id The id of the deleted project.
+         * @param id
+         *         The id of the deleted project.
          */
         public Deleted(Long id) {
             super(id, EventType.PROJECT_DELETED);
@@ -55,7 +57,8 @@ public class ProjectEvent {
         /**
          * Constructor.
          *
-         * @param project The updated project.
+         * @param project
+         *         The updated project.
          */
         public Updated(Project project) {
             super(project, EventType.PROJECT_UPDATED);

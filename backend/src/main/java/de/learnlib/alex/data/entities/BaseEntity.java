@@ -17,10 +17,9 @@
 package de.learnlib.alex.data.entities;
 
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
+import javax.persistence.MappedSuperclass;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
-
-import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
 @TypeDefs({

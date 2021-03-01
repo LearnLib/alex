@@ -19,6 +19,9 @@ package de.learnlib.alex.learning.rest;
 import de.learnlib.alex.learning.dao.LearnerResultStepDAO;
 import de.learnlib.alex.modelchecking.services.reporters.JUnitModelCheckingResultReporter;
 import de.learnlib.alex.security.AuthContext;
+import java.util.List;
+import javax.validation.ValidationException;
+import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,10 +33,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.ValidationException;
-import javax.ws.rs.core.MediaType;
-import java.util.List;
 
 @RestController
 @RequestMapping("/rest/projects/{projectId}/results/{resultId}/steps")

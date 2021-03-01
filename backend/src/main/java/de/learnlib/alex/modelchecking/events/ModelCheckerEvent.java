@@ -20,7 +20,6 @@ import de.learnlib.alex.modelchecking.entities.LtsCheckingResult;
 import de.learnlib.alex.modelchecking.entities.LtsFormula;
 import de.learnlib.alex.webhooks.entities.Event;
 import de.learnlib.alex.webhooks.entities.EventType;
-
 import java.util.List;
 
 /** Events for model checking. */

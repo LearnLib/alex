@@ -25,15 +25,14 @@ import de.learnlib.alex.modelchecking.entities.LtsFormula;
 import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import de.learnlib.alex.modelchecking.repositories.LtsFormulaRepository;
 import de.learnlib.alex.modelchecking.repositories.ModelCheckingResultRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 import net.automatalib.modelcheckers.ltsmin.LTSminLTLParser;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -78,7 +77,7 @@ public class LtsFormulaDAO {
                 .orElseThrow(() -> new NotFoundException("Project could not be found"));
 
         final List<LtsFormula> formulas = ltsFormulaRepository.findAllByIdIn(formulaIds);
-        for (LtsFormula formula: formulas) {
+        for (LtsFormula formula : formulas) {
             checkAccess(user, project, formula.getSuite(), formula);
         }
 
@@ -103,7 +102,7 @@ public class LtsFormulaDAO {
         final LtsFormulaSuite newSuite = ltsFormulaSuiteDAO.get(user, projectId, targetSuite.getId());
 
         final List<LtsFormula> formulas = ltsFormulaRepository.findAllBySuite_IdAndIdIn(suiteId, formulaIds);
-        for (LtsFormula f: formulas) {
+        for (LtsFormula f : formulas) {
             checkAccess(user, oldSuite.getProject(), oldSuite, f);
             f.setSuite(newSuite);
         }

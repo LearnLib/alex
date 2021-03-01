@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package de.learnlib.alex.settings.repositories;
 
 import de.learnlib.alex.settings.entities.Settings;

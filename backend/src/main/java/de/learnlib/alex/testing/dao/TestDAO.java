@@ -44,18 +44,6 @@ import de.learnlib.alex.testing.repositories.TestRepository;
 import de.learnlib.alex.testing.repositories.TestResultRepository;
 import de.learnlib.alex.testing.services.TestService;
 import de.learnlib.alex.websocket.services.TestPresenceService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.hibernate.Hibernate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.validation.ValidationException;
 import java.time.ZonedDateTime;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -68,6 +56,17 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.validation.ValidationException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /** The implementation of the test dao. */
 @Service
@@ -186,7 +185,7 @@ public class TestDAO {
     }
 
     private void mapSymbolsInTests(List<Test> tests, Map<String, Symbol> symbolMap) {
-        for (Test test: tests) {
+        for (Test test : tests) {
             if (test instanceof TestCase) {
                 final TestCase tc = (TestCase) test;
                 mapSymbolsInTestCaseSteps(tc.getPreSteps(), symbolMap);
@@ -199,7 +198,7 @@ public class TestDAO {
     }
 
     private void mapSymbolsInTestCaseSteps(List<TestCaseStep> steps, Map<String, Symbol> symbolMap) {
-        for (TestCaseStep step: steps) {
+        for (TestCaseStep step : steps) {
             step.getPSymbol().setSymbol(symbolMap.get(step.getPSymbol().getSymbol().getName()));
         }
     }
@@ -236,7 +235,7 @@ public class TestDAO {
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
         final List<Test> tests = testRepository.findAllByProject_IdAndIdIn(projectId, ids);
-        for (Test t: tests) loadLazyRelations(t);
+        for (Test t : tests) loadLazyRelations(t);
         return tests;
     }
 
@@ -476,7 +475,7 @@ public class TestDAO {
                     .flatMap(List::stream)
                     .filter(testQueueItem ->
                             testQueueItem.getReport().getStatus().equals(TestReport.Status.IN_PROGRESS)
-                            || testQueueItem.getReport().getStatus().equals(TestReport.Status.PENDING))
+                                    || testQueueItem.getReport().getStatus().equals(TestReport.Status.PENDING))
                     .map(TestQueueItem::getConfig)
                     .map(TestExecutionConfig::getTestIds)
                     .flatMap(Collection::stream)

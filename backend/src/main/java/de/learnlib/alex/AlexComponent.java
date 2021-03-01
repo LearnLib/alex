@@ -24,6 +24,12 @@ import de.learnlib.alex.settings.dao.SettingsDAO;
 import de.learnlib.alex.settings.entities.DriverSettings;
 import de.learnlib.alex.settings.entities.Settings;
 import de.learnlib.alex.testing.dao.TestReportDAO;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import javax.annotation.PostConstruct;
+import javax.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
@@ -32,13 +38,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import javax.annotation.PostConstruct;
-import javax.validation.ValidationException;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 @Component
 public class AlexComponent {

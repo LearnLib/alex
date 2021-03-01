@@ -79,16 +79,16 @@ public enum EventType {
     /** Fired when a symbol group is deleted. */
     SYMBOL_GROUP_DELETED,
 
-    /** Fired when a symbol group is updated.*/
+    /** Fired when a symbol group is updated. */
     SYMBOL_GROUP_UPDATED,
 
-    /** Fired when a symbol group is moved.*/
+    /** Fired when a symbol group is moved. */
     SYMBOL_GROUP_MOVED,
 
     /** Fired when multiple symbol groups are created. */
     SYMBOL_GROUPS_CREATED,
 
-    /** Fired when a test case or test suite is created.*/
+    /** Fired when a test case or test suite is created. */
     TEST_CREATED,
 
     /** Fired when a test case or test suite is updated. */

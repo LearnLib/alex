@@ -23,7 +23,12 @@ import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.api.exception.SULException;
 import de.learnlib.mapper.api.ContextExecutableInput;
-
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -32,12 +37,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Symbol that is executed on the SUL that uses parameters. A symbol will then be used displayed as e.g. "NAME <value1,
@@ -95,7 +94,8 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
     /**
      * Constructor.
      *
-     * @param symbol The symbol to execute.
+     * @param symbol
+     *         The symbol to execute.
      */
     public ParameterizedSymbol(Symbol symbol) {
         this();
@@ -128,8 +128,13 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
         try {
             for (final SymbolInputParameter in : symbol.getInputs()) {
                 if (in.getParameterType().equals(SymbolParameter.ParameterType.STRING)) {
-                    final String userValue = pvMap.get(in.getName());
-                    localVariableStore.set(in.getName(), SearchHelper.insertVariableValues(connectors, symbol.getProjectId(), userValue));
+                    final var userValue = pvMap.get(in.getName());
+                    final var variableValue = SearchHelper.insertVariableValues(
+                            connectors,
+                            symbol.getProjectId(),
+                            userValue
+                    );
+                    localVariableStore.set(in.getName(), variableValue);
                 } else {
                     localCounterStore.set(symbol.getProjectId(), in.getName(), counterStore.get(in.getName()));
                 }
@@ -164,7 +169,7 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
     }
 
     private SymbolOutputMapping getOutputMappingFor(String name) {
-        for (SymbolOutputMapping m: outputMappings) {
+        for (SymbolOutputMapping m : outputMappings) {
             if (m.getParameter().getName().equals(name)) {
                 return m;
             }
@@ -217,8 +222,8 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
     }
 
     /**
-     * If there are no parameter values defined, the name will be "NAME". Otherwise it will be "NAME <value1, value2>"
-     * where "value1" and "value2" are concrete values for the parameters.
+     * If there are no parameter values defined, the name will be "NAME". Otherwise it will be
+     * "NAME &lt;value1, value2&gt;" where "value1" and "value2" are concrete values for the parameters.
      *
      * @return The computed name based on the parameters.
      */

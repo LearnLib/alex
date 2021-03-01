@@ -39,14 +39,6 @@ import de.learnlib.alex.testing.entities.TestResult;
 import de.learnlib.alex.testing.entities.TestScreenshot;
 import de.learnlib.alex.testing.entities.TestSuite;
 import de.learnlib.alex.testing.entities.TestSuiteResult;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-import org.springframework.util.FileCopyUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -54,6 +46,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 
 @Service
 @Scope("prototype")
@@ -188,7 +187,7 @@ public class TestExecutor {
 
                 final TestCaseStep step = testCase.getSteps().get(i);
                 if (step.isDisabled()) {
-                    outputs.add(new ExecuteResult(true,"Skipped"));
+                    outputs.add(new ExecuteResult(true, "Skipped"));
                     continue;
                 }
 

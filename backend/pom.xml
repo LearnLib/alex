@@ -91,9 +91,9 @@
         <failsafe-plugin.version>3.0.0-M5</failsafe-plugin.version>
         <failsafe-report.version>3.0.0-M5</failsafe-report.version>
         <jacoco-plugin.version>0.8.2</jacoco-plugin.version>
-        <checkstyle.version>3.0.0</checkstyle.version>
+        <maven-checkstyle.version>3.1.2</maven-checkstyle.version>
+        <checkstyle.version>8.41</checkstyle.version>
         <findbugs.version>3.0.4</findbugs.version>
-        <pmd.version>3.6</pmd.version>
 
         <!-- dependencies versions -->
         <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
@@ -507,6 +507,7 @@
     <profiles>
         <profile>
             <id>code-analysis</id>
+
             <build>
                 <plugins>
                     <!-- JoCoCo - Coverage -->
@@ -534,11 +535,21 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-checkstyle-plugin</artifactId>
-                        <version>${checkstyle.version}</version>
+                        <version>${maven-checkstyle.version}</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.puppycrawl.tools</groupId>
+                                <artifactId>checkstyle</artifactId>
+                                <version>${checkstyle.version}</version>
+                            </dependency>
+                        </dependencies>
                         <configuration>
                             <configLocation>src/main/resources/checkstyle.xml</configLocation>
                             <suppressionsLocation>src/main/resources/checkstyle-suppressions.xml</suppressionsLocation>
-                            <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                            <encoding>UTF-8</encoding>
+                            <consoleOutput>true</consoleOutput>
+                            <includeTestSourceDirectory>false</includeTestSourceDirectory>
+                            <failsOnError>false</failsOnError>
                             <linkXRef>false</linkXRef>
                         </configuration>
                         <executions>
@@ -549,31 +560,8 @@
                                     <goal>check</goal>
                                 </goals>
                                 <configuration>
-                                    <failOnViolation>false</failOnViolation>
+                                    <failOnViolation>true</failOnViolation>
                                     <maxAllowedViolations>50</maxAllowedViolations>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <!-- PMD -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-pmd-plugin</artifactId>
-                        <version>${pmd.version}</version>
-                        <configuration>
-                            <minimumTokens>75</minimumTokens>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>verify</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>check</goal>
-                                </goals>
-                                <configuration>
-                                    <failOnViolation>false</failOnViolation>
-                                    <printFailingErrors>true</printFailingErrors>
                                 </configuration>
                             </execution>
                         </executions>

@@ -16,10 +16,10 @@
 
 package de.learnlib.alex.modelchecking.entities;
 
-import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javax.validation.ValidationException;
 
 /** Configuration object for checking lts properties on a learned model. */
 public class LtsCheckingConfig {

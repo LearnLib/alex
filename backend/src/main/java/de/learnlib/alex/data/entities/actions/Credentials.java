@@ -16,10 +16,9 @@
 
 package de.learnlib.alex.data.entities.actions;
 
-import org.apache.commons.codec.binary.Base64;
-
-import javax.persistence.Embeddable;
 import java.io.Serializable;
+import javax.persistence.Embeddable;
+import org.apache.commons.codec.binary.Base64;
 
 /**
  * Helper class to store and transfer authentication credentials, i.e. user name / email and password.

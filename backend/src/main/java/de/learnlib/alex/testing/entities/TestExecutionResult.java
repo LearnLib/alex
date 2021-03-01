@@ -19,12 +19,11 @@ package de.learnlib.alex.testing.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Symbol;
-
+import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import java.io.Serializable;
 
 /** Wrapper for {@link de.learnlib.alex.data.entities.ExecuteResult} that allows persistence for tests. */
 @Entity

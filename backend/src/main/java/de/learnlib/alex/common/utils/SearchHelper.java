@@ -20,7 +20,6 @@ import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import de.learnlib.alex.learning.services.connectors.FileStoreConnector;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

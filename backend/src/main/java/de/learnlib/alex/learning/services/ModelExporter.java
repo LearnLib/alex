@@ -21,16 +21,15 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
+import java.io.IOException;
+import java.io.StringWriter;
+import javax.validation.ValidationException;
 import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.serialization.dot.GraphDOT;
 import net.automatalib.words.Alphabet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.validation.ValidationException;
-import java.io.IOException;
-import java.io.StringWriter;
 
 @Service
 @Transactional(rollbackFor = Exception.class, readOnly = true)

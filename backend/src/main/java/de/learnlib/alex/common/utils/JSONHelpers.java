@@ -20,11 +20,10 @@ import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.JsonPath;
 import de.learnlib.alex.data.entities.actions.rest.CheckAttributeTypeAction.JsonType;
+import java.util.LinkedHashMap;
 import net.minidev.json.JSONArray;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.LinkedHashMap;
 
 /**
  * Helper class for some JSON stuff.
