@@ -17,8 +17,9 @@
 package de.learnlib.alex.data.entities.actions;
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import javax.persistence.Embeddable;
-import org.apache.commons.codec.binary.Base64;
 
 /**
  * Helper class to store and transfer authentication credentials, i.e. user name / email and password.
@@ -55,13 +56,14 @@ public class Credentials implements Serializable {
     }
 
     /**
-     * Return the name and password encoded in Base64 to be used in the HTTP Basic Authentication.
+     * Return the name and password encoded in Base64 to be used in for HTTP Basic Authentication.
      *
      * @return "name:password" encoded in Base64.
      */
     public String toBase64() {
-        String credentialsAsString = name + ":" + password;
-        return Base64.encodeBase64String(credentialsAsString.getBytes());
+        var credentialsAsString = name + ":" + password;
+        var credentialsAsByteArray = credentialsAsString.getBytes(StandardCharsets.UTF_8);
+        return Base64.getEncoder().encodeToString(credentialsAsByteArray);
     }
 
     /**

@@ -24,12 +24,12 @@ import org.apache.logging.log4j.Logger;
 /**
  * Connector to hold and manage variables.
  */
-public class VariableStoreConnector implements Connector {
+public class VariableStoreConnector implements Connector, Cloneable {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
     /** The variable store. */
-    private Map<String, String> store;
+    private final Map<String, String> store;
 
     /**
      * Default constructor.
@@ -40,7 +40,7 @@ public class VariableStoreConnector implements Connector {
 
     @Override
     public void reset() {
-        store = new HashMap<>();
+        store.clear();
     }
 
     @Override
@@ -108,6 +108,7 @@ public class VariableStoreConnector implements Connector {
      *
      * @return The cloned store.
      */
+    @Override
     public VariableStoreConnector clone() {
         final VariableStoreConnector clone = new VariableStoreConnector();
         store.forEach(clone::set);

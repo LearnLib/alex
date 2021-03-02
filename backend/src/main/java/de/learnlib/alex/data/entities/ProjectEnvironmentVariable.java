@@ -18,6 +18,7 @@ package de.learnlib.alex.data.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -28,7 +29,9 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
 
 @Entity
-public class ProjectEnvironmentVariable {
+public class ProjectEnvironmentVariable implements Serializable {
+
+    private static final long serialVersionUID = -2041972735097937620L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

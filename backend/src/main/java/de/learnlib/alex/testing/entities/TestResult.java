@@ -152,7 +152,7 @@ public abstract class TestResult implements Serializable {
 
     @JsonProperty("project")
     public Long getProjectId() {
-        return this.project == null ? 0L : this.project.getId();
+        return this.project == null ? 0 : this.project.getId();
     }
 
     @JsonProperty("project")

@@ -30,7 +30,6 @@ import de.learnlib.alex.data.repositories.ProjectEnvironmentVariableRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.ProjectUrlRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
-import de.learnlib.alex.learning.dao.LearnerSetupDAO;
 import de.learnlib.alex.learning.entities.LearnerSetup;
 import de.learnlib.alex.learning.repositories.LearnerSetupRepository;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
@@ -56,7 +55,6 @@ public class ProjectEnvironmentDAO {
     private final SymbolActionRepository symbolActionRepository;
     private final TestReportRepository testReportRepository;
     private final LearnerSetupRepository learnerSetupRepository;
-    private final LearnerSetupDAO learnerSetupDAO;
 
     @Autowired
     public ProjectEnvironmentDAO(ProjectDAO projectDAO,
@@ -66,8 +64,7 @@ public class ProjectEnvironmentDAO {
                                  ProjectUrlRepository urlRepository,
                                  SymbolActionRepository symbolActionRepository,
                                  TestReportRepository testReportRepository,
-                                 LearnerSetupRepository learnerSetupRepository,
-                                 LearnerSetupDAO learnerSetupDAO) {
+                                 LearnerSetupRepository learnerSetupRepository) {
         this.projectDAO = projectDAO;
         this.projectRepository = projectRepository;
         this.environmentRepository = environmentRepository;
@@ -76,7 +73,6 @@ public class ProjectEnvironmentDAO {
         this.symbolActionRepository = symbolActionRepository;
         this.testReportRepository = testReportRepository;
         this.learnerSetupRepository = learnerSetupRepository;
-        this.learnerSetupDAO = learnerSetupDAO;
     }
 
     public ProjectEnvironment create(User user, Long projectId, ProjectEnvironment environment) {

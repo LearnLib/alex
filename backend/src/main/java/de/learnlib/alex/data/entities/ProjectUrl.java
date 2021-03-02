@@ -18,6 +18,7 @@ package de.learnlib.alex.data.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -31,7 +32,9 @@ import javax.validation.constraints.Pattern;
 
 /** The class for the URL of a target system. */
 @Entity
-public class ProjectUrl {
+public class ProjectUrl implements Serializable {
+
+    private static final long serialVersionUID = 2091513737646022637L;
 
     /** The id in the db. */
     @Id

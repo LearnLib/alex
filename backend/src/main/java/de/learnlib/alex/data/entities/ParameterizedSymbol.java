@@ -118,7 +118,7 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
 
         // local scope
         final VariableStoreConnector localVariableStore = new VariableStoreConnector();
-        final CounterStoreConnector localCounterStore = counterStore.copy();
+        final CounterStoreConnector localCounterStore = counterStore.clone();
 
         // user defined values for parameters (name -> value)
         final Map<String, String> pvMap = new HashMap<>();

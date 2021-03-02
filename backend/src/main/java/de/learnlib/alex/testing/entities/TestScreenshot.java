@@ -16,25 +16,26 @@
 
 package de.learnlib.alex.testing.entities;
 
+import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotEmpty;
 
 @Entity
-public class TestScreenshot {
+public class TestScreenshot implements Serializable {
+
+    private static final long serialVersionUID = -6608252802941079821L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @NotEmpty
     private String filename;
 
     public TestScreenshot() {
-    }
-
-    public TestScreenshot(String filename) {
-        this.filename = filename;
     }
 
     public String getFilename() {
@@ -43,5 +44,13 @@ public class TestScreenshot {
 
     public void setFilename(String filename) {
         this.filename = filename;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 }

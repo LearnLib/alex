@@ -32,21 +32,21 @@ import org.apache.logging.log4j.Logger;
 /**
  * Connector to store and manage counters.
  */
-public class CounterStoreConnector implements Connector {
+public class CounterStoreConnector implements Connector, Cloneable {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
     /** The map that keeps track of all counters used by different urls. url -> (counterName -> counterValue). */
-    private Map<String, Integer> countersMap;
+    private final Map<String, Integer> countersMap;
 
     /** An instance of the counterDAO. */
-    private CounterDAO counterDAO;
+    private final CounterDAO counterDAO;
 
     /** The current project. */
-    private Project project;
+    private final Project project;
 
     /** The user that executes the experiment. */
-    private User user;
+    private final User user;
 
     /**
      * Constructor.
@@ -82,7 +82,7 @@ public class CounterStoreConnector implements Connector {
         final Map<String, Counter> counters = new HashMap<>();
         try {
             counterDAO.getAll(user, project.getId()).forEach(c -> counters.put(c.getName(), c));
-        } catch (NotFoundException e) {
+        } catch (NotFoundException ignored) {
         }
 
         // create counters that have not yet been created
@@ -150,7 +150,7 @@ public class CounterStoreConnector implements Connector {
 
         countersMap.put(name, countersMap.get(name) + incrementBy);
 
-        LOGGER.debug("Incremented the counter '{}' in the project <{}> of user <{}> to '{}'.", name, projectId,
+        LOGGER.debug("Incremented the counter '{}' in the project <{}> of user <{}>.", name, projectId,
                 countersMap.get(name));
     }
 
@@ -188,7 +188,8 @@ public class CounterStoreConnector implements Connector {
      *
      * @return A copy of the connector.
      */
-    public CounterStoreConnector copy() {
+    @Override
+    public CounterStoreConnector clone() {
         return new CounterStoreConnector(counterDAO, user, project, new ArrayList<>());
     }
 }

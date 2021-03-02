@@ -129,7 +129,7 @@ public class TestReport implements Serializable {
 
     @JsonProperty("project")
     public Long getProjectId() {
-        return this.project == null ? 0L : this.project.getId();
+        return this.project == null ? 0 : this.project.getId();
     }
 
     @JsonProperty("project")
@@ -201,7 +201,7 @@ public class TestReport implements Serializable {
         return this.testResults.stream()
                 .filter(r -> r instanceof TestCaseResult)
                 .map(TestResult::getTime)
-                .reduce(0L, (a, b) -> a + b);
+                .reduce(0L, Long::sum);
     }
 
     /**

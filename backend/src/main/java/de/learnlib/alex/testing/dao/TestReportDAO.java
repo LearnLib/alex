@@ -204,36 +204,39 @@ public class TestReportDAO {
         final TestReport testReport = testReportRepository.findById(testReportId).orElse(null);
         checkAccess(user, project, testReport);
 
-        Optional<TestResult> result = testResultRepository.findById(resultId);
-        if (!result.isPresent()) {
-            throw new NotFoundException("The requested testresult does not exist.");
+        final var result = testResultRepository.findById(resultId);
+        if (result.isEmpty()) {
+            throw new NotFoundException("The requested test result does not exist.");
         }
 
-        TestResult testResult = result.get();
+        final var testResult = result.get();
         if (testResult instanceof TestSuiteResult) {
-            throw new BadRequestException("The requested testresult is of type TestCaseResult.");
+            throw new IllegalArgumentException("The requested test result is of type TestCaseResult.");
         }
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ZipOutputStream zos = new ZipOutputStream(bos);
+        try (
+                final var bos = new ByteArrayOutputStream();
+                final var zos = new ZipOutputStream(bos);
+        ) {
+            final var testCaseResult = (TestCaseResult) testResult;
 
-        if (((TestCaseResult) testResult).getBeforeScreenshot() != null) {
-            File beforeScreenshot = this.getScreenshot(user, projectId, testReportId, ((TestCaseResult) testResult).getBeforeScreenshot().getFilename());
-            writeToZipFile(beforeScreenshot, "000__screenshot_after_pre_symbols.png", zos);
-        }
-
-        List<TestExecutionResult> outputs = ((TestCaseResult) testResult).getOutputs();
-
-        for (int i = 0; i < outputs.size(); i++) {
-            if (outputs.get(i).getTestScreenshot() != null) {
-                File screenshot = this.getScreenshot(user, projectId, testReportId, outputs.get(i).getTestScreenshot().getFilename());
-                writeToZipFile(screenshot, String.format("%03d", i + 1) + "__" + outputs.get(i).getSymbol().getName().replaceAll("\\s", "_") + "__" + outputs.get(i).getOutput().replaceAll("\\s", "_") + ".png", zos);
+            final var beforeScreenshot = testCaseResult.getBeforeScreenshot();
+            if (beforeScreenshot != null) {
+                var beforeScreenshotFile = this.getScreenshot(user, projectId, testReportId, beforeScreenshot.getFilename());
+                writeToZipFile(beforeScreenshotFile, "000__screenshot_after_pre_symbols.png", zos);
             }
+
+            final var outputs = testCaseResult.getOutputs();
+            for (int i = 0; i < outputs.size(); i++) {
+                var output = outputs.get(i);
+                if (output.getTestScreenshot() != null) {
+                    var screenshotFile = this.getScreenshot(user, projectId, testReportId, output.getTestScreenshot().getFilename());
+                    writeToZipFile(screenshotFile, getScreenshotFilename(i, outputs.get(i)), zos);
+                }
+            }
+
+            return bos.toByteArray();
         }
-
-        zos.close();
-
-        return bos.toByteArray();
     }
 
     public void deleteScreenshot(User user, Long projectId, Long testReportId, String screenshotName) {
@@ -292,21 +295,28 @@ public class TestReportDAO {
         }
     }
 
-    private void writeToZipFile(File file, String targetPath, ZipOutputStream zos)
-            throws IOException {
+    private void writeToZipFile(File file, String targetPath, ZipOutputStream zos) throws IOException {
+        try (final var fis = new FileInputStream(file)) {
+            var zipEntry = new ZipEntry(targetPath);
+            zos.putNextEntry(zipEntry);
 
-        FileInputStream fis = new FileInputStream(file);
-        ZipEntry zipEntry = new ZipEntry(targetPath);
-        zos.putNextEntry(zipEntry);
+            byte[] bytes = new byte[1024];
+            int length;
+            while ((length = fis.read(bytes)) >= 0) {
+                zos.write(bytes, 0, length);
+            }
 
-        byte[] bytes = new byte[1024];
-        int length;
-        while ((length = fis.read(bytes)) >= 0) {
-            zos.write(bytes, 0, length);
+            zos.closeEntry();
         }
+    }
 
-        zos.closeEntry();
-        fis.close();
+    private String getScreenshotFilename(int i, TestExecutionResult testExecutionResult) {
+        return String.format("%03d", i + 1)
+                + "__"
+                + testExecutionResult.getSymbol().getName().replaceAll("\\s", "_")
+                + "__"
+                + testExecutionResult.getOutput().replaceAll("\\s", "_")
+                + ".png";
     }
 
     private void loadLazyRelations(TestReport testReport) {

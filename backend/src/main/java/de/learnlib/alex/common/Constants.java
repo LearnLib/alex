@@ -20,9 +20,9 @@ import java.time.format.DateTimeFormatter;
 
 public class Constants {
 
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
+
     private Constants() {
         throw new UnsupportedOperationException("The class cannot be instantiated.");
     }
-
-    public static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
 }

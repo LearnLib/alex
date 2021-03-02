@@ -218,10 +218,8 @@ public class TestExecutor {
         }
 
         // the remaining steps after the failing step are not executed
-        if (outputs.size() < testCase.getSteps().size()) {
-            while (outputs.size() < testCase.getSteps().size()) {
-                outputs.add(new ExecuteResult(false, "Not executed"));
-            }
+        while (outputs.size() < testCase.getSteps().size()) {
+            outputs.add(new ExecuteResult(false, "Not executed"));
         }
 
         executePostSteps(connectors, testCase.getPostSteps());
