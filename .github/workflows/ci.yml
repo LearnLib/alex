@@ -15,12 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
       - name: Set up JDK 12
         uses: actions/setup-java@v1
         with:
           java-version: 12
-
       - name: Build with Maven
         run: mvn clean install -DskipTests package --file ./backend/pom.xml
 
@@ -51,12 +49,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
       - name: Set up JDK 12
         uses: actions/setup-java@v1
         with:
           java-version: 12
-
       - name: Build with Maven
         run: mvn verify --file ./backend/pom.xml
 
@@ -66,7 +62,6 @@ jobs:
     if: github.event_name == 'push'
     steps:
       - uses: actions/checkout@v2
-
       - name: Push backend to GitHub repositories
         uses: ./.github/actions/build-and-deploy
         with:
@@ -91,7 +86,6 @@ jobs:
     if: github.event_name == 'push'
     steps:
       - uses: actions/checkout@v2
-
       - name: Push frontend to GitHub repositories
         uses: ./.github/actions/build-and-deploy
         with:
@@ -105,7 +99,6 @@ jobs:
     if: github.event_name == 'push'
     steps:
       - uses: actions/checkout@v2
-
       - name: Push CLI to GitHub repositories
         uses: ./.github/actions/build-and-deploy
         with:
@@ -113,3 +106,13 @@ jobs:
           password: ${{ secrets.CR_PAT }}
           context: ./cli
           tag: alex-cli
+
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build docs
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - run: cd ./docs && npm ci && npm run build
