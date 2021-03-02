@@ -42,7 +42,7 @@ jobs:
         with:
           java-version: 12
       - name: Analyse Java Code for bugs
-        run: mvn install -DskipTests && mvn spotbugs:check -Pcode-analysis --file ./backend/pom.xml
+        run: mvn install -DskipTests --file ./backend/pom.xml && mvn spotbugs:check -Pcode-analysis --file ./backend/pom.xml
 
   test-backend:
     needs: [lint-backend, analyse-backend]
