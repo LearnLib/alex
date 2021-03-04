@@ -32,6 +32,13 @@ export class UserApiService extends BaseApiService {
     super();
   }
 
+  changeMaxAllowedProcesses(user: User, maxAllowedProcesses: number): Observable<User> {
+    return this.http.put(`${this.env.apiUrl}/users/${user.id}/processes`, {maxAllowedProcesses}, this.defaultHttpOptions)
+      .pipe(
+        map((body: any) => User.fromData(body))
+      );
+  }
+
   /**
    * Changes the password of a user.
    *

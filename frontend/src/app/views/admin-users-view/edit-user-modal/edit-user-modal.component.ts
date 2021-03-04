@@ -40,11 +40,15 @@ export class EditUserModalComponent implements OnInit {
   /** The error message to display. */
   error: string = null;
 
+  processesForm: FormGroup;
+
   /** The email of the user. */
   emailForm: FormGroup;
 
   /** The username of the user. */
   usernameForm: FormGroup;
+
+  maxProcessesRange = 10;
 
   updated: EventEmitter<User>;
   deleted: EventEmitter<User>;
@@ -64,6 +68,10 @@ export class EditUserModalComponent implements OnInit {
     this.usernameForm = new FormGroup({
       username: new FormControl('', [Validators.required, Validators.pattern('[a-zA-Z][a-zA-Z0-9]*'), Validators.maxLength(32)]),
     });
+
+    this.processesForm = new FormGroup({
+      processes: new FormControl('', [Validators.min(1)])
+    })
   }
 
   get currentUser(): User {
@@ -73,6 +81,21 @@ export class EditUserModalComponent implements OnInit {
   ngOnInit(): void {
     this.usernameForm.controls.username.setValue(this.user.username);
     this.emailForm.controls.email.setValue(this.user.email);
+    this.processesForm.controls.processes.setValue(this.user.maxAllowedProcesses);
+  }
+
+  changeMaxAllowedProcesses(): void {
+    this.error = null;
+    this.userApi.changeMaxAllowedProcesses(this.user, this.processesForm.controls.processes.value).subscribe(
+      user => {
+        this.toastService.success('The maximum number of allowed processes has been changed.')
+        this.updated.emit(user);
+        this.modal.dismiss();
+      },
+      response => {
+        this.error = response.error.message;
+      }
+    )
   }
 
   /**
@@ -176,4 +199,10 @@ export class EditUserModalComponent implements OnInit {
     return c.invalid && (c.dirty || c.touched);
   }
 
+  getMaxProcessesRange() {
+    if (this.maxProcessesRange < this.processesForm.controls.processes.value) {
+      this.maxProcessesRange = this.processesForm.controls.processes.value;
+    }
+    return this.maxProcessesRange;
+  }
 }

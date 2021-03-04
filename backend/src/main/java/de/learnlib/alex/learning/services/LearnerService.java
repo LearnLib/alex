@@ -16,8 +16,10 @@
 
 package de.learnlib.alex.learning.services;
 
+import de.learnlib.alex.auth.dao.UserDAO;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
+import de.learnlib.alex.common.exceptions.ResourcesExhaustedException;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.ExecuteResult;
@@ -40,14 +42,7 @@ import de.learnlib.alex.learning.exceptions.LearnerException;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.PreparedConnectorContextHandlerFactory;
 import de.learnlib.alex.learning.services.connectors.PreparedContextHandler;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
+import de.learnlib.alex.testing.services.TestService;
 import net.automatalib.automata.transducers.impl.compact.CompactMealy;
 import net.automatalib.util.automata.Automata;
 import net.automatalib.util.automata.conformance.WpMethodTestsIterator;
@@ -58,8 +53,20 @@ import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Basic class to control and monitor a learn process. This class is a high level abstraction of the LearnLib.
@@ -85,6 +92,8 @@ public class LearnerService {
     private final PreparedConnectorContextHandlerFactory contextHandlerFactory;
     private final ProjectDAO projectDAO;
     private final ApplicationContext applicationContext;
+    private final TestService testService;
+    private final UserDAO userDAO;
 
     /** The learner threads for users (userId -> thread). */
     private final Map<Long, LearnerThread> learnerThreads;
@@ -94,12 +103,16 @@ public class LearnerService {
                           LearnerResultDAO learnerResultDAO,
                           ApplicationContext applicationContext,
                           PreparedConnectorContextHandlerFactory contextHandlerFactory,
-                          ProjectDAO projectDAO) {
+                          ProjectDAO projectDAO,
+                          @Lazy TestService testService,
+                          UserDAO userDAO) {
         this.learnerSetupDAO = learnerSetupDAO;
         this.learnerResultDAO = learnerResultDAO;
         this.contextHandlerFactory = contextHandlerFactory;
         this.projectDAO = projectDAO;
         this.applicationContext = applicationContext;
+        this.testService = testService;
+        this.userDAO = userDAO;
 
         this.learnerThreads = new HashMap<>();
     }
@@ -121,6 +134,9 @@ public class LearnerService {
      *         If the symbols specified in the configuration could not be found.
      */
     public LearnerResult start(User user, Project project, LearnerStartConfiguration startConfiguration) {
+        User userInDb = this.userDAO.getByID(user.getId());
+        checkRunningProcesses(userInDb, project.getId());
+
         final var setup = startConfiguration.getSetup();
         final var createdSetup = setup.getId() != null ? setup : learnerSetupDAO.create(user, project.getId(), setup);
 
@@ -156,6 +172,9 @@ public class LearnerService {
      *         The configuration to use for the next learning steps.
      */
     public LearnerResult resume(User user, Long projectId, Long testNo, LearnerResumeConfiguration configuration) {
+        User userInDb = this.userDAO.getByID(user.getId());
+        checkRunningProcesses(userInDb, projectId);
+
         configuration.checkConfiguration();
         var result = learnerResultDAO.getByTestNo(user, projectId, testNo);
 
@@ -276,6 +295,28 @@ public class LearnerService {
      */
     public boolean isActive(Long projectId) {
         return learnerThreads.containsKey(projectId);
+    }
+
+    public boolean hasRunningOrPendingTasks(User user, Long projectId) {
+        if (!isActive(projectId)) return false;
+        LearnerStatus learnerStatus =  this.getStatus(user, projectId);
+
+        List<LearnerResult> currentProcessSingletonList  = Optional.ofNullable(learnerStatus.getCurrentProcess())
+                .map(LearningProcessStatus::getResult)
+                .map(List::of)
+                .orElse(Collections.emptyList());
+
+        return Stream.of(currentProcessSingletonList, learnerStatus.getQueue())
+                .flatMap(List::stream)
+                .map(LearnerResult::getStatus)
+                .anyMatch(status -> status.equals(LearnerResult.Status.IN_PROGRESS) || status.equals(LearnerResult.Status.PENDING));
+    }
+
+    public long getNumberOfUserOwnedLearnProcesses(User user) {
+        return user.getProjectsOwner().stream()
+                .map(Project::getId)
+                .filter(projectId -> hasRunningOrPendingTasks(user, projectId))
+                .count();
     }
 
     /**
@@ -507,6 +548,17 @@ public class LearnerService {
                         break;
                     }
                 }
+            }
+        }
+    }
+
+    private void checkRunningProcesses(User user, Long projectId) {
+
+        // check number of already running test/learn processes against the maximum allowed number the user may allowed to start
+        if (this.getNumberOfUserOwnedLearnProcesses(user) + testService.getNumberOfUserOwnedTestProcesses(user) >= user.getMaxAllowedProcesses()) {
+            // check if there are already running/pending tests in this project
+            if (!this.hasRunningOrPendingTasks(user, projectId)) {
+                throw new ResourcesExhaustedException("You are not allowed to have more than " + user.getMaxAllowedProcesses() + " concurrent test/learn processes.");
             }
         }
     }

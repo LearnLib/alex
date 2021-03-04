@@ -34,11 +34,7 @@ export class User {
   /** The username of the user. */
   public username: string;
 
-  // /** List of project ids the user is owner **/
-  // public projectsOwner: number[];
-  //
-  // /** List of project ids the user is member **/
-  // public projectsMember: number[];
+  public maxAllowedProcesses: number;
 
   constructor() {
     this.role = UserRole.REGISTERED;
@@ -50,8 +46,7 @@ export class User {
     u.role = data.role;
     u.email = data.email;
     u.username = data.username;
-    // u.projectsOwner = data.projectsOwner;
-    // u.projectsMember = data.projectsMember;
+    u.maxAllowedProcesses = data.maxAllowedProcesses;
     return u;
   }
 

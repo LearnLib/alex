@@ -126,4 +126,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         final RESTError error = new RESTError(HttpStatus.LOCKED, e);
         return ResponseEntity.status(HttpStatus.LOCKED).body(error);
     }
+
+    @ExceptionHandler(ResourcesExhaustedException.class)
+    protected ResponseEntity<Object> handleResourcesExhaustedException(ResourcesExhaustedException e) {
+        LOGGER.info("ResourcesExhaustedException.java caught.", e);
+        final RESTError error = new RESTError(HttpStatus.LOCKED, e);
+        return ResponseEntity.status(HttpStatus.LOCKED).body(error);
+    }
 }

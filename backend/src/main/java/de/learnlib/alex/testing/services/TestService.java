@@ -16,22 +16,32 @@
 
 package de.learnlib.alex.testing.services;
 
+import de.learnlib.alex.auth.dao.UserDAO;
 import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.common.exceptions.ResourcesExhaustedException;
 import de.learnlib.alex.data.dao.ProjectDAO;
+import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.learning.services.LearnerService;
 import de.learnlib.alex.testing.dao.TestReportDAO;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
 import de.learnlib.alex.testing.entities.TestProcessQueueItem;
 import de.learnlib.alex.testing.entities.TestQueueItem;
 import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.entities.TestStatus;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /** The service that executes tests. */
 @Service
@@ -41,6 +51,8 @@ public class TestService {
     private final ApplicationContext applicationContext;
     private final TestReportDAO testReportDAO;
     private final ProjectDAO projectDAO;
+    private final LearnerService learnerService;
+    private final UserDAO userDAO;
 
     /** The running testing threads (projectId -> TestThread). */
     private final Map<Long, TestThread> testThreads;
@@ -49,11 +61,13 @@ public class TestService {
     public TestService(
             ApplicationContext applicationContext,
             TestReportDAO testReportDAO,
-            ProjectDAO projectDAO
-    ) {
+            ProjectDAO projectDAO,
+            @Lazy LearnerService learnerService, @Lazy UserDAO userDAO) {
         this.applicationContext = applicationContext;
         this.testReportDAO = testReportDAO;
         this.projectDAO = projectDAO;
+        this.learnerService = learnerService;
+        this.userDAO = userDAO;
 
         this.testThreads = new HashMap<>();
     }
@@ -70,6 +84,9 @@ public class TestService {
      * @return A test status.
      */
     public TestQueueItem start(User user, Long projectId, TestExecutionConfig config) {
+        User userInDb = this.userDAO.getByID(user.getId());
+        checkRunningProcesses(userInDb, projectId);
+
         final var project = projectDAO.getByID(user, projectId);
 
         final var r = new TestReport();
@@ -107,6 +124,31 @@ public class TestService {
         return qi;
     }
 
+    public boolean isActive(Long projectId) {
+        return this.testThreads.containsKey(projectId);
+    }
+
+    public boolean hasRunningOrPendingTasks(User user, Long projectId) {
+        if (!isActive(projectId)) return false;
+        TestStatus testStatus =  this.getStatus(user, projectId);
+
+        List<TestQueueItem> currentTestRunSingletonList  = Optional.ofNullable(testStatus.getCurrentTestRun())
+                .map(List::of)
+                .orElse(Collections.emptyList());
+
+        return Stream.of(currentTestRunSingletonList, testStatus.getTestRunQueue())
+                .flatMap(List::stream)
+                .map(TestQueueItem::getReport)
+                .map(TestReport::getStatus)
+                .anyMatch(status -> status.equals(TestReport.Status.IN_PROGRESS) || status.equals(TestReport.Status.PENDING));
+    }
+
+    public long getNumberOfUserOwnedTestProcesses(User user) {
+        return user.getProjectsOwner().stream()
+                .map(Project::getId)
+                .filter(projectId -> hasRunningOrPendingTasks(user, projectId))
+                .count();
+    }
     /**
      * Gets the status of the active test process of a project.
      *
@@ -120,7 +162,7 @@ public class TestService {
         final var project = projectDAO.getByID(user, projectId);
         final var status = new TestStatus();
 
-        if (testThreads.containsKey(project.getId())) {
+        if (isActive(projectId)) {
             final TestThread testThread = testThreads.get(project.getId());
             status.setTestRunQueue(testThread.getTestQueue().stream()
                     .map(item -> {
@@ -162,6 +204,17 @@ public class TestService {
         if (testThreads.containsKey(projectId)) {
             final TestThread testThread = testThreads.get(projectId);
             testThread.abort(reportId);
+        }
+    }
+
+    private void checkRunningProcesses(User user, Long projectId) {
+
+        // check number of already running test/learn processes against the maximum allowed number the user may allowed to start
+        if (this.getNumberOfUserOwnedTestProcesses(user) + learnerService.getNumberOfUserOwnedLearnProcesses(user) >= user.getMaxAllowedProcesses()) {
+            // check if there are already running/pending tests in this project
+            if (!this.hasRunningOrPendingTasks(user, projectId)) {
+                throw new ResourcesExhaustedException("You are not allowed to have more than " + user.getMaxAllowedProcesses() + " concurrent test/learn processes.");
+            }
         }
     }
 }

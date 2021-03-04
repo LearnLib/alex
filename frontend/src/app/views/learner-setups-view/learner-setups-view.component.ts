@@ -74,7 +74,9 @@ export class LearnerSetupsViewComponent {
           }
         });
       },
-      console.error
+      res => {
+        this.toastService.danger('The learning process could not be started. ' +  res.error.message);
+      }
     );
   }
 

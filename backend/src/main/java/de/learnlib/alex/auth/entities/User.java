@@ -94,6 +94,8 @@ public class User implements Serializable {
     @JsonIgnore
     private List<Webhook> webhooks;
 
+    private int maxAllowedProcesses;
+
     /**
      * Default constructor that gives the user the role of "registered".
      */
@@ -102,6 +104,7 @@ public class User implements Serializable {
         this.projectsMember = new HashSet<>();
         this.webhooks = new ArrayList<>();
         this.role = UserRole.REGISTERED;
+        this.maxAllowedProcesses = 1;
     }
 
     /**
@@ -212,6 +215,14 @@ public class User implements Serializable {
 
     public void setWebhooks(List<Webhook> webhooks) {
         this.webhooks = webhooks;
+    }
+
+    public void setMaxAllowedProcesses(int maxAllowedProcesses) {
+        this.maxAllowedProcesses = maxAllowedProcesses;
+    }
+
+    public int getMaxAllowedProcesses() {
+        return this.maxAllowedProcesses;
     }
 
     @Override

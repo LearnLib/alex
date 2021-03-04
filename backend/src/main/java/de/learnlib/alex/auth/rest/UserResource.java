@@ -220,6 +220,43 @@ public class UserResource {
         return ResponseEntity.ok(users);
     }
 
+    @PutMapping(
+            value = "/{id}/processes",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity changeMaxAllowedProcesses(@PathVariable("id") Long userId, @RequestBody JSONObject json) {
+        final User user = authContext.getUser();
+        LOGGER.traceEntry("changeMaxAllowedProcesses({}, {}) for user {}.", userId, json, user);
+
+        if (!user.getRole().equals(UserRole.ADMIN)) {
+            LOGGER.traceExit("Only an admin is allowed to change the maximum allowed processes.");
+            return ResourceErrorHandler.createRESTErrorMessage("UserResource.changeMaxAllowedProcesses", HttpStatus.FORBIDDEN, new UnauthorizedException("You are not allowed to do this."));
+        }
+
+        int newMaxAllowedProcesses;
+        try {
+            newMaxAllowedProcesses = (int) json.get("maxAllowedProcesses");
+        } catch (ClassCastException e) {
+            throw new ValidationException("Received invalid Value for maximum number of allowed processes per user.");
+        }
+
+        if (newMaxAllowedProcesses <= 0) {
+            throw new ValidationException("The maximum number of allowed processes per user has to be greater 0.");
+        }
+
+        User userInDB = userDAO.getByID(userId);
+
+        userInDB.setMaxAllowedProcesses(newMaxAllowedProcesses);
+
+        userDAO.update(userInDB);
+
+        LOGGER.traceExit(userInDB);
+
+        return ResponseEntity.ok(userInDB);
+    }
+
+
     /**
      * Changes the password of the user.
      *
