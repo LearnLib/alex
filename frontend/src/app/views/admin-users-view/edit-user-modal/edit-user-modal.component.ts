@@ -71,7 +71,7 @@ export class EditUserModalComponent implements OnInit {
 
     this.processesForm = new FormGroup({
       processes: new FormControl('', [Validators.min(1)])
-    })
+    });
   }
 
   get currentUser(): User {
@@ -88,14 +88,14 @@ export class EditUserModalComponent implements OnInit {
     this.error = null;
     this.userApi.changeMaxAllowedProcesses(this.user, this.processesForm.controls.processes.value).subscribe(
       user => {
-        this.toastService.success('The maximum number of allowed processes has been changed.')
+        this.toastService.success('The maximum number of allowed processes has been changed.');
         this.updated.emit(user);
         this.modal.dismiss();
       },
       response => {
         this.error = response.error.message;
       }
-    )
+    );
   }
 
   /**
