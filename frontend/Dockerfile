@@ -11,4 +11,4 @@ COPY ./nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 4200
 
-CMD envsubst '$${SERVER_ADDRESS},$${PORT}' < /usr/share/nginx/html/assets/config.template.json > /usr/share/nginx/html/assets/config.json && exec nginx -g 'daemon off;'
+CMD envsubst '$${ALEX_BACKEND_ADDRESS},$${ALEX_BACKEND_PORT}' < /usr/share/nginx/html/assets/config.template.json > /usr/share/nginx/html/assets/config.json && exec nginx -g 'daemon off;'

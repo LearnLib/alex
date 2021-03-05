@@ -1,9 +1,8 @@
-version: '3.3'
+version: '3.7'
+
 services:
   selenium-hub:
     image: selenium/hub:3
-    networks:
-      - backend
   chrome-node:
     image: selenium/node-chrome-debug:3
     shm_size: '2gb'
@@ -12,8 +11,6 @@ services:
     environment:
       - HUB_HOST=selenium-hub
       - HUB_PORT=4444
-    networks:
-      - backend
   firefox-node:
     image: selenium/node-firefox-debug:3
     shm_size: '2gb'
@@ -22,8 +19,6 @@ services:
     environment:
       - HUB_HOST=selenium-hub
       - HUB_PORT=4444
-    networks:
-      - backend
   alex-database:
     image: postgres:10
     environment:
@@ -32,12 +27,15 @@ services:
       - POSTGRES_DB=alex
     volumes:
       - alex-database:/var/lib/postgresql
-    networks:
-      - backend
+  alex-frontend:
+    image: ghcr.io/learnlib/alex/alex-frontend:unstable
+    environment:
+      - ALEX_BACKEND_ADDRESS=http://localhost
+      - ALEX_BACKEND_PORT=8000
     ports:
-      - "127.0.0.1:5432:5432"
+      - 80:4200
   alex-backend:
-    build: ./backend
+    image: ghcr.io/learnlib/alex/alex-backend:unstable
     depends_on:
       - alex-database
       - selenium-hub
@@ -46,18 +44,7 @@ services:
     environment:
       - REMOTE_DRIVER=http://selenium-hub:4444/wd/hub
     ports:
-      - "127.0.0.1:8000:8000"
-    networks:
-      - backend
-  alex-frontend:
-    build: ./frontend
-    environment:
-      - SERVER_ADDRESS=http://localhost
-      - PORT=8000
-    ports:
-      - "127.0.0.1:4200:4200"
-    networks:
-      - frontend
+      - 8000:8000
 
 volumes:
   alex-database:

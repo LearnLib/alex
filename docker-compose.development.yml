@@ -1,11 +1,10 @@
-version: '3.3'
+version: '3.7'
+
 services:
     selenium-hub:
         image: selenium/hub:3
-        ports:
-            - "127.0.0.1:4444:4444"
-        networks:
-            - backend
+        network_mode: "host"
+
     chrome-node:
         image: selenium/node-chrome-debug:3
         shm_size: '2gb'
@@ -14,22 +13,22 @@ services:
         environment:
             - HUB_HOST=selenium-hub
             - HUB_PORT=4444
-        ports:
-            - "127.0.0.1:5900:5900"
-        networks:
-            - backend
-    firefox-node:
-        image: selenium/node-firefox-debug:3
-        shm_size: '2gb'
-        depends_on:
-            - selenium-hub
-        environment:
-            - HUB_HOST=selenium-hub
-            - HUB_PORT=4444
-        ports:
-            - "127.0.0.1:5901:5900"
-        networks:
-            - backend
+        extra_hosts:
+            - "selenium-hub:127.0.0.1"
+        network_mode: "host"
+
+#    firefox-node:
+#        image: selenium/node-firefox-debug:3
+#        shm_size: '2gb'
+#        depends_on:
+#            - selenium-hub
+#        environment:
+#            - HUB_HOST=selenium-hub
+#            - HUB_PORT=4444
+#        extra_hosts:
+#            - "selenium-hub:127.0.0.1"
+#        network_mode: "host"
+
     alex-database:
         image: postgres:10
         environment:
@@ -38,10 +37,8 @@ services:
             - POSTGRES_DB=alex
         volumes:
           - alex-database:/var/lib/postgresql
-        networks:
-          - backend
-        ports:
-          - "127.0.0.1:5432:5432"
+        network_mode: "host"
+
     alex-backend:
         image: maven:3-jdk-11
         depends_on:
@@ -66,27 +63,20 @@ services:
             mv /var/ltsmin/v3.0.2/* /var/ltsmin/;
             rm -rf /var/ltsmin/v3.0.2 /var/ltsmin/ltsmin-v3.0.2-linux.tgz;
             fi && mvn spring-boot:run -Dspring-boot.run.arguments=--ltsmin.path=/var/ltsmin/bin,--webdriver.remote.url=http://selenium-hub:4444/wd/hub,--spring.datasource.url=jdbc:postgresql://$${DATABASE_HOST}:$${DATABASE_PORT}/$${DATABASE_NAME},--spring.datasource.username=$${DATABASE_USER}"
-        ports:
-            - "127.0.0.1:8000:8000"
-        networks:
-            - backend
+        extra_hosts:
+          - "alex-database:127.0.0.1"
+          - "selenium-hub:127.0.0.1"
+        network_mode: "host"
+
     alex-frontend:
         image: node
         working_dir: /var/alex/frontend
         volumes:
             - ./frontend:/var/alex/frontend:rw
         command: bash -c "npm install && npm run start:docker"
-        ports:
-            - "127.0.0.1:4200:4200"
-        networks:
-            - frontend
+        network_mode: "host"
 
 volumes:
   alex-backend-maven:
   alex-database:
   alex-backend-ltsmin:
-
-
-networks:
-    frontend:
-    backend:
