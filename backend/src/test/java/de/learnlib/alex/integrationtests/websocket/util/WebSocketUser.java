@@ -90,6 +90,8 @@ public class WebSocketUser {
 
         final UserApi userApi = new UserApi(client, port);
         final Response res = userApi.create("{\"email\":\"" + username + "@test.de\",\"username\":\"" + username + "\",\"password\":\"test\"}");
+        res.bufferEntity();
+        System.out.println(res.readEntity(String.class));
         this.userId = Integer.toUnsignedLong(JsonPath.read(res.readEntity(String.class), "id"));
         this.jwt = userApi.login(username + "@test.de", "test");
 
