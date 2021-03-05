@@ -6,17 +6,19 @@
 **Alexander Bainczyk** <br> 
 [alexander.bainczyk@tu-dortmund.de](mailto:alexander.bainczyk@tu-dortmund.de)
   
+**Marco Krumrey** <br> 
+[marco.krumrey@tu-dortmund.de](mailto:marco.krumrey@tu-dortmund.de)
   
 ## Copyright
 
 This project is open source and licensed under the [Apache-2 license][apache2].
 
-Copyright 2015 - 2020 TU Dortmund
+Copyright 2015 - 2021 TU Dortmund
 
 
 ## Issue management
 
-We use GitHub for the issue management.
+We use GitHub for the issue and project management.
 If you find a bug in the software, inaccuracies in this documentation or have other suggestions, please file an issue [here][issues] or submit a pull request.
 
 

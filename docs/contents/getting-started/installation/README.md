@@ -1,15 +1,19 @@
 # Installation
 
-In order to use ALEX on your system, make sure that **Java 8** or **Java 11** is installed.
-Further, a **modern browser** like Google Chrome, Mozilla Firefox or Microsoft Edge with JavaScript enabled is required to use the web interface.
+In order to use ALEX on your local machine, make sure that 
+
+- Docker (v20.10.\*) and 
+- Docker Compose (v1.28.*) 
+
+are installed.
 
 
-## Bundled version
+## Using the latest Docker Compose file
 
-1. [Download][download] the latest version.
-2. Open a terminal and start ALEX via `java -jar alex-2.0.0.war`.
+1. [Download][download] the latest `docker-compose.deploy.yml` file.
+2. Open a terminal and start ALEX via `docker-compose -f docker-compose.deploy.yml`.
 3. Wait until the command line prints something like `Started App in XX.XXX seconds`.
-3. Open *http://localhost:8000* in a web browser.
+4. Open [http://127.0.0.1](http://127.0.0.1) in a modern Web browser.
 
 After the first start, you can login as an admin using the account below:
 
@@ -19,26 +23,10 @@ Password: *admin*
 
 ## From source
 
-In order to build ALEX from source, make sure that you have the following software installed:
+1. Clone the repository `git clone https://github.com/LearnLib/alex.git`
+2. Navigate to the directory `cd alex`
+3. Run `docker-compose -f docker-compose.deploy.yml`
+4. Open [http://127.0.0.1:4200](http://127.0.0.1:4200) in a modern Web browser.
 
-* Java JDK 11
-* Maven 3
-* Node.js (v12) and the NPM (v6)
 
-To build ALEX, open a terminal and follow the instructions below:
-
-```bash
-# clone the repository
-git clone https://github.com/LearnLib/alex.git
-
-# navigate to the project directory
-cd alex
-
-# build ALEX
-mvn install package [-DskipTests]
-```
-
-The bundle can then be found at `build/target/alex-2.0.0.war`.
-Run it using the instructions for running the bundled version from above.
-
-[download]: https://github.com/LearnLib/alex/releases/download/v2.0.0/alex-2.0.0.war
+[download]: https://github.com/LearnLib/alex/releases

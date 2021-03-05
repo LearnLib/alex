@@ -3,7 +3,7 @@
 Here and in the following sections, we present a detailed explanation of the concepts and ways to use ALEX.
 If you find bugs of any kind relating this application or inaccuracies in this manual, [let us][mails] know.
 
-[mails]: mailto:alexander.bainczyk@tu-dortmund.de,alexander.schieweck@tu-dortmund.de
+[mails]: mailto:alexander.bainczyk@tu-dortmund.de,marco.krumrey@tu-dortmund.de
 
 
 ## Features
@@ -30,9 +30,8 @@ As a user of ALEX and tester of web applications, you should
 
 * be familiar with HTML and CSS
 * be familiar with REST interfaces and exchange formats like JSON
-* have logical thinking abilities
-* have a basic understanding of active automata learning
 * have a basic understanding of web application testing
+* have a basic understanding of active automata learning
 
 It helps if you are familiar with programming in general and have already used Selenium.
 
@@ -41,14 +40,14 @@ It helps if you are familiar with programming in general and have already used S
 
 This document contains some terms related to automata learning which are listed in the following:
 
-<definition term="System under Learning">
+<definition term="System under Learning (SUL)">
     The system we want to infer an automaton model from.
     Often also called system under testing (SUT).
 </definition>
 
 <definition term="Symbol">
     We differentiate between input and output symbols.
-    Input symbols are modeled by the user and define possible inputs to a system.
+    Input symbols are modeled by the user and define possible inputs to a system, like a click.
     Output symbols specify how the system reacts to inputs.
 </definition>
 
@@ -57,7 +56,7 @@ This document contains some terms related to automata learning which are listed 
 </definition>
 
 <definition term="Learner">
-    A learner infers an automaton model of an application by posing words to the SUL and analyzing its outputs.
+    A learner is an algorithm that infers an automaton model of an application by posing words to the SUL and analyzing its outputs.
 </definition>
 
 <definition term="Membership query">
@@ -71,7 +70,7 @@ This document contains some terms related to automata learning which are listed 
 
 <definition term="Hypothesis">
     A hypothesis is the behavioral automaton model that is learned.
-    The model is called hypothesis due to the black box nature of the SUL. 
+    The model is called hypothesis due to the black-box nature of the SUL. 
     Theoretically, there can always exist a behavior that is not captured by the model.
 </definition>
 
