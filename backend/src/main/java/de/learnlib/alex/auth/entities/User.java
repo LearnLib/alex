@@ -35,6 +35,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha512Hash;
@@ -94,6 +95,9 @@ public class User implements Serializable {
     @JsonIgnore
     private List<Webhook> webhooks;
 
+    @Min(value = 1, message = "The number of allowed processes has to be greater than 0.")
+    private int maxAllowedProcesses;
+
     /**
      * Default constructor that gives the user the role of "registered".
      */
@@ -102,6 +106,7 @@ public class User implements Serializable {
         this.projectsMember = new HashSet<>();
         this.webhooks = new ArrayList<>();
         this.role = UserRole.REGISTERED;
+        this.maxAllowedProcesses = 1;
     }
 
     /**
@@ -212,6 +217,14 @@ public class User implements Serializable {
 
     public void setWebhooks(List<Webhook> webhooks) {
         this.webhooks = webhooks;
+    }
+
+    public void setMaxAllowedProcesses(int maxAllowedProcesses) {
+        this.maxAllowedProcesses = maxAllowedProcesses;
+    }
+
+    public int getMaxAllowedProcesses() {
+        return this.maxAllowedProcesses;
     }
 
     @Override

@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
+import javax.ws.rs.InternalServerErrorException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -106,6 +107,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
+    @ExceptionHandler(InternalServerErrorException.class)
+    protected ResponseEntity<Object> handleInternalServerErrorException(InternalServerErrorException e) {
+        LOGGER.info("InternalServerErrorException caught.", e);
+        final RESTError error = new RESTError(HttpStatus.INTERNAL_SERVER_ERROR, e);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
+
     @ExceptionHandler(ValidationException.class)
     protected ResponseEntity<Object> handleValidationException(ValidationException e) {
         LOGGER.info("ValidationException caught.", e);
@@ -123,6 +131,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(EntityLockedException.class)
     protected ResponseEntity<Object> handleEntityLockedException(EntityLockedException e) {
         LOGGER.info("EntityLockedException caught.", e);
+        final RESTError error = new RESTError(HttpStatus.LOCKED, e);
+        return ResponseEntity.status(HttpStatus.LOCKED).body(error);
+    }
+
+    @ExceptionHandler(ResourcesExhaustedException.class)
+    protected ResponseEntity<Object> handleResourcesExhaustedException(ResourcesExhaustedException e) {
+        LOGGER.info("ResourcesExhaustedException.java caught.", e);
         final RESTError error = new RESTError(HttpStatus.LOCKED, e);
         return ResponseEntity.status(HttpStatus.LOCKED).body(error);
     }

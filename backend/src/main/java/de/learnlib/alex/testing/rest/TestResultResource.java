@@ -17,7 +17,6 @@
 package de.learnlib.alex.testing.rest;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.testing.dao.TestReportDAO;
 import de.learnlib.alex.testing.dao.TestResultDAO;
@@ -31,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -108,8 +106,7 @@ public class TestResultResource {
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"screenshots.zip\"")
                     .body(resource);
         } catch (IOException e) {
-            Exception ex = new InternalServerErrorException("There was a problem generation the zip file.");
-            return ResourceErrorHandler.createRESTErrorMessage("TestResultResource.getScreenshotsAsZip", HttpStatus.INTERNAL_SERVER_ERROR, ex);
+            throw  new InternalServerErrorException("There was a problem generation the zip file.");
         }
     }
 }

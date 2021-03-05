@@ -44,6 +44,7 @@
           <th width="1">Username</th>
           <th>Email</th>
           <th>Role</th>
+          <th>Allowed Processes</th>
           <th></th>
         </tr>
         </thead>
@@ -69,6 +70,9 @@
             >
               {{user.role | normalizeUpperCase}}
             </span>
+          </td>
+          <td>
+            {{user.maxAllowedProcesses}}
           </td>
           <td class="text-right">
             <button

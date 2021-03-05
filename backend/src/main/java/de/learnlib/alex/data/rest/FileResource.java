@@ -17,13 +17,13 @@
 package de.learnlib.alex.data.rest;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.data.dao.FileDAO;
 import de.learnlib.alex.data.entities.UploadableFile;
 import de.learnlib.alex.security.AuthContext;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import javax.validation.ValidationException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import org.apache.logging.log4j.LogManager;
@@ -31,7 +31,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -74,8 +73,10 @@ public class FileResource {
             consumes = MediaType.MULTIPART_FORM_DATA,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity uploadFile(@PathVariable("projectId") Long projectId,
-                                     @RequestParam("file") MultipartFile fileToUpload) {
+    public ResponseEntity<UploadableFile> uploadFile(
+            @PathVariable("projectId") Long projectId,
+            @RequestParam("file") MultipartFile fileToUpload
+    ) {
         final User user = authContext.getUser();
         LOGGER.traceEntry("uploadFile({}, {}) for user {}.", projectId, fileToUpload, user);
 
@@ -83,12 +84,9 @@ public class FileResource {
             final UploadableFile file = fileDAO.create(user, projectId, fileToUpload);
             LOGGER.traceExit(file);
             return ResponseEntity.ok(file);
-        } catch (IOException e) {
+        } catch (IOException | IllegalStateException e) {
             LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("FileResource.uploadFile", HttpStatus.INTERNAL_SERVER_ERROR, e);
-        } catch (IllegalStateException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("FileResource.uploadFile", HttpStatus.BAD_REQUEST, e);
+            throw new ValidationException(e);
         }
     }
 
