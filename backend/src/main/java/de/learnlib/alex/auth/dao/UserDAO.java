@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.auth.dao;
 
+import de.learnlib.alex.auth.entities.UpdateMaxAllowedProcessesInput;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.entities.UserRole;
 import de.learnlib.alex.auth.repositories.UserRepository;
@@ -28,7 +29,9 @@ import de.learnlib.alex.websocket.services.WebSocketService;
 import java.io.IOException;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.validation.Validation;
 import javax.validation.ValidationException;
+import javax.validation.Validator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
@@ -47,6 +50,8 @@ public class UserDAO {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final int MAX_USERNAME_LENGTH = 32;
+
+    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     private final UserRepository userRepository;
     private final FileDAO fileDAO;
@@ -139,6 +144,19 @@ public class UserDAO {
         }
     }
 
+    public User updateMaxAllowedProcesses(User user, UpdateMaxAllowedProcessesInput input) {
+        final var userInDB = userRepository.findById(user.getId())
+                .orElseThrow(() -> new NotFoundException("The user could not be found."));
+
+        for (var cve : validator.validate(input, UpdateMaxAllowedProcessesInput.class)) {
+            throw new ValidationException(cve.getMessage());
+        }
+
+        userInDB.setMaxAllowedProcesses(input.getMaxAllowedProcesses());
+
+        return userRepository.save(userInDB);
+    }
+
     private void delete(User authUser, User user) {
         // make sure there is at least one registered admin
         if (user.getRole().equals(UserRole.ADMIN)) {
@@ -184,4 +202,5 @@ public class UserDAO {
             LOGGER.info("The user has been deleted, the user directory, however, not.");
         }
     }
+
 }

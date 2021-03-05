@@ -17,7 +17,6 @@
 package de.learnlib.alex.testing.rest;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.testing.dao.TestReportDAO;
 import de.learnlib.alex.testing.entities.TestReport;
@@ -119,11 +118,9 @@ public class TestReportResource {
                         .header("Content-Type", "application/xml")
                         .body(report);
             default:
-                final Exception e = new ValidationException("format " + format + " does not exist");
+                final var e = new ValidationException("format " + format + " does not exist");
                 LOGGER.traceExit(e);
-
-                return ResourceErrorHandler.createRESTErrorMessage("TestReportResource.get",
-                        HttpStatus.BAD_REQUEST, e);
+                throw e;
         }
     }
 

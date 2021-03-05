@@ -436,8 +436,7 @@ public class UserResourceIT extends AbstractResourceIT {
 
         final Response res = userApi.search("abc", adminJwt);
         assertEquals(HttpStatus.OK.value(), res.getStatus());
-        final List<User> users = res.readEntity(new GenericType<List<User>>() {
-        });
+        final List<User> users = res.readEntity(new GenericType<>() {});
         assertEquals(1, users.size());
         assertEquals("abc", users.get(0).getUsername());
     }
@@ -460,8 +459,7 @@ public class UserResourceIT extends AbstractResourceIT {
         createDemoUsers();
         final Response res = userApi.search("unknown", adminJwt);
         assertEquals(HttpStatus.OK.value(), res.getStatus());
-        final List<User> users = res.readEntity(new GenericType<List<User>>() {
-        });
+        final List<User> users = res.readEntity(new GenericType<>() {});
         assertEquals(0, users.size());
     }
 

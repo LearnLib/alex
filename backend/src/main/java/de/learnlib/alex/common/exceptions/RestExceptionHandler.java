@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
+import javax.ws.rs.InternalServerErrorException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -104,6 +105,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         LOGGER.info("UnauthorizedException caught.", e);
         final RESTError error = new RESTError(HttpStatus.UNAUTHORIZED, e);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+    }
+
+    @ExceptionHandler(InternalServerErrorException.class)
+    protected ResponseEntity<Object> handleInternalServerErrorException(InternalServerErrorException e) {
+        LOGGER.info("InternalServerErrorException caught.", e);
+        final RESTError error = new RESTError(HttpStatus.INTERNAL_SERVER_ERROR, e);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 
     @ExceptionHandler(ValidationException.class)

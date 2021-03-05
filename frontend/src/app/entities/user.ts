@@ -34,6 +34,7 @@ export class User {
   /** The username of the user. */
   public username: string;
 
+  /** The number of concurrently allowed test or learner processes. */
   public maxAllowedProcesses: number;
 
   constructor() {
