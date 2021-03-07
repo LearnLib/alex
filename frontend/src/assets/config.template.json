@@ -1,3 +1,3 @@
 {
-  "url": "${SERVER_ADDRESS}:${PORT}"
+  "url": "${ALEX_BACKEND_ADDRESS}:${ALEX_BACKEND_PORT}"
 }
