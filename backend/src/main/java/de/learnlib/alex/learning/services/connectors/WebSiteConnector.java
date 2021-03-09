@@ -28,8 +28,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
@@ -37,13 +35,15 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Connector to communicate with a WebSite. This is a facade around Seleniums {@link WebDriver}.
  */
 public class WebSiteConnector implements Connector {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(WebSiteConnector.class);
 
     /** How often it should be tried to navigate to a given URL. */
     private static final int MAX_RETRIES = 10;
@@ -139,14 +139,14 @@ public class WebSiteConnector implements Connector {
                 driver.navigate().to(url);
                 break;
             } catch (Exception e1) {
-                LOGGER.warn(LoggerMarkers.LEARNER, "Failed to get URL", e1);
+                logger.warn(LoggerMarkers.LEARNER, "Failed to get URL", e1);
 
                 numRetries++;
                 try {
                     restart();
                     TimeUnit.SECONDS.sleep(1);
                 } catch (Exception e2) {
-                    LOGGER.warn(LoggerMarkers.LEARNER, "Failed to dispose", e2);
+                    logger.warn(LoggerMarkers.LEARNER, "Failed to dispose", e2);
                 }
             }
         }

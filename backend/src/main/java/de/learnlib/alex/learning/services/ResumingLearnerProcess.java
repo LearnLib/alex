@@ -130,7 +130,6 @@ public class ResumingLearnerProcess extends AbstractLearnerProcess<ResumingLearn
     @Override
     public void run() {
         ThreadContext.put("userId", String.valueOf(user.getId()));
-        logger.traceEntry();
         logger.info(LoggerMarkers.LEARNER, "Resuming a learner thread.");
 
         try {
@@ -142,14 +141,11 @@ public class ResumingLearnerProcess extends AbstractLearnerProcess<ResumingLearn
             shutdownWithErrors();
         } finally {
             logger.info(LoggerMarkers.LEARNER, "The learner finished resuming the experiment.");
-            logger.traceExit();
             ThreadContext.remove("userId");
         }
     }
 
     private void resumeLearning() throws Exception {
-        logger.traceEntry();
-
         result = learnerResultDAO.updateStatus(result.getId(), LearnerResult.Status.IN_PROGRESS);
 
         // initialize learner from old state
@@ -200,6 +196,5 @@ public class ResumingLearnerProcess extends AbstractLearnerProcess<ResumingLearn
         }
 
         webhookService.fireEvent(user, new LearnerEvent.Finished(result));
-        logger.traceExit();
     }
 }

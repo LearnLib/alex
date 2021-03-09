@@ -17,12 +17,11 @@
 package de.learnlib.alex.learning.entities.learnlibproxies.eqproxies;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class SampleEQOracleProxyTest {
 

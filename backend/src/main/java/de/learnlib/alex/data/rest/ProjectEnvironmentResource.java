@@ -34,8 +34,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.ValidationException;
 import javax.ws.rs.core.MediaType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
@@ -53,7 +53,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/rest/projects/{projectId}/environments")
 public class ProjectEnvironmentResource {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(ProjectEnvironmentResource.class);
 
     private final AuthContext authContext;
     private final ProjectEnvironmentDAO environmentDAO;
@@ -121,11 +121,7 @@ public class ProjectEnvironmentResource {
     )
     public ResponseEntity getAll(@PathVariable("projectId") Long projectId) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("enter getAll(projectId: {}) for user {}.", projectId, user);
-
         final List<ProjectEnvironment> envs = environmentDAO.getAll(user, projectId);
-
-        LOGGER.traceEntry("leave getAll(projectId: {}) for user {}.", projectId, user);
         return ResponseEntity.ok(envs);
     }
 

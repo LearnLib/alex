@@ -25,8 +25,6 @@ import de.learnlib.alex.testing.services.reporters.TestResultReporter;
 import java.util.List;
 import javax.validation.ValidationException;
 import javax.ws.rs.core.MediaType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -44,8 +42,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/rest/projects/{projectId}/tests/reports")
 public class TestReportResource {
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     private final AuthContext authContext;
     private final TestReportDAO testReportDAO;
@@ -74,12 +70,8 @@ public class TestReportResource {
                               @RequestParam(name = "page", defaultValue = "1") int page,
                               @RequestParam(name = "size", defaultValue = "25") int size) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("getAll({}) for user {}.", projectId, user);
-
         final PageRequest pr = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "startDate"));
         final Page<TestReport> testReports = testReportDAO.getAll(user, projectId, pr);
-
-        LOGGER.traceExit(testReports.getContent());
         return ResponseEntity.ok(testReports);
     }
 
@@ -102,8 +94,6 @@ public class TestReportResource {
                               @PathVariable("reportId") Long reportId,
                               @RequestParam(name = "format", defaultValue = "") String format) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("get({}, {}) for user {}.", projectId, reportId, user);
-
         final TestReport testReport = testReportDAO.get(user, projectId, reportId);
 
         switch (format) {
@@ -113,14 +103,11 @@ public class TestReportResource {
                 final TestResultReporter<String> reporter = new JUnitTestResultReporter();
                 final String report = reporter.createReport(testReport);
 
-                LOGGER.traceExit(report);
                 return ResponseEntity.status(HttpStatus.OK)
                         .header("Content-Type", "application/xml")
                         .body(report);
             default:
-                final var e = new ValidationException("format " + format + " does not exist");
-                LOGGER.traceExit(e);
-                throw e;
+                throw new ValidationException("format " + format + " does not exist");
         }
     }
 
@@ -137,10 +124,7 @@ public class TestReportResource {
     )
     public ResponseEntity getLatest(@PathVariable("projectId") Long projectId) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("getLatest({}) for user {}.", projectId, user);
-
         final TestReport latestReport = testReportDAO.getLatest(user, projectId);
-        LOGGER.traceExit(latestReport);
         return latestReport == null ? ResponseEntity.noContent().build() : ResponseEntity.ok(latestReport);
     }
 
@@ -160,11 +144,7 @@ public class TestReportResource {
     public ResponseEntity delete(@PathVariable("projectId") Long projectId,
                                  @PathVariable("reportId") Long reportId) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("delete({}, {}) for user {}.", projectId, reportId, user);
-
         testReportDAO.delete(user, projectId, reportId);
-
-        LOGGER.traceExit("Report {} deleted", reportId);
         return ResponseEntity.noContent().build();
     }
 
@@ -184,11 +164,7 @@ public class TestReportResource {
     public ResponseEntity delete(@PathVariable("projectId") Long projectId,
                                  @PathVariable("reportIds") List<Long> reportIds) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("delete({}, {}) for user {}.", projectId, reportIds, user);
-
         testReportDAO.delete(user, projectId, reportIds);
-
-        LOGGER.traceExit("Reports {} deleted", reportIds);
         return ResponseEntity.noContent().build();
     }
 }

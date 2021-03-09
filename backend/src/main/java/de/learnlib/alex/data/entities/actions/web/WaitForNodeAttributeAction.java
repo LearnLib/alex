@@ -28,8 +28,6 @@ import javax.persistence.Entity;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -40,10 +38,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 @DiscriminatorValue("web_waitForNodeAttribute")
 @JsonTypeName("web_waitForNodeAttribute")
 public class WaitForNodeAttributeAction extends WebSymbolAction {
-
-    private static final long serialVersionUID = 1759832996792561200L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** Enum to specify the wait criterion. */
     public enum WaitCriterion {
@@ -108,7 +102,7 @@ public class WaitForNodeAttributeAction extends WebSymbolAction {
 
             return getSuccessOutput();
         } catch (TimeoutException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Waiting on the attribute '{}' (criterion: '{}') timed out. ",
+            logger.info(LoggerMarkers.LEARNER, "Waiting on the attribute '{}' (criterion: '{}') timed out. ",
                     attribute, waitCriterion);
             return getFailedOutput();
         }

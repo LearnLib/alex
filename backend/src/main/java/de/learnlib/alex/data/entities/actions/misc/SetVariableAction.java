@@ -27,8 +27,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Set a variable to a specific value.
@@ -37,10 +35,6 @@ import org.apache.logging.log4j.Logger;
 @DiscriminatorValue("setVariable")
 @JsonTypeName("setVariable")
 public class SetVariableAction extends SymbolAction {
-
-    private static final long serialVersionUID = 1935478771410953466L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The name of the variable to set a new value to. */
     @NotBlank
@@ -56,7 +50,7 @@ public class SetVariableAction extends SymbolAction {
         VariableStoreConnector storeConnector = connector.getConnector(VariableStoreConnector.class);
         storeConnector.set(name, insertVariableValues(value));
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Set the variable '{}' to the value '{}'.", name, value);
+        logger.info(LoggerMarkers.LEARNER, "Set the variable '{}' to the value '{}'.", name, value);
         return getSuccessOutput();
     }
 

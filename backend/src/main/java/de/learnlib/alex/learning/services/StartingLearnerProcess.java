@@ -75,7 +75,6 @@ public class StartingLearnerProcess extends AbstractLearnerProcess<StartingLearn
     @Override
     public void run() {
         ThreadContext.put("userId", String.valueOf(user.getId()));
-        logger.traceEntry();
         logger.info(LoggerMarkers.LEARNER, "Started a new learner thread.");
 
         try {
@@ -87,14 +86,11 @@ public class StartingLearnerProcess extends AbstractLearnerProcess<StartingLearn
             shutdownWithErrors();
         } finally {
             logger.info(LoggerMarkers.LEARNER, "The learner thread has finished.");
-            logger.traceExit();
             ThreadContext.remove("userId");
         }
     }
 
     private void learn() {
-        logger.traceEntry();
-
         result = learnerResultDAO.updateStatus(result.getId(), LearnerResult.Status.IN_PROGRESS);
 
         learnerPhase = LearnerService.LearnerPhase.LEARNING;
@@ -106,6 +102,5 @@ public class StartingLearnerProcess extends AbstractLearnerProcess<StartingLearn
         startLearningLoop();
 
         webhookService.fireEvent(user, new LearnerEvent.Finished(result));
-        logger.traceExit();
     }
 }

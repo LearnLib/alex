@@ -17,7 +17,6 @@
 package de.learnlib.alex.integrationtests.resources.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import javax.ws.rs.client.Client;
 
 public abstract class AbstractApi {

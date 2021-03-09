@@ -16,7 +16,6 @@
 
 package de.learnlib.alex.data.entities.actions.rest;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
@@ -35,8 +34,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.Cookie;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.Type;
 import org.springframework.util.SerializationUtils;
 
@@ -46,12 +43,7 @@ import org.springframework.util.SerializationUtils;
 @Entity
 @DiscriminatorValue("rest_call")
 @JsonTypeName("rest_call")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CallAction extends RESTSymbolAction {
-
-    private static final long serialVersionUID = 7971257988991996022L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * Enumeration to specify the HTTP method.
@@ -139,11 +131,11 @@ public class CallAction extends RESTSymbolAction {
     @Override
     public ExecuteResult execute(WebServiceConnector target) {
         try {
-            LOGGER.info(LoggerMarkers.LEARNER, "Doing {} request to '{}'.", method, url);
+            logger.info(LoggerMarkers.LEARNER, "Doing {} request to '{}'.", method, url);
             doRequest(target);
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not call {}.", getUrlWithVariableValues(), e);
+            logger.info(LoggerMarkers.LEARNER, "Could not call {}.", getUrlWithVariableValues(), e);
             return getFailedOutput();
         }
     }
@@ -279,7 +271,7 @@ public class CallAction extends RESTSymbolAction {
     private void doRequest(WebServiceConnector target) throws Exception {
         final Map<String, String> requestHeaders = getHeadersWithVariableValues();
         if (credentials != null && credentials.areValid()) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Using credentials '{}'.", credentials);
+            logger.info(LoggerMarkers.LEARNER, "Using credentials '{}'.", credentials);
             requestHeaders.put("Authorization", "Basic " + getCredentialsWithVariableValues().toBase64());
         }
 
@@ -299,7 +291,7 @@ public class CallAction extends RESTSymbolAction {
                 target.delete(baseUrl, getUrlWithVariableValues(), requestHeaders, getCookiesWithVariableValues(), timeout);
                 break;
             default:
-                LOGGER.error(LoggerMarkers.LEARNER, "Tried to make a call to a REST API with an unknown method '{}'.",
+                logger.error(LoggerMarkers.LEARNER, "Tried to make a call to a REST API with an unknown method '{}'.",
                         method.name());
         }
     }

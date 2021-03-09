@@ -26,8 +26,6 @@ import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.NoAlertPresentException;
 
@@ -38,10 +36,6 @@ import org.openqa.selenium.NoAlertPresentException;
 @DiscriminatorValue("web_alertGetText")
 @JsonTypeName("web_alertGetText")
 public class AlertGetTextAction extends SymbolAction {
-
-    private static final long serialVersionUID = 3133661009325694262L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The name of the variable to store the displayed text of the alert in. */
     @NotBlank
@@ -57,10 +51,10 @@ public class AlertGetTextAction extends SymbolAction {
             final String text = alert.getText();
             variableStore.set(variableName, text);
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Save text '{}' from alert to variable '{}'.", text, variableName);
+            logger.info(LoggerMarkers.LEARNER, "Save text '{}' from alert to variable '{}'.", text, variableName);
             return getSuccessOutput();
         } catch (NoAlertPresentException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Failed to get text from alert.");
+            logger.info(LoggerMarkers.LEARNER, "Failed to get text from alert.");
             return getFailedOutput();
         }
     }

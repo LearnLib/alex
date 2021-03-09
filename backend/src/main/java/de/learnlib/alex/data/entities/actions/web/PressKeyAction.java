@@ -28,8 +28,6 @@ import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.text.StringEscapeUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 
@@ -40,10 +38,6 @@ import org.openqa.selenium.WebElement;
 @DiscriminatorValue("web_pressKey")
 @JsonTypeName("web_pressKey")
 public class PressKeyAction extends WebSymbolAction {
-
-    private static final long serialVersionUID = 3238529954083029446L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * The selector of the element.
@@ -70,11 +64,11 @@ public class PressKeyAction extends WebSymbolAction {
         try {
             final WebElement element = connector.getElement(nodeWithVariables);
             element.sendKeys(keyToPress);
-            LOGGER.info(LoggerMarkers.LEARNER, "Pressed the key '{}' on the element '{}'.",
+            logger.info(LoggerMarkers.LEARNER, "Pressed the key '{}' on the element '{}'.",
                     keyToPress.toString(), nodeWithVariables);
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not press key '{}' on element '{}'.",
+            logger.info(LoggerMarkers.LEARNER, "Could not press key '{}' on element '{}'.",
                     keyToPress.toString(), nodeWithVariables, e);
             return getFailedOutput();
         }

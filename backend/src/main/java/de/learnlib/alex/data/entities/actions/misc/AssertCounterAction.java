@@ -28,8 +28,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Action to assert the value of a counter.
@@ -80,10 +78,6 @@ public class AssertCounterAction extends SymbolAction {
 
     }
 
-    private static final long serialVersionUID = -8210218030257177422L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
-
     /**
      * The name of the counter to assert.
      */
@@ -130,7 +124,7 @@ public class AssertCounterAction extends SymbolAction {
                 break;
         }
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Asserting counter '{}' with value '{}' against '{}' using {} => {}.",
+        logger.info(LoggerMarkers.LEARNER, "Asserting counter '{}' with value '{}' against '{}' using {} => {}.",
                 name, counterValue, value, operator, result);
 
         if (result) {

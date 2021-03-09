@@ -31,8 +31,6 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.text.StringEscapeUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.NoSuchElementException;
 
 /**
@@ -42,10 +40,6 @@ import org.openqa.selenium.NoSuchElementException;
 @DiscriminatorValue("web_checkForText")
 @JsonTypeName("web_checkForText")
 public class CheckTextWebAction extends WebSymbolAction {
-
-    private static final long serialVersionUID = -1212555673698070996L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The value the site is checked for. */
     @NotBlank
@@ -90,16 +84,16 @@ public class CheckTextWebAction extends WebSymbolAction {
             final String htmlEscapedValue = StringEscapeUtils.escapeHtml4(getValueWithVariableValues());
             final boolean found = SearchHelper.search(htmlEscapedValue, source, regexp);
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Check if the current pages contains '{}' => {} (regExp: {}).",
+            logger.info(LoggerMarkers.LEARNER, "Check if the current pages contains '{}' => {} (regExp: {}).",
                     value, found, regexp);
 
             return found ? getSuccessOutput() : getFailedOutput();
         } catch (NoSuchElementException e) {
-            LOGGER.error(LoggerMarkers.LEARNER, "Could not find text '{}' in element '{}' (regExp: {}).",
+            logger.error(LoggerMarkers.LEARNER, "Could not find text '{}' in element '{}' (regExp: {}).",
                     value, node.getSelector(), regexp);
             return getFailedOutput();
         } catch (Exception e) {
-            LOGGER.error(LoggerMarkers.LEARNER, "Failed to search for text '{}' in element '{}' (regExp: {}).",
+            logger.error(LoggerMarkers.LEARNER, "Failed to search for text '{}' in element '{}' (regExp: {}).",
                     value, node.getSelector(), regexp, e);
             return getFailedOutput();
         }

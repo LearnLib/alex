@@ -16,12 +16,11 @@
 
 package de.learnlib.alex.modelchecking.entities;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import javax.validation.ValidationException;
 import java.util.Arrays;
 import java.util.Collections;
+import javax.validation.ValidationException;
+import org.junit.Before;
+import org.junit.Test;
 
 public class LtsCheckingConfigTest {
 

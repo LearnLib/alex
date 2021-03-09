@@ -19,13 +19,11 @@ package de.learnlib.alex.integrationtests.resources;
 import de.learnlib.alex.integrationtests.resources.api.SettingsApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
 import de.learnlib.alex.settings.entities.Settings;
+import javax.ws.rs.core.Response;
 import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.http.HttpStatus;
-
-import javax.ws.rs.core.Response;
-
 import static org.junit.Assert.assertEquals;
 
 public class SettingsResourceIT extends AbstractResourceIT {

@@ -36,9 +36,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.ThreadContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
@@ -53,14 +53,12 @@ import org.springframework.transaction.support.TransactionTemplate;
 @Scope("prototype")
 public class TestThread extends Thread {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(TestThread.class);
 
     /** Listener for when the test process finished. */
     public interface FinishedListener {
         /** What to do when the test process finished. */
         void handleFinished();
-
-
     }
 
     private final WebhookService webhookService;
@@ -135,10 +133,11 @@ public class TestThread extends Thread {
             }
 
             try {
-                ThreadContext.put("userId", String.valueOf(user.getId()));
+                MDC.put("userId", String.valueOf(user.getId()));
+                MDC.put("projectId", String.valueOf(project.getId()));
 
                 final var config = currentTestProcessQueueItem.config;
-                LOGGER.info(LoggerMarkers.LEARNER, "Start executing tests: {}", config.getTestIds());
+                logger.info(LoggerMarkers.LEARNER, "Start executing tests: {}", config.getTestIds());
 
                 report = testReportDAO.updateStatus(report.getId(), TestReport.Status.IN_PROGRESS);
 
@@ -162,11 +161,11 @@ public class TestThread extends Thread {
 
                 webhookService.fireEvent(user, new TestEvent.ExecutionFinished(report));
 
-                LOGGER.info(LoggerMarkers.LEARNER, "Successfully executed tests");
+                logger.info(LoggerMarkers.LEARNER, "Successfully executed tests");
             } catch (Exception e) {
                 testReportDAO.updateStatus(report.getId(), TestReport.Status.ABORTED);
 
-                LOGGER.info(LoggerMarkers.LEARNER, "Could not execute all tests", e);
+                logger.info(LoggerMarkers.LEARNER, "Could not execute all tests", e);
                 e.printStackTrace();
             }
         }
@@ -174,8 +173,9 @@ public class TestThread extends Thread {
         finishedListener.handleFinished();
         testProcessQueue.clear();
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Finished testing");
-        ThreadContext.remove("userId");
+        logger.info(LoggerMarkers.LEARNER, "Finished testing");
+        MDC.remove("userId");
+        MDC.remove("projectID");
     }
 
     @Transactional(rollbackFor = Exception.class)

@@ -14,9 +14,8 @@ import de.learnlib.alex.data.entities.actions.misc.SetVariableByJSONAttributeAct
 import de.learnlib.alex.data.entities.actions.rest.CallAction;
 import de.learnlib.alex.data.entities.actions.rest.CheckStatusAction;
 import de.learnlib.alex.integrationtests.resources.api.SymbolApi;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.util.HashMap;
+import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 public class SymbolUtils {
 

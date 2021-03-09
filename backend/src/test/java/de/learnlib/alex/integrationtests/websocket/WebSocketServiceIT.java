@@ -21,14 +21,12 @@ import de.learnlib.alex.integrationtests.resources.AbstractResourceIT;
 import de.learnlib.alex.integrationtests.websocket.util.WebSocketUser;
 import de.learnlib.alex.websocket.entities.WebSocketMessage;
 import de.learnlib.alex.websocket.services.enums.WebSocketServiceEnum;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 

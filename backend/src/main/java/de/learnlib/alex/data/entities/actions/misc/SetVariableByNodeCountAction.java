@@ -29,8 +29,6 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.NoSuchElementException;
 
 /**
@@ -40,10 +38,6 @@ import org.openqa.selenium.NoSuchElementException;
 @DiscriminatorValue("setVariableByNodeCount")
 @JsonTypeName("setVariableByNodeCount")
 public class SetVariableByNodeCountAction extends SymbolAction {
-
-    private static final long serialVersionUID = 8693471212825524162L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The name of the variable. */
     @NotBlank
@@ -65,7 +59,7 @@ public class SetVariableByNodeCountAction extends SymbolAction {
                     .getElements(nodeWithVariables)
                     .size();
         } catch (NoSuchElementException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not find elements with the selector '{}'.",
+            logger.info(LoggerMarkers.LEARNER, "Could not find elements with the selector '{}'.",
                     nodeWithVariables);
         }
 

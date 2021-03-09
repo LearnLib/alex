@@ -19,14 +19,12 @@ package de.learnlib.alex.integrationtests.repositories;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
+import java.util.List;
+import javax.inject.Inject;
+import javax.validation.ValidationException;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.dao.EmptyResultDataAccessException;
-
-import javax.inject.Inject;
-import javax.validation.ValidationException;
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;

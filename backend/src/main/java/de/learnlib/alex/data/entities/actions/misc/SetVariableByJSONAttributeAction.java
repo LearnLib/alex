@@ -25,8 +25,6 @@ import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Action to set a variable to a value received from an element of the current (JSON) body.
@@ -35,8 +33,6 @@ import org.apache.logging.log4j.Logger;
 @DiscriminatorValue("setVariableByJSON")
 @JsonTypeName("setVariableByJSON")
 public class SetVariableByJSONAttributeAction extends SetVariableAction {
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     @Override
     public ExecuteResult execute(ConnectorManager connector) {
@@ -47,7 +43,7 @@ public class SetVariableByJSONAttributeAction extends SetVariableAction {
         String valueInTheBody = JSONHelpers.getAttributeValue(body, value);
 
         if (valueInTheBody == null) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not set variable '{}' to the value of the JSON attribute '{}' ",
+            logger.info(LoggerMarkers.LEARNER, "Could not set variable '{}' to the value of the JSON attribute '{}' ",
                     name, value);
             return getFailedOutput();
         }

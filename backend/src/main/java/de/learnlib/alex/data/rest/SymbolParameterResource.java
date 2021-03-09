@@ -22,8 +22,6 @@ import de.learnlib.alex.data.entities.SymbolParameter;
 import de.learnlib.alex.security.AuthContext;
 import javax.validation.ValidationException;
 import javax.ws.rs.core.MediaType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,8 +39,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/rest/projects/{projectId}/symbols/{symbolId}/parameters")
 public class SymbolParameterResource {
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     private final AuthContext authContext;
     private final SymbolParameterDAO symbolParameterDAO;
@@ -75,10 +71,7 @@ public class SymbolParameterResource {
             @RequestBody SymbolParameter parameter
     ) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("create({}, {}, {}) for user {}.", projectId, symbolId, parameter, user);
-
         final SymbolParameter createdParameter = symbolParameterDAO.create(user, projectId, symbolId, parameter);
-        LOGGER.traceExit(createdParameter);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdParameter);
     }
 
@@ -103,10 +96,7 @@ public class SymbolParameterResource {
             @PathVariable("parameterId") Long parameterId
     ) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("delete({}, {}, {}) for user {}.", projectId, symbolId, parameterId, user);
-
         symbolParameterDAO.delete(user, projectId, symbolId, parameterId);
-        LOGGER.traceExit("Parameter {} deleted.", parameterId);
         return ResponseEntity.noContent().build();
     }
 
@@ -135,14 +125,11 @@ public class SymbolParameterResource {
             @RequestBody SymbolParameter parameter
     ) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("update({}, {}, {}, {}) for user {}.", projectId, symbolId, parameterId, parameter, user);
-
         if (!parameterId.equals(parameter.getId())) {
             throw new ValidationException("The id of the parameter does not match with the one in the URL.");
         }
 
         final SymbolParameter updatedParameter = symbolParameterDAO.update(user, projectId, symbolId, parameter);
-        LOGGER.traceExit(updatedParameter);
         return ResponseEntity.ok(updatedParameter);
     }
 }

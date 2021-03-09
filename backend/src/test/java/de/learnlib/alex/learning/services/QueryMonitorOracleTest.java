@@ -19,15 +19,14 @@ package de.learnlib.alex.learning.services;
 import de.learnlib.alex.learning.services.oracles.QueryMonitorOracle;
 import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.api.query.DefaultQuery;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import net.automatalib.words.Word;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class QueryMonitorOracleTest {
 

@@ -32,8 +32,6 @@ import de.learnlib.alex.webhooks.services.WebhookService;
 import java.util.List;
 import javax.ws.rs.core.MediaType;
 import net.automatalib.automata.transducers.impl.compact.CompactMealy;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,8 +49,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Transactional(rollbackFor = Exception.class)
 @RequestMapping("/rest/projects/{projectId}/learner")
 public class LearnerResource {
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     private final AuthContext authContext;
     private final ProjectDAO projectDAO;
@@ -88,7 +84,6 @@ public class LearnerResource {
     public ResponseEntity<LearnerResult> start(@PathVariable("projectId") Long projectId,
                                                @RequestBody LearnerStartConfiguration startConfiguration) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("start({}, {}) for user {}.", projectId, startConfiguration, user);
 
         if (startConfiguration.getSetup().getSymbols().contains(startConfiguration.getSetup().getPreSymbol())) {
             throw new IllegalArgumentException("The reset may not be a part of the input alphabet");
@@ -97,7 +92,6 @@ public class LearnerResource {
         final Project project = projectDAO.getByID(user, projectId);
         final LearnerResult learnerResult = learnerService.start(user, project, startConfiguration);
 
-        LOGGER.traceExit(learnerResult);
         webhookService.fireEvent(user, new LearnerEvent.Started(learnerResult));
         return ResponseEntity.ok(learnerResult);
     }
@@ -123,8 +117,6 @@ public class LearnerResource {
                                                 @PathVariable("testNo") Long testNo,
                                                 @RequestBody LearnerResumeConfiguration configuration) {
         final var user = authContext.getUser();
-        LOGGER.traceEntry("resume({}, {}, {}) for user {}.", projectId, testNo, configuration, user);
-
         final var result = learnerService.resume(user, projectId, testNo, configuration);
         webhookService.fireEvent(user, new LearnerEvent.Resumed(result));
         return ResponseEntity.ok(result);
@@ -144,8 +136,6 @@ public class LearnerResource {
     )
     public ResponseEntity<String> stop(@PathVariable("projectId") Long projectId, @PathVariable("testNo") Long testNo) {
         final var user = authContext.getUser();
-        LOGGER.traceEntry("stop() for user {}.", user);
-
         learnerService.abort(user, projectId, testNo);
         return ResponseEntity.ok().build();
     }
@@ -163,9 +153,7 @@ public class LearnerResource {
     )
     public ResponseEntity<LearnerStatus> getStatus(@PathVariable("projectId") Long projectId) {
         final var user = authContext.getUser();
-        LOGGER.traceEntry("getStatus() for user {}.", user);
-        final LearnerStatus status = learnerService.getStatus(user, projectId);
-        LOGGER.traceExit(status);
+        final var status = learnerService.getStatus(user, projectId);
         return ResponseEntity.ok(status);
     }
 
@@ -186,16 +174,11 @@ public class LearnerResource {
             @PathVariable("projectId") Long projectId,
             @RequestBody List<CompactMealyMachineProxy> mealyMachineProxies
     ) {
-        final var user = authContext.getUser();
-        LOGGER.traceEntry("calculate separating word for models ({}) and user {}.", mealyMachineProxies, user);
-
         if (mealyMachineProxies.size() != 2) {
             throw new IllegalArgumentException("You need to specify exactly two hypotheses!");
         }
 
-        final SeparatingWord diff = learnerService.separatingWord(mealyMachineProxies.get(0), mealyMachineProxies.get(1));
-
-        LOGGER.traceExit(diff);
+        final var diff = learnerService.separatingWord(mealyMachineProxies.get(0), mealyMachineProxies.get(1));
         return ResponseEntity.ok(diff);
     }
 
@@ -215,17 +198,15 @@ public class LearnerResource {
             @PathVariable("projectId") Long projectId,
             @RequestBody List<CompactMealyMachineProxy> mealyMachineProxies
     ) {
-        final User user = authContext.getUser();
-        LOGGER.traceEntry("calculate the difference tree for models ({}) and user {}.", mealyMachineProxies, user);
-
         if (mealyMachineProxies.size() != 2) {
             throw new IllegalArgumentException("You need to specify exactly two hypotheses!");
         }
 
-        final CompactMealy<String, String> diffTree =
-                learnerService.differenceTree(mealyMachineProxies.get(0), mealyMachineProxies.get(1));
+        final CompactMealy<String, String> diffTree = learnerService.differenceTree(
+                mealyMachineProxies.get(0),
+                mealyMachineProxies.get(1)
+        );
 
-        LOGGER.traceExit(diffTree);
         return ResponseEntity.ok(CompactMealyMachineProxy.createFrom(diffTree, diffTree.getInputAlphabet()));
     }
 }

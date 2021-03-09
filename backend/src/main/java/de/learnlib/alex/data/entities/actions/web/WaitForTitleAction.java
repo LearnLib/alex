@@ -27,8 +27,6 @@ import javax.persistence.Entity;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -39,10 +37,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 @DiscriminatorValue("web_waitForTitle")
 @JsonTypeName("web_waitForTitle")
 public class WaitForTitleAction extends WebSymbolAction {
-
-    private static final long serialVersionUID = -7416267361597106520L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * Enumeration to specify the wait criterion.
@@ -122,7 +116,7 @@ public class WaitForTitleAction extends WebSymbolAction {
 
             return getSuccessOutput();
         } catch (TimeoutException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Waiting on the title '{}' (criterion: '{}') timed out. "
+            logger.info(LoggerMarkers.LEARNER, "Waiting on the title '{}' (criterion: '{}') timed out. "
                             + "Last known title was '{}'.",
                     valueWithVariables, waitCriterion, connector.getDriver().getTitle());
             return getFailedOutput();

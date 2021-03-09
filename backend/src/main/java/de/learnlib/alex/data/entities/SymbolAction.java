@@ -77,7 +77,6 @@ import de.learnlib.alex.data.entities.actions.web.WaitForTextAction;
 import de.learnlib.alex.data.entities.actions.web.WaitForTitleAction;
 import de.learnlib.alex.data.entities.actions.web.WebSymbolAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
-import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -93,6 +92,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract super type of how a Action for Symbols should look & work like.
@@ -167,7 +168,9 @@ import javax.persistence.Transient;
         @JsonSubTypes.Type(name = "rest_checkStatus", value = CheckStatusAction.class),
         @JsonSubTypes.Type(name = "rest_validateJson", value = ValidateJsonAction.class),
 })
-public abstract class SymbolAction implements Serializable {
+public abstract class SymbolAction {
+
+    protected static final Logger logger = LoggerFactory.getLogger(SymbolAction.class);
 
     /** The ID of the Action in the DB. */
     @Id

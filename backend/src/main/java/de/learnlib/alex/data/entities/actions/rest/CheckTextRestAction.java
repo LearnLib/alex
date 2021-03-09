@@ -28,8 +28,6 @@ import javax.persistence.Entity;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * RESTSymbolAction to check if the response body of the last request contains a certain text.
@@ -38,10 +36,6 @@ import org.apache.logging.log4j.Logger;
 @DiscriminatorValue("rest_checkForText")
 @JsonTypeName("rest_checkForText")
 public class CheckTextRestAction extends RESTSymbolAction {
-
-    private static final long serialVersionUID = -681951086735590790L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The expected text in the response body of the last request. */
     @NotBlank
@@ -58,8 +52,8 @@ public class CheckTextRestAction extends RESTSymbolAction {
         String body = target.getBody();
         boolean result = SearchHelper.search(getValueWithVariableValues(), body, regexp);
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Check if the value '{}' is in '{}' => {} (regexp: {}).",
-                value, value, body, result, regexp);
+        logger.info(LoggerMarkers.LEARNER, "Check if the value '{}' is in '{}' => {} (regexp: {}).",
+                value, body, result, regexp);
         if (result) {
             return getSuccessOutput();
         } else {

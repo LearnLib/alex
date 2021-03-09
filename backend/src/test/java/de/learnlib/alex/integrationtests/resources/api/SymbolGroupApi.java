@@ -17,13 +17,12 @@
 package de.learnlib.alex.integrationtests.resources.api;
 
 import de.learnlib.alex.data.entities.SymbolGroup;
-
+import java.util.List;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
 
 public class SymbolGroupApi extends AbstractApi {
 

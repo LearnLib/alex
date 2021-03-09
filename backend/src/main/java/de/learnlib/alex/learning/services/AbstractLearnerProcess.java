@@ -55,8 +55,8 @@ import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import net.automatalib.words.impl.GrowingMapAlphabet;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
@@ -65,7 +65,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public abstract class AbstractLearnerProcess<C extends AbstractLearnerProcessQueueItem> {
 
-    protected static final Logger logger = LogManager.getLogger();
+    protected static final Logger logger = LoggerFactory.getLogger(AbstractLearnerProcess.class);
 
     protected final UserDAO userDAO;
     protected final ProjectDAO projectDAO;

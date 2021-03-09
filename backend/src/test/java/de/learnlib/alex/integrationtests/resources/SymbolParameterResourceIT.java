@@ -26,13 +26,12 @@ import de.learnlib.alex.integrationtests.resources.api.SymbolParameterApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
 import de.learnlib.alex.integrationtests.websocket.util.SymbolPresenceServiceWSMessages;
 import de.learnlib.alex.integrationtests.websocket.util.WebSocketUser;
+import java.util.Collections;
+import javax.ws.rs.core.Response;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
-
-import javax.ws.rs.core.Response;
-import java.util.Collections;
 
 public class SymbolParameterResourceIT extends AbstractResourceIT {
 

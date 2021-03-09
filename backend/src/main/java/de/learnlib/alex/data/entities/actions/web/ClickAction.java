@@ -25,8 +25,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -38,10 +36,6 @@ import org.openqa.selenium.interactions.Actions;
 @DiscriminatorValue("web_click")
 @JsonTypeName("web_click")
 public class ClickAction extends WebSymbolAction {
-
-    private static final long serialVersionUID = -9158530821188611940L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * The information to identify the element.
@@ -75,14 +69,14 @@ public class ClickAction extends WebSymbolAction {
                 element.click();
             }
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Clicked on element '{}' (doubleClick: {}).",
+            logger.info(LoggerMarkers.LEARNER, "Clicked on element '{}' (doubleClick: {}).",
                     nodeWithVariables, doubleClick);
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not find element '{}' (doubleClick: {}).",
+            logger.info(LoggerMarkers.LEARNER, "Could not find element '{}' (doubleClick: {}).",
                     nodeWithVariables, doubleClick);
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Failed to click on element '{}' (doubleClick: {}).",
+            logger.info(LoggerMarkers.LEARNER, "Failed to click on element '{}' (doubleClick: {}).",
                     nodeWithVariables, doubleClick, e);
         }
 

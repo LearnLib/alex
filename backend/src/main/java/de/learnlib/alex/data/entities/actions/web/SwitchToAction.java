@@ -24,8 +24,6 @@ import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 
 /**
@@ -35,10 +33,6 @@ import org.openqa.selenium.WebDriver;
 @DiscriminatorValue("web_switchTo")
 @JsonTypeName("web_switchTo")
 public class SwitchToAction extends WebSymbolAction {
-
-    private static final long serialVersionUID = 5072169613597915144L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * The target to switch to.
@@ -93,10 +87,10 @@ public class SwitchToAction extends WebSymbolAction {
                 default:
                     throw new Exception("Undefined target type.");
             }
-            LOGGER.info(LoggerMarkers.LEARNER, "Switch to '{}'", target);
+            logger.info(LoggerMarkers.LEARNER, "Switch to '{}'", target);
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not switch to '{}'", target, e);
+            logger.info(LoggerMarkers.LEARNER, "Could not switch to '{}'", target, e);
             return getFailedOutput();
         }
     }

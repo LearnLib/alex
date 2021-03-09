@@ -33,20 +33,18 @@ import de.learnlib.alex.integrationtests.resources.api.SymbolGroupApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
 import de.learnlib.alex.integrationtests.websocket.util.SymbolPresenceServiceWSMessages;
 import de.learnlib.alex.integrationtests.websocket.util.WebSocketUser;
-import org.junit.Before;
-import org.junit.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.springframework.http.HttpStatus;
-
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.Response;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
-
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.Response;
+import org.junit.Before;
+import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.springframework.http.HttpStatus;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -330,7 +328,7 @@ public class SymbolResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void shouldCreateASymbolInAGroup() throws Exception {
+    public void shouldCreateASymbolInAGroup() {
         final String symbolJson = createSymbolWithGroupJson(projectId1, symbolGroupId1, "s1");
         final Response res1 = symbolApi.create(projectId1, symbolJson, jwtUser1);
         assertEquals(HttpStatus.CREATED.value(), res1.getStatus());
@@ -340,8 +338,14 @@ public class SymbolResourceIT extends AbstractResourceIT {
         assertEquals(symbolGroupId1, groupId);
 
         final Response res2 = symbolGroupApi.getAll(projectId1, jwtUser1);
-        final JsonNode groupNode = objectMapper.readTree(res2.readEntity(String.class));
-        assertEquals(1, groupNode.get(1).get("symbols").size());
+        final var groups = res2.readEntity(new GenericType<List<SymbolGroup>>(){});
+        final var numberOfSymbols = groups.stream()
+                .filter(g -> g.getName().equals("group1"))
+                .findFirst()
+                .map(g -> g.getSymbols().size())
+                .orElse(0);
+
+        assertEquals(1, (int) numberOfSymbols);
     }
 
     @Test

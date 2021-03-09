@@ -75,10 +75,10 @@ import java.util.stream.Stream;
 import javax.validation.ValidationException;
 import net.automatalib.graphs.base.compact.CompactSimpleGraph;
 import net.automatalib.util.graphs.scc.SCCs;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -93,10 +93,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(rollbackFor = Exception.class)
 public class SymbolDAO {
 
-    private static final Logger LOGGER = LogManager.getLogger();
-
     /** The format for archived symbols. */
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd-HH:mm:ss");
+
+    private static final Logger logger = LoggerFactory.getLogger(SymbolDAO.class);
 
     private final ProjectRepository projectRepository;
     private final ProjectDAO projectDAO;
@@ -206,7 +206,6 @@ public class SymbolDAO {
     }
 
     public Symbol create(User user, Long projectId, Symbol symbol) {
-        LOGGER.traceEntry("create({})", symbol);
         try {
             final Symbol createdSymbol = createOne(user, projectId, symbol);
             final Map<Long, List<SymbolStep>> symbolStepMap = new HashMap<>();
@@ -214,10 +213,8 @@ public class SymbolDAO {
             saveSymbolSteps(projectId, Collections.singletonList(createdSymbol), symbolStepMap);
             return createdSymbol;
         } catch (Exception e) {
-            LOGGER.info("Symbol creation failed:", e);
+            logger.info("Symbol creation failed:", e);
             throw e;
-        } finally {
-            LOGGER.traceExit(symbol);
         }
     }
 
@@ -234,10 +231,8 @@ public class SymbolDAO {
             saveSymbolSteps(projectId, createdSymbols, symbolStepMap);
             return createdSymbols;
         } catch (Exception e) {
-            LOGGER.info("Symbols creation failed:", e);
+            logger.info("Symbols creation failed:", e);
             throw e;
-        } finally {
-            LOGGER.traceExit();
         }
     }
 
@@ -450,7 +445,7 @@ public class SymbolDAO {
         try {
             return doUpdate(user, projectId, symbol);
         } catch (TransactionSystemException | DataIntegrityViolationException e) {
-            LOGGER.info("Symbol update failed:", e);
+            logger.info("Symbol update failed:", e);
             throw new ValidationException("Symbol could not be updated.", e);
         } catch (IllegalStateException e) {
             throw new ValidationException("Could not update the symbol because it is not valid.", e);

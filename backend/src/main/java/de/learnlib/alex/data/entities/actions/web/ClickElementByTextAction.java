@@ -27,8 +27,6 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
@@ -40,8 +38,6 @@ import org.openqa.selenium.WebElement;
 @DiscriminatorValue("web_clickElementByText")
 @JsonTypeName("web_clickElementByText")
 public class ClickElementByTextAction extends WebSymbolAction {
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** Search link in a specific element. */
     @NotNull
@@ -85,13 +81,13 @@ public class ClickElementByTextAction extends WebSymbolAction {
                 if (candidate.isDisplayed() && candidate.isEnabled() && hasText) {
                     candidate.click();
 
-                    LOGGER.info(LoggerMarkers.LEARNER, "Click on element '{}' with text '{}' ", tagName, text);
+                    logger.info(LoggerMarkers.LEARNER, "Click on element '{}' with text '{}' ", tagName, text);
                     return getSuccessOutput();
                 }
             }
             throw new NoSuchElementException("No clickable element found.");
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not click on element '{}' with text '{}' ", tagName, text, e);
+            logger.info(LoggerMarkers.LEARNER, "Could not click on element '{}' with text '{}' ", tagName, text, e);
             return getFailedOutput();
         }
     }

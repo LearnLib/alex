@@ -25,8 +25,6 @@ import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
@@ -39,8 +37,6 @@ import org.openqa.selenium.support.ui.UnexpectedTagNameException;
 @DiscriminatorValue("web_select")
 @JsonTypeName("web_select")
 public class SelectAction extends FillAction {
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * Enum to choose how to interact with the selection input.
@@ -108,11 +104,11 @@ public class SelectAction extends FillAction {
                     break;
             }
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Selected '{}' of '{}' by '{}'.",
+            logger.info(LoggerMarkers.LEARNER, "Selected '{}' of '{}' by '{}'.",
                     value, nodeWithVariables, selectBy);
             return getSuccessOutput();
         } catch (NoSuchElementException | NumberFormatException | UnexpectedTagNameException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not select '{}' of '{}' by '{}'.",
+            logger.info(LoggerMarkers.LEARNER, "Could not select '{}' of '{}' by '{}'.",
                     value, nodeWithVariables, selectBy, e);
             return getFailedOutput();
         }

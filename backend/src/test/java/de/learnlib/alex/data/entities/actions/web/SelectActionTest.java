@@ -21,6 +21,11 @@ import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.WebElementLocator;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,13 +33,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -159,18 +157,7 @@ public class SelectActionTest extends WebActionTest {
         given(selectElement.getTagName()).willReturn("select");
         s.setValue("definite not a number");
         s.setSelectBy(SelectAction.SelectByType.INDEX);
-
         ExecuteResult result = s.executeAction(connectors);
-
-        assertFalse(result.isSuccess());
-    }
-
-    @Test
-    public void shouldReturnFailedIfTheNodeCouldNotBeFound() {
-        given(webSiteConnector.getElement(node)).willThrow(NoSuchElementException.class);
-
-        ExecuteResult result = s.executeAction(connectors);
-
         assertFalse(result.isSuccess());
     }
 

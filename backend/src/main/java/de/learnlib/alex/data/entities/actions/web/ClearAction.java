@@ -25,8 +25,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Action to clear on a specific element.
@@ -35,10 +33,6 @@ import org.apache.logging.log4j.Logger;
 @DiscriminatorValue("web_clear")
 @JsonTypeName("web_clear")
 public class ClearAction extends WebSymbolAction {
-
-    private static final long serialVersionUID = -255670058811890900L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The node to look for. */
     @NotNull
@@ -53,10 +47,10 @@ public class ClearAction extends WebSymbolAction {
         try {
             connector.getElement(nodeWithVariables).clear();
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Cleared element '{}'.", nodeWithVariables);
+            logger.info(LoggerMarkers.LEARNER, "Cleared element '{}'.", nodeWithVariables);
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not clear element '{}'.", nodeWithVariables, e);
+            logger.info(LoggerMarkers.LEARNER, "Could not clear element '{}'.", nodeWithVariables, e);
             return getFailedOutput();
         }
     }

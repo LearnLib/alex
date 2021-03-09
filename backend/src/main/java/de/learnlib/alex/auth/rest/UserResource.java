@@ -37,8 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.validation.ValidationException;
 import javax.ws.rs.core.MediaType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.jose4j.lang.JoseException;
@@ -64,8 +62,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserResource {
 
     public static final int MAX_USERNAME_LENGTH = 32;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     private final AuthContext authContext;
     private final UserDAO userDAO;
@@ -98,7 +94,6 @@ public class UserResource {
     )
     public ResponseEntity<User> create(@RequestBody User newUser) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("create({}).", newUser);
 
         if (!new EmailValidator().isValid(newUser.getEmail(), null)) {
             throw new ValidationException("The email is not valid");
@@ -124,7 +119,6 @@ public class UserResource {
 
             // create user
             userDAO.create(newUser);
-            LOGGER.traceExit(newUser);
             return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
         } else {
             if (user.getRole().equals(UserRole.REGISTERED)) {
@@ -134,7 +128,6 @@ public class UserResource {
 
                 // create user
                 userDAO.create(newUser);
-                LOGGER.traceExit(newUser);
                 return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
             }
         }
@@ -153,14 +146,11 @@ public class UserResource {
     )
     public ResponseEntity<User> get(@PathVariable("id") Long userId) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("get({}) for user {}.", userId, user);
-
         if (!user.getRole().equals(UserRole.ADMIN) && !user.getId().equals(userId)) {
             throw new ForbiddenOperationException("You are not allowed to get this information.");
         }
 
         final User userById = userDAO.getByID(userId);
-        LOGGER.traceExit(userById);
         return ResponseEntity.ok(userById);
     }
 
@@ -177,14 +167,12 @@ public class UserResource {
     )
     public ResponseEntity<List<User>> getManyUsers(@PathVariable("ids") List<Long> userIds) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("get({}) for user {}.", userIds, user);
 
         final List<User> users = new ArrayList<>();
         for (Long id : userIds) {
             users.add(userDAO.getByID(id));
         }
 
-        LOGGER.traceExit(users);
         return ResponseEntity.ok(users);
     }
 
@@ -197,9 +185,7 @@ public class UserResource {
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity<List<User>> getAll() {
-        LOGGER.traceEntry("getAll()");
         final List<User> users = userDAO.getAll();
-        LOGGER.traceExit(users);
         return ResponseEntity.ok(users);
     }
 
@@ -208,7 +194,6 @@ public class UserResource {
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity<List<User>> getByUsernameOrEmail(@RequestParam("searchterm") String term) {
-        LOGGER.traceEntry("getByUsernameOrEmail");
         final List<User> users = new ArrayList<>();
         try {
             if (term.contains("@")) {
@@ -218,7 +203,6 @@ public class UserResource {
             }
         } catch (NotFoundException ignored) {
         }
-        LOGGER.traceExit(users);
         return ResponseEntity.ok(users);
     }
 
@@ -232,11 +216,7 @@ public class UserResource {
             @Validated @RequestBody UpdateMaxAllowedProcessesInput input
     ) {
         final var user = authContext.getUser();
-        LOGGER.traceEntry("changeMaxAllowedProcesses({}, {}) for user {}.", userId, input, user);
-
         final var updatedUser = userDAO.updateMaxAllowedProcesses(user, input);
-        LOGGER.traceExit(updatedUser);
-
         return ResponseEntity.ok(updatedUser);
     }
 
@@ -260,10 +240,7 @@ public class UserResource {
             @Validated @RequestBody UpdatePasswordInput input
     ) {
         final var user = authContext.getUser();
-        LOGGER.traceEntry("changePassword({}, {}) for user {}.", userId, input, user);
-
         if (!user.getId().equals(userId)) {
-            LOGGER.traceExit("Only the user is allowed to change his own password.");
             throw new ForbiddenOperationException("You are not allowed to do this.");
         }
 
@@ -275,8 +252,6 @@ public class UserResource {
         realUser.setEncryptedPassword(input.getNewPassword());
 
         final var updatedUser = userDAO.update(realUser);
-
-        LOGGER.traceExit(updatedUser);
 
         webhookService.fireEvent(user, new UserEvent.CredentialsUpdated(userId));
         return ResponseEntity.ok(updatedUser);
@@ -302,10 +277,8 @@ public class UserResource {
             @Validated @RequestBody UpdateEmailInput input
     ) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("changeEmail({}, {}) for user {}.", userId, input, user);
 
         if (!user.getId().equals(userId) && !user.getRole().equals(UserRole.ADMIN)) {
-            LOGGER.traceExit("Only the user or an admin is allowed to change the email.");
             throw new UnauthorizedException("You are not allowed to do this.");
         }
 
@@ -317,7 +290,6 @@ public class UserResource {
         realUser.setEmail(input.getEmail());
 
         final var updatedUser = userDAO.update(realUser);
-        LOGGER.traceExit(updatedUser);
 
         webhookService.fireEvent(user, new UserEvent.CredentialsUpdated(userId));
         return ResponseEntity.ok(updatedUser);
@@ -343,7 +315,6 @@ public class UserResource {
             @Validated @RequestBody UpdateUsernameInput input
     ) {
         final var user = authContext.getUser();
-        LOGGER.traceEntry("changeUsername({}, {}) for user {}.", userId, input, user);
 
         if (!user.getRole().equals(UserRole.ADMIN)) {
             throw new ForbiddenOperationException("You are not allowed to do this.");
@@ -355,7 +326,6 @@ public class UserResource {
         userInDB.setUsername(input.getUsername());
 
         final var updatedUser = userDAO.update(userInDB);
-        LOGGER.traceExit(updatedUser);
 
         webhookService.fireEvent(user, new UserEvent.CredentialsUpdated(userId));
         return ResponseEntity.ok(updatedUser);
@@ -380,8 +350,6 @@ public class UserResource {
             @Validated @RequestBody UpdateRoleInput input
     ) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("update role for user {}.", userId);
-
         final User userToUpdate = userDAO.getByID(userId);
 
         switch (input.getRole()) {
@@ -404,8 +372,6 @@ public class UserResource {
         }
 
         final var updatedUser = userDAO.update(userToUpdate);
-        LOGGER.info("Role of user {} updated.", updatedUser);
-        LOGGER.traceExit(updatedUser);
         webhookService.fireEvent(user, new UserEvent.RoleUpdated(updatedUser));
         return ResponseEntity.ok(updatedUser);
     }
@@ -423,12 +389,9 @@ public class UserResource {
     )
     public ResponseEntity<String> delete(@PathVariable("id") Long userId) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("delete({}) for user {}.", userId, user);
 
         if (!user.getId().equals(userId) && !user.getRole().equals(UserRole.ADMIN)) {
-            final var e = new ForbiddenOperationException("You are not allowed to delete this user.");
-            LOGGER.traceExit(e);
-            throw e;
+            throw new ForbiddenOperationException("You are not allowed to delete this user.");
         }
 
         // the event is not fired if we do it after the user is deleted in the next line
@@ -436,7 +399,6 @@ public class UserResource {
         webhookService.fireEvent(new User(userId), new UserEvent.Deleted(userId));
         userDAO.delete(user, userId);
 
-        LOGGER.traceExit("User {} deleted.", userId);
         return ResponseEntity.noContent().build();
     }
 
@@ -453,16 +415,12 @@ public class UserResource {
     )
     public ResponseEntity<String> delete(@PathVariable("ids") List<Long> ids) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("delete({}) for user {}.", ids, user);
 
         if (ids.contains(user.getId())) {
-            final var e = new IllegalArgumentException("You cannot delete your own account this way.");
-            LOGGER.traceExit(e);
-            throw e;
+            throw new IllegalArgumentException("You cannot delete your own account this way.");
         }
 
         userDAO.delete(user, ids);
-        LOGGER.traceExit("User(s) {} deleted.", ids);
 
         ids.forEach(id -> webhookService.fireEvent(new User(id), new UserEvent.Deleted(id)));
         return ResponseEntity.noContent().build();
@@ -481,8 +439,6 @@ public class UserResource {
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity<JsonWebToken> login(@RequestBody User user) {
-        LOGGER.traceEntry("login({}).", user);
-
         try {
             final var realUser = userDAO.getByEmail(user.getEmail());
 
@@ -492,10 +448,8 @@ public class UserResource {
 
             final var jwt = new JsonWebToken(JwtHelper.generateJWT(realUser));
 
-            LOGGER.traceExit(jwt);
             return ResponseEntity.ok(jwt);
         } catch (JoseException e) {
-            LOGGER.traceExit(e);
             throw new UnauthorizedException();
         }
     }

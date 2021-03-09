@@ -21,8 +21,6 @@ import de.learnlib.alex.settings.entities.Settings;
 import de.learnlib.alex.settings.events.SettingsEvent;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import javax.ws.rs.core.MediaType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,8 +35,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/rest/settings")
 public class SettingsResource {
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     private final SettingsDAO settingsDAO;
     private final WebhookService webhookService;
@@ -59,9 +55,7 @@ public class SettingsResource {
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity<Settings> get() {
-        LOGGER.traceEntry("get()");
-        final Settings settings = settingsDAO.get();
-        LOGGER.traceExit(settings);
+        final var settings = settingsDAO.get();
         return ResponseEntity.ok(settings);
     }
 
@@ -77,11 +71,9 @@ public class SettingsResource {
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity<Settings> update(@RequestBody Settings settings) {
-        LOGGER.traceEntry("update({})", settings);
-        settingsDAO.update(settings);
+        final var updatedSettings = settingsDAO.update(settings);
         webhookService.fireEvent(new SettingsEvent.Updated(settings));
-        LOGGER.traceExit(settings);
-        return ResponseEntity.ok(settings);
+        return ResponseEntity.ok(updatedSettings);
     }
 
 }

@@ -32,9 +32,9 @@ import javax.persistence.EntityManager;
 import javax.validation.Validation;
 import javax.validation.ValidationException;
 import javax.validation.Validator;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -47,7 +47,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(rollbackFor = Exception.class)
 public class UserDAO {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(UserDAO.class);
 
     private static final int MAX_USERNAME_LENGTH = 32;
 
@@ -185,7 +185,7 @@ public class UserDAO {
                 try {
                     fileDAO.deleteProjectDirectory(user, project.getId());
                 } catch (IOException e) {
-                    LOGGER.info("The project has been deleted, the user directory, however, not.");
+                    logger.info("The project has been deleted, the user directory, however, not.");
                 }
             }
         }
@@ -199,7 +199,7 @@ public class UserDAO {
         try {
             fileDAO.deleteUserDirectory(user);
         } catch (IOException e) {
-            LOGGER.info("The user has been deleted, the user directory, however, not.");
+            logger.info("The user has been deleted, the user directory, however, not.");
         }
     }
 

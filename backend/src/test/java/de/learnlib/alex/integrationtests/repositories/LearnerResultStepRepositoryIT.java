@@ -22,12 +22,10 @@ import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;
+import javax.inject.Inject;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.dao.DataIntegrityViolationException;
-
-import javax.inject.Inject;
-
 import static de.learnlib.alex.integrationtests.repositories.LearnerResultRepositoryIT.createLearnerResult;
 import static org.junit.Assert.assertNotNull;
 

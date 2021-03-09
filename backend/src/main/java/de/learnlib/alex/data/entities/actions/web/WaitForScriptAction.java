@@ -32,8 +32,6 @@ import javax.persistence.Entity;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -41,10 +39,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 @DiscriminatorValue("web_waitForScript")
 @JsonTypeName("web_waitForScript")
 public class WaitForScriptAction extends SymbolAction {
-
-    private static final long serialVersionUID = 5692261035639937573L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     private static final int DEFAULT_SCRIPT_TIMEOUT = 10;
 
@@ -75,7 +69,7 @@ public class WaitForScriptAction extends SymbolAction {
                 final Map<String, Map<String, ? extends Object>> store = ExecuteScriptUtils.createScriptStore(connector);
                 final Object returnValue = ((JavascriptExecutor) webSiteConnector.getDriver()).executeScript(script, store);
                 if (!(returnValue instanceof Boolean)) {
-                    LOGGER.info(LoggerMarkers.LEARNER, "Script does not return boolean result.");
+                    logger.info(LoggerMarkers.LEARNER, "Script does not return boolean result.");
                     return getFailedOutput();
                 }
 
@@ -84,14 +78,14 @@ public class WaitForScriptAction extends SymbolAction {
                     return (boolean) val;
                 });
 
-                LOGGER.info(LoggerMarkers.LEARNER, "Waiting for JavaScript success");
+                logger.info(LoggerMarkers.LEARNER, "Waiting for JavaScript success");
                 return getSuccessOutput();
             } catch (Exception e) {
-                LOGGER.info(LoggerMarkers.LEARNER, "Could not execute JavaScript", e);
+                logger.info(LoggerMarkers.LEARNER, "Could not execute JavaScript", e);
                 return getFailedOutput();
             }
         } else {
-            LOGGER.info(LoggerMarkers.LEARNER, "This driver does not support JavaScript!");
+            logger.info(LoggerMarkers.LEARNER, "This driver does not support JavaScript!");
             return getFailedOutput();
         }
     }

@@ -19,7 +19,6 @@ package de.learnlib.alex.integrationtests.resources.api;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.ProjectEnvironmentVariable;
 import de.learnlib.alex.data.entities.ProjectUrl;
-
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.HttpHeaders;

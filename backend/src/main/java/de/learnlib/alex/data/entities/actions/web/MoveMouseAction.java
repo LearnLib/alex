@@ -25,8 +25,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
@@ -38,10 +36,6 @@ import org.openqa.selenium.interactions.Actions;
 @DiscriminatorValue("web_moveMouse")
 @JsonTypeName("web_moveMouse")
 public class MoveMouseAction extends WebSymbolAction {
-
-    private static final long serialVersionUID = -3477841410719285695L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * The selector of the element.
@@ -71,16 +65,16 @@ public class MoveMouseAction extends WebSymbolAction {
 
             if (nodeWithVariables == null || nodeWithVariables.getSelector().trim().equals("")) {
                 actions.moveByOffset(offsetX, offsetY).build().perform();
-                LOGGER.info(LoggerMarkers.LEARNER, "Moved the mouse to the position ({}, {}) ", offsetX, offsetY);
+                logger.info(LoggerMarkers.LEARNER, "Moved the mouse to the position ({}, {}) ", offsetX, offsetY);
             } else {
                 final WebElement element = connector.getElement(nodeWithVariables);
                 actions.moveToElement(element, offsetX, offsetY).build().perform();
-                LOGGER.info(LoggerMarkers.LEARNER, "Moved the mouse to the element '{}'", nodeWithVariables);
+                logger.info(LoggerMarkers.LEARNER, "Moved the mouse to the element '{}'", nodeWithVariables);
             }
 
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not move the mouse to the element '{}' or the position ({}, {})",
+            logger.info(LoggerMarkers.LEARNER, "Could not move the mouse to the element '{}' or the position ({}, {})",
                     nodeWithVariables, offsetX, offsetY);
             return getFailedOutput();
         }

@@ -24,8 +24,8 @@ import de.learnlib.api.query.Query;
 import java.util.Collection;
 import javax.annotation.ParametersAreNonnullByDefault;
 import net.automatalib.words.Word;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Oracle that delegates queries to another oracle that can be exchanged.
@@ -38,7 +38,7 @@ import org.apache.logging.log4j.Logger;
 @ParametersAreNonnullByDefault
 public class DelegationOracle<I, O> implements MembershipOracle<I, Word<O>> {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(DelegationOracle.class);
 
     /** How often the queries should be posed in case an exception is thrown. */
     private static final int MAX_RETRIES = 5;
@@ -48,20 +48,6 @@ public class DelegationOracle<I, O> implements MembershipOracle<I, Word<O>> {
 
     /** The sul the membership queries should be posed to. */
     private MembershipOracle<I, Word<O>> delegate;
-
-    /** Constructor. */
-    public DelegationOracle() {
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param delegate
-     *         The membership oracle the queries are delegated to.
-     */
-    public DelegationOracle(MembershipOracle<I, Word<O>> delegate) {
-        this.delegate = delegate;
-    }
 
     @Override
     public void processQueries(Collection<? extends Query<I, Word<O>>> queries) {
@@ -76,11 +62,11 @@ public class DelegationOracle<I, O> implements MembershipOracle<I, Word<O>> {
             } catch (Exception e) {
                 e.printStackTrace();
                 lastException = e;
-                LOGGER.warn(LoggerMarkers.LEARNER, "Failed to execute query on {}. try. Retry in {}ms", i + 1, SLEEP_TIME);
+                logger.warn(LoggerMarkers.LEARNER, "Failed to execute query on {}. try. Retry in {}ms", i + 1, SLEEP_TIME);
                 i++;
 
                 if (i == MAX_RETRIES) {
-                    LOGGER.error(LoggerMarkers.LEARNER, "Failed to execute query for " + MAX_RETRIES + " times\"", lastException);
+                    logger.error(LoggerMarkers.LEARNER, "Failed to execute query for " + MAX_RETRIES + " times\"", lastException);
                     throw new LearnerException("Failed to execute query for " + MAX_RETRIES + " times", lastException);
                 } else {
                     try {

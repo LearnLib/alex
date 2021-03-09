@@ -24,6 +24,14 @@ import de.learnlib.alex.data.dao.FileDAO;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.websocket.services.WebSocketService;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import javax.persistence.EntityManager;
+import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,16 +40,6 @@ import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import javax.persistence.EntityManager;
-import javax.validation.ConstraintViolationException;
-import javax.validation.ValidationException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
 import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)

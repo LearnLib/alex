@@ -64,10 +64,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.ValidationException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -80,7 +80,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(rollbackFor = Exception.class)
 public class ProjectDAO {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(ProjectDAO.class);
 
     private final ProjectRepository projectRepository;
     private final LearnerResultRepository learnerResultRepository;
@@ -166,8 +166,6 @@ public class ProjectDAO {
     }
 
     public Project create(final User user, final CreateProjectForm projectForm) {
-        LOGGER.traceEntry("create({})", projectForm);
-
         final Project project = new Project();
         project.addOwner(user);
         project.setName(projectForm.getName());
@@ -199,7 +197,6 @@ public class ProjectDAO {
         createdDefaultEnvironment.getUrls().add(createdProjectUrl);
         projectEnvironmentDAO.update(user, createdProject.getId(), createdDefaultEnvironment.getId(), createdDefaultEnvironment);
 
-        LOGGER.traceExit(createdProject);
         return loadLazyRelations(createdProject);
     }
 
@@ -217,8 +214,6 @@ public class ProjectDAO {
     }
 
     public Project update(User user, Long projectId, Project project) {
-        LOGGER.traceEntry("update({})", project);
-
         final Project projectInDb = projectRepository.findById(projectId).orElse(null);
         checkAccess(user, projectInDb);
 
@@ -232,7 +227,6 @@ public class ProjectDAO {
         final Project updatedProject = projectRepository.save(projectInDb);
         loadLazyRelations(updatedProject);
 
-        LOGGER.traceExit(project);
         return updatedProject;
     }
 
@@ -270,7 +264,7 @@ public class ProjectDAO {
         try {
             testReportDAO.deleteScreenshotDirectory(user, projectId);
         } catch (IOException e) {
-            LOGGER.info("The screenshot directory may not have been deleted.");
+            logger.info("The screenshot directory may not have been deleted.");
         }
 
         // delete the project directory
@@ -278,7 +272,7 @@ public class ProjectDAO {
             fileDAO.deleteProjectDirectory(user, projectId);
             projectRepository.delete(project);
         } catch (IOException e) {
-            LOGGER.info("The project has been deleted, the directory, however, not.");
+            logger.info("The project has been deleted, the directory, however, not.");
         }
 
     }

@@ -42,18 +42,16 @@ import de.learnlib.alex.testing.repositories.TestRepository;
 import de.learnlib.alex.websocket.services.ProjectPresenceService;
 import de.learnlib.alex.websocket.services.SymbolPresenceService;
 import de.learnlib.alex.websocket.services.TestPresenceService;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import javax.validation.ConstraintViolationException;
-import javax.validation.ValidationException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;

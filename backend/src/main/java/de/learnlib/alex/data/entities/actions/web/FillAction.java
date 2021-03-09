@@ -27,8 +27,6 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebElement;
 
 /**
@@ -38,10 +36,6 @@ import org.openqa.selenium.WebElement;
 @DiscriminatorValue("web_fill")
 @JsonTypeName("web_fill")
 public class FillAction extends WebSymbolAction {
-
-    private static final long serialVersionUID = 8595076806577663223L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * The node to look for.
@@ -67,10 +61,10 @@ public class FillAction extends WebSymbolAction {
             WebElement element = connector.getElement(nodeWithVariables);
             element.sendKeys(valueWithVariables);
 
-            LOGGER.info("Filled the element '{}' with '{}'.", nodeWithVariables, value);
+            logger.info("Filled the element '{}' with '{}'.", nodeWithVariables, value);
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not find the element '{}' to fill it with '{}'",
+            logger.info(LoggerMarkers.LEARNER, "Could not find the element '{}' to fill it with '{}'",
                     nodeWithVariables, valueWithVariables, e);
             return getFailedOutput();
         }

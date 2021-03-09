@@ -22,15 +22,13 @@ import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
+import java.util.Arrays;
+import java.util.List;
+import javax.inject.Inject;
+import javax.validation.ValidationException;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.dao.DataIntegrityViolationException;
-
-import javax.inject.Inject;
-import javax.validation.ValidationException;
-import java.util.Arrays;
-import java.util.List;
-
 import static de.learnlib.alex.integrationtests.repositories.SymbolGroupRepositoryIT.createGroup;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

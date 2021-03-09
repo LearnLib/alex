@@ -24,7 +24,6 @@ import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.GrowingMapAlphabet;
 import org.junit.Before;
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;

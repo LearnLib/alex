@@ -33,8 +33,6 @@ import javax.persistence.Entity;
 @JsonTypeName("web")
 public abstract class WebSymbolAction extends SymbolAction {
 
-    private static final long serialVersionUID = -1990239222213631726L;
-
     @Override
     public ExecuteResult execute(ConnectorManager connector) {
         return execute(connector.getConnector(WebSiteConnector.class));

@@ -26,8 +26,6 @@ import de.learnlib.alex.webhooks.services.WebhookService;
 import java.util.Collections;
 import java.util.List;
 import javax.ws.rs.core.MediaType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,8 +40,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/rest/projects/{projectId}/ltsFormulaSuites/{suiteId}/ltsFormulas")
 public class LtsFormulaResource {
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     private final AuthContext authContext;
     private final LtsFormulaDAO ltsFormulaDAO;
@@ -65,12 +61,9 @@ public class LtsFormulaResource {
     public ResponseEntity<LtsFormula> create(@PathVariable("projectId") Long projectId,
                                              @PathVariable("suiteId") Long suiteId,
                                              @RequestBody LtsFormula formula) {
-        LOGGER.traceEntry("enter create(projectId: {}, formula: {})", projectId, formula);
         final User user = authContext.getUser();
         final LtsFormula createdFormula = ltsFormulaDAO.create(user, projectId, suiteId, formula);
-
         webhookService.fireEvent(user, new ModelCheckerEvent.Created(createdFormula));
-        LOGGER.traceExit("create create() with formula: {}", createdFormula);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdFormula);
     }
 
@@ -94,12 +87,9 @@ public class LtsFormulaResource {
                                              @PathVariable("suiteId") Long suiteId,
                                              @PathVariable("formulaId") Long formulaId,
                                              @RequestBody LtsFormula formula) {
-        LOGGER.traceEntry("enter update(projectId: {}, formulaId: {})", projectId, formulaId);
         final User user = authContext.getUser();
         final LtsFormula updatedFormula = ltsFormulaDAO.update(user, projectId, suiteId, formula);
-
         webhookService.fireEvent(user, new ModelCheckerEvent.Updated(updatedFormula));
-        LOGGER.traceExit("leave update() with formula: {}", updatedFormula);
         return ResponseEntity.ok(updatedFormula);
     }
 
@@ -112,11 +102,8 @@ public class LtsFormulaResource {
                                                         @PathVariable("suiteId") Long suiteId,
                                                         @PathVariable("formulaIds") List<Long> formulaIds,
                                                         @RequestBody LtsFormulaSuite suite) {
-        LOGGER.traceEntry("enter updateParent(projectId: {}, formulaIds: {})", projectId, formulaIds);
         final User user = authContext.getUser();
         final List<LtsFormula> updatedFormulas = ltsFormulaDAO.updateParent(user, projectId, suiteId, formulaIds, suite);
-
-        LOGGER.traceExit("leave updateParent()");
         return ResponseEntity.ok(updatedFormulas);
     }
 
@@ -129,11 +116,8 @@ public class LtsFormulaResource {
                                                   @PathVariable("suiteId") Long suiteId,
                                                   @PathVariable("formulaId") Long formulaId,
                                                   @RequestBody LtsFormulaSuite suite) {
-        LOGGER.traceEntry("enter updateParent(projectId: {}, formulaId: {})", projectId, formulaId);
         final User user = authContext.getUser();
         final List<LtsFormula> updatedFormulas = ltsFormulaDAO.updateParent(user, projectId, suiteId, Collections.singletonList(formulaId), suite);
-
-        LOGGER.traceExit("leave updateParent()");
         return ResponseEntity.ok(updatedFormulas.get(0));
     }
 
@@ -153,12 +137,9 @@ public class LtsFormulaResource {
     public ResponseEntity<String> delete(@PathVariable("projectId") Long projectId,
                                          @PathVariable("suiteId") Long suiteId,
                                          @PathVariable("formulaId") Long formulaId) {
-        LOGGER.traceEntry("enter delete(projectId: {}, formulaId: {})", projectId, formulaId);
         final User user = authContext.getUser();
         ltsFormulaDAO.delete(user, projectId, suiteId, formulaId);
-
         webhookService.fireEvent(user, new ModelCheckerEvent.Deleted(formulaId));
-        LOGGER.traceExit("leave delete()");
         return ResponseEntity.noContent().build();
     }
 
@@ -178,12 +159,9 @@ public class LtsFormulaResource {
     public ResponseEntity<String> delete(@PathVariable("projectId") Long projectId,
                                          @PathVariable("suiteId") Long suiteId,
                                          @PathVariable("formulaIds") List<Long> formulaIds) {
-        LOGGER.traceEntry("enter delete(projectId: {}, formulaIds: {})", projectId, formulaIds);
         final User user = authContext.getUser();
         ltsFormulaDAO.delete(user, projectId, suiteId, formulaIds);
-
         webhookService.fireEvent(user, new ModelCheckerEvent.DeletedMany(formulaIds));
-        LOGGER.traceExit("leave delete()");
         return ResponseEntity.noContent().build();
     }
 }

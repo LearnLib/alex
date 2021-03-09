@@ -20,7 +20,6 @@ import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.AbstractEqui
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
 import org.junit.Before;
 import org.junit.Test;
-
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
 

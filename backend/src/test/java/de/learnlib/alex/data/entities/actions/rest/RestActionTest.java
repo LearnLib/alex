@@ -18,7 +18,6 @@ package de.learnlib.alex.data.entities.actions.rest;
 
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
-
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
