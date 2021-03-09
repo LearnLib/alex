@@ -24,14 +24,11 @@ import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.FileStoreConnector;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import java.io.Serializable;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
@@ -39,11 +36,7 @@ import org.openqa.selenium.WebElement;
 @Entity
 @DiscriminatorValue("web_uploadFile")
 @JsonTypeName("web_uploadFile")
-public class UploadFileAction extends SymbolAction implements Serializable {
-
-    private static final long serialVersionUID = -1094366952752580170L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
+public class UploadFileAction extends SymbolAction {
 
     /** The input element to upload the file to. */
     @NotNull
@@ -73,13 +66,13 @@ public class UploadFileAction extends SymbolAction implements Serializable {
                 throw new NoSuchElementException("The element is not an input file element.");
             }
         } catch (IllegalStateException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "The file '{}' could not be found in ALEX.", this.fileName);
+            logger.info(LoggerMarkers.LEARNER, "The file '{}' could not be found in ALEX.", this.fileName);
             return getFailedOutput();
         } catch (NoSuchElementException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "The element could not be found or is not an input element.");
+            logger.info(LoggerMarkers.LEARNER, "The element could not be found or is not an input element.");
             return getFailedOutput();
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "The file could not be uploaded for an unknown reason", e);
+            logger.info(LoggerMarkers.LEARNER, "The file could not be uploaded for an unknown reason", e);
             return getFailedOutput();
         }
     }

@@ -25,8 +25,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.NoSuchElementException;
 
 /**
@@ -36,10 +34,6 @@ import org.openqa.selenium.NoSuchElementException;
 @DiscriminatorValue("web_checkForNode")
 @JsonTypeName("web_checkForNode")
 public class CheckNodeAction extends WebSymbolAction {
-
-    private static final long serialVersionUID = -3884454109124323412L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The node on the site that is checked for. */
     @NotNull
@@ -54,10 +48,10 @@ public class CheckNodeAction extends WebSymbolAction {
         try {
             connector.getElement(nodeWithVariables);
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Found element '{}'.", nodeWithVariables);
+            logger.info(LoggerMarkers.LEARNER, "Found element '{}'.", nodeWithVariables);
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not find element '{}'.", nodeWithVariables, e);
+            logger.info(LoggerMarkers.LEARNER, "Could not find element '{}'.", nodeWithVariables, e);
             return getFailedOutput();
         }
     }

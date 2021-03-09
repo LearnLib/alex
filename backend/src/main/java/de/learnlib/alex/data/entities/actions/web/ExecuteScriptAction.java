@@ -33,8 +33,6 @@ import javax.persistence.Entity;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 
@@ -45,10 +43,6 @@ import org.openqa.selenium.WebElement;
 @DiscriminatorValue("web_executeScript")
 @JsonTypeName("web_executeScript")
 public class ExecuteScriptAction extends SymbolAction {
-
-    private static final long serialVersionUID = 6118333853615934954L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** How long in seconds should be waited before the script times out. */
     private static final int DEFAULT_SCRIPT_TIMEOUT = 10;
@@ -96,21 +90,21 @@ public class ExecuteScriptAction extends SymbolAction {
                             || returnValue instanceof Boolean) {
                         variableStore.set(name, String.valueOf(returnValue));
                     } else if (returnValue instanceof WebElement || returnValue instanceof List) {
-                        LOGGER.info(LoggerMarkers.LEARNER, "WebElements and lists as return values are not supported.");
+                        logger.info(LoggerMarkers.LEARNER, "WebElements and lists as return values are not supported.");
                         return getFailedOutput();
                     } else {
                         variableStore.set(name, (String) returnValue);
                     }
                 }
 
-                LOGGER.info(LoggerMarkers.LEARNER, "JavaScript {} successfully executed.");
+                logger.info(LoggerMarkers.LEARNER, "JavaScript {} successfully executed.");
                 return getSuccessOutput();
             } catch (Exception e) {
-                LOGGER.info(LoggerMarkers.LEARNER, "Could not execute JavaScript", e);
+                logger.info(LoggerMarkers.LEARNER, "Could not execute JavaScript", e);
                 return getFailedOutput();
             }
         } else {
-            LOGGER.info(LoggerMarkers.LEARNER, "This driver does not support JavaScript!");
+            logger.info(LoggerMarkers.LEARNER, "This driver does not support JavaScript!");
             return getFailedOutput();
         }
     }

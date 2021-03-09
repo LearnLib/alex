@@ -26,8 +26,6 @@ import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotEmpty;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Action to set a variable to the body of the last HTTP response.
@@ -37,11 +35,9 @@ import org.apache.logging.log4j.Logger;
 @JsonTypeName("setVariableByHttpResponse")
 public class SetVariableByHttpResponseAction extends SymbolAction {
 
-    private static final long serialVersionUID = -1062817486843997759L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
-
-    /** The name of the variable. */
+    /**
+     * The name of the variable.
+     */
     @NotEmpty
     private String name;
 
@@ -54,10 +50,10 @@ public class SetVariableByHttpResponseAction extends SymbolAction {
             final String body = webServiceConnector.getBody();
             variableStore.set(name, body);
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Set variable '{}' to HTTP body.", name);
+            logger.info(LoggerMarkers.LEARNER, "Set variable '{}' to HTTP body.", name);
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not set variable '{}' to HTTP body.", name);
+            logger.info(LoggerMarkers.LEARNER, "Could not set variable '{}' to HTTP body.", name);
             return getFailedOutput();
         }
     }

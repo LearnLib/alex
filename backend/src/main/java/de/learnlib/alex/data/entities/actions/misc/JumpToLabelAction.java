@@ -31,16 +31,12 @@ import javax.persistence.Entity;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.JavascriptExecutor;
 
 @Entity
 @DiscriminatorValue("jumpToLabel")
 @JsonTypeName("jumpToLabel")
 public class JumpToLabelAction extends SymbolAction {
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     @NotBlank
     private String label;
@@ -75,24 +71,24 @@ public class JumpToLabelAction extends SymbolAction {
                 }
 
                 if (!(returnValue instanceof Boolean)) {
-                    LOGGER.info(LoggerMarkers.LEARNER, "Result of jump condition is not a boolean value.");
+                    logger.info(LoggerMarkers.LEARNER, "Result of jump condition is not a boolean value.");
                     return getFailedOutput();
                 } else {
                     final boolean canJump = (Boolean) returnValue;
                     if (canJump) {
-                        LOGGER.info(LoggerMarkers.LEARNER, "Jump to label '{}'.", label);
+                        logger.info(LoggerMarkers.LEARNER, "Jump to label '{}'.", label);
                         return getSuccessOutput();
                     } else {
-                        LOGGER.info(LoggerMarkers.LEARNER, "Jump condition for label '" + label + "' not satisfied.");
+                        logger.info(LoggerMarkers.LEARNER, "Jump condition for label '" + label + "' not satisfied.");
                         return getFailedOutput();
                     }
                 }
             } catch (Exception e) {
-                LOGGER.info(LoggerMarkers.LEARNER, "Could not execute JavaScript", e);
+                logger.info(LoggerMarkers.LEARNER, "Could not execute JavaScript", e);
                 return getFailedOutput();
             }
         } else {
-            LOGGER.info(LoggerMarkers.LEARNER, "This driver does not support JavaScript!");
+            logger.info(LoggerMarkers.LEARNER, "This driver does not support JavaScript!");
             return getFailedOutput();
         }
     }

@@ -28,8 +28,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -38,10 +36,6 @@ import org.openqa.selenium.interactions.Actions;
 @DiscriminatorValue("web_dragAndDropBy")
 @JsonTypeName("web_dragAndDropBy")
 public class DragAndDropByAction extends WebSymbolAction {
-
-    private static final long serialVersionUID = 6755722972120171745L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     @NotNull
     @Embedded
@@ -70,10 +64,10 @@ public class DragAndDropByAction extends WebSymbolAction {
         try {
             final WebElement source = connector.getElement(sourceNodeWithVariables);
             new Actions(connector.getDriver()).dragAndDropBy(source, offsetX, offsetY).build().perform();
-            LOGGER.info(LoggerMarkers.LEARNER, "Drag element '({})' by ({}, {}).", source, offsetX, offsetY);
+            logger.info(LoggerMarkers.LEARNER, "Drag element '({})' by ({}, {}).", source, offsetX, offsetY);
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not perform drag and drop");
+            logger.info(LoggerMarkers.LEARNER, "Could not perform drag and drop");
             return getFailedOutput();
         }
     }

@@ -23,8 +23,6 @@ import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.NoAlertPresentException;
 
@@ -35,10 +33,6 @@ import org.openqa.selenium.NoAlertPresentException;
 @DiscriminatorValue("web_alertAcceptDismiss")
 @JsonTypeName("web_alertAcceptDismiss")
 public class AlertAcceptDismissAction extends WebSymbolAction {
-
-    private static final long serialVersionUID = 194831141591117765L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The actions for an alert. */
     public enum Action {
@@ -66,15 +60,15 @@ public class AlertAcceptDismissAction extends WebSymbolAction {
 
             if (this.action == Action.ACCEPT) {
                 alert.accept();
-                LOGGER.info(LoggerMarkers.LEARNER, "Accept alert window.");
+                logger.info(LoggerMarkers.LEARNER, "Accept alert window.");
             } else {
                 alert.dismiss();
-                LOGGER.info(LoggerMarkers.LEARNER, "Dismiss alert window.");
+                logger.info(LoggerMarkers.LEARNER, "Dismiss alert window.");
             }
 
             return getSuccessOutput();
         } catch (NoAlertPresentException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Failed accept or dismiss alert window.");
+            logger.info(LoggerMarkers.LEARNER, "Failed accept or dismiss alert window.");
             return getFailedOutput();
         }
     }

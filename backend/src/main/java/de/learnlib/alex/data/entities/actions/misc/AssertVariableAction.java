@@ -27,8 +27,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Action to assert the equality of the content of a variable with a given string.
@@ -37,10 +35,6 @@ import org.apache.logging.log4j.Logger;
 @DiscriminatorValue("assertVariable")
 @JsonTypeName("assertVariable")
 public class AssertVariableAction extends SymbolAction {
-
-    private static final long serialVersionUID = 6363724455992504221L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * The name of the variable to assert.
@@ -80,7 +74,7 @@ public class AssertVariableAction extends SymbolAction {
             result = variableValue.equals(valueWithVariables);
         }
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Asserting variable '{}' with value '{}' against '{}' => {} (regex: {}).",
+        logger.info(LoggerMarkers.LEARNER, "Asserting variable '{}' with value '{}' against '{}' => {} (regex: {}).",
                 name, variableValue, valueWithVariables, result, regexp);
 
         if (result) {

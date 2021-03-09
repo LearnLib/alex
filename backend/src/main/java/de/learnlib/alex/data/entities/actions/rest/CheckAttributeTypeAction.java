@@ -28,8 +28,6 @@ import javax.persistence.Entity;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * RESTSymbolAction to check if the request body of the last request has a JSON attribute with a specific type.
@@ -38,10 +36,6 @@ import org.apache.logging.log4j.Logger;
 @DiscriminatorValue("rest_checkAttributeType")
 @JsonTypeName("rest_checkAttributeType")
 public class CheckAttributeTypeAction extends RESTSymbolAction {
-
-    private static final long serialVersionUID = 6962742356381266855L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * Enumeration to refer to a type of a JSON field.
@@ -107,7 +101,7 @@ public class CheckAttributeTypeAction extends RESTSymbolAction {
 
         boolean result = typeInBody != null && typeInBody.equals(jsonType);
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Check if the attribute '{}' has the type '{}' in '{}' => {}.",
+        logger.info(LoggerMarkers.LEARNER, "Check if the attribute '{}' has the type '{}' in '{}' => {}.",
                 attribute, jsonType, body, result);
         if (result) {
             return getSuccessOutput();

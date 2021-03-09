@@ -30,8 +30,6 @@ import javax.persistence.Entity;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Action that, given a regular expression, searches in the page source for matches. If a match is found, it extracts
@@ -41,10 +39,6 @@ import org.apache.logging.log4j.Logger;
 @DiscriminatorValue("setVariableByRegexGroup")
 @JsonTypeName("setVariableByRegexGroup")
 public class SetVariableByRegexGroupAction extends SymbolAction {
-
-    private static final long serialVersionUID = -5562530206394874225L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The name of the variable. */
     @NotBlank
@@ -89,11 +83,11 @@ public class SetVariableByRegexGroupAction extends SymbolAction {
             }
 
             if (!matchFound) {
-                LOGGER.info(LoggerMarkers.LEARNER, "Could not find a string that matches regex '{}' ", regex);
+                logger.info(LoggerMarkers.LEARNER, "Could not find a string that matches regex '{}' ", regex);
                 return getFailedOutput();
             }
         } catch (IndexOutOfBoundsException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not find group {} in regex '{}' ", mthGroup, regex);
+            logger.info(LoggerMarkers.LEARNER, "Could not find group {} in regex '{}' ", mthGroup, regex);
             return getFailedOutput();
         }
 

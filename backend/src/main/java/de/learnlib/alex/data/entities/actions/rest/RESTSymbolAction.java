@@ -32,8 +32,6 @@ import javax.persistence.Entity;
 @JsonTypeName("rest")
 public abstract class RESTSymbolAction extends SymbolAction {
 
-    private static final long serialVersionUID = -897337751104947135L;
-
     @Override
     public ExecuteResult execute(ConnectorManager connector) {
         return execute(connector.getConnector(WebServiceConnector.class));

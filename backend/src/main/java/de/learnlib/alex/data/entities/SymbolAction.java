@@ -93,6 +93,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Abstract super type of how a Action for Symbols should look & work like.
@@ -167,7 +169,9 @@ import javax.persistence.Transient;
         @JsonSubTypes.Type(name = "rest_checkStatus", value = CheckStatusAction.class),
         @JsonSubTypes.Type(name = "rest_validateJson", value = ValidateJsonAction.class),
 })
-public abstract class SymbolAction implements Serializable {
+public abstract class SymbolAction {
+
+    protected static final Logger logger = LogManager.getLogger();
 
     /** The ID of the Action in the DB. */
     @Id

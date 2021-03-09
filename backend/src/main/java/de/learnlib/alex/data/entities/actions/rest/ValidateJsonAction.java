@@ -30,8 +30,6 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Validates a JSON object against a JSON schema v4. See https://tools.ietf.org/html/draft-zyp-json-schema-04.
@@ -40,10 +38,6 @@ import org.apache.logging.log4j.Logger;
 @DiscriminatorValue("rest_validateJson")
 @JsonTypeName("rest_validateJson")
 public class ValidateJsonAction extends RESTSymbolAction {
-
-    private static final long serialVersionUID = -3417929867422889753L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * The JSON schema to validate the response of the latest request against.
@@ -66,10 +60,10 @@ public class ValidateJsonAction extends RESTSymbolAction {
                     .validate(obj);
 
             final ExecuteResult result = report.isSuccess() ? getSuccessOutput() : getFailedOutput();
-            LOGGER.info(LoggerMarkers.LEARNER, "Validated JSON document with {}", result);
+            logger.info(LoggerMarkers.LEARNER, "Validated JSON document with {}", result);
             return result;
         } catch (IOException | ProcessingException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Failed to validate JSON document.");
+            logger.info(LoggerMarkers.LEARNER, "Failed to validate JSON document.");
             return getFailedOutput();
         }
     }

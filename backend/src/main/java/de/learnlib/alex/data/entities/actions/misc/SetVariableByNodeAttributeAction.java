@@ -29,8 +29,6 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.NoSuchElementException;
 
 /**
@@ -40,10 +38,6 @@ import org.openqa.selenium.NoSuchElementException;
 @DiscriminatorValue("setVariableByNodeAttribute")
 @JsonTypeName("setVariableByNodeAttribute")
 public class SetVariableByNodeAttributeAction extends SymbolAction {
-
-    private static final long serialVersionUID = 8998187003156355834L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The name of the variable. */
     @NotBlank
@@ -70,12 +64,12 @@ public class SetVariableByNodeAttributeAction extends SymbolAction {
             String value = webSiteConnector.getElement(nodeWithVariables).getAttribute(attribute);
             storeConnector.set(name, value);
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Set variable '{}' to attribute '{}' of element '{}'.",
+            logger.info(LoggerMarkers.LEARNER, "Set variable '{}' to attribute '{}' of element '{}'.",
                     name, attribute, nodeWithVariables);
 
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not set variable '{}' to attribute '{}' of element '{}'.",
+            logger.info(LoggerMarkers.LEARNER, "Could not set variable '{}' to attribute '{}' of element '{}'.",
                     name, attribute, nodeWithVariables);
 
             return getFailedOutput();

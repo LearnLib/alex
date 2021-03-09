@@ -29,8 +29,6 @@ import javax.persistence.Entity;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * RESTSymbolAction to check if the request body of the last request has a JSON Attribute with a specific value.
@@ -39,10 +37,6 @@ import org.apache.logging.log4j.Logger;
 @DiscriminatorValue("rest_checkAttributeValue")
 @JsonTypeName("rest_checkAttributeValue")
 public class CheckAttributeValueAction extends RESTSymbolAction {
-
-    private static final long serialVersionUID = -3411541294360335382L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The name of the attribute to check for. */
     @NotBlank
@@ -66,7 +60,7 @@ public class CheckAttributeValueAction extends RESTSymbolAction {
         boolean result = valueInTheBody != null
                 && SearchHelper.search(getValueWithVariableValues(), valueInTheBody, regexp);
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Check if the attribute '{}' has the value '{}' in '{}' => {} (regexp: {}).",
+        logger.info(LoggerMarkers.LEARNER, "Check if the attribute '{}' has the value '{}' in '{}' => {} (regexp: {}).",
                 attribute, value, body, result, regexp);
         if (result) {
             return getSuccessOutput();

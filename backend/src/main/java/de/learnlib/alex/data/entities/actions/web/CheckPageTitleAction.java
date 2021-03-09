@@ -28,8 +28,6 @@ import javax.persistence.Entity;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 
 /**
@@ -39,8 +37,6 @@ import org.openqa.selenium.WebDriver;
 @DiscriminatorValue("web_checkPageTitle")
 @JsonTypeName("web_checkPageTitle")
 public class CheckPageTitleAction extends WebSymbolAction {
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The title of the web page. */
     @NotBlank
@@ -63,7 +59,7 @@ public class CheckPageTitleAction extends WebSymbolAction {
         final WebDriver driver = connector.getDriver();
         final boolean result = SearchHelper.search(getTitleWithVariableValues(), driver.getTitle(), regexp);
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Check if the current page has title '{}' => {} (regExp: {}).",
+        logger.info(LoggerMarkers.LEARNER, "Check if the current page has title '{}' => {} (regExp: {}).",
                 title, result, regexp);
 
         return result ? getSuccessOutput() : getFailedOutput();

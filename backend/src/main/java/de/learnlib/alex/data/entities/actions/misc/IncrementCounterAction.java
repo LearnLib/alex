@@ -26,8 +26,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Increment a counter by 1.
@@ -36,8 +34,6 @@ import org.apache.logging.log4j.Logger;
 @DiscriminatorValue("incrementCounter")
 @JsonTypeName("incrementCounter")
 public class IncrementCounterAction extends SymbolAction {
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The name of the counter to increment. */
     @NotBlank
@@ -52,7 +48,7 @@ public class IncrementCounterAction extends SymbolAction {
         CounterStoreConnector counterConnector = connector.getConnector(CounterStoreConnector.class);
         counterConnector.incrementBy(symbol.getProjectId(), name, incrementBy);
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Incremented counter '{}' by '{}'.", name, incrementBy);
+        logger.info(LoggerMarkers.LEARNER, "Incremented counter '{}' by '{}'.", name, incrementBy);
         return getSuccessOutput();
     }
 

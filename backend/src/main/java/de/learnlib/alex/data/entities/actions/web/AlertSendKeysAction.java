@@ -23,8 +23,6 @@ import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.ElementNotSelectableException;
 import org.openqa.selenium.NoAlertPresentException;
@@ -37,10 +35,6 @@ import org.openqa.selenium.NoAlertPresentException;
 @JsonTypeName("web_alertSendKeys")
 public class AlertSendKeysAction extends WebSymbolAction {
 
-    private static final long serialVersionUID = -1561905659822411588L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
-
     /** The text to send to the prompt alert. */
     @NotNull
     private String text;
@@ -52,10 +46,10 @@ public class AlertSendKeysAction extends WebSymbolAction {
             alert.sendKeys(insertVariableValues(text));
             alert.accept();
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Send text '{}' to prompt window.", text);
+            logger.info(LoggerMarkers.LEARNER, "Send text '{}' to prompt window.", text);
             return getSuccessOutput();
         } catch (NoAlertPresentException | ElementNotSelectableException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Failed to send text '{}' to prompt window.", text);
+            logger.info(LoggerMarkers.LEARNER, "Failed to send text '{}' to prompt window.", text);
             return getFailedOutput();
         }
     }

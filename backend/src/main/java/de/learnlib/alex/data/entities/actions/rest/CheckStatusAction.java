@@ -24,8 +24,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * RESTSymbolAction to check if the last call returned a specific status code.
@@ -34,10 +32,6 @@ import org.apache.logging.log4j.Logger;
 @DiscriminatorValue("rest_checkStatus")
 @JsonTypeName("rest_checkStatus")
 public class CheckStatusAction extends RESTSymbolAction {
-
-    private static final long serialVersionUID = -4444604521120530087L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The smallest possible HTTP status. */
     private static final int MIN_HTTP_STATUS = 100;
@@ -53,7 +47,7 @@ public class CheckStatusAction extends RESTSymbolAction {
 
         boolean result = this.status == returnedStatus;
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Checked if the returned status code '{}' is equal to '{}' => {}.",
+        logger.info(LoggerMarkers.LEARNER, "Checked if the returned status code '{}' is equal to '{}' => {}.",
                 returnedStatus, status, result);
         if (result) {
             return getSuccessOutput();
