@@ -58,9 +58,9 @@ import net.automatalib.util.automata.Automata;
 import net.automatalib.util.automata.conformance.WpMethodTestsIterator;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Lazy;
@@ -74,7 +74,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(rollbackFor = Exception.class)
 public class LearnerService {
 
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(LearnerService.class);
 
     /** Indicator for in which phase the learner currently is. */
     public enum LearnerPhase {
@@ -372,7 +372,6 @@ public class LearnerService {
     public List<ExecuteResult> readOutputs(User user, Project project, ProjectEnvironment environment, ParameterizedSymbol resetSymbol,
                                            List<ParameterizedSymbol> symbols, ParameterizedSymbol postSymbol, WebDriverConfig driverConfig)
             throws LearnerException {
-        logger.traceEntry();
         logger.info(LoggerMarkers.LEARNER, "Learner.readOutputs({}, {}, {}, {}, {})", user, project, resetSymbol, symbols, driverConfig);
 
         final ReadOutputConfig config = new ReadOutputConfig(
@@ -382,7 +381,6 @@ public class LearnerService {
                 driverConfig
         );
 
-        logger.traceExit();
         return readOutputs(user, project, environment, config);
     }
 

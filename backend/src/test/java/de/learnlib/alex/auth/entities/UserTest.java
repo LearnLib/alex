@@ -22,13 +22,12 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.webhooks.entities.Webhook;
+import java.util.Collections;
 import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
-
-import java.util.Collections;
 
 public class UserTest {
 

@@ -24,16 +24,14 @@ import de.learnlib.alex.integrationtests.websocket.util.TestPresenceServiceWSMes
 import de.learnlib.alex.integrationtests.websocket.util.WebSocketUser;
 import de.learnlib.alex.websocket.entities.WebSocketMessage;
 import de.learnlib.alex.websocket.services.enums.TestPresenceServiceEnum;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-
+import javax.ws.rs.core.Response;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;

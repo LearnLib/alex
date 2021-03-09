@@ -18,15 +18,15 @@ package de.learnlib.alex.learning.services.connectors;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Connector to hold and manage variables.
  */
 public class VariableStoreConnector implements Connector, Cloneable {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(VariableStoreConnector.class);
 
     /** The variable store. */
     private final Map<String, String> store;
@@ -61,7 +61,7 @@ public class VariableStoreConnector implements Connector, Cloneable {
      */
     public void set(String name, String value) {
         store.put(name, value);
-        LOGGER.debug("Set the variable '{}' to the value '{}'.", name, value);
+        logger.debug("Set the variable '{}' to the value '{}'.", name, value);
     }
 
     /**
@@ -79,7 +79,7 @@ public class VariableStoreConnector implements Connector, Cloneable {
             throw new IllegalStateException("Undefined variable: " + name);
         }
 
-        LOGGER.debug("Got the variable '{}' with the value '{}'.", name, variable);
+        logger.debug("Got the variable '{}' with the value '{}'.", name, variable);
         return variable;
     }
 

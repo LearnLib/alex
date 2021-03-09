@@ -23,6 +23,8 @@ import de.learnlib.alex.auth.repositories.UserRepository;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.integrationtests.TestPostgresqlContainer;
 import de.learnlib.alex.settings.dao.SettingsDAO;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -33,9 +35,6 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(

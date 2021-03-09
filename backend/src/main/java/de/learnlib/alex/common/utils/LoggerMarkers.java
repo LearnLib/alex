@@ -16,14 +16,14 @@
 
 package de.learnlib.alex.common.utils;
 
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 /** Markers for logging. */
 public final class LoggerMarkers {
 
     /** Marker for learning processes. */
-    public static final Marker LEARNER = MarkerManager.getMarker("LEARNER");
+    public static final Marker LEARNER = MarkerFactory.getMarker("LEARNER");
 
     private LoggerMarkers() {
     }

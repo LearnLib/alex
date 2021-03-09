@@ -27,8 +27,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class to map the Symbols and their result to the values used in the learning process.
@@ -39,7 +39,7 @@ public class SymbolMapper implements SULMapper<
         ContextExecutableInput<ExecuteResult, ConnectorManager>,
         ExecuteResult> {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(SymbolMapper.class);
 
     /** Map to manage the symbols according to their name in the Alphabet. */
     private final Map<String, ParameterizedSymbol> symbolMap;
@@ -90,13 +90,13 @@ public class SymbolMapper implements SULMapper<
 
     @Override
     public MappedException<? extends String> mapUnwrappedException(RuntimeException e) throws RuntimeException {
-        LOGGER.info("mapper mapped unwrapped exception", e);
+        logger.info("mapper mapped unwrapped exception", e);
         return null;
     }
 
     @Override
     public MappedException<? extends String> mapWrappedException(SULException e) throws SULException {
-        LOGGER.info("mapper mapped wrapped exception", e);
+        logger.info("mapper mapped wrapped exception", e);
         return null;
     }
 

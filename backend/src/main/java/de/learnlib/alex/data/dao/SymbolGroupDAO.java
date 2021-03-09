@@ -43,10 +43,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.ValidationException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -62,7 +62,7 @@ public class SymbolGroupDAO {
     /** The format for archived symbols. */
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd-HH:mm:ss");
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(SymbolGroupDAO.class);
 
     private final ProjectRepository projectRepository;
     private final ProjectDAO projectDAO;
@@ -91,8 +91,6 @@ public class SymbolGroupDAO {
     }
 
     public List<SymbolGroup> importGroups(User user, Long projectId, SymbolGroupsImportableEntity importableEntity) {
-        LOGGER.traceEntry("import()");
-
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
@@ -111,7 +109,6 @@ public class SymbolGroupDAO {
             List<SymbolGroup> groups,
             Map<String, SymbolImportConflictResolutionStrategy> conflictResolutions
     ) {
-        LOGGER.traceEntry("import({})", groups);
         projectDAO.checkAccess(user, project);
 
         // name -> symbol
@@ -453,8 +450,6 @@ public class SymbolGroupDAO {
      *         The Group to take care of its Symbols.
      */
     private void beforePersistGroup(SymbolGroup group) {
-        LOGGER.traceEntry("beforePersistGroup({})", group);
-
         final Project project = group.getProject();
 
         group.getSymbols().forEach(symbol -> {
@@ -462,7 +457,5 @@ public class SymbolGroupDAO {
             symbol.setGroup(group);
             SymbolDAO.beforeSymbolSave(symbol);
         });
-
-        LOGGER.traceExit();
     }
 }

@@ -25,8 +25,6 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import javax.ws.rs.core.MediaType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -44,8 +42,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/rest/webhooks")
 public class WebhookResource {
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     private final AuthContext authContext;
     private final WebhookDAO webhookDAO;
@@ -75,10 +71,7 @@ public class WebhookResource {
     )
     public ResponseEntity<Webhook> create(@RequestBody Webhook webhook) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("create '{}' for user '{}'", webhook, user);
-
         final Webhook createdWebhook = webhookDAO.create(user, webhook);
-        LOGGER.traceExit(createdWebhook);
         return ResponseEntity.ok(createdWebhook);
     }
 
@@ -92,9 +85,7 @@ public class WebhookResource {
     )
     public ResponseEntity<List<Webhook>> get() {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("get webhooks for user '{}'", user);
         final List<Webhook> webhooks = webhookDAO.getAll(user);
-        LOGGER.traceExit(webhooks);
         return ResponseEntity.ok(webhooks);
     }
 
@@ -114,10 +105,7 @@ public class WebhookResource {
     )
     public ResponseEntity<Webhook> update(@PathVariable("webhookId") Long webhookId, @RequestBody Webhook webhook) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("update webhook '{}' for user '{}'", webhook, user);
-
         final Webhook updatedWebhook = webhookDAO.update(user, webhookId, webhook);
-        LOGGER.traceExit("Webhook '{}' updated", updatedWebhook);
         return ResponseEntity.ok(updatedWebhook);
     }
 
@@ -134,10 +122,7 @@ public class WebhookResource {
     )
     public ResponseEntity<?> delete(@PathVariable("webhookId") Long webhookId) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("delete webhook '{}' for user '{}'", webhookId, user);
-
         webhookDAO.delete(user, webhookId);
-        LOGGER.traceExit("Webhook {} deleted", webhookId);
         return ResponseEntity.noContent().build();
     }
 
@@ -154,10 +139,7 @@ public class WebhookResource {
     )
     public ResponseEntity<?> delete(@PathVariable("webhookIds") List<Long> webhookIds) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("delete webhooks '{}' for user '{}'", webhookIds, user);
-
         webhookDAO.delete(user, webhookIds);
-        LOGGER.traceExit("Webhooks {} deleted", webhookIds);
         return ResponseEntity.noContent().build();
     }
 
@@ -171,9 +153,7 @@ public class WebhookResource {
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity<List<EventType>> getEvents() {
-        LOGGER.traceEntry("getEvents");
         final List<EventType> eventTypes = new ArrayList<>(EnumSet.allOf(EventType.class));
-        LOGGER.traceExit(eventTypes);
         return ResponseEntity.ok(eventTypes);
     }
 }

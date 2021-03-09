@@ -23,8 +23,8 @@ import java.io.Serializable;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Executes an action on the SUL.
@@ -33,7 +33,7 @@ import org.apache.logging.log4j.Logger;
 @JsonTypeName("action")
 public class SymbolActionStep extends SymbolStep implements Serializable {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(SymbolActionStep.class);
 
     private static final long serialVersionUID = 5116902783136721652L;
 
@@ -60,7 +60,7 @@ public class SymbolActionStep extends SymbolStep implements Serializable {
         try {
             return getExecuteResult(i, connectors, action.executeAction(connectors));
         } catch (Exception e) {
-            LOGGER.error(LoggerMarkers.LEARNER, "The action could not be executed.", e);
+            logger.error(LoggerMarkers.LEARNER, "The action could not be executed.", e);
             return new ExecuteResult(false, String.valueOf(i + 1));
         }
     }

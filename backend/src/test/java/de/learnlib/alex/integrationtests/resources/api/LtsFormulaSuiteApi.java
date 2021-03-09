@@ -17,14 +17,13 @@
 package de.learnlib.alex.integrationtests.resources.api;
 
 import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
-
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class LtsFormulaSuiteApi extends AbstractApi {
 

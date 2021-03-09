@@ -18,7 +18,6 @@ package de.learnlib.alex.integrationtests.resources.api;
 
 import de.learnlib.alex.learning.entities.LearnerOptions;
 import de.learnlib.alex.learning.entities.LearnerSetup;
-
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.HttpHeaders;

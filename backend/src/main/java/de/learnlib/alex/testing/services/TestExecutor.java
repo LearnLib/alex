@@ -46,8 +46,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -58,7 +58,7 @@ import org.springframework.util.FileCopyUtils;
 @Scope("prototype")
 public class TestExecutor {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(TestExecutor.class);
 
     @Value("${alex.filesRootDir}")
     private String filesRootDir;
@@ -148,7 +148,7 @@ public class TestExecutor {
      */
     public TestCaseResult executeTestCase(User user, TestCase testCase, TestExecutionConfig testConfig,
                                           Map<Long, TestResult> results) {
-        LOGGER.info(LoggerMarkers.LEARNER, "Execute test[id={}] '{}'", testCase.getId(), testCase.getName());
+        logger.info(LoggerMarkers.LEARNER, "Execute test[id={}] '{}'", testCase.getId(), testCase.getName());
 
         final Symbol dummySymbol = new Symbol();
         dummySymbol.setName("dummy");
@@ -242,7 +242,7 @@ public class TestExecutor {
         result.setBeforeScreenshot(beforeScreenshot);
         results.put(testCase.getId(), result);
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Finished executing test[id={}], passed=" + result.isPassed(), testCase.getId());
+        logger.info(LoggerMarkers.LEARNER, "Finished executing test[id={}], passed=" + result.isPassed(), testCase.getId());
         return result;
     }
 

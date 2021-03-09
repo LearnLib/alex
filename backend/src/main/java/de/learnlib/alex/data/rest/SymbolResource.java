@@ -31,8 +31,6 @@ import de.learnlib.alex.webhooks.services.WebhookService;
 import java.util.Collections;
 import java.util.List;
 import javax.ws.rs.core.MediaType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,8 +49,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/rest/projects/{projectId}/symbols")
 public class SymbolResource {
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     private final AuthContext authContext;
     private final WebhookService webhookService;
@@ -88,10 +84,7 @@ public class SymbolResource {
     )
     public ResponseEntity createSymbol(@PathVariable("projectId") Long projectId, @RequestBody Symbol symbol) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("createSymbol({}, {}) for user {}.", projectId, symbol, user);
-
         final Symbol createdSymbol = symbolDAO.create(user, projectId, symbol);
-        LOGGER.traceExit(createdSymbol);
         webhookService.fireEvent(user, new SymbolEvent.Created(createdSymbol));
         return ResponseEntity.status(HttpStatus.CREATED).body(createdSymbol);
     }
@@ -112,10 +105,7 @@ public class SymbolResource {
     )
     public ResponseEntity createSymbols(@PathVariable("projectId") Long projectId, @RequestBody List<Symbol> symbols) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("createSymbols({}, {}) for user {}.", projectId, symbols, user);
-
         final List<Symbol> createdSymbols = symbolDAO.create(user, projectId, symbols);
-        LOGGER.traceExit(createdSymbols);
         webhookService.fireEvent(user, new SymbolEvent.CreatedMany(createdSymbols));
         return ResponseEntity.status(HttpStatus.CREATED).body(createdSymbols);
     }
@@ -146,11 +136,7 @@ public class SymbolResource {
     )
     public ResponseEntity getAll(@PathVariable("projectId") Long projectId) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("getAll({}, {}) for user {}.", projectId, user);
-
         final List<Symbol> symbols = symbolDAO.getAll(user, projectId);
-
-        LOGGER.traceExit(symbols);
         return ResponseEntity.ok(symbols);
     }
 
@@ -169,11 +155,7 @@ public class SymbolResource {
     )
     public ResponseEntity getByIds(@PathVariable("projectId") Long projectId, @PathVariable("symbolIds") List<Long> symbolIds) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("getByIds({}, {}) for user {}.", projectId, symbolIds, user);
-
         final List<Symbol> symbols = symbolDAO.getByIds(user, projectId, symbolIds);
-
-        LOGGER.traceExit(symbols);
         return ResponseEntity.ok(symbols);
     }
 
@@ -192,11 +174,7 @@ public class SymbolResource {
     )
     public ResponseEntity get(@PathVariable("projectId") Long projectId, @PathVariable("symbolId") Long symbolId) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("get({}, {})  for user {}.", projectId, symbolId, user);
-
         final Symbol symbol = symbolDAO.get(user, projectId, symbolId);
-
-        LOGGER.traceExit(symbol);
         return ResponseEntity.ok(symbol);
     }
 
@@ -206,11 +184,7 @@ public class SymbolResource {
     )
     public ResponseEntity getUsages(@PathVariable("projectId") Long projectId, @PathVariable("symbolId") Long symbolId) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("getUsages({}, {})  for user {}.", projectId, symbolId, user);
-
         final SymbolUsageResult result = symbolUsageService.findUsages(user, projectId, symbolId);
-
-        LOGGER.traceExit();
         return ResponseEntity.ok(result);
     }
 
@@ -234,11 +208,7 @@ public class SymbolResource {
                                  @PathVariable("symbolId") Long symbolId,
                                  @RequestBody Symbol symbol) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("update({}, {}, {}) for user {}.", projectId, symbolId, symbol, user);
-
         final Symbol updatedSymbol = symbolDAO.update(user, projectId, symbol);
-
-        LOGGER.traceExit(updatedSymbol);
         webhookService.fireEvent(user, new SymbolEvent.Updated(updatedSymbol));
         return ResponseEntity.ok(updatedSymbol);
     }
@@ -262,11 +232,7 @@ public class SymbolResource {
                                             @PathVariable("symbolId") Long symbolId,
                                             @PathVariable("groupId") Long groupId) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("moveSymbolToAnotherGroup({}, {}, {}) for user {}.", projectId, symbolId, groupId, user);
-
         final Symbol movedSymbol = symbolDAO.move(user, projectId, symbolId, groupId);
-
-        LOGGER.traceExit(movedSymbol);
         webhookService.fireEvent(user, new SymbolEvent.Updated(movedSymbol));
         return ResponseEntity.ok(movedSymbol);
     }
@@ -290,11 +256,7 @@ public class SymbolResource {
                                              @PathVariable("symbolIds") List<Long> symbolIds,
                                              @PathVariable("groupId") Long groupId) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("moveSymbolToAnotherGroup({}, {}, {}) for user {}.", projectId, symbolIds, groupId, user);
-
         final List<Symbol> movedSymbols = symbolDAO.move(user, projectId, symbolIds, groupId);
-
-        LOGGER.traceExit(movedSymbols);
         webhookService.fireEvent(user, new SymbolEvent.UpdatedMany(movedSymbols));
         return ResponseEntity.ok(movedSymbols);
     }
@@ -314,11 +276,7 @@ public class SymbolResource {
     )
     public ResponseEntity hide(@PathVariable("projectId") Long projectId, @PathVariable("symbolId") Long symbolId) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("hide({}, {}) for user {}.", projectId, symbolId, user);
-
         final Symbol archivedSymbol = symbolDAO.hide(user, projectId, Collections.singletonList(symbolId)).get(0);
-
-        LOGGER.traceExit(archivedSymbol);
         webhookService.fireEvent(user, new SymbolEvent.Updated(archivedSymbol));
         return ResponseEntity.ok(archivedSymbol);
     }
@@ -338,10 +296,7 @@ public class SymbolResource {
     )
     public ResponseEntity delete(@PathVariable("projectId") Long projectId, @PathVariable("symbolId") Long symbolId) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("delete symbol ({}, {}) for user {}.", projectId, symbolId, user);
-
         symbolDAO.delete(user, projectId, symbolId);
-        LOGGER.traceExit("deleted symbol {}", symbolId);
         webhookService.fireEvent(user, new SymbolEvent.Deleted(symbolId));
         return ResponseEntity.noContent().build();
     }
@@ -361,10 +316,7 @@ public class SymbolResource {
     )
     public ResponseEntity delete(@PathVariable("projectId") Long projectId, @PathVariable("symbolIds") List<Long> symbolIds) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("delete symbols ({}, {}) for user {}.", projectId, symbolIds, user);
-
         symbolDAO.delete(user, projectId, symbolIds);
-        LOGGER.traceExit("deleted symbols {}", symbolIds);
         webhookService.fireEvent(user, new SymbolEvent.DeletedMany(symbolIds));
         return ResponseEntity.noContent().build();
     }
@@ -384,11 +336,7 @@ public class SymbolResource {
     )
     public ResponseEntity hide(@PathVariable("projectId") Long projectId, @PathVariable("symbolIds") List<Long> symbolIds) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("hide({}, {}) for user {}.", projectId, symbolIds, user);
-
         final List<Symbol> archivedSymbols = symbolDAO.hide(user, projectId, symbolIds);
-
-        LOGGER.traceExit(archivedSymbols);
         webhookService.fireEvent(user, new SymbolEvent.UpdatedMany(archivedSymbols));
         return ResponseEntity.ok(archivedSymbols);
     }
@@ -408,12 +356,8 @@ public class SymbolResource {
     )
     public ResponseEntity show(@PathVariable("projectId") Long projectId, @PathVariable("symbolId") Long symbolId) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("show({}, {}) for user {}.", projectId, symbolId, user);
-
         symbolDAO.show(user, projectId, Collections.singletonList(symbolId));
         final Symbol symbol = symbolDAO.get(user, projectId, symbolId);
-
-        LOGGER.traceExit(symbol);
         webhookService.fireEvent(user, new SymbolEvent.Updated(symbol));
         return ResponseEntity.ok(symbol);
     }
@@ -433,12 +377,8 @@ public class SymbolResource {
     )
     public ResponseEntity show(@PathVariable("projectId") Long projectId, @PathVariable("symbolIds") List<Long> symbolIds) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("show({}, {}) for user {}.", projectId, symbolIds, user);
-
         symbolDAO.show(user, projectId, symbolIds);
         final List<Symbol> symbols = symbolDAO.getByIds(user, projectId, symbolIds);
-
-        LOGGER.traceExit(symbols);
         webhookService.fireEvent(user, new SymbolEvent.UpdatedMany(symbols));
         return ResponseEntity.ok(symbols);
     }

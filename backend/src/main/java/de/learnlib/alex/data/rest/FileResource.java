@@ -26,8 +26,6 @@ import java.util.List;
 import javax.validation.ValidationException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -47,8 +45,6 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/rest/projects/{projectId}/files")
 public class FileResource {
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     private final AuthContext authContext;
     private final FileDAO fileDAO;
@@ -78,14 +74,11 @@ public class FileResource {
             @RequestParam("file") MultipartFile fileToUpload
     ) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("uploadFile({}, {}) for user {}.", projectId, fileToUpload, user);
 
         try {
             final UploadableFile file = fileDAO.create(user, projectId, fileToUpload);
-            LOGGER.traceExit(file);
             return ResponseEntity.ok(file);
         } catch (IOException | IllegalStateException e) {
-            LOGGER.traceExit(e);
             throw new ValidationException(e);
         }
     }
@@ -105,7 +98,6 @@ public class FileResource {
     public ResponseEntity<Resource> downloadFile(@PathVariable("projectId") Long projectId,
                                                  @PathVariable("fileId") Long fileId) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("downloadFile({}, {}) for user {}.", projectId, fileId, user);
         final File file = fileDAO.getFile(user, projectId, fileId);
 
         final Resource resource = new FileSystemResource(file);
@@ -126,11 +118,7 @@ public class FileResource {
     )
     public ResponseEntity getAllFiles(@PathVariable("projectId") Long projectId) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("getAllFiles({}) for user {}.", projectId, user);
-
         final List<UploadableFile> files = fileDAO.getAll(user, projectId);
-
-        LOGGER.traceExit(files);
         return ResponseEntity.ok(files);
     }
 
@@ -149,11 +137,7 @@ public class FileResource {
     )
     public ResponseEntity deleteFile(@PathVariable("projectId") Long projectId, @PathVariable("fileId") Long fileId) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("deleteFile({}, {}) for user {}.", projectId, fileId, user);
-
         fileDAO.delete(user, projectId, fileId);
-
-        LOGGER.traceExit("File deleted.");
         return ResponseEntity.noContent().build();
     }
 
@@ -163,11 +147,7 @@ public class FileResource {
     )
     public ResponseEntity deleteFiles(@PathVariable("projectId") Long projectId, @PathVariable("fileIds") List<Long> fileIds) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("deleteFiles({}, {}) for user {}.", projectId, fileIds, user);
-
         fileDAO.delete(user, projectId, fileIds);
-
-        LOGGER.traceExit("Files deleted.");
         return ResponseEntity.noContent().build();
     }
 }

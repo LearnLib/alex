@@ -58,9 +58,10 @@ public class SettingsDAO {
         return settingsRepository.get();
     }
 
-    public void update(Settings settings) {
-        settingsRepository.save(settings);
+    public Settings update(Settings settings) {
+        final var updatedSettings = settingsRepository.save(settings);
         updateDriverSystemProperties(settings.getDriverSettings());
+        return updatedSettings;
     }
 
     public void updateDriverSystemProperties(DriverSettings driverSettings) {

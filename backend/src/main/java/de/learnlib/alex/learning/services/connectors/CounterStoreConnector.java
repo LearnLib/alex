@@ -26,15 +26,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Connector to store and manage counters.
  */
 public class CounterStoreConnector implements Connector, Cloneable {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(CounterStoreConnector.class);
 
     /** The map that keeps track of all counters used by different urls. url -> (counterName -> counterValue). */
     private final Map<String, Integer> countersMap;
@@ -128,7 +128,7 @@ public class CounterStoreConnector implements Connector, Cloneable {
      */
     public void set(Long projectId, String name, Integer value) {
         countersMap.put(name, value);
-        LOGGER.debug("Set the counter '{}' in the project <{}> to '{}'.", name, projectId, value);
+        logger.debug("Set the counter '{}' in the project <{}> to '{}'.", name, projectId, value);
     }
 
     /**
@@ -150,7 +150,7 @@ public class CounterStoreConnector implements Connector, Cloneable {
 
         countersMap.put(name, countersMap.get(name) + incrementBy);
 
-        LOGGER.debug("Incremented the counter '{}' in the project <{}> of user <{}>.", name, projectId,
+        logger.debug("Incremented the counter '{}' in the project <{}> of user <{}>.", name, projectId,
                 countersMap.get(name));
     }
 

@@ -30,7 +30,7 @@ import de.learnlib.alex.websocket.entities.WebSocketMessage;
 import de.learnlib.alex.websocket.services.enums.ProjectPresenceServiceEnum;
 import de.learnlib.alex.websocket.services.enums.WebSocketServiceEnum;
 import io.reactivex.rxjava3.disposables.Disposable;
-import java.awt.Color;
+import java.awt.*;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;

@@ -25,8 +25,6 @@ import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import java.util.List;
 import javax.ws.rs.core.MediaType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,8 +43,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/rest/projects/{projectId}/groups")
 public class SymbolGroupResource {
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     private final AuthContext authContext;
     private final SymbolGroupDAO symbolGroupDAO;
@@ -79,12 +75,7 @@ public class SymbolGroupResource {
             @RequestBody SymbolGroup group
     ) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("createGroup({}, {}) for user {}.", projectId, group, user);
-
         final var createdGroup = symbolGroupDAO.create(user, projectId, group);
-
-        LOGGER.traceExit(group);
-
         webhookService.fireEvent(user, new SymbolGroupEvent.Created(createdGroup));
         return ResponseEntity.status(HttpStatus.CREATED).body(createdGroup);
     }
@@ -108,11 +99,8 @@ public class SymbolGroupResource {
             @RequestBody List<SymbolGroup> groups
     ) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("createGroups({}, {}) for user {}.", projectId, groups, user);
-
         final List<SymbolGroup> createdGroups = symbolGroupDAO.create(user, projectId, groups);
         webhookService.fireEvent(user, new SymbolGroupEvent.CreatedMany(createdGroups));
-        LOGGER.traceExit(createdGroups);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdGroups);
     }
 
@@ -126,10 +114,8 @@ public class SymbolGroupResource {
             @RequestBody SymbolGroupsImportableEntity symbolGroupsImportable
     ) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("importGroups() for user {}.", projectId, user);
         final List<SymbolGroup> importedGroups = symbolGroupDAO.importGroups(user, projectId, symbolGroupsImportable);
         webhookService.fireEvent(user, new SymbolGroupEvent.CreatedMany(importedGroups));
-        LOGGER.traceExit(importedGroups);
         return ResponseEntity.status(HttpStatus.CREATED).body(importedGroups);
     }
 
@@ -145,11 +131,7 @@ public class SymbolGroupResource {
     )
     public ResponseEntity<List<SymbolGroup>> getAll(@PathVariable("projectId") Long projectId) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("getAll({}) for user {}.", projectId, user);
-
         final List<SymbolGroup> groups = symbolGroupDAO.getAll(user, projectId);
-
-        LOGGER.traceExit(groups);
         return ResponseEntity.ok(groups);
     }
 
@@ -171,11 +153,7 @@ public class SymbolGroupResource {
             @PathVariable("groupId") Long groupId
     ) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("get({}, {}) for user {}.", projectId, groupId, user);
-
         final SymbolGroup group = symbolGroupDAO.get(user, projectId, groupId);
-
-        LOGGER.traceExit(group);
         return ResponseEntity.ok(group);
     }
 
@@ -199,11 +177,7 @@ public class SymbolGroupResource {
                                               @PathVariable("groupId") Long groupId,
                                               @RequestBody SymbolGroup group) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("update({}, {}, {}) for user {}.", projectId, groupId, group, user);
-
         final var updatedGroup = symbolGroupDAO.update(user, group);
-
-        LOGGER.traceExit(updatedGroup);
         webhookService.fireEvent(user, new SymbolGroupEvent.Updated(updatedGroup));
         return ResponseEntity.ok(updatedGroup);
     }
@@ -229,11 +203,7 @@ public class SymbolGroupResource {
                                             @PathVariable("groupId") Long groupId,
                                             @RequestBody SymbolGroup group) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("move({}, {}, {}) for user {}.", projectId, groupId, group, user);
-
         final SymbolGroup movedGroup = symbolGroupDAO.move(user, group);
-
-        LOGGER.traceExit(movedGroup);
         webhookService.fireEvent(user, new SymbolGroupEvent.Moved(movedGroup));
         return ResponseEntity.ok(movedGroup);
     }
@@ -252,10 +222,7 @@ public class SymbolGroupResource {
     )
     public ResponseEntity<?> delete(@PathVariable("projectId") Long projectId, @PathVariable("groupId") Long groupId) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("delete({}, {}) for user {}.", projectId, groupId, user);
-
         symbolGroupDAO.delete(user, projectId, groupId);
-        LOGGER.traceExit("Group {} deleted.", groupId);
         webhookService.fireEvent(user, new SymbolGroupEvent.Deleted(groupId));
         return ResponseEntity.noContent().build();
     }

@@ -27,16 +27,14 @@ import de.learnlib.alex.data.repositories.SymbolRepository;
 import de.learnlib.alex.learning.dao.LearnerSetupDAO;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.websocket.services.SymbolPresenceService;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;

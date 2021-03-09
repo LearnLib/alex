@@ -20,20 +20,18 @@ import com.jayway.jsonpath.JsonPath;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
 import de.learnlib.alex.integrationtests.resources.api.WebhookApi;
 import de.learnlib.alex.webhooks.entities.Webhook;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.springframework.http.HttpStatus;
-
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.Response;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.springframework.http.HttpStatus;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 

@@ -20,11 +20,10 @@ import com.jayway.jsonpath.JsonPath;
 import de.learnlib.alex.integrationtests.resources.api.ProjectApi;
 import de.learnlib.alex.integrationtests.resources.api.TestExecutionConfigApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
+import javax.ws.rs.core.Response;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import javax.ws.rs.core.Response;
 
 public class ATestExecutionConfigResourceIT extends AbstractResourceIT {
 

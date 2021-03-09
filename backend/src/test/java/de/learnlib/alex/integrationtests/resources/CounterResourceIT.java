@@ -22,17 +22,15 @@ import de.learnlib.alex.integrationtests.SpringRestError;
 import de.learnlib.alex.integrationtests.resources.api.CounterApi;
 import de.learnlib.alex.integrationtests.resources.api.ProjectApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
+import java.util.Arrays;
+import java.util.List;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.Response;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
-
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.Response;
-import java.util.Arrays;
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 
 public class CounterResourceIT extends AbstractResourceIT {

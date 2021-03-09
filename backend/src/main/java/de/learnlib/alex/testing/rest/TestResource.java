@@ -33,8 +33,6 @@ import de.learnlib.alex.testing.services.export.TestsExporter;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import java.util.List;
 import javax.ws.rs.core.MediaType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -56,8 +54,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/rest/projects/{projectId}/tests")
 public class TestResource {
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     private final AuthContext authContext;
     private final TestDAO testDAO;
@@ -194,9 +190,7 @@ public class TestResource {
     )
     public ResponseEntity<TestStatus> status(@PathVariable("projectId") Long projectId) {
         final var user = authContext.getUser();
-        LOGGER.traceEntry("status(projectId: {}) with user {}", projectId, user);
         final var status = testService.getStatus(user, projectId);
-        LOGGER.traceExit("status() with status {}", status);
         return ResponseEntity.ok(status);
     }
 
@@ -245,12 +239,8 @@ public class TestResource {
                                        @PathVariable("testId") Long testId,
                                        @RequestBody Test test) {
         final var user = authContext.getUser();
-        LOGGER.traceEntry("update(projectId: {}, testId: {})", projectId, testId);
-
         testDAO.update(user, projectId, test);
-
         webhookService.fireEvent(user, new TestEvent.Updated(test));
-        LOGGER.traceExit("update");
         return ResponseEntity.ok(test);
     }
 

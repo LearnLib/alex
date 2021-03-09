@@ -24,18 +24,16 @@ import de.learnlib.alex.integrationtests.websocket.util.ProjectPresenceServiceWS
 import de.learnlib.alex.integrationtests.websocket.util.WebSocketUser;
 import de.learnlib.alex.websocket.entities.WebSocketMessage;
 import de.learnlib.alex.websocket.services.enums.ProjectPresenceServiceEnum;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
-
+import javax.ws.rs.core.Response;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;

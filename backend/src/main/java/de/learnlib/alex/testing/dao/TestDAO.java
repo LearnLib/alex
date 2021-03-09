@@ -57,8 +57,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.validation.ValidationException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,8 +70,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class TestDAO {
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     private final ProjectDAO projectDAO;
     private final SymbolDAO symbolDAO;
@@ -144,8 +140,6 @@ public class TestDAO {
     }
 
     public Test create(User user, Long projectId, Test test) throws NotFoundException, ValidationException {
-        LOGGER.traceEntry("create({})", test);
-
         test.setId(null);
 
         final Test root = testRepository.findFirstByProject_IdOrderByIdAsc(projectId);
@@ -167,7 +161,6 @@ public class TestDAO {
         test.setParent(getParent(user, projectId, test.getParentId()));
 
         final Test createdTest = createByGenerate(user, project, test);
-        LOGGER.traceExit(test);
         return createdTest;
     }
 

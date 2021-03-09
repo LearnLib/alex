@@ -27,9 +27,9 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.client.ClientProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,11 +39,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class WebhookService {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(WebhookService.class);
 
     /** The client timeout. */
     private static final int READ_CONNECT_TIMEOUT = 3000;
 
+    /** The maximum number of threads to use for sending http requests. */
     private static final int MAX_THREADS = 4;
 
     /** HTTP client. */
@@ -82,10 +83,8 @@ public class WebhookService {
      *         The type of the event.
      */
     public <T> void fireEvent(User user, Event<T> event) {
-        LOGGER.traceEntry();
         final List<Webhook> webhooks = webhookDAO.getByUserAndEvent(user, event.getEventType());
         triggerWebhooks(event, webhooks);
-        LOGGER.traceExit();
     }
 
     /**
@@ -97,16 +96,14 @@ public class WebhookService {
      *         The type of the event.
      */
     public <T> void fireEvent(Event<T> event) {
-        LOGGER.traceEntry();
         final List<Webhook> webhooks = webhookDAO.getByEvent(event.getEventType());
         triggerWebhooks(event, webhooks);
-        LOGGER.traceExit();
     }
 
     private <T> void triggerWebhooks(Event<T> event, List<Webhook> webhooks) {
         for (final Webhook webhook : webhooks) {
             executorService.submit(() -> {
-                LOGGER.info("send {} to {}", event, webhook.getUrl());
+                logger.info("send {} to {}", event, webhook.getUrl());
                 client.target(webhook.getUrl())
                         .request(MediaType.APPLICATION_JSON)
                         .post(Entity.json(event));

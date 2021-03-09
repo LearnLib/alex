@@ -17,7 +17,6 @@ package de.learnlib.alex.learning.services.connectors;
 
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import org.junit.Test;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 

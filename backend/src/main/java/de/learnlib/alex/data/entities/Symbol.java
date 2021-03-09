@@ -50,8 +50,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotBlank;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Representation of a symbol for the learning process. A Symbol is one unit which will be executed and it is made of a
@@ -70,7 +70,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
 
     private static final long serialVersionUID = 7987585761829495962L;
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(Symbol.class);
 
     /** The id of the symbol in the project. */
     private Long id;
@@ -378,7 +378,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
 
     @Override
     public ExecuteResult execute(ConnectorManager connectors) throws SULException {
-        LOGGER.info(LoggerMarkers.LEARNER, "Executing Symbol {} ({})...", String.valueOf(id), name);
+        logger.info(LoggerMarkers.LEARNER, "Executing Symbol {} ({})...", String.valueOf(id), name);
 
         if (steps.isEmpty()) {
             return new ExecuteResult(false, "Not implemented");
@@ -430,7 +430,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
             }
         }
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Executed the Symbol {} ({}) => {}.", String.valueOf(id), name, result);
+        logger.info(LoggerMarkers.LEARNER, "Executed the Symbol {} ({}) => {}.", String.valueOf(id), name, result);
 
         return result;
     }

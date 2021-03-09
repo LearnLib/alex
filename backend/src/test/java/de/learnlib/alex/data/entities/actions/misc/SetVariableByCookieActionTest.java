@@ -22,18 +22,16 @@ import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.junit.Before;
-import org.junit.Test;
-import org.openqa.selenium.Cookie;
-import org.openqa.selenium.WebDriver;
-
-import javax.ws.rs.core.NewCookie;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
-
+import javax.ws.rs.core.NewCookie;
+import org.junit.Before;
+import org.junit.Test;
+import org.openqa.selenium.Cookie;
+import org.openqa.selenium.WebDriver;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
