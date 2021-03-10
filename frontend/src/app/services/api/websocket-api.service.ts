@@ -52,7 +52,14 @@ export class WebSocketAPIService {
       heartbeatOutgoing: 4000,
     });
 
-    this.client.webSocketFactory = () => new SockJS(`${this.env.apiUrl}/ws/stomp`);
+    this.client.webSocketFactory = () => new SockJS(`${this.env.apiUrl}/ws/stomp`, null,
+      {transports: [
+          'websocket'
+        , 'xhr-streaming'
+        , 'xdr-streaming'
+        , 'xhr-polling'
+        , 'xdr-polling'
+        ]});
 
     this.client.beforeConnect = () => {
       const jwt = localStorage.getItem('jwt');
