@@ -59,7 +59,8 @@ export class WebSocketAPIService {
         , 'xdr-streaming'
         , 'xhr-polling'
         , 'xdr-polling'
-        ]});
+        ],
+      timeout: 5000});
 
     this.client.beforeConnect = () => {
       const jwt = localStorage.getItem('jwt');
