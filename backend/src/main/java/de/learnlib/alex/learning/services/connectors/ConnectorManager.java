@@ -29,10 +29,10 @@ public class ConnectorManager implements Iterable<Connector> {
     /**
      * Map of all the connectors by their type.
      */
-    private Map<Class<? extends Connector>, Connector> connectors;
+    private final Map<Class<? extends Connector>, Connector> connectors;
 
     /** The environment the connectors are used in. */
-    private ProjectEnvironment environment;
+    private final ProjectEnvironment environment;
 
     /**
      * Default constructor.

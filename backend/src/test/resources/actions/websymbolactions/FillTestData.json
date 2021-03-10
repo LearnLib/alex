@@ -1,8 +1,8 @@
 {
-    "type" : "web_fill",
-    "node" : {
-        "selector": "#input",
-        "type": "CSS"
-    },
-    "value" : "Lorem Ipsum"
+  "type": "web_fill",
+  "node": {
+    "selector": "#input",
+    "type": "CSS"
+  },
+  "value": "Lorem Ipsum"
 }

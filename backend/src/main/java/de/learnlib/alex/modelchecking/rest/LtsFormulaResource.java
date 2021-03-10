@@ -116,8 +116,8 @@ public class LtsFormulaResource {
                                                   @PathVariable("suiteId") Long suiteId,
                                                   @PathVariable("formulaId") Long formulaId,
                                                   @RequestBody LtsFormulaSuite suite) {
-        final User user = authContext.getUser();
-        final List<LtsFormula> updatedFormulas = ltsFormulaDAO.updateParent(user, projectId, suiteId, Collections.singletonList(formulaId), suite);
+        final var user = authContext.getUser();
+        final var updatedFormulas = ltsFormulaDAO.updateParent(user, projectId, suiteId, Collections.singletonList(formulaId), suite);
         return ResponseEntity.ok(updatedFormulas.get(0));
     }
 

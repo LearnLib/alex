@@ -1,7 +1,7 @@
 {
-    "type": "web_clear",
-    "node": {
-        "selector": "#node",
-        "type": "CSS"
-    }
+  "type": "web_clear",
+  "node": {
+    "selector": "#node",
+    "type": "CSS"
+  }
 }

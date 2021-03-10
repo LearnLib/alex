@@ -335,9 +335,9 @@ public class UserResource {
      * Update the role of a user.
      *
      * @param userId
-     *          The ID of the user to update.
+     *         The ID of the user to update.
      * @param input
-     *          The input with the new role.
+     *         The input with the new role.
      * @return The updated user.
      */
     @PutMapping(

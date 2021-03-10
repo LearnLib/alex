@@ -228,7 +228,9 @@ public class TestDAO {
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
         final List<Test> tests = testRepository.findAllByProject_IdAndIdIn(projectId, ids);
-        for (Test t : tests) loadLazyRelations(t);
+        for (Test t : tests) {
+            loadLazyRelations(t);
+        }
         return tests;
     }
 

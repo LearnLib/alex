@@ -45,8 +45,6 @@ import java.util.stream.Collectors;
 import javax.validation.ValidationException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -61,8 +59,6 @@ public class SymbolGroupDAO {
 
     /** The format for archived symbols. */
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd-HH:mm:ss");
-
-    private static final Logger logger = LoggerFactory.getLogger(SymbolGroupDAO.class);
 
     private final ProjectRepository projectRepository;
     private final ProjectDAO projectDAO;

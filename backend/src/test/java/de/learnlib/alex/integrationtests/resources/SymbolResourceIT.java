@@ -16,6 +16,11 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
@@ -45,10 +50,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.http.HttpStatus;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
 
 public class SymbolResourceIT extends AbstractResourceIT {
 
@@ -338,7 +339,8 @@ public class SymbolResourceIT extends AbstractResourceIT {
         assertEquals(symbolGroupId1, groupId);
 
         final Response res2 = symbolGroupApi.getAll(projectId1, jwtUser1);
-        final var groups = res2.readEntity(new GenericType<List<SymbolGroup>>(){});
+        final var groups = res2.readEntity(new GenericType<List<SymbolGroup>>() {
+        });
         final var numberOfSymbols = groups.stream()
                 .filter(g -> g.getName().equals("group1"))
                 .findFirst()

@@ -60,9 +60,6 @@ public class TestSuite extends Test {
         return tests;
     }
 
-    /**
-     * @return A list of Test IDs.
-     */
     @Transient
     @JsonIgnore
     public List<Long> getTestsAsIds() {
@@ -82,10 +79,6 @@ public class TestSuite extends Test {
         }
     }
 
-    /**
-     * @param testsAsIds
-     *         A list of Test IDs.
-     */
     @Transient
     @JsonProperty("testIds")
     public void setTestsAsIds(List<Long> testsAsIds) {

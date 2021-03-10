@@ -49,17 +49,10 @@ public class Statistics implements Serializable {
         /** Data of the EqOracle. */
         private long eqOracle;
 
-        /** Constructor. */
         public DetailedStatistics() {
             this(0L, 0L);
         }
 
-        /**
-         * @param learner
-         *         Data of the Learner.
-         * @param eqOracle
-         *         Data of the EqOracle.
-         */
         public DetailedStatistics(long learner, long eqOracle) {
             this.learner = learner;
             this.eqOracle = eqOracle;

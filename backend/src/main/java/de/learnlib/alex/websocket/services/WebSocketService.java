@@ -92,7 +92,8 @@ public class WebSocketService {
             msg.setUser((User) ((UsernamePasswordAuthenticationToken) userPrincipal).getPrincipal());
             msg.setSessionId(SimpAttributesContextHolder.currentAttributes().getSessionId());
 
-            if (msg.getEntity().equals(WebSocketServiceEnum.WEBSOCKET_SERVICE.name()) && msg.getType().equals(WebSocketServiceEnum.LOGOUT.name())) {
+            if (msg.getEntity().equals(WebSocketServiceEnum.WEBSOCKET_SERVICE.name())
+                    && msg.getType().equals(WebSocketServiceEnum.LOGOUT.name())) {
                 final WebSocketMessage message = new WebSocketMessage();
                 message.setEntity(WebSocketServiceEnum.WEBSOCKET_SERVICE.name());
                 message.setType(WebSocketServiceEnum.LOGOUT_CHECK.name());
@@ -101,7 +102,8 @@ public class WebSocketService {
                 closeSession(msg.getSessionId());
             }
 
-            if (msg.getEntity().equals(WebSocketServiceEnum.WEBSOCKET_SERVICE.name()) && msg.getType().equals(WebSocketServiceEnum.REQUEST_SESSION_ID.name())) {
+            if (msg.getEntity().equals(WebSocketServiceEnum.WEBSOCKET_SERVICE.name())
+                    && msg.getType().equals(WebSocketServiceEnum.REQUEST_SESSION_ID.name())) {
                 final WebSocketMessage message = new WebSocketMessage();
                 message.setEntity(WebSocketServiceEnum.WEBSOCKET_SERVICE.name());
                 message.setType(WebSocketServiceEnum.SESSION_ID.name());
@@ -154,7 +156,8 @@ public class WebSocketService {
                     publishMessage(msg);
                 }
 
-                if (userSessionIds.get(userId) == null || !userSessionIds.get(userId).contains(SimpAttributesContextHolder.currentAttributes().getSessionId())) {
+                if (userSessionIds.get(userId) == null
+                        || !userSessionIds.get(userId).contains(SimpAttributesContextHolder.currentAttributes().getSessionId())) {
                     msg = new WebSocketMessage();
                     msg.setEntity(WebSocketServiceEnum.WEBSOCKET_SERVICE_INTERNAL.name());
                     msg.setType(WebSocketServiceEnum.SESSION_CONNECT.name());
@@ -183,7 +186,8 @@ public class WebSocketService {
 
                 WebSocketMessage msg;
 
-                if (userSessionIds.get(userId) != null && userSessionIds.get(userId).contains(SimpAttributesContextHolder.currentAttributes().getSessionId())) {
+                if (userSessionIds.get(userId) != null
+                        && userSessionIds.get(userId).contains(SimpAttributesContextHolder.currentAttributes().getSessionId())) {
                     msg = new WebSocketMessage();
                     msg.setEntity(WebSocketServiceEnum.WEBSOCKET_SERVICE_INTERNAL.name());
                     msg.setType(WebSocketServiceEnum.SESSION_DISCONNECT.name());

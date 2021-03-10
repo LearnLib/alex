@@ -48,8 +48,12 @@ public class DriverSettings implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DriverSettings)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof DriverSettings)) {
+            return false;
+        }
         DriverSettings that = (DriverSettings) o;
         return Objects.equals(remote, that.remote);
     }

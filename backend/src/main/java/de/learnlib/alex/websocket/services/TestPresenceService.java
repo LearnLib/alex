@@ -80,7 +80,7 @@ public class TestPresenceService {
 
     private final ProjectRepository projectRepository;
 
-    /** A map which stores the TestLock objects with the projectId and testId as the keys */
+    /** A map which stores the TestLock objects with the projectId and testId as the keys. */
     private final Map<Long, Map<Long, TestLock>> testLocks;
 
     /** Shortcut mapping for easier access given the corresponding sessionId. */
@@ -158,7 +158,8 @@ public class TestPresenceService {
                     });
 
             /* check access */
-            final Project project = projectRepository.findById(projectId).orElseThrow(() -> new NotFoundException("Project with id " + projectId + " not found."));
+            final Project project = projectRepository.findById(projectId)
+                    .orElseThrow(() -> new NotFoundException("Project with id " + projectId + " not found."));
             projectDAO.checkAccess(message.getUser(), project);
 
             /* ignore TestSuites */
@@ -230,7 +231,8 @@ public class TestPresenceService {
             final ObjectNode projects = objectMapper.createObjectNode();
 
             projectIds.forEach(projectId -> {
-                final Project project = projectRepository.findById(projectId.asLong()).orElseThrow(() -> new NotFoundException("Project with id " + projectId + " not found."));
+                final Project project = projectRepository.findById(projectId.asLong())
+                        .orElseThrow(() -> new NotFoundException("Project with id " + projectId + " not found."));
                 projectDAO.checkAccess(message.getUser(), project);
 
                 projects.set(projectId.asText(), getProjectStatus(projectId.asLong()));
@@ -282,7 +284,10 @@ public class TestPresenceService {
 
         try {
             Optional.ofNullable(userMap.get(userId))
-                    .map(testCaseLocks -> testCaseLocks.stream().filter(testCaseLock -> testCaseLock.getProjectId() == projectId).collect(Collectors.toSet()))
+                    .map(testCaseLocks -> testCaseLocks.stream()
+                            .filter(testCaseLock -> testCaseLock.getProjectId() == projectId)
+                            .collect(Collectors.toSet())
+                    )
                     .ifPresent(testCaseLocks -> {
                         testCaseLocks.forEach(testCaseLock -> {
                             final Set<String> tmp = new HashSet<>(testCaseLock.lockSessions);

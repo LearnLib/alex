@@ -16,6 +16,10 @@
 
 package de.learnlib.alex.integrationtests.repositories;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
@@ -25,9 +29,6 @@ import javax.validation.ValidationException;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.dao.EmptyResultDataAccessException;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 public class ProjectRepositoryIT extends AbstractRepositoryIT {
 

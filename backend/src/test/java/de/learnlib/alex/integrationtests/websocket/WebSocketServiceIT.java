@@ -16,6 +16,9 @@
 
 package de.learnlib.alex.integrationtests.websocket;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import com.jayway.jsonpath.JsonPath;
 import de.learnlib.alex.integrationtests.resources.AbstractResourceIT;
 import de.learnlib.alex.integrationtests.websocket.util.WebSocketUser;
@@ -27,8 +30,6 @@ import javax.ws.rs.core.MediaType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class WebSocketServiceIT extends AbstractResourceIT {
 

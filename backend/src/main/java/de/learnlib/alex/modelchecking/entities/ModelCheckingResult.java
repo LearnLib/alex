@@ -104,8 +104,12 @@ public class ModelCheckingResult extends BaseEntity implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ModelCheckingResult)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ModelCheckingResult)) {
+            return false;
+        }
         ModelCheckingResult that = (ModelCheckingResult) o;
         return id.equals(that.id);
     }

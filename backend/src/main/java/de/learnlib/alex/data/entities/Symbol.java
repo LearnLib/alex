@@ -378,7 +378,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
 
     @Override
     public ExecuteResult execute(ConnectorManager connectors) throws SULException {
-        logger.info(LoggerMarkers.LEARNER, "Executing Symbol {} ({})...", String.valueOf(id), name);
+        logger.info(LoggerMarkers.LEARNER, "Executing Symbol {} ({})...", id, name);
 
         if (steps.isEmpty()) {
             return new ExecuteResult(false, "Not implemented");
@@ -430,7 +430,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
             }
         }
 
-        logger.info(LoggerMarkers.LEARNER, "Executed the Symbol {} ({}) => {}.", String.valueOf(id), name, result);
+        logger.info(LoggerMarkers.LEARNER, "Executed the Symbol {} ({}) => {}.", id, name, result);
 
         return result;
     }

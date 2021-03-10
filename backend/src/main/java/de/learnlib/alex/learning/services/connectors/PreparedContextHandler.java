@@ -29,13 +29,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PreparedContextHandler {
-    private CounterDAO counterDAO;
-    private FileDAO fileDAO;
-    private User user;
-    private Project project;
-    private WebDriverConfig driverConfig;
-    private ParameterizedSymbol resetSymbol;
-    private ParameterizedSymbol postSymbol;
+    private final CounterDAO counterDAO;
+    private final FileDAO fileDAO;
+    private final User user;
+    private final Project project;
+    private final WebDriverConfig driverConfig;
+    private final ParameterizedSymbol resetSymbol;
+    private final ParameterizedSymbol postSymbol;
 
     public PreparedContextHandler(CounterDAO counterDAO,
                                   FileDAO fileDAO,

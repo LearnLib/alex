@@ -79,10 +79,10 @@ public class SymbolPresenceService {
 
     private final ProjectRepository projectRepository;
 
-    /** A map which stores the SymbolLock objects with the projectId and symbolId as the keys */
+    /** A map which stores the SymbolLock objects with the projectId and symbolId as the keys. */
     private final Map<Long, Map<Long, SymbolLock>> symbolLocks;
 
-    /** A map which stores the SymbolGroupLock objects with the projectId and symbolGroupId as the keys */
+    /** A map which stores the SymbolGroupLock objects with the projectId and symbolGroupId as the keys. */
     private final Map<Long, Map<Long, SymbolGroupLock>> symbolGroupLocks;
 
     /** Shortcut mapping for easier access given the corresponding sessionId. */
@@ -153,12 +153,14 @@ public class SymbolPresenceService {
             /* session already acquired another symbolLock */
             Optional.ofNullable(sessionMap.get(sessionId))
                     .ifPresent(symbolLock -> {
-                        if (symbolLock.getSymbolId() != symbolId)
+                        if (symbolLock.getSymbolId() != symbolId) {
                             releaseSymbolLock(symbolLock.getProjectId(), symbolLock.getSymbolId(), userId, sessionId);
+                        }
                     });
 
             /* check access */
-            final Project project = projectRepository.findById(projectId).orElseThrow(() -> new NotFoundException("Project with id " + projectId + " not found."));
+            final Project project = projectRepository.findById(projectId)
+                    .orElseThrow(() -> new NotFoundException("Project with id " + projectId + " not found."));
             projectDAO.checkAccess(message.getUser(), project);
 
             acquireSymbolLock(projectId, symbolId, userId, sessionId);
@@ -224,7 +226,8 @@ public class SymbolPresenceService {
             final ObjectNode projects = objectMapper.createObjectNode();
 
             projectIds.forEach(projectId -> {
-                final Project project = projectRepository.findById(projectId.asLong()).orElseThrow(() -> new NotFoundException("Project with id " + projectId + " not found."));
+                final Project project = projectRepository.findById(projectId.asLong())
+                        .orElseThrow(() -> new NotFoundException("Project with id " + projectId + " not found."));
                 projectDAO.checkAccess(message.getUser(), project);
 
                 projects.set(projectId.asText(), getProjectStatus(projectId.asLong()));
@@ -290,7 +293,10 @@ public class SymbolPresenceService {
 
         try {
             Optional.ofNullable(userMap.get(userId))
-                    .map(userSymbolLocks -> userSymbolLocks.stream().filter(symbolLock -> symbolLock.getProjectId() == projectId).collect(Collectors.toSet()))
+                    .map(userSymbolLocks -> userSymbolLocks.stream()
+                            .filter(symbolLock -> symbolLock.getProjectId() == projectId)
+                            .collect(Collectors.toSet())
+                    )
                     .ifPresent(userSymbolLocks -> {
                         userSymbolLocks.forEach(symbolLock -> {
                             final Set<String> tmp = new HashSet<>(symbolLock.lockSessions);
@@ -624,7 +630,7 @@ public class SymbolPresenceService {
         }
 
         @JsonProperty("locks")
-        public List getLockOwnersNames() {
+        public List<String> getLockOwnersNames() {
             return lockOwners.stream().map(userId -> userDAO.getByID(userId).getUsername()).collect(Collectors.toList());
         }
     }

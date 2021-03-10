@@ -92,7 +92,8 @@ public class ProjectEnvironment implements Serializable {
     @Transient
     @JsonIgnore
     public Map<String, String> getVariablesAsMap() {
-        return this.variables.stream().collect(Collectors.toMap(ProjectEnvironmentVariable::getName, ProjectEnvironmentVariable::getValue));
+        return this.variables.stream()
+                .collect(Collectors.toMap(ProjectEnvironmentVariable::getName, ProjectEnvironmentVariable::getValue));
     }
 
     public Long getId() {

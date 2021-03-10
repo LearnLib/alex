@@ -27,12 +27,12 @@ public class RESTError {
     /**
      * Status of the error.
      */
-    private HttpStatus status;
+    private final HttpStatus status;
 
     /**
      * The cause of the error.
      */
-    private Exception exception;
+    private final Exception exception;
 
     /**
      * Constructor.

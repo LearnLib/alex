@@ -39,9 +39,7 @@ import de.learnlib.alex.learning.entities.WebDriverConfig;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
 import de.learnlib.alex.learning.exceptions.LearnerException;
-import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.PreparedConnectorContextHandlerFactory;
-import de.learnlib.alex.learning.services.connectors.PreparedContextHandler;
 import de.learnlib.alex.testing.services.TestService;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -297,10 +295,12 @@ public class LearnerService {
     }
 
     public boolean hasRunningOrPendingTasks(User user, Long projectId) {
-        if (!isActive(projectId)) return false;
-        LearnerStatus learnerStatus =  this.getStatus(user, projectId);
+        if (!isActive(projectId)) {
+            return false;
+        }
+        LearnerStatus learnerStatus = this.getStatus(user, projectId);
 
-        List<LearnerResult> currentProcessSingletonList  = Optional.ofNullable(learnerStatus.getCurrentProcess())
+        List<LearnerResult> currentProcessSingletonList = Optional.ofNullable(learnerStatus.getCurrentProcess())
                 .map(LearningProcessStatus::getResult)
                 .map(List::of)
                 .orElse(Collections.emptyList());
@@ -308,7 +308,8 @@ public class LearnerService {
         return Stream.of(currentProcessSingletonList, learnerStatus.getQueue())
                 .flatMap(List::stream)
                 .map(LearnerResult::getStatus)
-                .anyMatch(status -> status.equals(LearnerResult.Status.IN_PROGRESS) || status.equals(LearnerResult.Status.PENDING));
+                .anyMatch(status -> status.equals(LearnerResult.Status.IN_PROGRESS)
+                        || status.equals(LearnerResult.Status.PENDING));
     }
 
     public long getNumberOfUserOwnedLearnProcesses(User user) {
@@ -395,12 +396,23 @@ public class LearnerService {
      *         The config to use.
      * @return The outputs of the SUL.
      */
-    public List<ExecuteResult> readOutputs(User user, Project project, ProjectEnvironment environment, ReadOutputConfig readOutputConfig) {
-        PreparedContextHandler ctxHandler = contextHandlerFactory.createPreparedContextHandler(user, project, readOutputConfig.getDriverConfig(), readOutputConfig.getPreSymbol(), readOutputConfig.getPostSymbol());
-        ConnectorManager connectors = ctxHandler.create(environment).createContext();
+    public List<ExecuteResult> readOutputs(
+            User user,
+            Project project,
+            ProjectEnvironment environment,
+            ReadOutputConfig readOutputConfig
+    ) {
+        final var ctxHandler = contextHandlerFactory.createPreparedContextHandler(
+                user,
+                project,
+                readOutputConfig.getDriverConfig(),
+                readOutputConfig.getPreSymbol(),
+                readOutputConfig.getPostSymbol()
+        );
+        final var connectors = ctxHandler.create(environment).createContext();
 
         try {
-            List<ExecuteResult> outputs = readOutputConfig.getSymbols().stream()
+            final var outputs = readOutputConfig.getSymbols().stream()
                     .map(s -> s.execute(connectors))
                     .collect(Collectors.toList());
             connectors.dispose();
@@ -550,12 +562,15 @@ public class LearnerService {
     }
 
     private void checkRunningProcesses(User user, Long projectId) {
+        final var numberOfCurrentProcesses = getNumberOfUserOwnedLearnProcesses(user)
+                + testService.getNumberOfUserOwnedTestProcesses(user);
 
-        // check number of already running test/learn processes against the maximum allowed number the user may allowed to start
-        if (this.getNumberOfUserOwnedLearnProcesses(user) + testService.getNumberOfUserOwnedTestProcesses(user) >= user.getMaxAllowedProcesses()) {
+        if (numberOfCurrentProcesses >= user.getMaxAllowedProcesses()) {
             // check if there are already running/pending tests in this project
             if (!this.hasRunningOrPendingTasks(user, projectId)) {
-                throw new ResourcesExhaustedException("You are not allowed to have more than " + user.getMaxAllowedProcesses() + " concurrent test/learn processes.");
+                throw new ResourcesExhaustedException("You are not allowed to have more than "
+                        + user.getMaxAllowedProcesses()
+                        + " concurrent test/learn processes.");
             }
         }
     }

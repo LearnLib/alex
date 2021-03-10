@@ -82,12 +82,12 @@ public class SetVariableByCookieAction extends SetVariableAction {
                 return getSuccessOutput();
             } else {
                 logger.info(LoggerMarkers.LEARNER, "Could not set the variable '{}' to the cookie '{}:{}' because "
-                                + "the cookie was not found!", name, cookieType, value);
+                        + "the cookie was not found!", name, cookieType, value);
                 return getFailedOutput();
             }
         } catch (IllegalStateException | NoSuchElementException e) {
             logger.warn(LoggerMarkers.LEARNER, "Could not set the variable '{}' to the cookie '{}' because of an "
-                            + "error.", name, value, e);
+                    + "error.", name, value, e);
             return getFailedOutput();
         }
     }

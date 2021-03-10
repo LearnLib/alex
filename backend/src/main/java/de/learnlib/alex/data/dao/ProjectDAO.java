@@ -56,12 +56,10 @@ import de.learnlib.alex.websocket.services.ProjectPresenceService;
 import de.learnlib.alex.websocket.services.SymbolPresenceService;
 import de.learnlib.alex.websocket.services.TestPresenceService;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.ValidationException;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -186,7 +184,7 @@ public class ProjectDAO {
         final ProjectEnvironment defaultEnv = new ProjectEnvironment();
         defaultEnv.setName("Production");
         defaultEnv.setDefault(true);
-        final ProjectEnvironment createdDefaultEnvironment = projectEnvironmentDAO.create(user, createdProject.getId(), defaultEnv);
+        final var createdDefaultEnvironment = projectEnvironmentDAO.create(user, createdProject.getId(), defaultEnv);
 
         final ProjectUrl projectUrl = new ProjectUrl();
         projectUrl.setUrl(projectForm.getUrl());
@@ -195,7 +193,12 @@ public class ProjectDAO {
         projectUrl.setDefault(true);
         final ProjectUrl createdProjectUrl = projectUrlRepository.save(projectUrl);
         createdDefaultEnvironment.getUrls().add(createdProjectUrl);
-        projectEnvironmentDAO.update(user, createdProject.getId(), createdDefaultEnvironment.getId(), createdDefaultEnvironment);
+        projectEnvironmentDAO.update(
+                user,
+                createdProject.getId(),
+                createdDefaultEnvironment.getId(),
+                createdDefaultEnvironment
+        );
 
         return loadLazyRelations(createdProject);
     }
@@ -261,11 +264,7 @@ public class ProjectDAO {
         this.projectPresenceService.removeProjectFromPresenceMap(projectId);
 
         // delete the screenshot directory
-        try {
-            testReportDAO.deleteScreenshotDirectory(user, projectId);
-        } catch (IOException e) {
-            logger.info("The screenshot directory may not have been deleted.");
-        }
+        testReportDAO.deleteScreenshotDirectory(user, projectId);
 
         // delete the project directory
         try {
@@ -294,10 +293,10 @@ public class ProjectDAO {
 
         try {
             project = om.readValue(projectExportableEntity.getProject().toString(), Project.class);
-            groups = new ArrayList<>(Arrays.asList(om.readValue(projectExportableEntity.getGroups().toString(), SymbolGroup[].class)));
-            tests = new ArrayList<>(Arrays.asList(om.readValue(projectExportableEntity.getTests().toString(), Test[].class)));
-            formulaSuites = new ArrayList<>(Arrays.asList(om.readValue(projectExportableEntity.getFormulaSuites().toString(), LtsFormulaSuite[].class)));
-            learnerSetups = new ArrayList<>(Arrays.asList(om.readValue(projectExportableEntity.getLearnerSetups().toString(), LearnerSetup[].class)));
+            groups = Arrays.asList(om.readValue(projectExportableEntity.getGroups().toString(), SymbolGroup[].class));
+            tests = Arrays.asList(om.readValue(projectExportableEntity.getTests().toString(), Test[].class));
+            formulaSuites = Arrays.asList(om.readValue(projectExportableEntity.getFormulaSuites().toString(), LtsFormulaSuite[].class));
+            learnerSetups = Arrays.asList(om.readValue(projectExportableEntity.getLearnerSetups().toString(), LearnerSetup[].class));
         } catch (IOException e) {
             e.printStackTrace();
             throw new ValidationException("The input is not formatted correctly");
@@ -352,50 +351,11 @@ public class ProjectDAO {
     }
 
     private void check(Project project) {
-        // there is a default environment
-        if (project.getEnvironments().stream().filter(ProjectEnvironment::isDefault).count() != 1) {
-            throw new ValidationException("There has to be exactly one environment");
-        }
-
-        // each environment has default url
-        for (ProjectEnvironment env : project.getEnvironments()) {
-            if (env.getUrls().stream().filter(ProjectUrl::isDefault).count() != 1) {
-                throw new ValidationException("An environment needs a default URL");
-            }
-        }
-
-        // unique environments name
-        if (project.getEnvironments().stream().map(ProjectEnvironment::getName).collect(Collectors.toSet()).size() != project.getEnvironments().size()) {
-            throw new ValidationException("The names of the environments need to be unique");
-        }
-
-        // all environments have same url names
-        if (project.getEnvironments().stream().map(e -> e.getUrls().size()).collect(Collectors.toSet()).size() > 1) {
-            throw new ValidationException("Each environment has to have the same amount of URLs");
-        }
-        final Set<String> urlNamesSet = project.getEnvironments().stream()
-                .map(ProjectEnvironment::getUrls)
-                .flatMap(Collection::stream)
-                .map(ProjectUrl::getName)
-                .collect(Collectors.toSet());
-
-        if (urlNamesSet.size() != project.getEnvironments().get(0).getUrls().size()) {
-            throw new ValidationException("The names of the urls are not equal in the environments");
-        }
-
-        // all environments have same variable names
-        if (project.getEnvironments().stream().map(e -> e.getVariables().size()).collect(Collectors.toSet()).size() > 1) {
-            throw new ValidationException("Each environment has to have the same amount of variables");
-        }
-        final Set<String> variableNamesSet = project.getEnvironments().stream()
-                .map(ProjectEnvironment::getVariables)
-                .flatMap(Collection::stream)
-                .map(ProjectEnvironmentVariable::getName)
-                .collect(Collectors.toSet());
-
-        if (variableNamesSet.size() != project.getEnvironments().get(0).getVariables().size()) {
-            throw new ValidationException("The names of the variables are not equal in the environments");
-        }
+        checkProjectHasDefaultEnvironment(project);
+        checkEnvironmentsHaveDefaultUrl(project);
+        checkEnvironmentNamesAreUnique(project);
+        checkEnvironmentsHaveSameUrlNames(project);
+        checkEnvironmentsHaveSameVariableNames(project);
     }
 
     /**
@@ -527,6 +487,72 @@ public class ProjectDAO {
         //at least one owner has to remain
         if (project.getOwners().isEmpty()) {
             throw new ValidationException("There need to be at least one owner in the project.");
+        }
+    }
+
+    private void checkEnvironmentNamesAreUnique(Project project) {
+        final var numberOfUniqueEnvironments = project.getEnvironments().stream()
+                .map(ProjectEnvironment::getName)
+                .collect(Collectors.toSet())
+                .size();
+
+        if (numberOfUniqueEnvironments != project.getEnvironments().size()) {
+            throw new ValidationException("The names of the environments need to be unique.");
+        }
+    }
+
+    private void checkEnvironmentsHaveDefaultUrl(Project project) {
+        for (ProjectEnvironment env : project.getEnvironments()) {
+            if (env.getUrls().stream().filter(ProjectUrl::isDefault).count() != 1) {
+                throw new ValidationException("An environment needs a default URL");
+            }
+        }
+    }
+
+    private void checkEnvironmentsHaveSameVariableNames(Project project) {
+        final var numberOfVariables = project.getEnvironments().stream()
+                .map(e -> e.getVariables().size())
+                .collect(Collectors.toSet())
+                .size();
+
+        if (numberOfVariables > 1) {
+            throw new ValidationException("Each environment has to have the same amount of variables");
+        }
+
+        final var variableNamesSet = project.getEnvironments().stream()
+                .map(ProjectEnvironment::getVariables)
+                .flatMap(Collection::stream)
+                .map(ProjectEnvironmentVariable::getName)
+                .collect(Collectors.toSet());
+
+        if (variableNamesSet.size() != project.getEnvironments().get(0).getVariables().size()) {
+            throw new ValidationException("The names of the variables are not equal in the environments");
+        }
+    }
+
+    private void checkEnvironmentsHaveSameUrlNames(Project project) {
+        final var numberOfUrls = project.getEnvironments().stream()
+                .map(e -> e.getUrls().size()).collect(Collectors.toSet())
+                .size();
+
+        if (numberOfUrls > 1) {
+            throw new ValidationException("Each environment has to have the same amount of URLs");
+        }
+
+        final var urlNamesSet = project.getEnvironments().stream()
+                .map(ProjectEnvironment::getUrls)
+                .flatMap(Collection::stream)
+                .map(ProjectUrl::getName)
+                .collect(Collectors.toSet());
+
+        if (urlNamesSet.size() != project.getEnvironments().get(0).getUrls().size()) {
+            throw new ValidationException("The names of the urls are not equal in the environments");
+        }
+    }
+
+    private void checkProjectHasDefaultEnvironment(Project project) {
+        if (project.getEnvironments().stream().filter(ProjectEnvironment::isDefault).count() != 1) {
+            throw new ValidationException("There has to be exactly one environment");
         }
     }
 }

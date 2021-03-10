@@ -1,9 +1,9 @@
 {
-    "type" : "web_select",
-    "node" : {
-        "selector": "#node",
-        "type": "CSS"
-    },
-    "value" : "Lorem Ipsum",
-    "selectBy" : "text"
+  "type": "web_select",
+  "node": {
+    "selector": "#node",
+    "type": "CSS"
+  },
+  "value": "Lorem Ipsum",
+  "selectBy": "text"
 }

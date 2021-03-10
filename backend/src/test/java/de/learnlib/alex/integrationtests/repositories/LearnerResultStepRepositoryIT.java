@@ -16,6 +16,9 @@
 
 package de.learnlib.alex.integrationtests.repositories;
 
+import static de.learnlib.alex.integrationtests.repositories.LearnerResultRepositoryIT.createLearnerResult;
+import static org.junit.Assert.assertNotNull;
+
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.learning.entities.LearnerResult;
@@ -26,8 +29,6 @@ import javax.inject.Inject;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.dao.DataIntegrityViolationException;
-import static de.learnlib.alex.integrationtests.repositories.LearnerResultRepositoryIT.createLearnerResult;
-import static org.junit.Assert.assertNotNull;
 
 public class LearnerResultStepRepositoryIT extends AbstractRepositoryIT {
 

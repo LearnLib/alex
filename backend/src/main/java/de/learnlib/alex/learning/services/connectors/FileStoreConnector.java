@@ -26,10 +26,10 @@ import de.learnlib.alex.data.dao.FileDAO;
 public class FileStoreConnector implements Connector {
 
     /** The current user. */
-    private User user;
+    private final User user;
 
     /** The FileDAO to use. */
-    private FileDAO fileDAO;
+    private final FileDAO fileDAO;
 
     /**
      * Constructor.

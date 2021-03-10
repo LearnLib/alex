@@ -25,7 +25,7 @@ import java.util.List;
 
 public class SymbolPresenceServiceWSMessages {
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public WebSocketMessage requestStatus(List<Long> projectIds) {
         final WebSocketMessage msg = new WebSocketMessage();

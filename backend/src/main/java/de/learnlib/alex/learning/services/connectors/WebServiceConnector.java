@@ -54,9 +54,9 @@ public class WebServiceConnector implements Connector {
     private Map<String, NewCookie> cookies;
 
     /** Client for following redirects. */
-    private Client client;
+    private final Client client;
 
-    private BaseUrlManager baseUrlManager;
+    private final BaseUrlManager baseUrlManager;
 
     /**
      * Constructor which sets the WebTarget to use.
@@ -146,18 +146,11 @@ public class WebServiceConnector implements Connector {
      * @param timeout
      *         The amount of time in ms before the request is canceled.
      */
-    public void get(String baseUrl, String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies, int timeout) throws Exception {
+    public void get(String baseUrl, String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies, int timeout)
+            throws Exception {
         final Response response = getRequestObject(baseUrl, path, requestHeaders, requestCookies, timeout).get();
         rememberResponseComponents(response);
         followRedirects(response);
-    }
-
-    private Entity getBody(Map<String, String> requestHeaders, String data) {
-        if (requestHeaders.containsKey("Content-Type")) {
-            return Entity.entity(data, requestHeaders.get("Content-Type"));
-        } else {
-            return Entity.json(data);
-        }
     }
 
     /**
@@ -174,8 +167,8 @@ public class WebServiceConnector implements Connector {
      * @param timeout
      *         The amount of time in ms before the request is canceled.
      */
-    public void post(String baseUrl, String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies, String data,
-                     int timeout) throws Exception {
+    public void post(String baseUrl, String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies, String data, int timeout)
+            throws Exception {
         final Entity body = getBody(requestHeaders, data);
         final Response response = getRequestObject(baseUrl, path, requestHeaders, requestCookies, timeout).post(body);
         rememberResponseComponents(response);
@@ -307,5 +300,13 @@ public class WebServiceConnector implements Connector {
         builder.property(ClientProperties.READ_TIMEOUT, timeout);
 
         return builder;
+    }
+
+    private Entity getBody(Map<String, String> requestHeaders, String data) {
+        if (requestHeaders.containsKey("Content-Type")) {
+            return Entity.entity(data, requestHeaders.get("Content-Type"));
+        } else {
+            return Entity.json(data);
+        }
     }
 }

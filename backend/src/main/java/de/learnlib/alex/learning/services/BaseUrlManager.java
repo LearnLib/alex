@@ -27,7 +27,7 @@ import java.util.Map;
  */
 public class BaseUrlManager {
 
-    private Map<String, ProjectUrl> urlMap;
+    private final Map<String, ProjectUrl> urlMap;
 
     /** Advanced constructor which sets the base url field. */
     public BaseUrlManager(ProjectEnvironment environment) {

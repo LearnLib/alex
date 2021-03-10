@@ -16,8 +16,9 @@
 
 package de.learnlib.alex.data.entities.actions;
 
-import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 public class CredentialsTest {
 

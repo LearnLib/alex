@@ -64,7 +64,7 @@ public class CheckAttributeTypeAction extends RESTSymbolAction {
         UNKNOWN(JsonNodeType.MISSING);
 
         /** Connection between our minimal type set and the bigger one from Jackson. */
-        private JsonNodeType relatedType;
+        private final JsonNodeType relatedType;
 
         /**
          * Internal constructor to set the related types.

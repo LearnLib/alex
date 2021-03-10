@@ -78,8 +78,7 @@ public class AuthenticationProvider {
         }
 
         final List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(user.getRole().toString()));
-        final UsernamePasswordAuthenticationToken usernamePasswordAuthToken = new UsernamePasswordAuthenticationToken(user, null, authorities);
 
-        return usernamePasswordAuthToken;
+        return new UsernamePasswordAuthenticationToken(user, null, authorities);
     }
 }

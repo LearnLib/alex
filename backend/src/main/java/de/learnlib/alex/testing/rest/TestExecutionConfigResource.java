@@ -90,11 +90,11 @@ public class TestExecutionConfigResource {
      * Update a test configuration
      *
      * @param projectId
-     *          The ID of the project.
+     *         The ID of the project.
      * @param configId
-     *          The ID of the config to update.
+     *         The ID of the config to update.
      * @param config
-     *          The updated config object.
+     *         The updated config object.
      * @return The updated config object.
      */
     @PutMapping(
@@ -126,7 +126,7 @@ public class TestExecutionConfigResource {
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity<?> delete(@PathVariable("projectId") Long projectId,
-                                 @PathVariable("configId") Long configId) {
+                                    @PathVariable("configId") Long configId) {
         final var user = authContext.getUser();
         testExecutionConfigDAO.delete(user, projectId, configId);
         return ResponseEntity.noContent().build();

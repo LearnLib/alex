@@ -25,34 +25,33 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-/** Wrapper for {@link de.learnlib.alex.data.entities.ExecuteResult} that allows persistence for tests. */
+/**
+ * Wrapper for {@link de.learnlib.alex.data.entities.ExecuteResult} that allows persistence for tests.
+ */
 @Entity
 public class TestExecutionResult extends ExecuteResult implements Serializable {
 
     private static final long serialVersionUID = -3528131025646284916L;
 
-    /** The referenced test result. */
+    /**
+     * The referenced test result.
+     */
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "testResultId")
     @JsonIgnore
     private TestCaseResult result;
 
-    /** The symbols that produced the result. */
+    /**
+     * The symbols that produced the result.
+     */
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "symbolId")
     private Symbol symbol;
 
-    /** Constructor. */
     public TestExecutionResult() {
         super();
     }
 
-    /**
-     * Constructor.
-     *
-     * @param result
-     *         The output of the SUL.
-     */
     public TestExecutionResult(ExecuteResult result) {
         super(result.isSuccess(), result.getMessage(), result.getTrace(), result.getTime(), result.getTestScreenshot());
     }

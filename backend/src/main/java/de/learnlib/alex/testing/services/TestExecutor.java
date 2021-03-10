@@ -82,7 +82,9 @@ public class TestExecutor {
     public void executeTests(User user, List<Test> tests, TestExecutionConfig testConfig, Map<Long, TestResult> results) {
         for (Test test : tests) {
             currentTest = test;
-            if (aborted) break;
+            if (aborted) {
+                break;
+            }
 
             if (test instanceof TestCase) {
                 executeTestCase(user, (TestCase) test, testConfig, results);
@@ -114,7 +116,9 @@ public class TestExecutor {
                 .collect(Collectors.toList());
 
         for (Test test : testCases) {
-            if (aborted) return tsResult;
+            if (aborted) {
+                return tsResult;
+            }
             final TestCaseResult result = executeTestCase(user, (TestCase) test, testConfig, results);
             tsResult.add(result);
         }
@@ -124,7 +128,9 @@ public class TestExecutor {
                 .collect(Collectors.toList());
 
         for (Test test : testSuites) {
-            if (aborted) return tsResult;
+            if (aborted) {
+                return tsResult;
+            }
             final TestSuiteResult result = executeTestSuite(user, (TestSuite) test, testConfig, results);
             tsResult.add(result);
         }
@@ -183,7 +189,9 @@ public class TestExecutor {
             beforeScreenshot = takeAndStoreScreenshot(testCase.getProject(), connectors.getConnector(WebSiteConnector.class), "pre");
 
             for (int i = 0; i < testCase.getSteps().size(); i++) {
-                if (aborted) break;
+                if (aborted) {
+                    break;
+                }
 
                 final TestCaseStep step = testCase.getSteps().get(i);
                 if (step.isDisabled()) {

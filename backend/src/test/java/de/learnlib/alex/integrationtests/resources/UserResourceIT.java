@@ -16,6 +16,10 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
@@ -34,9 +38,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.http.HttpStatus;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class UserResourceIT extends AbstractResourceIT {
 
@@ -434,7 +435,8 @@ public class UserResourceIT extends AbstractResourceIT {
 
         final Response res = userApi.search("abc", adminJwt);
         assertEquals(HttpStatus.OK.value(), res.getStatus());
-        final List<User> users = res.readEntity(new GenericType<>() {});
+        final List<User> users = res.readEntity(new GenericType<>() {
+        });
         assertEquals(1, users.size());
         assertEquals("abc", users.get(0).getUsername());
     }
@@ -457,7 +459,8 @@ public class UserResourceIT extends AbstractResourceIT {
         createDemoUsers();
         final Response res = userApi.search("unknown", adminJwt);
         assertEquals(HttpStatus.OK.value(), res.getStatus());
-        final List<User> users = res.readEntity(new GenericType<>() {});
+        final List<User> users = res.readEntity(new GenericType<>() {
+        });
         assertEquals(0, users.size());
     }
 

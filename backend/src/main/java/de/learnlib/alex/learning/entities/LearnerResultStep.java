@@ -110,9 +110,6 @@ public class LearnerResultStep implements Serializable {
         this.id = id;
     }
 
-    /**
-     * @return The current LearnResult of the step.
-     */
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "result_id")
     public LearnerResult getResult() {
@@ -132,148 +129,72 @@ public class LearnerResultStep implements Serializable {
         this.result.setId(resultId);
     }
 
-    /**
-     * @param result
-     *         The new LearnResult for the step.
-     */
     public void setResult(LearnerResult result) {
         this.result = result;
     }
 
-    /**
-     * Get the step number of the result, i.e. the number of the result within the test run.
-     *
-     * @return The step no. of the result within the test run.
-     */
     @Column(nullable = false)
     public Long getStepNo() {
         return stepNo;
     }
 
-    /**
-     * Set a new step number of the result, i.e. the number of the result within the test run.
-     *
-     * @param stepNo
-     *         The new step no. of the result within the test run.
-     */
     public void setStepNo(Long stepNo) {
         this.stepNo = stepNo;
     }
 
-    /**
-     * @return The current eq oracle strategy of the step.
-     */
     @Column(columnDefinition = "BYTEA")
     public AbstractEquivalenceOracleProxy getEqOracle() {
         return eqOracle;
     }
 
-    /**
-     * @param eqOracle
-     *         The new eq oracle strategy for the step.
-     */
     public void setEqOracle(AbstractEquivalenceOracleProxy eqOracle) {
         this.eqOracle = eqOracle;
     }
 
-    /**
-     * The hypothesis (as proxy) which is one of the core information of the result.
-     *
-     * @return The hypothesis (as proxy) of the result.
-     */
     @Embedded
     @JsonProperty("hypothesis")
     public CompactMealyMachineProxy getHypothesis() {
         return hypothesis;
     }
 
-    /**
-     * Set a new hypothesis (as proxy) for the result.
-     *
-     * @param hypothesis
-     *         The new hypothesis (as proxy).
-     */
     @JsonProperty("hypothesis")
     public void setHypothesis(CompactMealyMachineProxy hypothesis) {
         this.hypothesis = hypothesis;
     }
 
-    /**
-     * Get the statistic of this learn step.
-     *
-     * @return The learning statistics.
-     */
     @Embedded
     public Statistics getStatistics() {
         return statistics;
     }
 
-    /**
-     * Set a new statistics object for the learning result.
-     *
-     * @param statistics
-     *         The new statistics.
-     */
     public void setStatistics(Statistics statistics) {
         this.statistics = statistics;
     }
 
-    /**
-     * Get the latest counterexample that was found..
-     *
-     * @return The latest counterexample or null.
-     */
     @Embedded
     public DefaultQueryProxy getCounterExample() {
         return counterExample;
     }
 
-    /**
-     * Set the latest counterexample new.
-     *
-     * @param counterExample
-     *         The new counterexample.
-     */
     public void setCounterExample(DefaultQueryProxy counterExample) {
         this.counterExample = counterExample;
     }
 
-    /**
-     * Get more (internal) information about the algorithm used during the learning.
-     *
-     * @return More (internal) information of the algorithm as string.
-     */
     @Column(columnDefinition = "TEXT")
     public String getAlgorithmInformation() {
         return algorithmInformation;
     }
 
-    /**
-     * Set the internal or other information about the algorithm.
-     *
-     * @param algorithmInformation
-     *         The new information about the algorithm.
-     */
     public void setAlgorithmInformation(String algorithmInformation) {
         this.algorithmInformation = algorithmInformation;
     }
 
-    /**
-     * Get the current error text of the learning process.
-     *
-     * @return The current error text (can be null).
-     */
     @Column
     @JsonProperty("errorText")
     public String getErrorText() {
         return errorText;
     }
 
-    /**
-     * Did some kind of error occurred during the learning, i.e. the error text property is set.
-     *
-     * @return true if the result represents a failed learning process; null otherwise.
-     */
     @Transient
     @JsonProperty("error")
     public boolean isError() {
@@ -291,13 +212,6 @@ public class LearnerResultStep implements Serializable {
         this.state = state;
     }
 
-    /**
-     * Set an error text as part of the learning result. If a error text is set, it also implies that something during
-     * the learning went wrong and {@link #isError()} will return True.
-     *
-     * @param errorText
-     *         The new error text.
-     */
     public void setErrorText(String errorText) {
         this.errorText = errorText;
     }

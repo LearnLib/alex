@@ -16,14 +16,15 @@
 
 package de.learnlib.alex.learning.entities.algorithms;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+
 import de.learnlib.api.algorithm.LearningAlgorithm;
 import de.learnlib.oracle.membership.SULOracle;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.GrowingMapAlphabet;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 
 public class DHCTest {
 

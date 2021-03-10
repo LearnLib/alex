@@ -16,15 +16,16 @@
 
 package de.learnlib.alex.data.events;
 
-import de.learnlib.alex.data.entities.Symbol;
-import de.learnlib.alex.webhooks.entities.Event;
-import java.util.List;
 import static de.learnlib.alex.webhooks.entities.EventType.SYMBOLS_CREATED;
 import static de.learnlib.alex.webhooks.entities.EventType.SYMBOLS_DELETED;
 import static de.learnlib.alex.webhooks.entities.EventType.SYMBOLS_UPDATED;
 import static de.learnlib.alex.webhooks.entities.EventType.SYMBOL_CREATED;
 import static de.learnlib.alex.webhooks.entities.EventType.SYMBOL_DELETED;
 import static de.learnlib.alex.webhooks.entities.EventType.SYMBOL_UPDATED;
+
+import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.webhooks.entities.Event;
+import java.util.List;
 
 /** Symbol related events. */
 public class SymbolEvent {

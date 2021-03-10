@@ -56,7 +56,7 @@ public class TestSuiteEQOracleProxy extends AbstractEquivalenceOracleProxy
     private int batchSize;
 
     /** The test cases in the test suite. Once a test case has been tried, it is removed from the queue. */
-    private Queue<Word<String>> testCases;
+    private final Queue<Word<String>> testCases;
 
     /** Constructor. */
     public TestSuiteEQOracleProxy() {

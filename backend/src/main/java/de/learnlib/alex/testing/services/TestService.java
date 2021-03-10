@@ -130,10 +130,12 @@ public class TestService {
     }
 
     public boolean hasRunningOrPendingTasks(User user, Long projectId) {
-        if (!isActive(projectId)) return false;
-        TestStatus testStatus =  this.getStatus(user, projectId);
+        if (!isActive(projectId)) {
+            return false;
+        }
+        TestStatus testStatus = this.getStatus(user, projectId);
 
-        List<TestQueueItem> currentTestRunSingletonList  = Optional.ofNullable(testStatus.getCurrentTestRun())
+        List<TestQueueItem> currentTestRunSingletonList = Optional.ofNullable(testStatus.getCurrentTestRun())
                 .map(List::of)
                 .orElse(Collections.emptyList());
 
@@ -150,6 +152,7 @@ public class TestService {
                 .filter(projectId -> hasRunningOrPendingTasks(user, projectId))
                 .count();
     }
+
     /**
      * Gets the status of the active test process of a project.
      *
@@ -209,12 +212,13 @@ public class TestService {
     }
 
     private void checkRunningProcesses(User user, Long projectId) {
-
-        // check number of already running test/learn processes against the maximum allowed number the user may allowed to start
-        if (this.getNumberOfUserOwnedTestProcesses(user) + learnerService.getNumberOfUserOwnedLearnProcesses(user) >= user.getMaxAllowedProcesses()) {
+        var activeProcesses = getNumberOfUserOwnedTestProcesses(user) + learnerService.getNumberOfUserOwnedLearnProcesses(user);
+        if (activeProcesses >= user.getMaxAllowedProcesses()) {
             // check if there are already running/pending tests in this project
             if (!this.hasRunningOrPendingTasks(user, projectId)) {
-                throw new ResourcesExhaustedException("You are not allowed to have more than " + user.getMaxAllowedProcesses() + " concurrent test/learn processes.");
+                throw new ResourcesExhaustedException("You are not allowed to have more than "
+                        + user.getMaxAllowedProcesses()
+                        + " concurrent test/learn processes.");
             }
         }
     }

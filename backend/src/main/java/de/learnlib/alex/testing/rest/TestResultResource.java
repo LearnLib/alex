@@ -106,7 +106,7 @@ public class TestResultResource {
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"screenshots.zip\"")
                     .body(resource);
         } catch (IOException e) {
-            throw  new InternalServerErrorException("There was a problem generation the zip file.");
+            throw new InternalServerErrorException("There was a problem generation the zip file.");
         }
     }
 }

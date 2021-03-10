@@ -39,8 +39,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 /**
- * Symbol that is executed on the SUL that uses parameters. A symbol will then be used displayed as e.g. "NAME <value1,
- * value2>" where "value1" and "value2" are values for the parameters. This way, a symbol can be used in multiple
+ * Symbol that is executed on the SUL that uses parameters. A symbol will then be used displayed as e.g. "NAME &lt;value1,
+ * value2&gt;" where "value1" and "value2" are values for the parameters. This way, a symbol can be used in multiple
  * configurations during a learning process.
  */
 @Entity

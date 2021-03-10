@@ -16,10 +16,11 @@
 
 package de.learnlib.alex.data.entities.actions.web;
 
-import de.learnlib.alex.learning.services.connectors.ConnectorManager;
-import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+
+import de.learnlib.alex.learning.services.connectors.ConnectorManager;
+import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 
 public abstract class WebActionTest {
 

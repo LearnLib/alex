@@ -23,7 +23,7 @@ import java.util.Map;
 public class SymbolGroupsImportableEntity extends SymbolGroupsExportableEntity {
 
     /**
-     * Map symbol name -> resolutionStrategy
+     * Map symbol name -> resolutionStrategy.
      */
     private Map<String, SymbolImportConflictResolutionStrategy> conflictResolutions;
 

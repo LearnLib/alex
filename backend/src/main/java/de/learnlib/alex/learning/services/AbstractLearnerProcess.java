@@ -224,9 +224,9 @@ public abstract class AbstractLearnerProcess<C extends AbstractLearnerProcessQue
         while (true) {
             learnerPhase = LearnerService.LearnerPhase.EQUIVALENCE_TESTING;
 
-            final long eqOracleStartTime = System.currentTimeMillis();
-            final DefaultQuery<String, Word<String>> ce = equivalenceOracle.findCounterExample(learner.getHypothesisModel(), abstractAlphabet);
-            final long eqOracleEndTime = System.currentTimeMillis();
+            final var eqOracleStartTime = System.currentTimeMillis();
+            final var ce = equivalenceOracle.findCounterExample(learner.getHypothesisModel(), abstractAlphabet);
+            final var eqOracleEndTime = System.currentTimeMillis();
 
             final LearnerResultStep currentStep = result.getSteps().get(result.getSteps().size() - 1);
 

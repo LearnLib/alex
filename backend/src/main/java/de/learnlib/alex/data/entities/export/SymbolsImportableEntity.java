@@ -23,7 +23,7 @@ import java.util.Map;
 public class SymbolsImportableEntity extends SymbolsExportableEntity {
 
     /**
-     * Map symbol name -> resolutionStrategy
+     * Map symbol name -> resolutionStrategy.
      */
     private Map<String, SymbolImportConflictResolutionStrategy> conflictResolutions;
 
@@ -36,7 +36,11 @@ public class SymbolsImportableEntity extends SymbolsExportableEntity {
         this.conflictResolutions = new HashMap<>();
     }
 
-    public SymbolsImportableEntity(String version, JsonNode symbols, Map<String, SymbolImportConflictResolutionStrategy> conflictResolutions) {
+    public SymbolsImportableEntity(
+            String version,
+            JsonNode symbols,
+            Map<String, SymbolImportConflictResolutionStrategy> conflictResolutions
+    ) {
         super(version, symbols);
         this.conflictResolutions = conflictResolutions;
     }

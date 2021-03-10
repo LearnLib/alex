@@ -195,8 +195,8 @@ public class LearnerResultResource {
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity<TestSuite> generateTestSuite(@PathVariable("projectId") Long projectId,
-                                            @PathVariable("testNo") Long testNo,
-                                            @RequestBody @Valid TestSuiteGenerationConfig config) {
+                                                       @PathVariable("testNo") Long testNo,
+                                                       @RequestBody @Valid TestSuiteGenerationConfig config) {
         final var user = authContext.getUser();
 
         try {
@@ -221,7 +221,7 @@ public class LearnerResultResource {
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity<?> deleteResults(@PathVariable("projectId") Long projectId,
-                                        @PathVariable("testNos") List<Long> testNos) {
+                                           @PathVariable("testNos") List<Long> testNos) {
         final User user = authContext.getUser();
         learnerResultDAO.deleteByTestNos(user, projectId, testNos);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

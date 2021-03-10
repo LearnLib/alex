@@ -1,8 +1,8 @@
 {
-    "type": "web_checkForText",
-    "value": "Lorem Ipsum",
-    "node": {
-        "selector": "document",
-        "type": "CSS"
-    }
+  "type": "web_checkForText",
+  "value": "Lorem Ipsum",
+  "node": {
+    "selector": "document",
+    "type": "CSS"
+  }
 }

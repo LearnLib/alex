@@ -77,7 +77,7 @@ public class TestResource {
     }
 
     /**
-     * Create a test
+     * Create a test.
      *
      * @param projectId
      *         The id of the project to create the test in.

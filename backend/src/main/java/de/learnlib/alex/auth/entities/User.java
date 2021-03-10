@@ -179,6 +179,8 @@ public class User implements Serializable {
     }
 
     /**
+     * Encrypt and set a given password.
+     *
      * @param plainPassword
      *         The new password of the User as plain text.
      */

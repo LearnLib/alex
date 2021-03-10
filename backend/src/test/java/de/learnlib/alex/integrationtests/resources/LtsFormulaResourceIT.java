@@ -16,6 +16,9 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
+import static org.junit.Assert.assertEquals;
+
 import com.jayway.jsonpath.JsonPath;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.integrationtests.resources.api.LtsFormulaApi;
@@ -31,8 +34,6 @@ import javax.ws.rs.core.Response;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
-import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
-import static org.junit.Assert.assertEquals;
 
 public class LtsFormulaResourceIT extends AbstractResourceIT {
 

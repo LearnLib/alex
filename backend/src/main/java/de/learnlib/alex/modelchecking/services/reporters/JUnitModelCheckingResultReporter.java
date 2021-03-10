@@ -51,7 +51,6 @@ public class JUnitModelCheckingResultReporter {
             final var idToFormulaSuiteMap = new HashMap<Long, LtsFormulaSuite>();
             final var idToNumTests = new HashMap<Long, Integer>();
             final var idToNumFailures = new HashMap<Long, Integer>();
-            var totalTests = step.getModelCheckingResults().size();
             var totalFailures = 0;
 
             for (var result : step.getModelCheckingResults()) {
@@ -68,7 +67,6 @@ public class JUnitModelCheckingResultReporter {
                     totalFailures++;
                 }
             }
-            ;
 
             // create xml elements for test suites and add them to the root element
             final Map<Long, Element> testSuiteElements = new HashMap<>();
@@ -85,7 +83,7 @@ public class JUnitModelCheckingResultReporter {
             });
 
             // add the summed up statistics of the report to the root 'testsuites' element
-            rootElement.setAttribute("tests", String.valueOf(totalTests));
+            rootElement.setAttribute("tests", String.valueOf(step.getModelCheckingResults().size()));
             rootElement.setAttribute("failures", String.valueOf(totalFailures));
             rootElement.setAttribute("time", "n/a");
 

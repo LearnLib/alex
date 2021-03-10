@@ -30,7 +30,7 @@ import de.learnlib.alex.websocket.entities.WebSocketMessage;
 import de.learnlib.alex.websocket.services.enums.ProjectPresenceServiceEnum;
 import de.learnlib.alex.websocket.services.enums.WebSocketServiceEnum;
 import io.reactivex.rxjava3.disposables.Disposable;
-import java.awt.*;
+import java.awt.Color;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -207,7 +207,8 @@ public class ProjectPresenceService {
             final ObjectNode projects = objectMapper.createObjectNode();
 
             projectIds.forEach(projectId -> {
-                final Project project = projectRepository.findById(projectId.asLong()).orElseThrow(() -> new NotFoundException("Project with id " + projectId + " not found."));
+                final Project project = projectRepository.findById(projectId.asLong())
+                        .orElseThrow(() -> new NotFoundException("Project with id " + projectId + " not found."));
                 projectDAO.checkAccess(message.getUser(), project);
 
                 projects.set(projectId.asText(), getProjectStatus(projectId.asLong()));
@@ -225,7 +226,7 @@ public class ProjectPresenceService {
     }
 
     private void addSessionToProject(long projectId, long userId, String sessionId) {
-        final ProjectPresenceStatus projectPresenceStatus = projectPresences.computeIfAbsent(projectId, k -> new ProjectPresenceStatus(projectId));
+        final var projectPresenceStatus = projectPresences.computeIfAbsent(projectId, k -> new ProjectPresenceStatus(projectId));
 
         if (projectPresenceStatus.addSession(userId, sessionId)) {
             sessionMap.put(sessionId, projectPresenceStatus);
@@ -391,14 +392,16 @@ public class ProjectPresenceService {
 
         @JsonProperty("userColors")
         public Map<String, String> getUserColors() {
-            return userColors.entrySet().stream().collect(Collectors.toMap(k -> userDAO.getByID(k.getKey()).getUsername(), v -> computeRGBColor(v.getValue())));
+            return userColors.entrySet().stream()
+                    .collect(Collectors.toMap(k -> userDAO.getByID(k.getKey()).getUsername(), v -> computeRGBColor(v.getValue())));
         }
 
         private int nextColor() {
             Set<Integer> colorsInUse = new HashSet<>(userColors.values());
             colorsInUse.add(0);
 
-            Set<Integer> missingColors = IntStream.rangeClosed(Collections.min(colorsInUse), Collections.max(colorsInUse)).boxed().collect(Collectors.toSet());
+            Set<Integer> missingColors = IntStream.rangeClosed(Collections.min(colorsInUse), Collections.max(colorsInUse)).boxed()
+                    .collect(Collectors.toSet());
             missingColors.removeAll(colorsInUse);
 
             return missingColors.stream()
@@ -416,7 +419,9 @@ public class ProjectPresenceService {
             }
 
             Color color = Color.getHSBColor(h, 0.5f, 0.99f);
-            String rgbColor = Integer.toHexString(color.getRed()) + Integer.toHexString(color.getGreen()) + Integer.toHexString(color.getBlue());
+            String rgbColor = Integer.toHexString(color.getRed())
+                    + Integer.toHexString(color.getGreen())
+                    + Integer.toHexString(color.getBlue());
 
             return rgbColor.toUpperCase();
         }

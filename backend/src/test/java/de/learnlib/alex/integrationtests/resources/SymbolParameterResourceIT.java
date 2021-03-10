@@ -35,7 +35,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 
 public class SymbolParameterResourceIT extends AbstractResourceIT {
 
-    private static ObjectMapper om = new ObjectMapper();
+    private static final ObjectMapper om = new ObjectMapper();
 
     private SymbolParameterApi symbolParameterApi;
 

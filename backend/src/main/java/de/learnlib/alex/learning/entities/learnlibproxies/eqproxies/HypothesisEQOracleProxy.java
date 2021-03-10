@@ -39,17 +39,10 @@ public class HypothesisEQOracleProxy extends AbstractEquivalenceOracleProxy impl
     /** The Hypothesis to check against. */
     private CompactMealyMachineProxy hypothesis;
 
-    /**
-     * @return The Hypothesis to check against.
-     */
     public CompactMealyMachineProxy getHypothesis() {
         return hypothesis;
     }
 
-    /**
-     * @param hypothesis
-     *         The new Hypothesis to check against.
-     */
     public void setHypothesis(CompactMealyMachineProxy hypothesis) {
         this.hypothesis = hypothesis;
     }

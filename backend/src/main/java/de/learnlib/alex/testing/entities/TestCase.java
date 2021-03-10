@@ -213,10 +213,14 @@ public class TestCase extends Test {
     }
 
     private boolean areSameSteps(List<TestCaseStep> stepsA, List<TestCaseStep> stepsB) {
-        if (stepsA.size() != stepsB.size()) return false;
+        if (stepsA.size() != stepsB.size()) {
+            return false;
+        }
 
         for (int i = 0; i < stepsA.size(); i++) {
-            if (!stepsA.get(i).behavesLike(stepsB.get(i))) return false;
+            if (!stepsA.get(i).behavesLike(stepsB.get(i))) {
+                return false;
+            }
         }
 
         return true;

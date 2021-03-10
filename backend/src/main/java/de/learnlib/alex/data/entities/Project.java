@@ -400,20 +400,11 @@ public class Project implements Serializable {
         group.setProject(this);
     }
 
-    /**
-     * Get the set of symbols in the project.
-     *
-     * @return The Set of Symbols.
-     */
     @JsonIgnore
     public Collection<Symbol> getSymbols() {
         return symbols;
     }
 
-    /**
-     * @param symbols
-     *         the symbols to set
-     */
     @JsonIgnore
     public void setSymbols(Set<Symbol> symbols) {
         this.symbols = symbols;
@@ -460,19 +451,12 @@ public class Project implements Serializable {
         this.testReports = testReports;
     }
 
-    /**
-     * @return All the counters of the Project.
-     */
     @JsonProperty
     @JsonIgnore
     public Set<Counter> getCounters() {
         return counters;
     }
 
-    /**
-     * @param counters
-     *         The new set of counters for the project.
-     */
     @JsonIgnore
     public void setCounters(Set<Counter> counters) {
         this.counters = counters;
@@ -521,8 +505,12 @@ public class Project implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Project project = (Project) o;
         return Objects.equals(id, project.id);
     }

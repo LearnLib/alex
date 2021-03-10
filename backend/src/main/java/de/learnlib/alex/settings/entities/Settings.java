@@ -104,8 +104,12 @@ public class Settings implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Settings)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Settings)) {
+            return false;
+        }
         Settings settings = (Settings) o;
         return allowUserRegistration == settings.allowUserRegistration
                 && Objects.equals(id, settings.id)

@@ -16,6 +16,8 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
+import static org.junit.Assert.assertEquals;
+
 import de.learnlib.alex.data.entities.Counter;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.integrationtests.SpringRestError;
@@ -31,7 +33,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
-import static org.junit.Assert.assertEquals;
 
 public class CounterResourceIT extends AbstractResourceIT {
 

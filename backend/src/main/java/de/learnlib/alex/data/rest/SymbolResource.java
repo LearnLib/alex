@@ -282,6 +282,26 @@ public class SymbolResource {
     }
 
     /**
+     * Mark a bunch of symbols as hidden.
+     *
+     * @param projectId
+     *         The ID of the project.
+     * @param symbolIds
+     *         The IDs of the symbols to hide.
+     * @return On success no content will be returned; an error message on failure..
+     */
+    @PostMapping(
+            value = "/batch/{symbolIds}/hide",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity hide(@PathVariable("projectId") Long projectId, @PathVariable("symbolIds") List<Long> symbolIds) {
+        final User user = authContext.getUser();
+        final List<Symbol> archivedSymbols = symbolDAO.hide(user, projectId, symbolIds);
+        webhookService.fireEvent(user, new SymbolEvent.UpdatedMany(archivedSymbols));
+        return ResponseEntity.ok(archivedSymbols);
+    }
+
+    /**
      * Permanently delete a symbol.
      *
      * @param projectId
@@ -319,26 +339,6 @@ public class SymbolResource {
         symbolDAO.delete(user, projectId, symbolIds);
         webhookService.fireEvent(user, new SymbolEvent.DeletedMany(symbolIds));
         return ResponseEntity.noContent().build();
-    }
-
-    /**
-     * Mark a bunch of symbols as hidden.
-     *
-     * @param projectId
-     *         The ID of the project.
-     * @param symbolIds
-     *         The IDs of the symbols to hide.
-     * @return On success no content will be returned; an error message on failure..
-     */
-    @PostMapping(
-            value = "/batch/{symbolIds}/hide",
-            produces = MediaType.APPLICATION_JSON
-    )
-    public ResponseEntity hide(@PathVariable("projectId") Long projectId, @PathVariable("symbolIds") List<Long> symbolIds) {
-        final User user = authContext.getUser();
-        final List<Symbol> archivedSymbols = symbolDAO.hide(user, projectId, symbolIds);
-        webhookService.fireEvent(user, new SymbolEvent.UpdatedMany(archivedSymbols));
-        return ResponseEntity.ok(archivedSymbols);
     }
 
     /**

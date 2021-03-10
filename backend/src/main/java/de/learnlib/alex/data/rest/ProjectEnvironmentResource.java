@@ -34,8 +34,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.ValidationException;
 import javax.ws.rs.core.MediaType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
@@ -52,8 +50,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/rest/projects/{projectId}/environments")
 public class ProjectEnvironmentResource {
-
-    private static final Logger logger = LoggerFactory.getLogger(ProjectEnvironmentResource.class);
 
     private final AuthContext authContext;
     private final ProjectEnvironmentDAO environmentDAO;
@@ -103,7 +99,9 @@ public class ProjectEnvironmentResource {
         final var resetSymbol = symbolDAO.get(user, projectId, pResetSymbol.getSymbol().getId());
         config.getPreSymbol().setSymbol(resetSymbol);
 
-        final var symbolIds = config.getSymbols().stream().map(ps -> ps.getSymbol().getId()).collect(Collectors.toList());
+        final var symbolIds = config.getSymbols().stream()
+                .map(ps -> ps.getSymbol().getId())
+                .collect(Collectors.toList());
         final var symbols = symbolDAO.getByIds(user, projectId, symbolIds);
         final var symbolMap = new HashMap<Long, Symbol>();
         symbols.forEach(s -> symbolMap.put(s.getId(), s));
@@ -119,7 +117,7 @@ public class ProjectEnvironmentResource {
     @GetMapping(
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity getAll(@PathVariable("projectId") Long projectId) {
+    public ResponseEntity<List<ProjectEnvironment>> getAll(@PathVariable("projectId") Long projectId) {
         final User user = authContext.getUser();
         final List<ProjectEnvironment> envs = environmentDAO.getAll(user, projectId);
         return ResponseEntity.ok(envs);
@@ -129,7 +127,10 @@ public class ProjectEnvironmentResource {
             produces = MediaType.APPLICATION_JSON,
             consumes = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity create(@PathVariable("projectId") Long projectId, @RequestBody ProjectEnvironment env) {
+    public ResponseEntity<ProjectEnvironment> create(
+            @PathVariable("projectId") Long projectId,
+            @RequestBody ProjectEnvironment env
+    ) {
         final User user = authContext.getUser();
         final ProjectEnvironment createdEnv = environmentDAO.create(user, projectId, env);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdEnv);
@@ -138,7 +139,10 @@ public class ProjectEnvironmentResource {
     @DeleteMapping(
             value = "/{environmentId}"
     )
-    public ResponseEntity delete(@PathVariable("projectId") Long projectId, @PathVariable("environmentId") Long environmentId) {
+    public ResponseEntity<?> delete(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("environmentId") Long environmentId
+    ) {
         final User user = authContext.getUser();
         environmentDAO.delete(user, projectId, environmentId);
         return ResponseEntity.noContent().build();
@@ -149,9 +153,11 @@ public class ProjectEnvironmentResource {
             produces = MediaType.APPLICATION_JSON,
             consumes = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity update(@PathVariable("projectId") Long projectId,
-                                 @PathVariable("environmentId") Long environmentId,
-                                 @RequestBody ProjectEnvironment environment) {
+    public ResponseEntity<ProjectEnvironment> update(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("environmentId") Long environmentId,
+            @RequestBody ProjectEnvironment environment
+    ) {
         final User user = authContext.getUser();
         final ProjectEnvironment updatedEnv = environmentDAO.update(user, projectId, environmentId, environment);
         return ResponseEntity.ok(updatedEnv);
@@ -162,9 +168,11 @@ public class ProjectEnvironmentResource {
             produces = MediaType.APPLICATION_JSON,
             consumes = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity createUrl(@PathVariable("projectId") Long projectId,
-                                    @PathVariable("environmentId") Long environmentId,
-                                    @RequestBody ProjectUrl url) {
+    public ResponseEntity<List<ProjectUrl>> createUrl(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("environmentId") Long environmentId,
+            @RequestBody ProjectUrl url
+    ) {
         final User user = authContext.getUser();
         final List<ProjectUrl> createdUrls = environmentDAO.createUrls(user, projectId, environmentId, url);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUrls);
@@ -173,9 +181,11 @@ public class ProjectEnvironmentResource {
     @DeleteMapping(
             value = "/{environmentId}/urls/{urlId}"
     )
-    public ResponseEntity deleteUrl(@PathVariable("projectId") Long projectId,
-                                    @PathVariable("environmentId") Long environmentId,
-                                    @PathVariable("urlId") Long urlId) {
+    public ResponseEntity<?> deleteUrl(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("environmentId") Long environmentId,
+            @PathVariable("urlId") Long urlId
+    ) {
         final User user = authContext.getUser();
         environmentDAO.deleteUrl(user, projectId, environmentId, urlId);
         return ResponseEntity.noContent().build();
@@ -186,10 +196,12 @@ public class ProjectEnvironmentResource {
             produces = MediaType.APPLICATION_JSON,
             consumes = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity updateUrl(@PathVariable("projectId") Long projectId,
-                                    @PathVariable("environmentId") Long environmentId,
-                                    @PathVariable("urlId") Long urlId,
-                                    @RequestBody ProjectUrl url) {
+    public ResponseEntity<List<ProjectUrl>> updateUrl(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("environmentId") Long environmentId,
+            @PathVariable("urlId") Long urlId,
+            @RequestBody ProjectUrl url
+    ) {
         final User user = authContext.getUser();
         final List<ProjectUrl> updatedUrls = environmentDAO.updateUrls(user, projectId, environmentId, urlId, url);
         return ResponseEntity.ok(updatedUrls);
@@ -200,20 +212,24 @@ public class ProjectEnvironmentResource {
             produces = MediaType.APPLICATION_JSON,
             consumes = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity createVariable(@PathVariable("projectId") Long projectId,
-                                         @PathVariable("environmentId") Long environmentId,
-                                         @RequestBody ProjectEnvironmentVariable variable) {
-        final User user = authContext.getUser();
-        final ProjectEnvironmentVariable createdVariable = environmentDAO.createVariable(user, projectId, environmentId, variable);
+    public ResponseEntity<ProjectEnvironmentVariable> createVariable(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("environmentId") Long environmentId,
+            @RequestBody ProjectEnvironmentVariable variable
+    ) {
+        final var user = authContext.getUser();
+        final var createdVariable = environmentDAO.createVariable(user, projectId, environmentId, variable);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdVariable);
     }
 
     @DeleteMapping(
             value = "/{environmentId}/variables/{varId}"
     )
-    public ResponseEntity deleteVariable(@PathVariable("projectId") Long projectId,
-                                         @PathVariable("environmentId") Long environmentId,
-                                         @PathVariable("varId") Long varId) {
+    public ResponseEntity<?> deleteVariable(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("environmentId") Long environmentId,
+            @PathVariable("varId") Long varId
+    ) {
         final User user = authContext.getUser();
         environmentDAO.deleteVariable(user, projectId, environmentId, varId);
         return ResponseEntity.noContent().build();
@@ -224,12 +240,14 @@ public class ProjectEnvironmentResource {
             produces = MediaType.APPLICATION_JSON,
             consumes = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity updateUrl(@PathVariable("projectId") Long projectId,
-                                    @PathVariable("environmentId") Long environmentId,
-                                    @PathVariable("varId") Long varId,
-                                    @RequestBody ProjectEnvironmentVariable variable) {
-        final User user = authContext.getUser();
-        final ProjectEnvironmentVariable updatedVariable = environmentDAO.updateVariable(user, projectId, environmentId, varId, variable);
+    public ResponseEntity<ProjectEnvironmentVariable> updateUrl(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("environmentId") Long environmentId,
+            @PathVariable("varId") Long varId,
+            @RequestBody ProjectEnvironmentVariable variable
+    ) {
+        final var user = authContext.getUser();
+        final var updatedVariable = environmentDAO.updateVariable(user, projectId, environmentId, varId, variable);
         return ResponseEntity.ok(updatedVariable);
     }
 }

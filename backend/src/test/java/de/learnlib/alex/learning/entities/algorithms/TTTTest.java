@@ -16,6 +16,10 @@
 
 package de.learnlib.alex.learning.entities.algorithms;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+
 import de.learnlib.algorithms.ttt.base.AbstractBaseDTNode;
 import de.learnlib.algorithms.ttt.base.BaseTTTDiscriminationTree;
 import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealy;
@@ -26,9 +30,6 @@ import net.automatalib.words.Word;
 import net.automatalib.words.impl.GrowingMapAlphabet;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 
 public class TTTTest {
 

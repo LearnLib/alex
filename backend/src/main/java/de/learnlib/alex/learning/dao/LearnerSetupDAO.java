@@ -160,7 +160,8 @@ public class LearnerSetupDAO {
         setup.getWebDriver().setId(null);
         setupInDb.setWebDriver(setup.getWebDriver());
 
-        final var updatedModelCheckingConfig = modelCheckingConfigDAO.update(user, projectId, setupInDb.getModelCheckingConfig().getId(), setup.getModelCheckingConfig());
+        final var updatedModelCheckingConfig = modelCheckingConfigDAO.update(user, projectId,
+                setupInDb.getModelCheckingConfig().getId(), setup.getModelCheckingConfig());
         setupInDb.setModelCheckingConfig(updatedModelCheckingConfig);
 
         setupInDb.setEnvironments(projectEnvironmentRepository.findAllByIdIn(setup.getEnvironments().stream()
@@ -205,7 +206,8 @@ public class LearnerSetupDAO {
                 .map(ProjectEnvironment::getId)
                 .collect(Collectors.toList())));
 
-        newSetup.setModelCheckingConfig(modelCheckingConfigDAO.create(user, projectId, setupInDb.getModelCheckingConfig()));
+        final var createdMCConfig = modelCheckingConfigDAO.create(user, projectId, setupInDb.getModelCheckingConfig());
+        newSetup.setModelCheckingConfig(createdMCConfig);
 
         newSetup.setPreSymbol(setupInDb.getPreSymbol().copy());
         newSetup.setSymbols(setupInDb.getSymbols().stream()
@@ -292,8 +294,8 @@ public class LearnerSetupDAO {
         setup.setId(null);
         setup.getWebDriver().setId(null);
 
-        final var modelCheckingConfig = modelCheckingConfigDAO.create(user, projectId, setup.getModelCheckingConfig());
-        setup.setModelCheckingConfig(modelCheckingConfig);
+        final var mcConfig = modelCheckingConfigDAO.create(user, projectId, setup.getModelCheckingConfig());
+        setup.setModelCheckingConfig(mcConfig);
 
         final LearnerSetup createdSetup = learnerSetupRepository.save(setup);
         loadLazyRelations(createdSetup);

@@ -33,25 +33,37 @@ public class WebElementLocator implements Serializable {
 
     private static final long serialVersionUID = -6070241271039096113L;
 
-    /** The type of selectors. */
+    /**
+     * The type of selectors.
+     */
     public enum Type {
 
-        /** If the selector is a CSS selector. */
+        /**
+         * If the selector is a CSS selector.
+         */
         CSS,
 
-        /** If the selector is an XPath expression. */
+        /**
+         * If the selector is an XPath expression.
+         */
         XPATH,
 
-        /** If the element should be received by a JavaScript. */
+        /**
+         * If the element should be received by a JavaScript.
+         */
         JS
     }
 
-    /** The selector of the element[s]. */
+    /**
+     * The selector of the element[s].
+     */
     @NotBlank
     @Column(columnDefinition = "TEXT")
     private String selector;
 
-    /** What kind of selector {@link #selector} is. */
+    /**
+     * What kind of selector {@link #selector} is.
+     */
     @NotNull
     @Column(name = "selectorType")
     private Type type;
@@ -87,12 +99,16 @@ public class WebElementLocator implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         WebElementLocator that = (WebElementLocator) o;
-
-        if (!Objects.equals(selector, that.selector)) return false;
+        if (!Objects.equals(selector, that.selector)) {
+            return false;
+        }
         return type == that.type;
     }
 

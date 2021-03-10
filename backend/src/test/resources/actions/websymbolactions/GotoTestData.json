@@ -1,5 +1,5 @@
 {
-    "type": "web_goto",
-    "url":  "http://example.com",
-    "baseUrl": "Base"
+  "type": "web_goto",
+  "url": "http://example.com",
+  "baseUrl": "Base"
 }

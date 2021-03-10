@@ -31,20 +31,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class PreparedConnectorContextHandlerFactory {
 
-    /** The {@link CounterDAO}. */
-    private CounterDAO counterDAO;
+    private final CounterDAO counterDAO;
+    private final FileDAO fileDAO;
 
-    /** The {@link FileDAO}. */
-    private FileDAO fileDAO;
-
-    /**
-     * Constructor.
-     *
-     * @param counterDAO
-     *         {@link CounterDAO}.
-     * @param fileDAO
-     *         {@link FileDAO}.
-     */
     @Autowired
     public PreparedConnectorContextHandlerFactory(CounterDAO counterDAO, FileDAO fileDAO) {
         this.counterDAO = counterDAO;

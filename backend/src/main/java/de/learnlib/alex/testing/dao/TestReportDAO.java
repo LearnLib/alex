@@ -163,11 +163,13 @@ public class TestReportDAO {
         testReport.getTestResults().forEach(testResult -> {
             if (testResult instanceof TestCaseResult) {
                 if (((TestCaseResult) testResult).getBeforeScreenshot() != null) {
-                    this.deleteScreenshot(user, projectId, testReportId, ((TestCaseResult) testResult).getBeforeScreenshot().getFilename());
+                    final var filename = ((TestCaseResult) testResult).getBeforeScreenshot().getFilename();
+                    this.deleteScreenshot(user, projectId, testReportId, filename);
                 }
                 ((TestCaseResult) testResult).getOutputs().forEach(testExecutionResult -> {
                     if (testExecutionResult.getTestScreenshot() != null) {
-                        this.deleteScreenshot(user, projectId, testReportId, testExecutionResult.getTestScreenshot().getFilename());
+                        final var filename = testExecutionResult.getTestScreenshot().getFilename();
+                        this.deleteScreenshot(user, projectId, testReportId, filename);
                     }
                 });
             }
@@ -187,8 +189,8 @@ public class TestReportDAO {
         final TestReport testReport = testReportRepository.findById(testReportId).orElse(null);
         checkAccess(user, project, testReport);
 
-        String filePath = filesRootDir + "/test_screenshots/" + project.getId().toString() + "/" + screenshotName + ".png";
-        File screenshot = Paths.get(filePath).toFile();
+        final var filePath = filesRootDir + "/test_screenshots/" + project.getId() + "/" + screenshotName + ".png";
+        final var screenshot = Paths.get(filePath).toFile();
         if (!screenshot.exists()) {
             throw new NotFoundException("The requested screenshot does not exists.");
         }
@@ -213,13 +215,14 @@ public class TestReportDAO {
 
         try (
                 final var bos = new ByteArrayOutputStream();
-                final var zos = new ZipOutputStream(bos);
+                final var zos = new ZipOutputStream(bos)
         ) {
             final var testCaseResult = (TestCaseResult) testResult;
 
             final var beforeScreenshot = testCaseResult.getBeforeScreenshot();
             if (beforeScreenshot != null) {
-                var beforeScreenshotFile = this.getScreenshot(user, projectId, testReportId, beforeScreenshot.getFilename());
+                var filename = beforeScreenshot.getFilename();
+                var beforeScreenshotFile = this.getScreenshot(user, projectId, testReportId, filename);
                 writeToZipFile(beforeScreenshotFile, "000__screenshot_after_pre_symbols.png", zos);
             }
 
@@ -227,7 +230,8 @@ public class TestReportDAO {
             for (int i = 0; i < outputs.size(); i++) {
                 var output = outputs.get(i);
                 if (output.getTestScreenshot() != null) {
-                    var screenshotFile = this.getScreenshot(user, projectId, testReportId, output.getTestScreenshot().getFilename());
+                    var filename = output.getTestScreenshot().getFilename();
+                    var screenshotFile = this.getScreenshot(user, projectId, testReportId, filename);
                     writeToZipFile(screenshotFile, getScreenshotFilename(i, outputs.get(i)), zos);
                 }
             }
@@ -241,22 +245,18 @@ public class TestReportDAO {
         final TestReport testReport = testReportRepository.findById(testReportId).orElse(null);
         checkAccess(user, project, testReport);
 
-        String filePath = filesRootDir + "/test_screenshots/" + project.getId().toString() + "/" + screenshotName + ".png";
-        File screenshot = Paths.get(filePath).toFile();
-        if (screenshot.exists()) {
-            screenshot.delete();
-        }
+        final var filePath = filesRootDir + "/test_screenshots/" + project.getId() + "/" + screenshotName + ".png";
+        final var screenshot = Paths.get(filePath).toFile();
+        FileUtils.deleteQuietly(screenshot);
     }
 
-    public void deleteScreenshotDirectory(User user, Long projectId) throws IOException {
+    public void deleteScreenshotDirectory(User user, Long projectId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         this.projectDAO.checkAccess(user, project);
 
-        String dirPath = filesRootDir + "/test_screenshots/" + project.getId().toString();
-        File directory = Paths.get(dirPath).toFile();
-        if (directory.exists()) {
-            FileUtils.deleteDirectory(directory);
-        }
+        final var dirPath = filesRootDir + "/test_screenshots/" + project.getId();
+        final var directory = Paths.get(dirPath).toFile();
+        FileUtils.deleteQuietly(directory);
     }
 
     public TestReport updateStatus(Long reportId, TestReport.Status status) {

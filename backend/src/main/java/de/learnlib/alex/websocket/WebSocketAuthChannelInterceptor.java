@@ -45,11 +45,11 @@ public class WebSocketAuthChannelInterceptor implements ChannelInterceptor {
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
-        StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+        var accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
             try {
-                String jwt = accessor.getFirstNativeHeader("Authorization");
-                UsernamePasswordAuthenticationToken usernamePasswordAuthToken = (UsernamePasswordAuthenticationToken) authenticationProvider.getAuthentication(jwt);
+                var jwt = accessor.getFirstNativeHeader("Authorization");
+                var usernamePasswordAuthToken = (UsernamePasswordAuthenticationToken) authenticationProvider.getAuthentication(jwt);
 
                 if (usernamePasswordAuthToken.getAuthorities().contains(new SimpleGrantedAuthority("ANONYMOUS"))) {
                     throw new UnauthorizedException("Cannot get authorized.");

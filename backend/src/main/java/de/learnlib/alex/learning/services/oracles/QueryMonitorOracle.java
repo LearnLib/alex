@@ -46,6 +46,8 @@ public class QueryMonitorOracle<I, O> implements MembershipOracle<I, Word<O>> {
     public interface QueryProcessingListener<I, O> {
 
         /**
+         * Process incoming queries.
+         *
          * @param queries
          *         The queries that are or have been processed.
          */
@@ -56,10 +58,10 @@ public class QueryMonitorOracle<I, O> implements MembershipOracle<I, Word<O>> {
     private final MembershipOracle<I, Word<O>> delegate;
 
     /** The pre process listeners. */
-    private List<QueryProcessingListener<I, O>> preProcessListeners;
+    private final List<QueryProcessingListener<I, O>> preProcessListeners;
 
     /** The pre process listeners. */
-    private List<QueryProcessingListener<I, O>> postProcessListeners;
+    private final List<QueryProcessingListener<I, O>> postProcessListeners;
 
     /**
      * Constructor.

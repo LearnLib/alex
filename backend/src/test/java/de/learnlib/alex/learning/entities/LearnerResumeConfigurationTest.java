@@ -16,12 +16,13 @@
 
 package de.learnlib.alex.learning.entities;
 
+import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.mock;
+
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
 import org.junit.Before;
 import org.junit.Test;
-import static org.mockito.BDDMockito.willThrow;
-import static org.mockito.Mockito.mock;
 
 public class LearnerResumeConfigurationTest {
 

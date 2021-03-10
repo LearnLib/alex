@@ -103,7 +103,13 @@ public class ModelCheckerService {
         return check(hypothesis, alphabet, formulasToCheck, config.getMinUnfolds(), config.getMultiplier());
     }
 
-    private List<ModelCheckingResult> check(CompactMealy<String, String> model, Alphabet<String> alphabet, List<LtsFormula> formulas, int minUnfolds, double multiplier) {
+    private List<ModelCheckingResult> check(
+            CompactMealy<String, String> model,
+            Alphabet<String> alphabet,
+            List<LtsFormula> formulas,
+            int minUnfolds,
+            double multiplier
+    ) {
         final LTSminLTLIO<String, String> ltsmin = new LTSminLTLIOBuilder<String, String>()
                 .withString2Input(Function.identity())
                 .withString2Output(Function.identity())

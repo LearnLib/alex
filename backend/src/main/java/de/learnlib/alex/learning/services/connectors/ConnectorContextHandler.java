@@ -28,24 +28,14 @@ import de.learnlib.mapper.ContextExecutableInputSUL;
 public class ConnectorContextHandler implements ContextExecutableInputSUL.ContextHandler<ConnectorManager> {
 
     /** The pool with the managers for the sul. */
-    private ConnectorManager connectors;
+    private final ConnectorManager connectors;
 
     /** The symbol used to reset the SUL. */
-    private ParameterizedSymbol resetSymbol;
+    private final ParameterizedSymbol resetSymbol;
 
     /** The symbol used after a membership query. */
-    private ParameterizedSymbol postSymbol;
+    private final ParameterizedSymbol postSymbol;
 
-    /**
-     * Constructor.
-     *
-     * @param connectors
-     *         {@link #connectors}.
-     * @param resetSymbol
-     *         {@link #resetSymbol}.
-     * @param postSymbol
-     *         {@link #postSymbol}.
-     */
     public ConnectorContextHandler(ConnectorManager connectors,
                                    ParameterizedSymbol resetSymbol,
                                    ParameterizedSymbol postSymbol) {
@@ -108,7 +98,7 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
             if (this.postSymbol != null) {
                 this.postSymbol.execute(connectorManager);
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         try {
@@ -118,7 +108,9 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
         }
     }
 
-    /** Execute the {@link ConnectorManager#post} method after the learner has finished. */
+    /**
+     * Execute the {@link ConnectorManager#post} method after the learner has finished.
+     */
     public void post() {
         connectors.post();
     }

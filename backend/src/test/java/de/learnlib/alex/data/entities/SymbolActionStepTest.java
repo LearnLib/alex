@@ -16,13 +16,14 @@
 
 package de.learnlib.alex.data.entities;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+
 import de.learnlib.alex.data.entities.actions.web.ClickAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 
 public class SymbolActionStepTest {
 
