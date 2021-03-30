@@ -3,15 +3,6 @@
 ALEX allows to automatically verify properties of learned models using LTL model checking using the LTSmin library [LTSmin](ltsmin).
 
 
-## Setting up LTSmin
-
-LTSmin has to be downloaded from the homepage and extracted to a place of your choice.
-Inside the folder, there is a *bin* directory that contains all the binaries.
-When starting ALEX, specify the path to the bin directory as an additional argument:
-
-`java -jar alex-2.0.0.war --ltsmin.path=/path/to/ltsmin/bin`
-
-
 ## Define LTL formulas
 
 Currently, ALEX only supports model checking using LTL formulas.

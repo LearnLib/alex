@@ -1,3 +1,3 @@
 module.exports = {
-  BASE: '/alex/book/2.0.0/'
+  BASE: '/alex/book/2.1.0/'
 };

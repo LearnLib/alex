@@ -1,21 +1,22 @@
 # Installation
 
-In order to use ALEX on your local machine, make sure that 
+In order to use ALEX on your local machine, make sure the following software is installed:
 
+For **Linux / OSX**
 - Docker (v20.10.\*) and 
 - Docker Compose (v1.28.*) 
 
-are installed.
-
+For **Windows 10**
+- Docker for Windows
 
 ## Using the latest Docker Compose file
 
-1. [Download][download] the latest `docker-compose.deploy.yml` file.
-2. Open a terminal and start ALEX via `docker-compose -f docker-compose.deploy.yml`.
+1. [Download][download] the latest `docker-compose.alex-2.1.0.yml` file.
+2. Open a terminal and start ALEX via `docker-compose -f docker-compose.alex-2.1.0.yml up`.
 3. Wait until the command line prints something like `Started App in XX.XXX seconds`.
-4. Open [http://127.0.0.1](http://127.0.0.1) in a modern Web browser.
+4. Open [http://127.0.0.1](http://127.0.0.1) in a Web browser.
 
-After the first start, you can login as an admin using the account below:
+After the first start, you can log in as an admin using the account below:
 
 Email: *admin@alex.example* <br>
 Password: *admin*
@@ -25,8 +26,15 @@ Password: *admin*
 
 1. Clone the repository `git clone https://github.com/LearnLib/alex.git`
 2. Navigate to the directory `cd alex`
-3. Run `docker-compose -f docker-compose.deploy.yml`
-4. Open [http://127.0.0.1:4200](http://127.0.0.1:4200) in a modern Web browser.
 
+For the **production** environment:
+
+3. Run `docker-compose -f docker-compose.production.yml`
+4. Open [http://127.0.0.1](http://127.0.0.1) in a Web browser.
+
+For the **development** environment:
+
+3. Run `docker-compose -f docker-compose.development.yml`
+4. Open [http://127.0.0.1:4200](http://127.0.0.1:4200) in a Web browser.
 
 [download]: https://github.com/LearnLib/alex/releases
