@@ -1,21 +1,9 @@
 {
-  "version": "1.8.0-SNAPSHOT",
+  "version": "2.0.0",
   "type": "project",
   "project": {
     "name": "TodoMVC React",
     "environments": [
-      {
-        "name": "Production",
-        "urls": [
-          {
-            "name": "Base",
-            "url": "http://localhost:8080/examples/react",
-            "default": true
-          }
-        ],
-        "variables": [],
-        "default": true
-      },
       {
         "name": "mirror1",
         "urls": [
@@ -39,17 +27,69 @@
         ],
         "variables": [],
         "default": false
+      },
+      {
+        "name": "Production",
+        "urls": [
+          {
+            "name": "Base",
+            "url": "http://localhost:8080/examples/react",
+            "default": true
+          }
+        ],
+        "variables": [],
+        "default": true
       }
-    ],
-    "members": [],
-    "owners": [
-      1
     ]
   },
   "groups": [
     {
       "name": "Default group",
       "symbols": [
+        {
+          "description": "",
+          "expectedResult": "",
+          "hidden": false,
+          "inputs": [],
+          "name": "reset",
+          "outputs": [],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_goto",
+                "url": "/",
+                "baseUrl": "Base",
+                "credentials": {
+                  "name": "",
+                  "password": ""
+                }
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_waitForNode",
+                "node": {
+                  "selector": ".new-todo",
+                  "type": "CSS"
+                },
+                "waitCriterion": "CLICKABLE",
+                "maxWaitTime": 10
+              }
+            }
+          ],
+          "successOutput": null,
+          "updatedOn": "2021-03-31T06:34:56.495+00:00"
+        },
         {
           "description": "",
           "expectedResult": "",
@@ -61,12 +101,6 @@
               "parameterType": "STRING"
             }
           ],
-          "lastUpdatedBy": {
-            "id": 1,
-            "username": "admin",
-            "email": "admin@alex.example",
-            "role": "ADMIN"
-          },
           "name": "create todo",
           "outputs": [],
           "steps": [
@@ -143,19 +177,13 @@
             }
           ],
           "successOutput": null,
-          "updatedOn": "2020-02-24T10:04:54.568+01:00"
+          "updatedOn": "2021-03-31T06:34:56.542+00:00"
         },
         {
           "description": "",
           "expectedResult": "",
           "hidden": false,
           "inputs": [],
-          "lastUpdatedBy": {
-            "id": 1,
-            "username": "admin",
-            "email": "admin@alex.example",
-            "role": "ADMIN"
-          },
           "name": "get visible todos",
           "outputs": [],
           "steps": [
@@ -176,19 +204,13 @@
             }
           ],
           "successOutput": "{{$count}}",
-          "updatedOn": "2020-02-24T10:03:53.858+01:00"
+          "updatedOn": "2021-03-31T06:34:56.566+00:00"
         },
         {
           "description": "",
           "expectedResult": "",
           "hidden": false,
           "inputs": [],
-          "lastUpdatedBy": {
-            "id": 1,
-            "username": "admin",
-            "email": "admin@alex.example",
-            "role": "ADMIN"
-          },
           "name": "get todos left",
           "outputs": [],
           "steps": [
@@ -209,19 +231,13 @@
             }
           ],
           "successOutput": "{{$count}}",
-          "updatedOn": "2020-02-24T10:03:53.880+01:00"
+          "updatedOn": "2021-03-31T06:34:56.583+00:00"
         },
         {
           "description": "",
           "expectedResult": "",
           "hidden": false,
           "inputs": [],
-          "lastUpdatedBy": {
-            "id": 1,
-            "username": "admin",
-            "email": "admin@alex.example",
-            "role": "ADMIN"
-          },
           "name": "show all",
           "outputs": [],
           "steps": [
@@ -242,69 +258,13 @@
             }
           ],
           "successOutput": null,
-          "updatedOn": "2020-02-24T10:03:53.908+01:00"
+          "updatedOn": "2021-03-31T06:34:56.597+00:00"
         },
         {
           "description": "",
           "expectedResult": "",
           "hidden": false,
           "inputs": [],
-          "lastUpdatedBy": {
-            "id": 1,
-            "username": "admin",
-            "email": "admin@alex.example",
-            "role": "ADMIN"
-          },
-          "name": "reset",
-          "outputs": [],
-          "steps": [
-            {
-              "type": "action",
-              "disabled": false,
-              "ignoreFailure": false,
-              "negated": false,
-              "errorOutput": null,
-              "action": {
-                "type": "web_goto",
-                "url": "/",
-                "baseUrl": "Base",
-                "credentials": {
-                  "name": "",
-                  "password": ""
-                }
-              }
-            },
-            {
-              "type": "action",
-              "disabled": false,
-              "ignoreFailure": false,
-              "negated": false,
-              "errorOutput": null,
-              "action": {
-                "type": "web_waitForNode",
-                "node": {
-                  "selector": ".new-todo",
-                  "type": "CSS"
-                },
-                "waitCriterion": "CLICKABLE",
-                "maxWaitTime": 10
-              }
-            }
-          ],
-          "successOutput": null,
-          "updatedOn": "2020-02-24T10:03:53.932+01:00"
-        },
-        {
-          "description": "",
-          "expectedResult": "",
-          "hidden": false,
-          "inputs": [],
-          "lastUpdatedBy": {
-            "id": 1,
-            "username": "admin",
-            "email": "admin@alex.example",
-            "role": "ADMIN"
-          },
           "name": "show active",
           "outputs": [],
           "steps": [
@@ -325,19 +285,13 @@
             }
           ],
           "successOutput": null,
-          "updatedOn": "2020-02-24T10:03:53.958+01:00"
+          "updatedOn": "2021-03-31T06:34:56.613+00:00"
         },
         {
           "description": "",
           "expectedResult": "",
           "hidden": false,
           "inputs": [],
-          "lastUpdatedBy": {
-            "id": 1,
-            "username": "admin",
-            "email": "admin@alex.example",
-            "role": "ADMIN"
-          },
           "name": "show completed",
           "outputs": [],
           "steps": [
@@ -358,7 +312,7 @@
             }
           ],
           "successOutput": null,
-          "updatedOn": "2020-02-24T10:03:53.982+01:00"
+          "updatedOn": "2021-03-31T06:34:56.626+00:00"
         },
         {
           "description": "",
@@ -371,12 +325,6 @@
               "parameterType": "STRING"
             }
           ],
-          "lastUpdatedBy": {
-            "id": 1,
-            "username": "admin",
-            "email": "admin@alex.example",
-            "role": "ADMIN"
-          },
           "name": "delete todo",
           "outputs": [],
           "steps": [
@@ -456,19 +404,13 @@
             }
           ],
           "successOutput": null,
-          "updatedOn": "2020-02-24T10:03:54.009+01:00"
+          "updatedOn": "2021-03-31T06:34:56.645+00:00"
         },
         {
           "description": "",
           "expectedResult": "",
           "hidden": false,
           "inputs": [],
-          "lastUpdatedBy": {
-            "id": 1,
-            "username": "admin",
-            "email": "admin@alex.example",
-            "role": "ADMIN"
-          },
           "name": "clear completed",
           "outputs": [],
           "steps": [
@@ -489,19 +431,13 @@
             }
           ],
           "successOutput": null,
-          "updatedOn": "2020-02-24T10:03:54.037+01:00"
+          "updatedOn": "2021-03-31T06:34:56.663+00:00"
         },
         {
           "description": "",
           "expectedResult": "",
           "hidden": false,
           "inputs": [],
-          "lastUpdatedBy": {
-            "id": 1,
-            "username": "admin",
-            "email": "admin@alex.example",
-            "role": "ADMIN"
-          },
           "name": "toggle completed all",
           "outputs": [],
           "steps": [
@@ -522,7 +458,7 @@
             }
           ],
           "successOutput": null,
-          "updatedOn": "2020-02-24T10:03:54.059+01:00"
+          "updatedOn": "2021-03-31T06:34:56.676+00:00"
         },
         {
           "description": "",
@@ -535,12 +471,6 @@
               "parameterType": "STRING"
             }
           ],
-          "lastUpdatedBy": {
-            "id": 1,
-            "username": "admin",
-            "email": "admin@alex.example",
-            "role": "ADMIN"
-          },
           "name": "toggle completed",
           "outputs": [],
           "steps": [
@@ -561,7 +491,7 @@
             }
           ],
           "successOutput": null,
-          "updatedOn": "2020-02-24T10:03:54.085+01:00"
+          "updatedOn": "2021-03-31T06:34:56.688+00:00"
         }
       ],
       "groups": []
@@ -629,15 +559,161 @@
       ],
       "postSteps": [],
       "generated": false,
-      "lastUpdatedBy": {
-        "id": 1,
-        "username": "admin",
-        "email": "admin@alex.example",
-        "role": "ADMIN"
-      },
-      "updatedOn": "2020-02-10T12:07:24.495+01:00",
+      "updatedOn": "2020-02-10T11:07:24.495+00:00",
       "status": "DONE",
       "type": "case"
+    }
+  ],
+  "formulaSuites": [],
+  "learnerSetups": [
+    {
+      "name": "setup with one todo item",
+      "enableCache": true,
+      "saved": true,
+      "algorithm": {
+        "name": "TTT"
+      },
+      "environments": [
+        {
+          "name": "Production",
+          "urls": [
+            {
+              "name": "Base",
+              "url": "http://localhost:8080/examples/react",
+              "default": true
+            }
+          ],
+          "variables": [],
+          "default": true
+        }
+      ],
+      "symbols": [
+        {
+          "parameterValues": [],
+          "symbol": {
+            "name": "reset"
+          }
+        },
+        {
+          "parameterValues": [
+            {
+              "parameter": {
+                "type": "input",
+                "name": "text",
+                "parameterType": "STRING"
+              },
+              "value": "bananas"
+            }
+          ],
+          "symbol": {
+            "name": "create todo"
+          }
+        },
+        {
+          "parameterValues": [],
+          "symbol": {
+            "name": "get visible todos"
+          }
+        },
+        {
+          "parameterValues": [],
+          "symbol": {
+            "name": "get todos left"
+          }
+        },
+        {
+          "parameterValues": [],
+          "symbol": {
+            "name": "show all"
+          }
+        },
+        {
+          "parameterValues": [],
+          "symbol": {
+            "name": "show active"
+          }
+        },
+        {
+          "parameterValues": [],
+          "symbol": {
+            "name": "show completed"
+          }
+        },
+        {
+          "parameterValues": [
+            {
+              "parameter": {
+                "type": "input",
+                "name": "text",
+                "parameterType": "STRING"
+              },
+              "value": "bananas"
+            }
+          ],
+          "symbol": {
+            "name": "delete todo"
+          }
+        },
+        {
+          "parameterValues": [],
+          "symbol": {
+            "name": "clear completed"
+          }
+        },
+        {
+          "parameterValues": [],
+          "symbol": {
+            "name": "toggle completed all"
+          }
+        },
+        {
+          "parameterValues": [
+            {
+              "parameter": {
+                "type": "input",
+                "name": "text",
+                "parameterType": "STRING"
+              },
+              "value": "bananas"
+            }
+          ],
+          "symbol": {
+            "name": "toggle completed"
+          }
+        }
+      ],
+      "preSymbol": {
+        "parameterValues": [],
+        "symbol": {
+          "name": "reset"
+        }
+      },
+      "postSymbol": null,
+      "equivalenceOracle": {
+        "type": "random_word",
+        "batchSize": 1,
+        "minLength": 60,
+        "maxLength": 60,
+        "seed": 42,
+        "maxNoOfTests": 60
+      },
+      "webDriver": {
+        "width": 1920,
+        "height": 1080,
+        "implicitlyWait": 0,
+        "pageLoadTimeout": 10,
+        "scriptTimeout": 10,
+        "platform": "ANY",
+        "browser": "chrome",
+        "version": "",
+        "headless": true
+      },
+      "modelCheckingConfig": {
+        "formulaSuites": [],
+        "minUnfolds": 1,
+        "multiplier": 0.1
+      },
+      "project": 1
     }
   ]
 }

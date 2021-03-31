@@ -29,12 +29,12 @@ Password: *admin*
 
 For the **production** environment:
 
-3. Run `docker-compose -f docker-compose.production.yml`
+3. Run `docker-compose -f docker-compose.production.yml up`
 4. Open [http://127.0.0.1](http://127.0.0.1) in a Web browser.
 
 For the **development** environment:
 
-3. Run `docker-compose -f docker-compose.development.yml`
+3. Run `docker-compose -f docker-compose.development.yml up`
 4. Open [http://127.0.0.1:4200](http://127.0.0.1:4200) in a Web browser.
 
 [download]: https://github.com/LearnLib/alex/releases

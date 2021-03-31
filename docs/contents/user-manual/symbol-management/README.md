@@ -149,11 +149,11 @@ Web actions are used to interact with a browser interface like a normal user wou
 Most web actions require that a *locator* to the element to interact with is specified. 
 There are three possible options how to define such a locator:
 
-| Type  | Description                                                                                     |
-|-------|-------------------------------------------------------------------------------------------------|
-| CSS   | A valid CSS3 locator                                                                            |
-| XPath | An XPath expression to an element in the DOM tree                                               |
-| JS    | A JavaScript snippet that returns an element, e.g. `return document.querySelector('#new-todo')` |
+| Type  | Description                                        | Example                                      |
+|-------|---------------------------------------------------------------------------------------------------|
+| CSS   | A valid CSS3 locator                               | `#new-todo`                                  |
+| XPath | An XPath expression to an element in the DOM tree  | `//*[@id='new-todo']`                        |
+| JS    | A JavaScript snippet that returns an element, e.g. | `return document.querySelector('#new-todo')` |
 
 
 ### REST actions
@@ -203,13 +203,14 @@ In order to model and learn such behaviors and to pass data between symbols, act
 In order to make use of those in actions, there is a template language that has to be used in action fields:
 
 ::: v-pre
-| Notation           | Description                                                           |
-|--------------------|-----------------------------------------------------------------------|
-| {{#counterName}}   | The value of the counter with the name *counterName* is inserted      |
-| {{$variableName}}  | The value of the variable with the name *variableName* is inserted    |
+| Notation           | Description                                                                       |
+|--------------------|-----------------------------------------------------------------------------------|
+| {{#counterName}}   | The value of the counter with the name *counterName* is inserted                  |
+| {{$variableName}}  | The value of the variable with the name *variableName* is inserted                |
+| {{:variableName}}  | The value of the environment variable with the name *variableName* is inserted    |
 :::
 
-The following example demonstrates the usage of variables, but counters can be used in a similar way.
+The following example demonstrates the usage of variables, but counters can be used similarly.
 
 ![Variables 1](./assets/variables-1.jpg)
 
@@ -257,4 +258,4 @@ Note that currently, it is not possible to upload multiple files at once.
 ### Download
 
 Once you have uploaded a file, you can also download it again.
-Therefor, click on the corresponding menu item in the dropdown menu of a file.
+Therefore, click on the corresponding menu item in the dropdown menu of a file.

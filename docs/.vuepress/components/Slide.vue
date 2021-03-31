@@ -1,5 +1,5 @@
 <template>
-  <div class="slide" style="display: none">
+  <div class="slide">
     <div class="image">
       <slot name="image"></slot>
     </div>
@@ -26,5 +26,7 @@
     };
 </script>
 
-<style scoped>
+<style scoped lang="stylus">
+  .slide
+    display: none
 </style>

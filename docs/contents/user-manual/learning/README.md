@@ -1,30 +1,32 @@
 # Learning
 
-## Configuration of a learning process
+## Creating a learner setup
 
-In order to start learning an application, a learning process has to be configured. 
-Such a process always consists of the following components:
+In order to start learning an application, a learner setup has to be configured. 
+Such a setup always consists of the following components:
 
 * An input alphabet (set of symbols)
 * A symbol to reset the application
 * A learning algorithm
 * A parametrized equivalence oracle
-* A maximum amount of steps to learn
 * A list of target URLs
 * A web browser
 
-In the setup view (**Learning > Setup**), the list of symbols is displayed from which you have to select the symbols that should be used for the input alphabet.
+![Learning](./assets/learner-setup-1.png)
 
-1. Select a symbol that works as a system reset in the **Pre**-section
+In the setup view (**Learning > Setup**), the list of created learner setups is displayed.
+To create a new setup, click on the *New Setup*-button.
+
+![Learning](./assets/learner-setup-2.png)
+
+1. Select a symbol that works as a system reset in the **Reset**-section
 2. Select all symbols that should be included in the input alphabet from the tree view in the left column
 3. Optionally, select a symbol in the **Post**-section.
    This symbol will be executed after each membership query.
 
 You can start the learning process with the default configuration by clicking on **Start learning**.
 You can, however also adjust certain settings such as the equivalence test strategy or the target web browser.
-Therefore, click on the button with the gear icon at <span class="label">2</span> which opens the dialog displayed below.
-
-![Setup](./assets/learning-setup-2.jpg)
+The corresponding settings can be configured via the tabset on the right.
 
 Here, in the tab **Learner**, select a learning algorithm first.
 Per default, the *TTT* algorithm is preselected because it usually performs better than the other available options.
@@ -60,21 +62,14 @@ Then, configure the equivalence approximation strategy:
     This oracle is especially useful when having generated a test suite from a previously learned model.
 </definition>
 
-The input field for the maximum amount of steps to learn indicates how many intermediate hypotheses the learner has to generate before the learning process is stopped.
-The value *-1* means that the learner stops if no more counterexample is found.
-Another value, for example 3, would stop the learner after having generated three hypotheses, although this might not be the final one.
-Of cause, if the final hypothesis is learned before those three steps, the learner stops beforehand.
-This way, it is possible to e.g. learn the first three steps with a randomized equivalence oracle and then continue learning with another one.
-
 In the **WebDriver** tab you can configure which web browser is used for accessing the target web application during the learning process.
 Each web driver has individual options which are displayed once you select a web browser from the select input.
 
-Under the **Target** tab, all URLs that are registered to the project are listed.
+Under the **Environments** tab, all URLs that are registered to the project are listed.
 Select the ones where membership queries should be posed to.
 If more than one URL is selected, membership query batches will be parallelized automatically.
 
-Save the configuration with a click on the **Save**-button.
-Finally, click on the *Start learning* button in the button group <span class="label">2</span> to start the learning process.
+Save the configuration with a click on the **Save**-button so that it appears in the list of learner setups or execute the setup immediately.
 
 
 ## Learning
@@ -121,7 +116,7 @@ Beside automated strategies for finding counterexamples, there is the option to 
 
 ![Sample](./assets/sample-1.jpg)
 
-Therefor, select the equivalence oracle *Sample* from the select input in the sidebar.
+Therefore, select the equivalence oracle *Sample* from the select input in the sidebar.
 Then, click together a word by clicking on the edge labels of the hypothesis.
 After that, click on <span class="label">1</span> to check if the word actually is a counterexample.
 

@@ -12,15 +12,13 @@
     };
 </script>
 
-<style scoped>
-  .definition {
-    padding-left: 1.5em;
-    text-indent: -1.5em;
-    margin-bottom: 1rem;
-  }
+<style scoped lang="stylus">
+  .definition
+    padding-left: 1.5em
+    text-indent: -1.5em
+    margin-bottom: 1rem
 
-  .definition .term {
-    font-weight: 500;
-    margin-right: .25rem;
-  }
+    .term
+      font-weight: 500
+      margin-right: .25rem
 </style>

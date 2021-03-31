@@ -1,3 +1,19 @@
+$color-green = #87b82b
+
+a
+  color: $color-green
+
+  &:hover
+    color: $color-green
+
+  &.sidebar-link
+    &:hover
+      color: $color-green
+
+    &.active
+      color: $color-green
+      border-left-color: $color-green
+
 figure
     display: flex
     margin: 0
@@ -33,9 +49,14 @@ figure
   line-height: 1.7;
 
   &.alert-info
-    color: #0c5460;
-    background-color: #d1ecf1;
-    border-color: #bee5eb;
+    color: #0c5460
+    background-color: #d1ecf1
+    border-color: #bee5eb
 
 .definition
   line-height: 1.7
+
+table
+  display table
+  table-layout: auto
+  width: 100%

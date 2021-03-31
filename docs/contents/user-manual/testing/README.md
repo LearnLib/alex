@@ -25,26 +25,40 @@ For executing tests setup more quickly, select the tests you want to execute and
 
 ## Test cases
 
-![Testing](./assets/testing-2.jpg)
+![Testing](./assets/testing-2.png)
 
-Once you are in the view for a single test case, you can navigate to the parent test suite by clicking on <span class="label">1</span>.
+A test case consists of:
 
-In order to model the test, click together a sequence of symbols from the symbol tree on the left.
-You can always reorder the symbols in the test by drag-and-drop.
+* A list of **Pre steps** which are actions that are used to initialize the test, e.g. to clear the system and to create necessary data.
+  If one of the pre steps fails, the execution is aborted and the test is considered failed.
+  Steps can be added to the list of pre steps via drag and drop.
+  
+* A list of **Steps** which is the list of symbols that model the actual test case.
+  In order to model the test, click together a sequence of symbols from the symbol tree on the left.
+  You can always reorder the symbols in the test by drag-and-drop.
 
-If a symbol has input parameters defined, they are displayed here, too (see <span class="label">2</span>).
+* A list of **Post steps** which are actions that can be used to clean up after the test.
+  The test will not fail, if one of the post steps can not be executed.
+  Further, steps can be added to the list of post steps via drag and drop.
+
+If a symbol has input parameters defined, they are displayed in the corresponding step.
 At first, they are assigned a null value which indirectly means that the values are read from the global data context that is created during the execution of the test.
 If you specify a value yourself, that value overwrites the value from the global context.
 
-A test always has to pass.
-It fails if one of its steps fails and the steps after the failed step are not executed.
-You can however specify with <span class="3"></span> that a step should fail.
-In the example above, we specify that the last step *Read ToDo* should fail because after having deleted a todo, it should not be visible anylonger.
-As a result, the test passes.
+A test always has to pass and it passes, if the **Expected output** matches the **Actual output** column for all steps.
+It fails if the execute of one of its steps fails and the remaining steps are not executed.
 
-You can execute the test by clicking on <span class="4"></span> and configure the execution with the button with the gear icon on the right.
-Before the execution, save any changes first so the the current version of your test is executed.
-Note that if you execute the test here, no report is created.
+### Changing the expected output
+
+Sometimes, you want to assert that an certain step can not be executed.
+Instead of modeling an additional symbol, you can change the expected output.
+By clicking on the value in the **Expected output** column, you can negate the expected result.
+
+### Disabling steps
+
+For debugging purposes, it can be useful to disable steps.
+The toggle button in each row allows that.
+A step that is disabled is skipped during the test execution.
 
 
 ## Executing tests

@@ -8,9 +8,9 @@ If you find bugs of any kind relating this application or inaccuracies in this m
 
 ## Features
 
-ALEX offers a simplicity-oriented way to model and execute learning experiments for web applications and web services using active automata learning. 
-Since version 1.5.0 ALEX has been extended to support traditional UI and interface testing as well.
-Based on features of [LearnLib][learnlib] and inspired by the [LearnLib Studio][learnlibStudio], ALEX lays a focus on the ease to use of the tool while offering an extensive feature set, including:
+ALEX offers a simplicity-oriented way to execute learning experiments for web applications and web services using active automata learning. 
+Since version 1.5.0 ALEX has been extended to support traditional UI and interface testing using Selenium as well.
+Based on features of [LearnLib][learnlib], ALEX lays a focus on the ease to use of the tool while offering an extensive feature set, including:
 
 * Inferring Mealy machines of web applications and web services using active automata learning techniques
 * Graphical symbol and learning process modelling
@@ -20,6 +20,7 @@ Based on features of [LearnLib][learnlib] and inspired by the [LearnLib Studio][
     * Statistics of learning experiments
 * Simultaneous learning of web applications and web services
 * Various learning algorithms and equivalence approximation strategies
+* LTL-based model checking
 * GUI testing capabilities
 * And much more...
 

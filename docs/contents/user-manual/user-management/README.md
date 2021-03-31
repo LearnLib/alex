@@ -15,27 +15,31 @@ Password: *admin*
 
 ## Logging into ALEX
 
-![Login](./assets/login.jpg)
+![Login](./assets/login.png)
 
 The picture above shows the start page of ALEX. 
-You can either create a new account <span class="label">1</span> or sign in <span class="label">2</span> with an existing account.
+You can either create a new account or sign in with an existing account.
 
 
 ## Updating the user profile
 
-![Profile](./assets/profile.jpg)
+![Profile](./assets/profile.png)
 
-Once you are logged in, you can edit your user profile by clicking on the **"Settings"** item in the sidebar in the group labeled **"User"**.
+Once you are logged in, you can edit your user profile by clicking on the **"Profile"** item in dropdown menu on the top right.
 Here, you can change your email address, your password or delete your account permanently.
 
 
 ## Admin user management
 
 Admins also have the possibility to manage all existing users that are registered.
-Therefore, click on the item **"User Management"**.
+Therefore, click on the item **"User Management"** in the group **"Admin"**.
 
-![User Management 1](./assets/user-management-1.jpg)
+![User Management 1](./assets/user-management.png)
 
-A click on <span class="label">1</span> reveals a modal window (see the picture below) where the corresponding actions on a user can be performed.
-Note that, as an admin, you can only delete your own account or change your role to *REGISTERED* if there is another user with admin rights in the system.
-The button <span class="label">2</span> lets admins create new users.
+The click on the *Edit*-button opens a modal dialog where you can update information for each user.
+
+### Allowed processes
+
+This value indicates how many browser instances are available to this user.
+These instances are used for learning and testing processes.
+If, e.g. the value is set to 1, the corresponding user can only execute one learning process or one testing process.
