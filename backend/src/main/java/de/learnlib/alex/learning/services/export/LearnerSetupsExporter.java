@@ -92,7 +92,7 @@ public class LearnerSetupsExporter extends EntityExporter {
 
     private abstract static class IgnoreFieldsForLearnerSetupMixin extends IgnoreIdFieldMixin {
         @JsonIgnore
-        abstract Project getProject();
+        abstract Project getProjectId();
     }
 
     private abstract static class IgnoreFieldsForProjectEnvironmentMixin extends IgnoreIdFieldMixin {
