@@ -32,14 +32,26 @@ public class ParameterizedSymbolTest {
         final ParameterizedSymbol copy = ps.copy();
 
         assertNull(copy.getId());
+        assertEquals(ps.getAlias(), copy.getAlias());
         assertEquals(ps.getSymbol(), copy.getSymbol());
+        assertEquals(ps.getOutputMappings().size(), copy.getOutputMappings().size());
+        copy.getOutputMappings().forEach(pv -> assertNull(pv.getId()));
+        assertEquals(ps.getParameterValues().size(), copy.getParameterValues().size());
         copy.getParameterValues().forEach(pv -> assertNull(pv.getId()));
     }
 
     @Test
-    public void shouldGetTheComputedName() {
-        final ParameterizedSymbol ps = createDefaultPSymbol();
+    public void shouldGetTheComputedNameWhenNoAliasIsSpecified() {
+        final var ps = createDefaultPSymbol();
         assertEquals("s1 <v1, v2>", ps.getAliasOrComputedName());
+    }
+
+    @Test
+    public void shouldGetTheAliasAsComputedNameWhenAliasIsSpecified() {
+        final var ps = createDefaultPSymbol();
+        final var alias = "an alias";
+        ps.setAlias(alias);
+        assertEquals(alias, ps.getAliasOrComputedName());
     }
 
     @Test

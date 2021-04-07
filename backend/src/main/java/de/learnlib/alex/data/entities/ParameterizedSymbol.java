@@ -258,6 +258,7 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
     public ParameterizedSymbol copy() {
         final ParameterizedSymbol pSymbol = new ParameterizedSymbol();
         pSymbol.setSymbol(symbol);
+        pSymbol.setAlias(alias);
         pSymbol.setOutputMappings(
                 outputMappings.stream().map(om -> {
                     final SymbolOutputMapping mapping = new SymbolOutputMapping();
