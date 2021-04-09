@@ -24,6 +24,7 @@ import de.learnlib.alex.integrationtests.resources.AbstractResourceIT;
 import de.learnlib.alex.integrationtests.websocket.util.WebSocketUser;
 import de.learnlib.alex.websocket.entities.WebSocketMessage;
 import de.learnlib.alex.websocket.services.enums.WebSocketServiceEnum;
+import java.util.List;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -46,46 +47,44 @@ public class WebSocketServiceIT extends AbstractResourceIT {
     @After
     @Override
     public void post() throws Exception {
-        user1.forceDisconnectAll();
-        user2.forceDisconnectAll();
+        List.of(user1, user2).forEach(u -> {
+            u.clearMessagesInAllSessions();
+            u.forceDisconnectAll();
+        });
 
         super.post();
     }
 
     @Test
     public void shouldRejectNullEntity() throws Exception {
-        final WebSocketMessage badMessage = new WebSocketMessage();
+        final var badMessage = new WebSocketMessage();
         badMessage.setType("SOME_TYPE");
         badMessage.setContent("SOME_CONTENT");
 
         user1.send("default", badMessage);
-        final WebSocketMessage response = user1.getNextMessage("default");
-        assertEquals("Received malformed WebSocketMessage.", JsonPath.read(response.getContent(), "$.description"));
+        final var response = user1.getNextMessage("default");
+        assertEquals("Received malformed WebSocketMessage.", getDescription(response.getContent()));
     }
 
     @Test
     public void shouldRejectNullType() throws Exception {
-        final WebSocketMessage badMessage = new WebSocketMessage();
+        final var badMessage = new WebSocketMessage();
         badMessage.setEntity("SOME_ENTITY");
         badMessage.setContent("SOME_CONTENT");
 
-        user1.send("default", badMessage);
-        final WebSocketMessage response = user1.getNextMessage("default");
-        assertEquals("Received malformed WebSocketMessage.", JsonPath.read(response.getContent(), "$.description"));
+        final var response = user1.sendAndReceive("default", badMessage);
+        assertEquals("Received malformed WebSocketMessage.", getDescription(response.getContent()));
     }
 
     @Test
     public void shouldCatchSystemReservedEntity() throws Exception {
-        final WebSocketMessage badMessage = new WebSocketMessage();
-
+        final var badMessage = new WebSocketMessage();
         badMessage.setType("SOME_TYPE");
-
         badMessage.setEntity(WebSocketServiceEnum.WEBSOCKET_SERVICE_INTERNAL.name());
         badMessage.setContent("SOME_CONTENT");
 
-        user1.send("default", badMessage);
-        final WebSocketMessage response = user1.getNextMessage("default");
-        assertEquals("Received system reserved entity type.", JsonPath.read(response.getContent(), "$.description"));
+        final var response = user1.sendAndReceive("default", badMessage);
+        assertEquals("Received system reserved entity type.", getDescription(response.getContent()));
     }
 
     @Test
@@ -103,13 +102,16 @@ public class WebSocketServiceIT extends AbstractResourceIT {
     public void shouldPropagateLogoutCheck() throws Exception {
         user1.connectNewSession("otherSession");
 
-        WebSocketMessage message = new WebSocketMessage();
+        final var message = new WebSocketMessage();
         message.setEntity(WebSocketServiceEnum.WEBSOCKET_SERVICE.name());
         message.setType(WebSocketServiceEnum.LOGOUT.name());
-
         user1.send("default", message);
 
-        message = user1.getNextMessage("otherSession");
-        assertEquals(WebSocketServiceEnum.LOGOUT_CHECK.name(), message.getType());
+        final var response = user1.getNextMessage("otherSession");
+        assertEquals(WebSocketServiceEnum.LOGOUT_CHECK.name(), response.getType());
+    }
+
+    private String getDescription(String content) {
+        return JsonPath.read(content, "$.description");
     }
 }

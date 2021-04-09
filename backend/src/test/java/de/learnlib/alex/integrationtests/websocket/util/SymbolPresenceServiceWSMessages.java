@@ -16,57 +16,40 @@
 
 package de.learnlib.alex.integrationtests.websocket.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.learnlib.alex.websocket.entities.WebSocketMessage;
 import de.learnlib.alex.websocket.services.enums.SymbolPresenceServiceEnum;
 import java.util.List;
 
-public class SymbolPresenceServiceWSMessages {
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
+public class SymbolPresenceServiceWSMessages extends WSMessages {
 
     public WebSocketMessage requestStatus(List<Long> projectIds) {
-        final WebSocketMessage msg = new WebSocketMessage();
+        final var msg = new WebSocketMessage();
         msg.setEntity(SymbolPresenceServiceEnum.SYMBOL_PRESENCE_SERVICE.name());
         msg.setType(SymbolPresenceServiceEnum.STATUS_REQUEST.name());
-
-        final ArrayNode projects = objectMapper.createArrayNode();
-        final ObjectNode content = objectMapper.createObjectNode();
-
-        projectIds.forEach(projects::add);
-        content.set("projectIds", projects);
-        msg.setContent(content.toString());
-
+        msg.setContent(createContent(projectIds));
         return msg;
     }
 
     public WebSocketMessage userEnteredSymbol(long projectId, long symbolId) {
-        final WebSocketMessage msg = new WebSocketMessage();
+        final var msg = new WebSocketMessage();
         msg.setEntity(SymbolPresenceServiceEnum.SYMBOL_PRESENCE_SERVICE.name());
         msg.setType(SymbolPresenceServiceEnum.USER_ENTERED.name());
-
-        final ObjectNode content = objectMapper.createObjectNode();
-
-        content.put("projectId", projectId);
-        content.put("symbolId", symbolId);
-        msg.setContent(content.toString());
-
+        msg.setContent(createContent(projectId, symbolId));
         return msg;
     }
 
     public WebSocketMessage userLeftSymbol(long projectId, long symbolId) {
-        final WebSocketMessage msg = new WebSocketMessage();
+        final var msg = new WebSocketMessage();
         msg.setEntity(SymbolPresenceServiceEnum.SYMBOL_PRESENCE_SERVICE.name());
         msg.setType(SymbolPresenceServiceEnum.USER_LEFT.name());
+        msg.setContent(createContent(projectId, symbolId));
+        return msg;
+    }
 
-        final ObjectNode content = objectMapper.createObjectNode();
-
+    private String createContent(long projectId, long symbolId) {
+        final var content = objectMapper.createObjectNode();
         content.put("projectId", projectId);
         content.put("symbolId", symbolId);
-        msg.setContent(content.toString());
-
-        return msg;
+        return content.toString();
     }
 }

@@ -48,17 +48,21 @@ import de.learnlib.alex.testing.entities.TestQueueItem;
 import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.entities.TestSuite;
 import de.learnlib.alex.testing.entities.TestSuiteResult;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.ws.rs.core.Response;
+import org.awaitility.Awaitility;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
 public class ATestResourceIT extends AbstractResourceIT {
+
+    private final Duration defaultWaitTime = Duration.ofSeconds(5);
 
     private TestApi testApi;
     private SymbolApi symbolApi;
@@ -281,6 +285,7 @@ public class ATestResourceIT extends AbstractResourceIT {
 
         // lock testcase
         webSocketUser.send("default", testPresenceServiceWSMessages.userEnteredTest(projectId, testCase.getId()));
+        Awaitility.await().atMost(defaultWaitTime).until(() -> webSocketUser.assertNumberOfMessages(List.of("default"), List.of(1)));
 
         testCase.setName("abc");
 
@@ -302,6 +307,7 @@ public class ATestResourceIT extends AbstractResourceIT {
 
         // lock testcase
         webSocketUser.send("default", testPresenceServiceWSMessages.userEnteredTest(projectId, testCase.getId()));
+        Awaitility.await().atMost(defaultWaitTime).until(() -> webSocketUser.assertNumberOfMessages(List.of("default"), List.of(1)));
 
         testCase.setName("abc");
 
@@ -474,6 +480,7 @@ public class ATestResourceIT extends AbstractResourceIT {
 
         // lock testcase
         webSocketUser.send("default", testPresenceServiceWSMessages.userEnteredTest(projectId, tc1.getId()));
+        Awaitility.await().atMost(defaultWaitTime).until(() -> webSocketUser.assertNumberOfMessages(List.of("default"), List.of(1)));
 
         final Response res = testApi.move(projectId, tc1.getId().intValue(), ts2.getId().intValue(), webSocketUser.getJwt());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());
@@ -492,6 +499,7 @@ public class ATestResourceIT extends AbstractResourceIT {
 
         // lock testcase
         webSocketUser.send("default", testPresenceServiceWSMessages.userEnteredTest(projectId, tc1.getId()));
+        Awaitility.await().atMost(defaultWaitTime).until(() -> webSocketUser.assertNumberOfMessages(List.of("default"), List.of(1)));
 
         final Response res = testApi.move(projectId, ts1.getId().intValue(), ts2.getId().intValue(), webSocketUser.getJwt());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());
@@ -554,6 +562,7 @@ public class ATestResourceIT extends AbstractResourceIT {
 
         // lock testcase
         webSocketUser.send("default", testPresenceServiceWSMessages.userEnteredTest(projectId, tc1.getId()));
+        Awaitility.await().atMost(defaultWaitTime).until(() -> webSocketUser.assertNumberOfMessages(List.of("default"), List.of(1)));
 
         final Response res = testApi.delete(projectId, tc1.getId().intValue(), webSocketUser.getJwt());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());
@@ -571,6 +580,7 @@ public class ATestResourceIT extends AbstractResourceIT {
 
         // lock testcase
         webSocketUser.send("default", testPresenceServiceWSMessages.userEnteredTest(projectId, tc1.getId()));
+        Awaitility.await().atMost(defaultWaitTime).until(() -> webSocketUser.assertNumberOfMessages(List.of("default"), List.of(1)));
 
         final Response res = testApi.delete(projectId, ts1.getId().intValue(), webSocketUser.getJwt());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());

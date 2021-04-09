@@ -16,26 +16,26 @@
 
 package de.learnlib.alex.integrationtests.websocket.util;
 
+import static org.junit.Assert.assertEquals;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
 import de.learnlib.alex.websocket.entities.WebSocketMessage;
-import de.learnlib.alex.websocket.services.enums.WebSocketServiceEnum;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import javax.annotation.Nonnull;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.HttpHeaders;
@@ -44,7 +44,6 @@ import javax.ws.rs.core.Response;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
-import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
@@ -92,8 +91,10 @@ public class WebSocketUser {
         this.userId = Integer.toUnsignedLong(JsonPath.read(res.readEntity(String.class), "id"));
         this.jwt = userApi.login(username + "@test.de", "test");
 
-        this.stompClient = new WebSocketStompClient(new SockJsClient(
-                Collections.singletonList(new WebSocketTransport(new StandardWebSocketClient()))));
+        this.stompClient = new WebSocketStompClient(
+                new SockJsClient(Collections.singletonList(
+                        new WebSocketTransport(
+                                new StandardWebSocketClient()))));
 
         this.stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
@@ -120,11 +121,17 @@ public class WebSocketUser {
     }
 
     public void connectNewSession(String sessionName) throws URISyntaxException, InterruptedException, ExecutionException, TimeoutException, IOException {
-        this.messages.put(sessionName, new LinkedBlockingDeque<>());
-        this.sessions.put(sessionName, this.stompClient.connect(new URI(wsUrl()), null, headers, new MySessionHandler(this.messages.get(sessionName))).get(10, TimeUnit.SECONDS));
+        final var messageQueue = new LinkedBlockingDeque<WebSocketMessage>();
+        this.messages.put(sessionName, messageQueue);
 
-        final WebSocketMessage response = this.messages.get(sessionName).poll(DEFAULT_POLL_TIME, TimeUnit.SECONDS);
-        final ObjectNode content = (ObjectNode) objectMapper.readTree(response.getContent());
+        final var sessionHandler = new BlockingQueueSessionHandler(messageQueue);
+        final var stompSession = this.stompClient.connect(new URI(wsUrl()), null, headers, sessionHandler)
+                .get(10, TimeUnit.SECONDS);
+
+        this.sessions.put(sessionName, stompSession);
+
+        final var response = getNextMessage(sessionName);
+        final var content = (ObjectNode) objectMapper.readTree(response.getContent());
         this.sessionIds.put(sessionName, content.get("sessionId").asText());
     }
 
@@ -132,17 +139,21 @@ public class WebSocketUser {
         this.sessions.get(sessionName).send("/app/send/event", objectMapper.writeValueAsString(message));
     }
 
+    public WebSocketMessage sendAndReceive(String sessionName, WebSocketMessage message) throws JsonProcessingException, InterruptedException {
+        send(sessionName, message);
+        return getNextMessage(sessionName);
+    }
+
+    public int getAmountOfMessages(String sessionName) {
+        return this.messages.get(sessionName).size();
+    }
+
     public WebSocketMessage getNextMessage(String sessionName) throws InterruptedException {
         return this.messages.get(sessionName).poll(DEFAULT_POLL_TIME, TimeUnit.SECONDS);
     }
 
-    public WebSocketMessage getNextMessage(String sessionName, int pollTime) throws InterruptedException {
-        return this.messages.get(sessionName).poll(pollTime, TimeUnit.SECONDS);
-    }
-
-    public void clearMessages(String sessionName) throws InterruptedException {
-        Thread.sleep(DEFAULT_POLL_TIME * 1000); //wait for pending message(s)
-        this.messages.get(sessionName).clear();
+    public void clearMessagesInAllSessions() {
+        this.messages.forEach((k,v) -> v.clear());
     }
 
     public void forceDisconnect(String sessionName) {
@@ -156,40 +167,16 @@ public class WebSocketUser {
         this.sessionIds.keySet().forEach(this::forceDisconnect);
     }
 
-    private static class MySessionHandler extends StompSessionHandlerAdapter {
-
-        private final BlockingQueue<WebSocketMessage> queue;
-
-        private final ObjectMapper objectMapper = new ObjectMapper();
-
-        public MySessionHandler(BlockingQueue<WebSocketMessage> queue) {
-            this.queue = queue;
+    public boolean assertNumberOfMessages(List<String> sessions, List<Integer> expectedAmountOfMessages) {
+        assertEquals(sessions.size(), expectedAmountOfMessages.size());
+        var valid = true;
+        for (int i = 0; i < sessions.size(); i++) {
+            valid &= getAmountOfMessages(sessions.get(i)) == expectedAmountOfMessages.get(i);
         }
+        return valid;
+    }
 
-        @Override
-        public void afterConnected(StompSession session, @Nonnull StompHeaders connectedHeaders) {
-            session.subscribe("/user/queue", this);
-            session.subscribe("/user/queue/error", this);
-
-            final WebSocketMessage msg = new WebSocketMessage();
-            msg.setEntity(WebSocketServiceEnum.WEBSOCKET_SERVICE.name());
-            msg.setType(WebSocketServiceEnum.REQUEST_SESSION_ID.name());
-
-            try {
-                session.send("/app/send/event", objectMapper.writeValueAsString(msg));
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public Type getPayloadType(StompHeaders headers) {
-            return WebSocketMessage.class;
-        }
-
-        @Override
-        public void handleFrame(StompHeaders headers, Object payload) {
-            queue.offer((WebSocketMessage) payload);
-        }
+    public boolean assertNumberOfMessages(String session, Integer expectedAmountOfMessages) {
+        return assertNumberOfMessages(List.of(session), List.of(expectedAmountOfMessages));
     }
 }

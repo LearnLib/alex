@@ -26,8 +26,11 @@ import de.learnlib.alex.integrationtests.resources.api.SymbolParameterApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
 import de.learnlib.alex.integrationtests.websocket.util.SymbolPresenceServiceWSMessages;
 import de.learnlib.alex.integrationtests.websocket.util.WebSocketUser;
+import java.time.Duration;
 import java.util.Collections;
+import java.util.List;
 import javax.ws.rs.core.Response;
+import org.awaitility.Awaitility;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +38,8 @@ import org.skyscreamer.jsonassert.JSONAssert;
 
 public class SymbolParameterResourceIT extends AbstractResourceIT {
 
-    private static final ObjectMapper om = new ObjectMapper();
+    private final Duration defaultWaitTime = Duration.ofSeconds(5);
+    private final ObjectMapper om = new ObjectMapper();
 
     private SymbolParameterApi symbolParameterApi;
 
@@ -155,6 +159,7 @@ public class SymbolParameterResourceIT extends AbstractResourceIT {
         projectApi.addMembers(Integer.toUnsignedLong(projectId), Collections.singletonList(webSocketUser.getUserId()), jwtUser1);
 
         webSocketUser.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId, symbolId));
+        Awaitility.await().atMost(defaultWaitTime).until(() -> webSocketUser.assertNumberOfMessages(List.of("default"), List.of(1)));
 
         final Response res = symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test"), webSocketUser.getJwt());
         Assert.assertEquals(res.getStatus(), Response.Status.CREATED.getStatusCode());
@@ -168,6 +173,7 @@ public class SymbolParameterResourceIT extends AbstractResourceIT {
         projectApi.addMembers(Integer.toUnsignedLong(projectId), Collections.singletonList(webSocketUser.getUserId()), jwtUser1);
 
         webSocketUser.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId, symbolId));
+        Awaitility.await().atMost(defaultWaitTime).until(() -> webSocketUser.assertNumberOfMessages(List.of("default"), List.of(1)));
 
         final Response res = symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test"), jwtUser1);
         Assert.assertEquals(res.getStatus(), Response.Status.UNAUTHORIZED.getStatusCode());
@@ -242,6 +248,7 @@ public class SymbolParameterResourceIT extends AbstractResourceIT {
         ((ObjectNode) paramNode).put("name", "newName");
 
         webSocketUser.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId, symbolId));
+        Awaitility.await().atMost(defaultWaitTime).until(() -> webSocketUser.assertNumberOfMessages(List.of("default"), List.of(1)));
 
         final Response res2 = symbolParameterApi.update(projectId, symbolId, paramNode.get("id").asInt(), paramNode.toString(), webSocketUser.getJwt());
         Assert.assertEquals(Response.Status.OK.getStatusCode(), res2.getStatus());
@@ -260,6 +267,7 @@ public class SymbolParameterResourceIT extends AbstractResourceIT {
         ((ObjectNode) paramNode).put("name", "newName");
 
         webSocketUser.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId, symbolId));
+        Awaitility.await().atMost(defaultWaitTime).until(() -> webSocketUser.assertNumberOfMessages(List.of("default"), List.of(1)));
 
         final Response res2 = symbolParameterApi.update(projectId, symbolId, paramNode.get("id").asInt(), paramNode.toString(), jwtUser1);
         Assert.assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), res2.getStatus());
@@ -300,6 +308,7 @@ public class SymbolParameterResourceIT extends AbstractResourceIT {
         final int id = JsonPath.read(res1.readEntity(String.class), "$.id");
 
         webSocketUser.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId, symbolId));
+        Awaitility.await().atMost(defaultWaitTime).until(() -> webSocketUser.assertNumberOfMessages(List.of("default"), List.of(1)));
 
         final Response res2 = symbolParameterApi.delete(projectId, symbolId, id, webSocketUser.getJwt());
         Assert.assertEquals(Response.Status.NO_CONTENT.getStatusCode(), res2.getStatus());
@@ -316,6 +325,7 @@ public class SymbolParameterResourceIT extends AbstractResourceIT {
         final int id = JsonPath.read(res1.readEntity(String.class), "$.id");
 
         webSocketUser.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId, symbolId));
+        Awaitility.await().atMost(defaultWaitTime).until(() -> webSocketUser.assertNumberOfMessages(List.of("default"), List.of(1)));
 
         final Response res2 = symbolParameterApi.delete(projectId, symbolId, id, jwtUser1);
         Assert.assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), res2.getStatus());
