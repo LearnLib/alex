@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.integrationtests.resources.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -88,11 +89,11 @@ public class TestApi extends AbstractApi {
                 .delete();
     }
 
-    public Response execute(Long projectId, TestExecutionConfig config, String jwt) {
+    public Response execute(Long projectId, TestExecutionConfig config, String jwt) throws JsonProcessingException {
         return client.target(url(projectId) + "/execute").request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
-                .post(Entity.json(config));
+                .post(Entity.json(objectMapper.writeValueAsString(config)));
     }
 
     public String url(long projectId) {

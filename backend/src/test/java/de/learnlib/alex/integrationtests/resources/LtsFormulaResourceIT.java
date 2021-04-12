@@ -17,7 +17,7 @@
 package de.learnlib.alex.integrationtests.resources;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.jayway.jsonpath.JsonPath;
 import de.learnlib.alex.data.entities.Project;
@@ -31,8 +31,8 @@ import java.util.Arrays;
 import java.util.List;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 public class LtsFormulaResourceIT extends AbstractResourceIT {
@@ -51,7 +51,7 @@ public class LtsFormulaResourceIT extends AbstractResourceIT {
     private LtsFormulaSuite suite1;
     private LtsFormulaSuite suite2;
 
-    @Before
+    @BeforeEach
     public void before() {
         this.formulaApi = new LtsFormulaApi(client, port);
 

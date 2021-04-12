@@ -17,9 +17,10 @@
 package de.learnlib.alex.integrationtests.repositories;
 
 import static de.learnlib.alex.integrationtests.repositories.SymbolGroupRepositoryIT.createGroup;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.Project;
@@ -31,8 +32,8 @@ import java.util.Arrays;
 import java.util.List;
 import javax.inject.Inject;
 import javax.validation.ValidationException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.dao.DataIntegrityViolationException;
 
 public class SymbolRepositoryIT extends AbstractRepositoryIT {
@@ -45,7 +46,7 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
 
     private Project project;
 
-    @Before
+    @BeforeEach
     public void before() {
         User user = createUser("alex@test.example");
         user = userRepository.save(user);
@@ -65,43 +66,28 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         assertNotNull(symbol.getId());
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
+    @Test
     public void shouldFailToSaveASymbolWithoutAProject() {
         SymbolGroup group = createGroup(project, 1L, "Test Group");
         group = symbolGroupRepository.save(group);
 
         Symbol symbol = createSymbol(null, group, 0L, "Test Symbol");
-        symbolRepository.save(symbol); // should fail
+        assertThrows(DataIntegrityViolationException.class, () -> symbolRepository.save(symbol));
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
+    @Test
     public void shouldFailToSaveASymbolWithoutAGroup() {
         Symbol symbol = createSymbol(project, null, 0L, "Test Symbol");
-        symbolRepository.save(symbol); // should fail
+        assertThrows(DataIntegrityViolationException.class, () -> symbolRepository.save(symbol));
     }
 
-    @Test(expected = ValidationException.class)
+    @Test
     public void shouldFailToSaveASymbolWithoutAName() {
         SymbolGroup group = createGroup(project, 1L, "Test Group");
         group = symbolGroupRepository.save(group);
 
         Symbol symbol = createSymbol(project, group, 0L, null);
-        symbolRepository.save(symbol); // should fail
-    }
-
-    @Test(expected = DataIntegrityViolationException.class)
-    public void shouldSaveSymbolsWithADuplicateIdRevisionPairInDifferentGroups() {
-        SymbolGroup group1 = createGroup(project, 1L, "Test Group 1");
-        group1 = symbolGroupRepository.save(group1);
-        SymbolGroup group2 = createGroup(project, 2L, "Test Group 2");
-        group2 = symbolGroupRepository.save(group2);
-
-        Symbol symbol1 = createSymbol(project, group1, 0L, "Test Symbol");
-        symbolRepository.save(symbol1);
-        Symbol symbol2 = createSymbol(project, group2, 0L, "Test Symbol");
-        symbol2 = symbolRepository.save(symbol2);
-
-        assertNotNull(symbol2.getId());
+        assertThrows(ValidationException.class, () -> symbolRepository.save(symbol));
     }
 
     @Test

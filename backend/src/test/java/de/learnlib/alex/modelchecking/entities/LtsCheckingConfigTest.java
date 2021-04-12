@@ -16,17 +16,19 @@
 
 package de.learnlib.alex.modelchecking.entities;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.util.Arrays;
 import java.util.Collections;
 import javax.validation.ValidationException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class LtsCheckingConfigTest {
 
     private LtsCheckingConfig config;
 
-    @Before
+    @BeforeEach
     public void before() {
         config = new LtsCheckingConfig();
 
@@ -40,45 +42,45 @@ public class LtsCheckingConfigTest {
         config.setStepNo(1);
     }
 
-    @Test(expected = ValidationException.class)
+    @Test
     public void shouldThrowExceptionIfResultIdIsNull() {
         config.setLearnerResultId(null);
-        config.validate();
+        assertThrows(ValidationException.class, () -> config.validate());
     }
 
-    @Test(expected = ValidationException.class)
+    @Test
     public void shouldThrowExceptionIfResultIdIsLessThanZero() {
         config.setLearnerResultId(-1L);
-        config.validate();
+        assertThrows(ValidationException.class, () -> config.validate());
     }
 
-    @Test(expected = ValidationException.class)
+    @Test
     public void shouldThrowExceptionIfStepNoIsNull() {
         config.setStepNo(null);
-        config.validate();
+        assertThrows(ValidationException.class, () -> config.validate());
     }
 
-    @Test(expected = ValidationException.class)
+    @Test
     public void shouldThrowExceptionIfStepNoIsLessThanOne() {
         config.setStepNo(0);
-        config.validate();
+        assertThrows(ValidationException.class, () -> config.validate());
     }
 
-    @Test(expected = ValidationException.class)
+    @Test
     public void shouldThrowExceptionIsFormulasAreEmpty() {
         config.setFormulas(Collections.emptyList());
-        config.validate();
+        assertThrows(ValidationException.class, () -> config.validate());
     }
 
-    @Test(expected = ValidationException.class)
+    @Test
     public void shouldThrowExceptionIfMinUnfoldsIsLessThanZero() {
         config.setMinUnfolds(-1);
-        config.validate();
+        assertThrows(ValidationException.class, () -> config.validate());
     }
 
-    @Test(expected = ValidationException.class)
+    @Test
     public void shouldThrowExceptionIfMultiplierIsLessThanZero() {
         config.setMultiplier(-1.0);
-        config.validate();
+        assertThrows(ValidationException.class, () -> config.validate());
     }
 }

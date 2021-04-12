@@ -16,9 +16,9 @@
 
 package de.learnlib.alex.integrationtests.websocket;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jayway.jsonpath.JsonPath;
@@ -34,9 +34,9 @@ import java.util.Collections;
 import java.util.List;
 import javax.ws.rs.core.Response;
 import org.awaitility.Awaitility;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ProjectPresenceServiceIT extends AbstractResourceIT {
 
@@ -67,7 +67,7 @@ public class ProjectPresenceServiceIT extends AbstractResourceIT {
      *
      * @throws Exception If something goes wrong.
      */
-    @Before
+    @BeforeEach
     public void pre() throws Exception {
         user1 = new WebSocketUser("user1", client, port);
         user2 = new WebSocketUser("user2", client, port);
@@ -84,7 +84,7 @@ public class ProjectPresenceServiceIT extends AbstractResourceIT {
         projectId2 = Integer.toUnsignedLong(JsonPath.read(res2.readEntity(String.class), "$.id"));
     }
 
-    @After
+    @AfterEach
     @Override
     public void post() throws Exception {
         List.of(user1, user2, user3).forEach(u -> {

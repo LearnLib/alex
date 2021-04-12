@@ -17,9 +17,9 @@
 package de.learnlib.alex.integrationtests.resources;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -55,9 +55,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.ws.rs.core.Response;
 import org.awaitility.Awaitility;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 public class ATestResourceIT extends AbstractResourceIT {
@@ -70,11 +69,9 @@ public class ATestResourceIT extends AbstractResourceIT {
     private SymbolUtils symbolUtils;
 
     private String jwtUser1;
-
     private String jwtUser2;
 
     private int userId1;
-
     private int userId2;
 
     private Project project;
@@ -86,7 +83,7 @@ public class ATestResourceIT extends AbstractResourceIT {
 
     private TestPresenceServiceWSMessages testPresenceServiceWSMessages;
 
-    @Before
+    @BeforeEach
     public void pre() {
         this.testApi = new TestApi(client, port);
         this.testPresenceServiceWSMessages = new TestPresenceServiceWSMessages();
@@ -611,7 +608,7 @@ public class ATestResourceIT extends AbstractResourceIT {
         config.setTests(List.of(testCase));
 
         final var res1 = testApi.execute(project.getId(), config, jwtUser1);
-        Assert.assertEquals(HttpStatus.OK.value(), res1.getStatus());
+        assertEquals(HttpStatus.OK.value(), res1.getStatus());
 
         final var item = objectMapper.readValue(res1.readEntity(String.class), TestQueueItem.class);
         assertNotNull(item);
@@ -644,7 +641,7 @@ public class ATestResourceIT extends AbstractResourceIT {
         config.setTests(List.of(testSuite));
 
         final var res1 = testApi.execute(project.getId(), config, jwtUser1);
-        Assert.assertEquals(HttpStatus.OK.value(), res1.getStatus());
+        assertEquals(HttpStatus.OK.value(), res1.getStatus());
 
         final var item = objectMapper.readValue(res1.readEntity(String.class), TestQueueItem.class);
         assertNotNull(item);

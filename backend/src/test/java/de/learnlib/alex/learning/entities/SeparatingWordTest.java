@@ -18,7 +18,7 @@ package de.learnlib.alex.learning.entities;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.automatalib.words.Word;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 public class SeparatingWordTest {

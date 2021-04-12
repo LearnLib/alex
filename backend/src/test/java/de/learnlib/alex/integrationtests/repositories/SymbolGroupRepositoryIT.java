@@ -16,9 +16,10 @@
 
 package de.learnlib.alex.integrationtests.repositories;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.Project;
@@ -27,8 +28,8 @@ import de.learnlib.alex.data.repositories.SymbolGroupRepository;
 import java.util.List;
 import javax.inject.Inject;
 import javax.validation.ValidationException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
@@ -41,7 +42,7 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
 
     private Project project;
 
-    @Before
+    @BeforeEach
     public void before() {
         User user = createUser("alex@test.example");
         this.user = userRepository.save(user);
@@ -58,7 +59,7 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
         assertTrue(group.getId() > 0L);
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
+    @Test
     public void shouldFailToSaveAGroupWithoutAProject() {
         SymbolGroup group = new SymbolGroup();
         group.setId(1L);
@@ -66,17 +67,17 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
 
         project.getGroups().add(group);
 
-        symbolGroupRepository.save(group); // should fail
+        assertThrows(DataIntegrityViolationException.class, () -> symbolGroupRepository.save(group));
     }
 
-    @Test(expected = ValidationException.class)
+    @Test
     public void shouldFailToSaveAGroupWithoutAName() {
         SymbolGroup group = new SymbolGroup();
         group.setProject(project);
         project.getGroups().add(group);
         group.setId(1L);
 
-        symbolGroupRepository.save(group); // should fail
+        assertThrows(ValidationException.class, () -> symbolGroupRepository.save(group));
     }
 
     @Test
@@ -142,9 +143,9 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
         assertEquals(1L, symbolGroupRepository.count()); // only default group left
     }
 
-    @Test(expected = EmptyResultDataAccessException.class)
+    @Test
     public void shouldThrowAnExceptionWhenDeletingAnNonExistingGroup() {
-        symbolGroupRepository.deleteById(55L); // random uuid
+        assertThrows(EmptyResultDataAccessException.class, () -> symbolGroupRepository.deleteById(55L));
     }
 
     static SymbolGroup createGroup(Project project, Long id, String name) {

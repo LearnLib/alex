@@ -16,7 +16,8 @@
 
 package de.learnlib.alex.learning.services.connectors;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -27,13 +28,13 @@ import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.learning.exceptions.LearnerException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ConnectorContextHandlerTest {
 
     private ConnectorContextHandler handler;
@@ -41,7 +42,7 @@ public class ConnectorContextHandlerTest {
     @Mock
     private ParameterizedSymbol resetSymbol;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         Symbol symbol = new Symbol();
         symbol.setId(1L);
@@ -69,12 +70,12 @@ public class ConnectorContextHandlerTest {
         verify(resetSymbol).execute(any(ConnectorManager.class));
     }
 
-    @Test(expected = LearnerException.class)
+    @Test
     public void shouldThrowAnExceptionIfTheResetSymbolExecutionFailed() {
         given(resetSymbol.execute(any(ConnectorManager.class))).willReturn(new ExecuteResult(false));
 
         handler = new ConnectorContextHandler(createConnectorManager(), resetSymbol, null);
-        handler.createContext(); // should fail
+        assertThrows(LearnerException.class, () -> handler.createContext()); // should fail
     }
 
     private ConnectorManager createConnectorManager() {

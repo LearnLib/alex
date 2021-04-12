@@ -16,7 +16,7 @@
 
 package de.learnlib.alex.data.entities.actions.rest;
 
-import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
@@ -31,7 +31,6 @@ public class RestActionTest {
     protected void setUp() {
         connectors = mock(ConnectorManager.class);
         webServiceConnector = mock(WebServiceConnector.class);
-
-        given(connectors.getConnector(WebServiceConnector.class)).willReturn(webServiceConnector);
+        lenient().when(connectors.getConnector(WebServiceConnector.class)).thenReturn(webServiceConnector);
     }
 }

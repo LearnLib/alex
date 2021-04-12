@@ -16,8 +16,8 @@
 
 package de.learnlib.alex.data.entities.actions.misc;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -37,8 +37,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 import javax.ws.rs.core.NewCookie;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
 
@@ -51,7 +51,7 @@ public class SetVariableByCookieActionTest {
 
     private SetVariableByCookieAction setAction;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         setAction = new SetVariableByCookieAction();
         setAction.setName(VARIABLE_NAME);

@@ -16,19 +16,20 @@
 
 package de.learnlib.alex.learning.entities;
 
-import static org.mockito.BDDMockito.willThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.BDDMockito;
 
 public class LearnerResumeConfigurationTest {
 
     private LearnerResumeConfiguration configuration;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         configuration = new LearnerResumeConfiguration();
         configuration.setStepNo(1);
@@ -40,18 +41,18 @@ public class LearnerResumeConfigurationTest {
         configuration.checkConfiguration();
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void ensureThatAnExceptionIsThrownIfNoEqOracleIsGiven() {
         configuration.setEqOracle(null);
-        configuration.checkConfiguration();
+        assertThrows(IllegalArgumentException.class, () -> configuration.checkConfiguration());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void ensureThatAnExceptionIsThrownIfAnInvalidEqOracleIsGiven() {
         AbstractEquivalenceOracleProxy eqOracle = mock(AbstractEquivalenceOracleProxy.class);
-        willThrow(IllegalArgumentException.class).given(eqOracle).checkParameters();
+        BDDMockito.willThrow(IllegalArgumentException.class).given(eqOracle).checkParameters();
         configuration.setEqOracle(eqOracle);
-        configuration.checkConfiguration();
+        assertThrows(IllegalArgumentException.class, () -> configuration.checkConfiguration());
     }
 
 }

@@ -19,15 +19,15 @@ package de.learnlib.alex.learning.entities.learnlibproxies.eqproxies;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 public class SampleEQOracleProxyTest {
 
     private SampleEQOracleProxy eqOracle;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         List<SampleEQOracleProxy.InputOutputPair> counterExample1 = new ArrayList<>();
         counterExample1.add(new SampleEQOracleProxy.InputOutputPair("input1", "output1"));

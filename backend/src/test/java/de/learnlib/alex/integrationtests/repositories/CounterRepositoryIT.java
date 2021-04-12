@@ -16,9 +16,10 @@
 
 package de.learnlib.alex.integrationtests.repositories;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.Counter;
@@ -26,8 +27,8 @@ import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.repositories.CounterRepository;
 import java.util.List;
 import javax.inject.Inject;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
@@ -40,7 +41,7 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
 
     private Project project;
 
-    @Before
+    @BeforeEach
     public void before() {
         User user = createUser("alex@test.example");
         this.user = userRepository.save(user);
@@ -58,19 +59,20 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
         assertEquals(1, counterRepository.count());
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
+    @Test
     public void shouldFailToSaveACounterWithoutAProject() {
         Counter counter = createCounter(null, "TestCounter");
-        counterRepository.save(counter); // should fail
+
+        assertThrows(DataIntegrityViolationException.class, () -> counterRepository.save(counter));
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
+    @Test
     public void shouldFailToSaveACounterWithADuplicateNames() {
         Counter counter1 = createCounter(project, "TestCounter");
         counterRepository.save(counter1);
         Counter counter2 = createCounter(project, "TestCounter");
 
-        counterRepository.save(counter2); // should fail
+        assertThrows(DataIntegrityViolationException.class, () -> counterRepository.save(counter2));
     }
 
     @Test
@@ -120,9 +122,9 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
         assertEquals(0L, counterRepository.count());
     }
 
-    @Test(expected = EmptyResultDataAccessException.class)
+    @Test
     public void shouldThrowAnExceptionWhenDeletingAnNonExistingCounter() {
-        counterRepository.deleteById(-1L);
+        assertThrows(EmptyResultDataAccessException.class, () -> counterRepository.deleteById(-1L));
     }
 
     private Counter createCounter(Project project, String name) {

@@ -16,9 +16,10 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.JsonPath;
@@ -34,8 +35,8 @@ import java.util.List;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.http.HttpStatus;
 
@@ -47,7 +48,7 @@ public class UserResourceIT extends AbstractResourceIT {
 
     private String adminJwt;
 
-    @Before
+    @BeforeEach
     public void pre() {
         userApi = new UserApi(client, port);
         settingsApi = new SettingsApi(client, port);
@@ -70,7 +71,7 @@ public class UserResourceIT extends AbstractResourceIT {
         JsonPath.read(res.readEntity(String.class), "id");
     }
 
-    @Test(expected = PathNotFoundException.class)
+    @Test
     public void shouldFailToGetAJwtIfUserIsInvalid() {
         final Response res = client.target(userApi.url() + "/login").request()
                 .post(Entity.json(createUserJson("test@test.de", "test")));
@@ -78,7 +79,7 @@ public class UserResourceIT extends AbstractResourceIT {
         assertEquals(HttpStatus.NOT_FOUND.value(), res.getStatus());
 
         final String body = res.readEntity(String.class);
-        JsonPath.read(body, "token");
+        assertThrows(PathNotFoundException.class, () -> JsonPath.read(body, "token"));
     }
 
     @Test

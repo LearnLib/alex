@@ -16,9 +16,9 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -31,8 +31,8 @@ import java.util.Arrays;
 import java.util.List;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 public class SymbolGroupResourceIT extends AbstractResourceIT {
@@ -47,7 +47,7 @@ public class SymbolGroupResourceIT extends AbstractResourceIT {
 
     private SymbolGroupApi symbolGroupApi;
 
-    @Before
+    @BeforeEach
     public void pre() {
         final UserApi userApi = new UserApi(client, port);
         ProjectApi projectApi = new ProjectApi(client, port);

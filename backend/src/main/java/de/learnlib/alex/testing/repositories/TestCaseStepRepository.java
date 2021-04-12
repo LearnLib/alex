@@ -43,7 +43,7 @@ public interface TestCaseStepRepository extends JpaRepository<TestCaseStep, Long
      *         The ID of the symbol.
      * @return The count.
      */
-    Long countAllByPSymbol_Symbol_Id(Long symbolId);
+    Long countAllBypSymbol_Symbol_Id(Long symbolId);
 
-    List<TestCaseStep> findAllByPSymbol_Symbol_Id(Long symbolId);
+    List<TestCaseStep> findAllBypSymbol_Symbol_Id(Long symbolId);
 }

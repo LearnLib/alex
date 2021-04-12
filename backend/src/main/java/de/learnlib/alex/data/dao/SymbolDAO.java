@@ -44,10 +44,10 @@ import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
+import de.learnlib.alex.data.repositories.SymbolPSymbolStepRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
 import de.learnlib.alex.data.repositories.SymbolStepRepository;
-import de.learnlib.alex.data.repositories.SymbolSymbolStepRepository;
 import de.learnlib.alex.data.utils.SymbolOutputMappingUtils;
 import de.learnlib.alex.learning.dao.LearnerSetupDAO;
 import de.learnlib.alex.testing.dao.TestDAO;
@@ -107,7 +107,7 @@ public class SymbolDAO {
     private final SymbolParameterRepository symbolParameterRepository;
     private final SymbolStepRepository symbolStepRepository;
     private final ParameterizedSymbolDAO parameterizedSymbolDAO;
-    private final SymbolSymbolStepRepository symbolSymbolStepRepository;
+    private final SymbolPSymbolStepRepository symbolPSymbolStepRepository;
     private final ParameterizedSymbolRepository parameterizedSymbolRepository;
     private final TestCaseStepRepository testCaseStepRepository;
     private final TestExecutionResultRepository testExecutionResultRepository;
@@ -125,7 +125,7 @@ public class SymbolDAO {
                      SymbolParameterRepository symbolParameterRepository, SymbolStepRepository symbolStepRepository,
                      ParameterizedSymbolDAO parameterizedSymbolDAO,
                      ParameterizedSymbolRepository parameterizedSymbolRepository,
-                     SymbolSymbolStepRepository symbolSymbolStepRepository,
+                     SymbolPSymbolStepRepository symbolPSymbolStepRepository,
                      TestCaseStepRepository testCaseStepRepository,
                      TestExecutionResultRepository testExecutionResultRepository,
                      ProjectEnvironmentRepository projectEnvironmentRepository,
@@ -144,7 +144,7 @@ public class SymbolDAO {
         this.symbolStepRepository = symbolStepRepository;
         this.parameterizedSymbolDAO = parameterizedSymbolDAO;
         this.parameterizedSymbolRepository = parameterizedSymbolRepository;
-        this.symbolSymbolStepRepository = symbolSymbolStepRepository;
+        this.symbolPSymbolStepRepository = symbolPSymbolStepRepository;
         this.testCaseStepRepository = testCaseStepRepository;
         this.testExecutionResultRepository = testExecutionResultRepository;
         this.projectEnvironmentRepository = projectEnvironmentRepository;
@@ -703,8 +703,8 @@ public class SymbolDAO {
         }
 
         long r1 = parameterizedSymbolRepository.countAllBySymbol_Id(symbolId);
-        long r2 = symbolSymbolStepRepository.countAllByPSymbol_Symbol_Id(symbolId);
-        long r3 = testCaseStepRepository.countAllByPSymbol_Symbol_Id(symbolId);
+        long r2 = symbolPSymbolStepRepository.countAllBypSymbol_Symbol_Id(symbolId);
+        long r3 = testCaseStepRepository.countAllBypSymbol_Symbol_Id(symbolId);
         long r4 = testExecutionResultRepository.countAllBySymbol_Id(symbolId);
 
         long refCount = r1 + r2 + r3 + r4;

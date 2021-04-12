@@ -16,8 +16,8 @@
 
 package de.learnlib.alex.integrationtests.websocket;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.jayway.jsonpath.JsonPath;
 import de.learnlib.alex.integrationtests.resources.AbstractResourceIT;
@@ -28,9 +28,9 @@ import java.util.List;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class WebSocketServiceIT extends AbstractResourceIT {
 
@@ -38,13 +38,13 @@ public class WebSocketServiceIT extends AbstractResourceIT {
 
     private WebSocketUser user2;
 
-    @Before
+    @BeforeEach
     public void pre() throws Exception {
         user1 = new WebSocketUser("user1", client, port);
         user2 = new WebSocketUser("user2", client, port);
     }
 
-    @After
+    @AfterEach
     @Override
     public void post() throws Exception {
         List.of(user1, user2).forEach(u -> {

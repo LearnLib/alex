@@ -17,15 +17,15 @@
 package de.learnlib.alex.data.entities;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 public class UploadableFileTest {
 
     private static ObjectMapper om;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         om = new ObjectMapper();
     }

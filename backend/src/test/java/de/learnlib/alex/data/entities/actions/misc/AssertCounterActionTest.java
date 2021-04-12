@@ -16,9 +16,9 @@
 
 package de.learnlib.alex.data.entities.actions.misc;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -30,12 +30,12 @@ import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class AssertCounterActionTest {
 
     private static final String TEST_NAME = "counter";
@@ -43,7 +43,7 @@ public class AssertCounterActionTest {
 
     private AssertCounterAction assertAction;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         assertAction = new AssertCounterAction();
         assertAction.setName(TEST_NAME);
@@ -88,17 +88,17 @@ public class AssertCounterActionTest {
         // <
         given(counters.get(TEST_NAME)).willReturn(TEST_VALUE - 1);
         ExecuteResult result = assertAction.execute(connector);
-        assertTrue("LESS fails on <", result.isSuccess());
+        assertTrue(result.isSuccess());
 
         // ==
         given(counters.get(TEST_NAME)).willReturn(TEST_VALUE);
         result = assertAction.execute(connector);
-        assertFalse("LESS fails on ==", result.isSuccess());
+        assertFalse(result.isSuccess());
 
         // >
         given(counters.get(TEST_NAME)).willReturn(TEST_VALUE + 1);
         result = assertAction.execute(connector);
-        assertFalse("LESS fails on >", result.isSuccess());
+        assertFalse(result.isSuccess());
     }
 
     @Test
@@ -113,17 +113,17 @@ public class AssertCounterActionTest {
         // <
         given(counters.get(TEST_NAME)).willReturn(TEST_VALUE - 1);
         ExecuteResult result = assertAction.execute(connector);
-        assertTrue("LESS_OR_EQUAL fails on <", result.isSuccess());
+        assertTrue(result.isSuccess());
 
         // ==
         given(counters.get(TEST_NAME)).willReturn(TEST_VALUE);
         result = assertAction.execute(connector);
-        assertTrue("LESS_OR_EQUAL fails on ==", result.isSuccess());
+        assertTrue(result.isSuccess());
 
         // >
         given(counters.get(TEST_NAME)).willReturn(TEST_VALUE + 1);
         result = assertAction.execute(connector);
-        assertFalse("LESS_OR_EQUAL fails on >", result.isSuccess());
+        assertFalse(result.isSuccess());
     }
 
     @Test
@@ -138,17 +138,17 @@ public class AssertCounterActionTest {
         // <
         given(counters.get(TEST_NAME)).willReturn(TEST_VALUE - 1);
         ExecuteResult result = assertAction.execute(connector);
-        assertFalse("EQUALS fails on <", result.isSuccess());
+        assertFalse(result.isSuccess());
 
         // ==
         given(counters.get(TEST_NAME)).willReturn(TEST_VALUE);
         result = assertAction.execute(connector);
-        assertTrue("EQUALS fails on ==", result.isSuccess());
+        assertTrue(result.isSuccess());
 
         // >
         given(counters.get(TEST_NAME)).willReturn(TEST_VALUE + 1);
         result = assertAction.execute(connector);
-        assertFalse("EQUALS fails on >", result.isSuccess());
+        assertFalse(result.isSuccess());
     }
 
     @Test
@@ -163,17 +163,17 @@ public class AssertCounterActionTest {
         // <
         given(counters.get(TEST_NAME)).willReturn(TEST_VALUE - 1);
         ExecuteResult result = assertAction.execute(connector);
-        assertFalse("GREATER_OR_EQUAL fails on <", result.isSuccess());
+        assertFalse(result.isSuccess());
 
         // ==
         given(counters.get(TEST_NAME)).willReturn(TEST_VALUE);
         result = assertAction.execute(connector);
-        assertTrue("GREATER_OR_EQUAL fails on ==", result.isSuccess());
+        assertTrue(result.isSuccess());
 
         // >
         given(counters.get(TEST_NAME)).willReturn(TEST_VALUE + 1);
         result = assertAction.execute(connector);
-        assertTrue("GREATER_OR_EQUAL fails on >", result.isSuccess());
+        assertTrue(result.isSuccess());
     }
 
     @Test
@@ -188,17 +188,17 @@ public class AssertCounterActionTest {
         // <
         given(counters.get(TEST_NAME)).willReturn(TEST_VALUE - 1);
         ExecuteResult result = assertAction.execute(connector);
-        assertFalse("GREATER fails on <", result.isSuccess());
+        assertFalse(result.isSuccess());
 
         // ==
         given(counters.get(TEST_NAME)).willReturn(TEST_VALUE);
         result = assertAction.execute(connector);
-        assertFalse("GREATER fails on ==", result.isSuccess());
+        assertFalse(result.isSuccess());
 
         // >
         given(counters.get(TEST_NAME)).willReturn(TEST_VALUE + 1);
         result = assertAction.execute(connector);
-        assertTrue("GREATER fails on >", result.isSuccess());
+        assertTrue(result.isSuccess());
     }
 
 }

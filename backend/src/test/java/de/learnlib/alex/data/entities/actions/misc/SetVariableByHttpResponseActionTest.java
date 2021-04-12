@@ -16,14 +16,19 @@
 
 package de.learnlib.alex.data.entities.actions.misc;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
 import javax.validation.ValidationException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 public class SetVariableByHttpResponseActionTest {
@@ -36,7 +41,7 @@ public class SetVariableByHttpResponseActionTest {
 
     private VariableStoreConnector variableStore;
 
-    @Before
+    @BeforeEach
     public void before() {
         this.webServiceConnector = Mockito.mock(WebServiceConnector.class);
         this.variableStore = new VariableStoreConnector();
@@ -55,19 +60,19 @@ public class SetVariableByHttpResponseActionTest {
 
         final ExecuteResult result = action.execute(connectors);
 
-        Assert.assertTrue(result.isSuccess());
-        Assert.assertEquals("testBody", variableStore.get("var"));
+        assertTrue(result.isSuccess());
+        assertEquals("testBody", variableStore.get("var"));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void shouldNotSaveResponseBodyInVariable() {
         Mockito.when(webServiceConnector.getBody()).thenThrow(new ValidationException());
 
         final ExecuteResult result = action.execute(connectors);
 
-        Assert.assertFalse(result.isSuccess());
-        Assert.assertNull(variableStore.getStore().get("var"));
-        variableStore.get("var");
+        assertFalse(result.isSuccess());
+        assertNull(variableStore.getStore().get("var"));
+        assertThrows(IllegalStateException.class, () -> variableStore.get("var"));
     }
 
 }

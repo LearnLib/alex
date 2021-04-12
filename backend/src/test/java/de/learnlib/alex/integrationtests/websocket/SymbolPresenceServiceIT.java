@@ -16,10 +16,10 @@
 
 package de.learnlib.alex.integrationtests.websocket;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.jayway.jsonpath.JsonPath;
 import de.learnlib.alex.integrationtests.resources.AbstractResourceIT;
@@ -37,9 +37,9 @@ import java.util.Date;
 import java.util.List;
 import javax.ws.rs.core.Response;
 import org.awaitility.Awaitility;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class SymbolPresenceServiceIT extends AbstractResourceIT {
 
@@ -84,7 +84,7 @@ public class SymbolPresenceServiceIT extends AbstractResourceIT {
      *
      * @throws Exception If something goes wrong.
      */
-    @Before
+    @BeforeEach
     public void pre() throws Exception {
         user1 = new WebSocketUser("user1", client, port);
         user2 = new WebSocketUser("user2", client, port);
@@ -126,7 +126,7 @@ public class SymbolPresenceServiceIT extends AbstractResourceIT {
         symbolId4 = JsonPath.read(res9.readEntity(String.class), "id");
     }
 
-    @After
+    @AfterEach
     @Override
     public void post() throws Exception {
         List.of(user1, user2, user3).forEach(u -> {

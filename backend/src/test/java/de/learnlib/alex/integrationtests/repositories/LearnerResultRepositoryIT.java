@@ -16,11 +16,12 @@
 
 package de.learnlib.alex.integrationtests.repositories;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.Project;
@@ -29,8 +30,8 @@ import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,7 +45,7 @@ public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
 
     private Project project;
 
-    @Before
+    @BeforeEach
     public void before() {
         User user = createUser("alex@test.example");
         this.user = userRepository.save(user);
@@ -61,24 +62,24 @@ public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
         assertNotNull(result.getId());
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
+    @Test
     public void shouldFailToSaveALearnerResultWithoutAProject() {
         LearnerResult result = createLearnerResult(null, 0L);
-        learnerResultRepository.save(result); // should fail
+        assertThrows(DataIntegrityViolationException.class, () -> learnerResultRepository.save(result));
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
+    @Test
     public void shouldFailToSaveALearnerResultWithoutATestNo() {
         LearnerResult result = createLearnerResult(project, null);
-        learnerResultRepository.save(result); // should fail
+        assertThrows(DataIntegrityViolationException.class, () -> learnerResultRepository.save(result));
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
+    @Test
     public void shouldFailToSaveALearnerResultWithADuplicateTestNo() {
         LearnerResult result1 = createLearnerResult(project, 0L);
         learnerResultRepository.save(result1);
         LearnerResult result2 = createLearnerResult(project, 0L);
-        learnerResultRepository.save(result2); // should fail
+        assertThrows(DataIntegrityViolationException.class, () -> learnerResultRepository.save(result2));
     }
 
     @Test

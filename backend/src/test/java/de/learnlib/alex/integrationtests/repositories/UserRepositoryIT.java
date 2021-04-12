@@ -16,18 +16,18 @@
 
 package de.learnlib.alex.integrationtests.repositories;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.entities.UserRole;
 import java.util.List;
 import java.util.Optional;
 import javax.validation.ValidationException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
@@ -38,42 +38,42 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
         User user = createUser("test_user@test.example");
         userRepository.save(user);
 
-        Assert.assertTrue(user.getId() > 1);
+        assertTrue(user.getId() > 1);
     }
 
-    @Test(expected = ValidationException.class)
+    @Test
     public void shouldFailWhenSavingAnUserWithoutAnEmail() {
         User user = new User();
         user.setPassword("password");
 
-        userRepository.save(user);
+        assertThrows(ValidationException.class, () -> userRepository.save(user));
     }
 
 
-    @Test(expected = ValidationException.class)
+    @Test
     public void shouldFailWhenSavingAnUserWithAnInvalidEmail() {
         User user = new User();
         user.setEmail("test");
         user.setPassword("password");
 
-        userRepository.save(user);
+        assertThrows(ValidationException.class, () -> userRepository.save(user));
     }
 
-    @Test(expected = ValidationException.class)
+    @Test
     public void shouldFailWhenSavingAnUserWithoutPassword() {
         User user = new User();
         user.setEmail("test_user@test.example");
 
-        userRepository.save(user);
+        assertThrows(ValidationException.class, () -> userRepository.save(user));
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
+    @Test
     public void shouldFailOnUserSavingIfTheEMailIsAlreadyUsed() {
         User user1 = createUser("test_user@test.example");
         userRepository.save(user1);
 
         User user2 = createUser("test_user@test.example");
-        userRepository.save(user2); // should fail
+        assertThrows(DataIntegrityViolationException.class, () -> userRepository.save(user2));
     }
 
     @Test
@@ -170,9 +170,9 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
         assertEquals(1, userRepository.count());
     }
 
-    @Test(expected = EmptyResultDataAccessException.class)
+    @Test
     public void shouldThrowAnExceptionWhenDeletingAnNonExistingUser() {
-        userRepository.deleteById(-1L);
+        assertThrows(EmptyResultDataAccessException.class, () -> userRepository.deleteById(-1L));
     }
 
 }

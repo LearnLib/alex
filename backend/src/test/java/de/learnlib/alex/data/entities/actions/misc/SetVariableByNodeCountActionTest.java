@@ -16,6 +16,9 @@
 
 package de.learnlib.alex.data.entities.actions.misc;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
@@ -26,9 +29,8 @@ import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
@@ -45,7 +47,7 @@ public class SetVariableByNodeCountActionTest {
 
     private List<WebElement> elements;
 
-    @Before
+    @BeforeEach
     public void before() {
         this.webSiteConnector = Mockito.mock(WebSiteConnector.class);
         this.variableStore = new VariableStoreConnector();
@@ -74,8 +76,8 @@ public class SetVariableByNodeCountActionTest {
 
         final ExecuteResult result = action.executeAction(connectors);
 
-        Assert.assertTrue(result.isSuccess());
-        Assert.assertEquals(String.valueOf(elements.size()), variableStore.get("var"));
+        assertTrue(result.isSuccess());
+        assertEquals(String.valueOf(elements.size()), variableStore.get("var"));
     }
 
     @Test
@@ -84,8 +86,8 @@ public class SetVariableByNodeCountActionTest {
 
         final ExecuteResult result = action.executeAction(connectors);
 
-        Assert.assertTrue(result.isSuccess());
-        Assert.assertEquals(String.valueOf(0), variableStore.get("var"));
+        assertTrue(result.isSuccess());
+        assertEquals(String.valueOf(0), variableStore.get("var"));
     }
 
     @Test
@@ -94,8 +96,8 @@ public class SetVariableByNodeCountActionTest {
 
         final ExecuteResult result = action.executeAction(connectors);
 
-        Assert.assertTrue(result.isSuccess());
-        Assert.assertEquals(String.valueOf(0), variableStore.get("var"));
+        assertTrue(result.isSuccess());
+        assertEquals(String.valueOf(0), variableStore.get("var"));
     }
 
 }

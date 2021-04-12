@@ -16,6 +16,11 @@
 
 package de.learnlib.alex.auth.entities;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
@@ -24,16 +29,15 @@ import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.webhooks.entities.Webhook;
 import java.util.Collections;
 import org.json.JSONException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 public class UserTest {
 
     private static ObjectMapper om;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         om = new ObjectMapper();
     }
@@ -41,27 +45,27 @@ public class UserTest {
     @Test
     public void shouldInitializeUserWithDefaultRole() {
         final User user = new User();
-        Assert.assertEquals(user.getRole(), UserRole.REGISTERED);
+        assertEquals(user.getRole(), UserRole.REGISTERED);
     }
 
-    @Test(expected = PathNotFoundException.class)
+    @Test
     public void shouldNotLeakPasswordWhenSerialized() throws JsonProcessingException {
         final User user = new User();
         user.setSalt("salt");
         user.setPassword("password");
 
         final String userString = om.writeValueAsString(user);
-        JsonPath.read(userString, "$.password");
+        assertThrows(PathNotFoundException.class, () -> JsonPath.read(userString, "$.password"));
     }
 
-    @Test(expected = PathNotFoundException.class)
+    @Test
     public void shouldNotLeakSaltWhenSerialized() throws JsonProcessingException {
         final User user = new User();
         user.setSalt("salt");
         user.setPassword("password");
 
         final String userString = om.writeValueAsString(user);
-        JsonPath.read(userString, "$.salt");
+        assertThrows(PathNotFoundException.class, () -> JsonPath.read(userString, "$.salt"));
     }
 
     @Test
@@ -78,8 +82,8 @@ public class UserTest {
         JSONAssert.assertEquals(expectedUserString, userString, true);
     }
 
-    @Test(expected = PathNotFoundException.class)
-    public void shouldNotSerializeProjects() throws Exception {
+    @Test
+    public void shouldNotSerializeProjects() {
         final Project p1 = new Project();
         p1.setId(2L);
         final Project p2 = new Project();
@@ -92,13 +96,15 @@ public class UserTest {
         user.setProjectsOwner(Collections.singleton(p1));
         user.setProjectsMember(Collections.singleton(p2));
 
-        final String userString = om.writeValueAsString(user);
-        JsonPath.read(userString, "projectsMember");
-        JsonPath.read(userString, "projectsOwner");
+        assertThrows(PathNotFoundException.class, () -> {
+            final String userString = om.writeValueAsString(user);
+            JsonPath.read(userString, "projectsMember");
+            JsonPath.read(userString, "projectsOwner");
+        });
     }
 
-    @Test(expected = PathNotFoundException.class)
-    public void shouldNotSerializeWebhooks() throws Exception {
+    @Test
+    public void shouldNotSerializeWebhooks() {
         final Webhook w = new Webhook();
         w.setId(2L);
 
@@ -108,8 +114,10 @@ public class UserTest {
         user.setEmail("user@alex.com");
         user.setWebhooks(Collections.singletonList(w));
 
-        final String userString = om.writeValueAsString(user);
-        JsonPath.read(userString, "webhooks");
+        assertThrows(PathNotFoundException.class, () -> {
+            final String userString = om.writeValueAsString(user);
+            JsonPath.read(userString, "webhooks");
+        });
     }
 
     @Test
@@ -118,7 +126,7 @@ public class UserTest {
         user.setPassword("password123");
         user.setEncryptedPassword("password123");
 
-        Assert.assertTrue(user.isValidPassword("password123"));
+        assertTrue(user.isValidPassword("password123"));
     }
 
     @Test
@@ -127,6 +135,6 @@ public class UserTest {
         user.setPassword("password123");
         user.setEncryptedPassword("password123");
 
-        Assert.assertFalse(user.isValidPassword("Password123"));
+        assertFalse(user.isValidPassword("Password123"));
     }
 }

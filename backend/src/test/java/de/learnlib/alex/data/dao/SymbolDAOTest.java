@@ -16,11 +16,13 @@
 
 package de.learnlib.alex.data.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,10 +40,10 @@ import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
+import de.learnlib.alex.data.repositories.SymbolPSymbolStepRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
 import de.learnlib.alex.data.repositories.SymbolStepRepository;
-import de.learnlib.alex.data.repositories.SymbolSymbolStepRepository;
 import de.learnlib.alex.learning.dao.LearnerSetupDAO;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
@@ -56,15 +58,15 @@ import java.util.stream.Collectors;
 import javax.persistence.RollbackException;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.TransactionSystemException;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class SymbolDAOTest {
 
     private static final long USER_ID = 21L;
@@ -102,7 +104,7 @@ public class SymbolDAOTest {
     private ParameterizedSymbolDAO parameterizedSymbolDAO;
 
     @Mock
-    private SymbolSymbolStepRepository symbolSymbolStepRepository;
+    private SymbolPSymbolStepRepository symbolPSymbolStepRepository;
 
     @Mock
     private ParameterizedSymbolRepository parameterizedSymbolRepository;
@@ -133,11 +135,11 @@ public class SymbolDAOTest {
 
     private SymbolDAO symbolDAO;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         symbolDAO = new SymbolDAO(projectRepository, projectDAO, symbolGroupRepository, symbolRepository,
                 symbolActionRepository, symbolGroupDAO, symbolParameterRepository, symbolStepRepository,
-                parameterizedSymbolDAO, parameterizedSymbolRepository, symbolSymbolStepRepository,
+                parameterizedSymbolDAO, parameterizedSymbolRepository, symbolPSymbolStepRepository,
                 testCaseStepRepository, testExecutionResultRepository, projectEnvironmentRepository,
                 objectMapper, symbolParameterDAO, symbolPresenceService, testDAO, learnerSetupDAO);
     }
@@ -167,8 +169,8 @@ public class SymbolDAOTest {
         verify(symbolRepository).save(symbol);
     }
 
-    @Test(expected = ValidationException.class)
-    public void shouldFailToCreateASymbolsWithADuplicateNameWithinOneProject() throws NotFoundException {
+    @Test
+    public void shouldFailToCreateASymbolsWithADuplicateNameWithinOneProject() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -192,11 +194,11 @@ public class SymbolDAOTest {
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
         given(symbolRepository.findOneByProject_IdAndName(PROJECT_ID, "Test")).willReturn(symbol2);
 
-        symbolDAO.create(user, PROJECT_ID, symbol); // should fail
+        assertThrows(ValidationException.class, () -> symbolDAO.create(user, PROJECT_ID, symbol));
     }
 
     @Test
-    public void shouldGetAllRequestedSymbolsByIds() throws NotFoundException {
+    public void shouldGetAllRequestedSymbolsByIds() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -226,7 +228,7 @@ public class SymbolDAOTest {
     }
 
     @Test
-    public void shouldGetNoSymbolIfIdListIsEmpty() throws NotFoundException {
+    public void shouldGetNoSymbolIfIdListIsEmpty() {
         User user = new User();
         Project project = new Project();
         List<Long> ids = Collections.emptyList();
@@ -260,7 +262,7 @@ public class SymbolDAOTest {
     }
 
     @Test
-    public void shouldGetTheRightSymbol() throws NotFoundException {
+    public void shouldGetTheRightSymbol() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -284,8 +286,8 @@ public class SymbolDAOTest {
         assertEquals(symbol, symb2);
     }
 
-    @Test(expected = NotFoundException.class)
-    public void shouldThrowAnExceptionIfSymbolNotFound() throws NotFoundException {
+    @Test
+    public void shouldThrowAnExceptionIfSymbolNotFound() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -299,11 +301,11 @@ public class SymbolDAOTest {
         symbol.setProject(project);
         symbol.setGroup(group);
 
-        symbolDAO.get(user, symbol.getProjectId(), -1L); // should fail
+        assertThrows(NotFoundException.class, () -> symbolDAO.get(user, symbol.getProjectId(), -1L));
     }
 
     @Test
-    public void shouldUpdateASymbol() throws NotFoundException {
+    public void shouldUpdateASymbol() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -328,8 +330,8 @@ public class SymbolDAOTest {
         verify(symbolRepository).save(symbol);
     }
 
-    @Test(expected = ValidationException.class)
-    public void shouldFailToUpdateASymbolsWithADuplicateNameWithinOneProject() throws NotFoundException {
+    @Test
+    public void shouldFailToUpdateASymbolsWithADuplicateNameWithinOneProject() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -355,11 +357,11 @@ public class SymbolDAOTest {
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
         given(symbolRepository.findOneByProject_IdAndName(PROJECT_ID, "Test")).willReturn(symbol2);
 
-        symbolDAO.update(user, PROJECT_ID, symbol); // should fail
+        assertThrows(ValidationException.class, () -> symbolDAO.update(user, PROJECT_ID, symbol));
     }
 
-    @Test(expected = ValidationException.class)
-    public void shouldHandleDataIntegrityViolationExceptionOnSymbolUpdateGracefully() throws NotFoundException {
+    @Test
+    public void shouldHandleDataIntegrityViolationExceptionOnSymbolUpdateGracefully() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -379,11 +381,11 @@ public class SymbolDAOTest {
         given(symbolRepository.findById(symbol.getId())).willReturn(Optional.of(symbol));
         given(symbolRepository.save(symbol)).willThrow(DataIntegrityViolationException.class);
 
-        symbolDAO.update(user, PROJECT_ID, symbol); // should fail
+        assertThrows(ValidationException.class, () -> symbolDAO.update(user, PROJECT_ID, symbol));
     }
 
-    @Test(expected = ValidationException.class)
-    public void shouldHandleTransactionSystemExceptionOnGroupUpdateGracefully() throws NotFoundException {
+    @Test
+    public void shouldHandleTransactionSystemExceptionOnGroupUpdateGracefully() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -410,11 +412,11 @@ public class SymbolDAOTest {
         given(symbolRepository.findById(symbol.getId())).willReturn(Optional.of(symbol));
         given(symbolRepository.save(symbol)).willThrow(transactionSystemException);
 
-        symbolDAO.update(user, PROJECT_ID, symbol); // should fail
+        assertThrows(ValidationException.class, () -> symbolDAO.update(user, PROJECT_ID, symbol));
     }
 
     @Test
-    public void shouldMoveASymbol() throws NotFoundException {
+    public void shouldMoveASymbol() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -438,8 +440,8 @@ public class SymbolDAOTest {
 
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
         given(symbolRepository.findAllByIdIn(symbolIds)).willReturn(symbols);
-        given(symbolGroupRepository.findById(GROUP_ID)).willReturn(Optional.of(group1));
-        given(symbolGroupRepository.findById(GROUP_ID + 1)).willReturn(Optional.of(group2));
+        lenient().when(symbolGroupRepository.findById(GROUP_ID)).thenReturn(Optional.of(group1));
+        lenient().when(symbolGroupRepository.findById(GROUP_ID + 1)).thenReturn(Optional.of(group2));
         given(symbolRepository.saveAll(symbols)).willReturn(symbols);
 
         symbolDAO.move(user, PROJECT_ID, SYMBOL_ID, GROUP_ID + 1);
@@ -450,7 +452,7 @@ public class SymbolDAOTest {
     }
 
     @Test
-    public void shouldMoveSymbols() throws NotFoundException {
+    public void shouldMoveSymbols() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -466,8 +468,8 @@ public class SymbolDAOTest {
         List<Symbol> symbols = createTestSymbolLists(user, project, group1);
         List<Long> symbolIds = symbols.stream().map(Symbol::getId).collect(Collectors.toList());
 
-        given(symbolGroupRepository.findById(GROUP_ID)).willReturn(Optional.of(group1));
-        given(symbolGroupRepository.findById(GROUP_ID + 1)).willReturn(Optional.of(group2));
+        lenient().when(symbolGroupRepository.findById(GROUP_ID)).thenReturn(Optional.of(group1));
+        lenient().when(symbolGroupRepository.findById(GROUP_ID + 1)).thenReturn(Optional.of(group2));
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
         given(symbolRepository.findAllByIdIn(symbolIds)).willReturn(symbols);
 
@@ -480,8 +482,8 @@ public class SymbolDAOTest {
         }
     }
 
-    @Test(expected = NotFoundException.class)
-    public void ensureThatAnExceptionIsThrownWhileMovingSymbolsIfTheGroupDoesNotExist() throws NotFoundException {
+    @Test
+    public void ensureThatAnExceptionIsThrownWhileMovingSymbolsIfTheGroupDoesNotExist() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -496,16 +498,16 @@ public class SymbolDAOTest {
 
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
         given(symbolRepository.findAllByIdIn(symbolIds)).willReturn(symbols);
-        given(symbolGroupRepository.findById(GROUP_ID)).willReturn(Optional.of(group));
-        given(symbolGroupRepository.findById(-1L)).willReturn(Optional.empty());
+        lenient().when(symbolGroupRepository.findById(GROUP_ID)).thenReturn(Optional.of(group));
+        lenient().when(symbolGroupRepository.findById(-1L)).thenReturn(Optional.empty());
 
         doThrow(NotFoundException.class).when(symbolGroupDAO).checkAccess(user, project, null);
 
-        symbolDAO.move(user, PROJECT_ID, symbolIds, -1L); // should fail
+        assertThrows(NotFoundException.class, () -> symbolDAO.move(user, PROJECT_ID, symbolIds, -1L));
     }
 
     @Test
-    public void shouldHideAValidSymbol() throws NotFoundException {
+    public void shouldHideAValidSymbol() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -531,7 +533,7 @@ public class SymbolDAOTest {
     }
 
     @Test
-    public void shouldNotHideAnythingByInvalidID() throws NotFoundException {
+    public void shouldNotHideAnythingByInvalidID() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -540,7 +542,7 @@ public class SymbolDAOTest {
     }
 
     @Test
-    public void shouldShowAValidSymbol() throws NotFoundException {
+    public void shouldShowAValidSymbol() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -564,15 +566,14 @@ public class SymbolDAOTest {
         assertFalse(symbol.isHidden());
     }
 
-    @Test(expected = NotFoundException.class)
-    public void shouldNotShowAnythingByInvalidID() throws NotFoundException {
+    @Test
+    public void shouldNotShowAnythingByInvalidID() {
         User user = new User();
         user.setId(USER_ID);
-
-        symbolDAO.show(user, PROJECT_ID, Collections.singletonList(-1L)); // should fail
+        assertThrows(NotFoundException.class, () -> symbolDAO.show(user, PROJECT_ID, Collections.singletonList(-1L)));
     }
 
-    private List<Symbol> createTestSymbolLists(User user, Project project, SymbolGroup group) throws NotFoundException {
+    private List<Symbol> createTestSymbolLists(User user, Project project, SymbolGroup group) {
         List<Symbol> symbols = new ArrayList<>();
         symbols.addAll(createWebSymbolTestList(project, group));
         symbols.addAll(createRESTSymbolTestList(project, group));
@@ -586,8 +587,7 @@ public class SymbolDAOTest {
         return symbols;
     }
 
-    private List<Symbol> createWebSymbolTestList(Project project, SymbolGroup group)
-            throws NotFoundException {
+    private List<Symbol> createWebSymbolTestList(Project project, SymbolGroup group) {
         List<Symbol> returnList = new ArrayList<>();
         for (int i = 0; i < SYMBOL_LIST_SIZE; i++) {
             Symbol s = new Symbol();
@@ -619,8 +619,7 @@ public class SymbolDAOTest {
         return returnList;
     }
 
-    private List<Symbol> createRESTSymbolTestList(Project project, SymbolGroup group)
-            throws NotFoundException {
+    private List<Symbol> createRESTSymbolTestList(Project project, SymbolGroup group) {
         List<Symbol> returnList = new ArrayList<>();
         for (int i = 0; i < SYMBOL_LIST_SIZE; i++) {
             Symbol s = new Symbol();

@@ -16,10 +16,11 @@
 
 package de.learnlib.alex.data.entities;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 
 import de.learnlib.alex.data.entities.actions.web.CheckTextWebAction;
@@ -27,13 +28,13 @@ import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openqa.selenium.WebDriver;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class SymbolTest {
 
     private static final Long PROJECT_ID = 1L;
@@ -50,7 +51,7 @@ public class SymbolTest {
 
     private ParameterizedSymbol pSymbol;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         symbol = new Symbol();
         symbol.setProject(new Project(PROJECT_ID));
@@ -80,14 +81,14 @@ public class SymbolTest {
         connectorManager = mock(ConnectorManager.class);
         webSiteConnector = mock(WebSiteConnector.class);
 
-        given(connectorManager.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);
-        given(connectorManager.getConnector(VariableStoreConnector.class)).willReturn(mock(VariableStoreConnector.class));
-        given(connectorManager.getConnector(CounterStoreConnector.class)).willReturn(mock(CounterStoreConnector.class));
+        lenient().when(connectorManager.getConnector(WebSiteConnector.class)).thenReturn(webSiteConnector);
+        lenient().when(connectorManager.getConnector(VariableStoreConnector.class)).thenReturn(mock(VariableStoreConnector.class));
+        lenient().when(connectorManager.getConnector(CounterStoreConnector.class)).thenReturn(mock(CounterStoreConnector.class));
         given(webSiteConnector.getDriver()).willReturn(mock(WebDriver.class));
     }
 
     @Test
-    public void itShouldReturnOkOnSuccessAndNoCustomOutput() {
+    public void shouldReturnOkOnSuccessAndNoCustomOutput() {
         given(webSiteConnector.getDriver().getPageSource()).willReturn("test");
 
         ExecuteResult result = symbol.execute(connectorManager);
@@ -97,7 +98,7 @@ public class SymbolTest {
     }
 
     @Test
-    public void itShouldReturnACustomOutputOnSuccess() {
+    public void shouldReturnACustomOutputOnSuccess() {
         given(webSiteConnector.getDriver().getPageSource()).willReturn("test");
 
         symbol.setSuccessOutput("success");
@@ -108,8 +109,7 @@ public class SymbolTest {
     }
 
     @Test
-    public void itShouldReturnFailedOnErrorAndNoCustomOutput() {
-        // let the first action fail
+    public void shouldReturnFailedOnErrorAndNoCustomOutput() {
         given(webSiteConnector.getDriver().getPageSource()).willReturn("something");
 
         ExecuteResult result = symbol.execute(connectorManager);
@@ -119,9 +119,8 @@ public class SymbolTest {
     }
 
     @Test
-    public void itShouldReturnFailedOnErrorAndCustomOutput() {
+    public void shouldReturnFailedOnErrorAndCustomOutput() {
         actionStep.setErrorOutput("not found");
-        // let the first action fail
         given(webSiteConnector.getDriver().getPageSource()).willReturn("something");
 
         ExecuteResult result = symbol.execute(connectorManager);

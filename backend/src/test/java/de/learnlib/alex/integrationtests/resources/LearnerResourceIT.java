@@ -17,10 +17,10 @@
 package de.learnlib.alex.integrationtests.resources;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jayway.jsonpath.JsonPath;
@@ -50,8 +50,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 import javax.ws.rs.core.Response;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 public class LearnerResourceIT extends AbstractResourceIT {
@@ -63,7 +63,7 @@ public class LearnerResourceIT extends AbstractResourceIT {
     private LearnerResultApi learnerResultApi;
     private String memberJwt;
 
-    @Before
+    @BeforeEach
     public void pre() throws Exception {
         objectMapper.addMixIn(LearnerResult.class, LearnerSetupResourceIT.IgnoreLearnerResultFieldsMixin.class);
         objectMapper.addMixIn(LearnerResultStep.class, LearnerSetupResourceIT.IgnoreLearnerResultStepFieldsMixin.class);
