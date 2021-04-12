@@ -140,14 +140,6 @@ public class ProjectResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void shouldNotCreateProjectWithEmptyTitle() {
-        final String project = createProjectJson("", "http://localhost:8080");
-        final Response res = projectApi.create(project, adminJwt);
-
-        assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
-    }
-
-    @Test
     public void shouldNotGetProjectOfAnotherUser() {
         final Project project = projectApi.create(createProjectJson("test", "http://localhost:8080"), adminJwt)
                 .readEntity(Project.class);

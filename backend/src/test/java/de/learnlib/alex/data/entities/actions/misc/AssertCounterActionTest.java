@@ -17,7 +17,6 @@
 package de.learnlib.alex.data.entities.actions.misc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -33,6 +32,8 @@ import java.net.URISyntaxException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -76,129 +77,67 @@ public class AssertCounterActionTest {
         assertEquals(AssertCounterAction.Operator.EQUAL, objAsAction.getOperator());
     }
 
-    @Test
-    public void ensureThatLessWorks() {
-        CounterStoreConnector counters = mock(CounterStoreConnector.class);
-
-        ConnectorManager connector = mock(ConnectorManager.class);
-        given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
-
-        assertAction.setOperator(AssertCounterAction.Operator.LESS_THAN);
-
-        // <
-        given(counters.get(TEST_NAME)).willReturn(TEST_VALUE - 1);
-        ExecuteResult result = assertAction.execute(connector);
-        assertTrue(result.isSuccess());
-
-        // ==
-        given(counters.get(TEST_NAME)).willReturn(TEST_VALUE);
-        result = assertAction.execute(connector);
-        assertFalse(result.isSuccess());
-
-        // >
-        given(counters.get(TEST_NAME)).willReturn(TEST_VALUE + 1);
-        result = assertAction.execute(connector);
-        assertFalse(result.isSuccess());
+    @ParameterizedTest(name = "use counter value: \"{0}\", success: \"{1}\" for the test")
+    @CsvSource({
+            "41, true",
+            "42, false",
+            "43, false",
+    })
+    public void ensureThatLessWorks(int value, boolean success) {
+        ensureThatOperatorWorks(AssertCounterAction.Operator.LESS_THAN, value, success);
     }
 
-    @Test
-    public void ensureThatLessOrEqualsWorks() {
-        CounterStoreConnector counters = mock(CounterStoreConnector.class);
-
-        ConnectorManager connector = mock(ConnectorManager.class);
-        given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
-
-        assertAction.setOperator(AssertCounterAction.Operator.LESS_OR_EQUAL);
-
-        // <
-        given(counters.get(TEST_NAME)).willReturn(TEST_VALUE - 1);
-        ExecuteResult result = assertAction.execute(connector);
-        assertTrue(result.isSuccess());
-
-        // ==
-        given(counters.get(TEST_NAME)).willReturn(TEST_VALUE);
-        result = assertAction.execute(connector);
-        assertTrue(result.isSuccess());
-
-        // >
-        given(counters.get(TEST_NAME)).willReturn(TEST_VALUE + 1);
-        result = assertAction.execute(connector);
-        assertFalse(result.isSuccess());
+    @ParameterizedTest(name = "use counter value: \"{0}\", success: \"{1}\" for the test")
+    @CsvSource({
+            "41, true",
+            "42, true",
+            "43, false",
+    })
+    public void ensureThatLessOrEqualsWorks(int value, boolean success) {
+        ensureThatOperatorWorks(AssertCounterAction.Operator.LESS_OR_EQUAL, value, success);
     }
 
-    @Test
-    public void ensureThatEqualsWorks() {
-        CounterStoreConnector counters = mock(CounterStoreConnector.class);
-
-        ConnectorManager connector = mock(ConnectorManager.class);
-        given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
-
-        assertAction.setOperator(AssertCounterAction.Operator.EQUAL);
-
-        // <
-        given(counters.get(TEST_NAME)).willReturn(TEST_VALUE - 1);
-        ExecuteResult result = assertAction.execute(connector);
-        assertFalse(result.isSuccess());
-
-        // ==
-        given(counters.get(TEST_NAME)).willReturn(TEST_VALUE);
-        result = assertAction.execute(connector);
-        assertTrue(result.isSuccess());
-
-        // >
-        given(counters.get(TEST_NAME)).willReturn(TEST_VALUE + 1);
-        result = assertAction.execute(connector);
-        assertFalse(result.isSuccess());
+    @ParameterizedTest(name = "use counter value: \"{0}\", success: \"{1}\" for the test")
+    @CsvSource({
+            "41, false",
+            "42, true",
+            "43, false",
+    })
+    public void ensureThatEqualsWorks(int value, boolean success) {
+        ensureThatOperatorWorks(AssertCounterAction.Operator.EQUAL, value, success);
     }
 
-    @Test
-    public void ensureThatGreaterOrEqualsWorks() {
-        CounterStoreConnector counters = mock(CounterStoreConnector.class);
-
-        ConnectorManager connector = mock(ConnectorManager.class);
-        given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
-
-        assertAction.setOperator(AssertCounterAction.Operator.GREATER_OR_EQUAL);
-
-        // <
-        given(counters.get(TEST_NAME)).willReturn(TEST_VALUE - 1);
-        ExecuteResult result = assertAction.execute(connector);
-        assertFalse(result.isSuccess());
-
-        // ==
-        given(counters.get(TEST_NAME)).willReturn(TEST_VALUE);
-        result = assertAction.execute(connector);
-        assertTrue(result.isSuccess());
-
-        // >
-        given(counters.get(TEST_NAME)).willReturn(TEST_VALUE + 1);
-        result = assertAction.execute(connector);
-        assertTrue(result.isSuccess());
+    @ParameterizedTest(name = "use counter value: \"{0}\", success: \"{1}\" for the test")
+    @CsvSource({
+            "41, false",
+            "42, true",
+            "43, true",
+    })
+    public void ensureThatGreaterOrEqualsWorks(int value, boolean success) {
+        ensureThatOperatorWorks(AssertCounterAction.Operator.GREATER_OR_EQUAL, value, success);
     }
 
-    @Test
-    public void ensureThatGreaterWorks() {
+    @ParameterizedTest(name = "use counter value: \"{0}\", success: \"{1}\" for the test")
+    @CsvSource({
+            "41, false",
+            "42, false",
+            "43, true",
+    })
+    public void ensureThatGreaterWorks(int value, boolean success) {
+        ensureThatOperatorWorks(AssertCounterAction.Operator.GREATER_THAN, value, success);
+    }
+
+    private void ensureThatOperatorWorks(AssertCounterAction.Operator operator, int value, boolean success) {
         CounterStoreConnector counters = mock(CounterStoreConnector.class);
 
         ConnectorManager connector = mock(ConnectorManager.class);
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
 
-        assertAction.setOperator(AssertCounterAction.Operator.GREATER_THAN);
+        assertAction.setOperator(operator);
 
-        // <
-        given(counters.get(TEST_NAME)).willReturn(TEST_VALUE - 1);
+        given(counters.get(TEST_NAME)).willReturn(value);
         ExecuteResult result = assertAction.execute(connector);
-        assertFalse(result.isSuccess());
-
-        // ==
-        given(counters.get(TEST_NAME)).willReturn(TEST_VALUE);
-        result = assertAction.execute(connector);
-        assertFalse(result.isSuccess());
-
-        // >
-        given(counters.get(TEST_NAME)).willReturn(TEST_VALUE + 1);
-        result = assertAction.execute(connector);
-        assertTrue(result.isSuccess());
+        assertEquals(success, result.isSuccess());
     }
 
 }

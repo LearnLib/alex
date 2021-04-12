@@ -26,15 +26,15 @@ import de.learnlib.alex.data.entities.Counter;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.repositories.CounterRepository;
 import java.util.List;
-import javax.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 public class CounterRepositoryIT extends AbstractRepositoryIT {
 
-    @Inject
+    @Autowired
     private CounterRepository counterRepository;
 
     private User user;

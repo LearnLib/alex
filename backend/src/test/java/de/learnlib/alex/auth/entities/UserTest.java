@@ -17,9 +17,7 @@
 package de.learnlib.alex.auth.entities;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,6 +29,9 @@ import java.util.Collections;
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 public class UserTest {
@@ -48,24 +49,15 @@ public class UserTest {
         assertEquals(user.getRole(), UserRole.REGISTERED);
     }
 
-    @Test
-    public void shouldNotLeakPasswordWhenSerialized() throws JsonProcessingException {
+    @ParameterizedTest(name = "Use the value {0} for the test")
+    @ValueSource(strings = { "password", "salt" })
+    public void shouldNotLeakSensibleDataWhenSerialized(String property) throws JsonProcessingException {
         final User user = new User();
         user.setSalt("salt");
         user.setPassword("password");
 
         final String userString = om.writeValueAsString(user);
-        assertThrows(PathNotFoundException.class, () -> JsonPath.read(userString, "$.password"));
-    }
-
-    @Test
-    public void shouldNotLeakSaltWhenSerialized() throws JsonProcessingException {
-        final User user = new User();
-        user.setSalt("salt");
-        user.setPassword("password");
-
-        final String userString = om.writeValueAsString(user);
-        assertThrows(PathNotFoundException.class, () -> JsonPath.read(userString, "$.salt"));
+        assertThrows(PathNotFoundException.class, () -> JsonPath.read(userString, "$." + property));
     }
 
     @Test
@@ -120,21 +112,15 @@ public class UserTest {
         });
     }
 
-    @Test
-    public void shouldVerifyPasswordCorrectly() {
-        final User user = new User();
+    @ParameterizedTest(name = "Use values \"{0}, {1}\" for the test")
+    @CsvSource({
+            "password123, true",
+            "Password123, false"
+    })
+    public void shouldVerifyPassword(String password, boolean valid) {
+        final var user = new User();
         user.setPassword("password123");
         user.setEncryptedPassword("password123");
-
-        assertTrue(user.isValidPassword("password123"));
-    }
-
-    @Test
-    public void shouldFailWhenPasswordIsNotCorrect() {
-        final User user = new User();
-        user.setPassword("password123");
-        user.setEncryptedPassword("password123");
-
-        assertFalse(user.isValidPassword("Password123"));
+        assertEquals(valid, user.isValidPassword(password));
     }
 }

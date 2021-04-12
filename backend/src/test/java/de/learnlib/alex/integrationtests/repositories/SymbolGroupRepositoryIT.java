@@ -26,16 +26,16 @@ import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
 import java.util.List;
-import javax.inject.Inject;
 import javax.validation.ValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
 
-    @Inject
+    @Autowired
     private SymbolGroupRepository symbolGroupRepository;
 
     private User user;

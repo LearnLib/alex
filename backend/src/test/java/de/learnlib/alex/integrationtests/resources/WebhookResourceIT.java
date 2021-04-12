@@ -191,7 +191,7 @@ public class WebhookResourceIT extends AbstractResourceIT {
     @Test
     public void shouldGetAllEvents() {
         final Response res = webhookApi.getEvents(jwtUser1);
-        final List<String> events = res.readEntity(new GenericType<List<String>>() {
+        final List<String> events = res.readEntity(new GenericType<>() {
         });
         assertFalse(events.isEmpty());
     }

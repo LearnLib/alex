@@ -26,17 +26,17 @@ import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;
-import javax.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 
 public class LearnerResultStepRepositoryIT extends AbstractRepositoryIT {
 
-    @Inject
+    @Autowired
     private LearnerResultRepository learnerResultRepository;
 
-    @Inject
+    @Autowired
     private LearnerResultStepRepository learnerResultStepRepository;
 
     private Project project;
