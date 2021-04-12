@@ -116,3 +116,17 @@ jobs:
         with:
           node-version: '14'
       - run: cd ./docs && npm install -g npm && npm ci && npm run build
+
+  package-docs:
+    needs: build-docs
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Push docs to GitHub repositories
+        uses: ./.github/actions/build-and-deploy
+          with:
+            username: ${{ github.actor }}
+            password: ${{ secrets.CR_PAT }}
+            context: ./docs
+            tag: alex-docs
