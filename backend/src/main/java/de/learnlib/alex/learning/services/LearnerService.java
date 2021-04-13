@@ -436,16 +436,14 @@ public class LearnerService {
      * @return If the machines are different: The corresponding separating word; otherwise: ""
      */
     public SeparatingWord separatingWord(CompactMealyMachineProxy mealy1, CompactMealyMachineProxy mealy2) {
-        final Alphabet<String> alphabetProxy1 = mealy1.createAlphabet();
-        final Alphabet<String> alphabetProxy2 = mealy1.createAlphabet();
-        if (alphabetProxy1.size() != alphabetProxy2.size() || !alphabetProxy1.containsAll(alphabetProxy2)) {
-            throw new IllegalArgumentException("The alphabets of the hypotheses are not identical!");
-        }
+        final Alphabet<String> alphabet1 = mealy1.createAlphabet();
+        final Alphabet<String> alphabet2 = mealy2.createAlphabet();
+        checkAlphabetsAreIdentical(alphabet1, alphabet2);
 
-        final CompactMealy<String, String> mealyMachine1 = mealy1.createMealyMachine(alphabetProxy1);
-        final CompactMealy<String, String> mealyMachine2 = mealy2.createMealyMachine(alphabetProxy2);
+        final CompactMealy<String, String> mealyMachine1 = mealy1.createMealyMachine(alphabet1);
+        final CompactMealy<String, String> mealyMachine2 = mealy2.createMealyMachine(alphabet2);
 
-        final Word<String> separatingWord = Automata.findSeparatingWord(mealyMachine1, mealyMachine2, alphabetProxy1);
+        final Word<String> separatingWord = Automata.findSeparatingWord(mealyMachine1, mealyMachine2, alphabet1);
 
         if (separatingWord != null) {
             return new SeparatingWord(
@@ -469,25 +467,23 @@ public class LearnerService {
      */
     public CompactMealy<String, String> differenceTree(
             final CompactMealyMachineProxy mealyProxy1,
-            final CompactMealyMachineProxy mealyProxy2) {
+            final CompactMealyMachineProxy mealyProxy2
+    ) {
+        final Alphabet<String> alphabet1 = mealyProxy1.createAlphabet();
+        final Alphabet<String> alphabet2 = mealyProxy2.createAlphabet();
+        checkAlphabetsAreIdentical(alphabet1, alphabet2);
 
-        final Alphabet<String> alphabet = mealyProxy1.createAlphabet();
-        final Alphabet<String> alph2 = mealyProxy2.createAlphabet();
-        if (alphabet.size() != alph2.size() || !alphabet.containsAll(alph2)) {
-            throw new IllegalArgumentException("The alphabets of the hypotheses are not identical!");
-        }
-
-        final CompactMealy<String, String> hyp1 = mealyProxy1.createMealyMachine(alphabet);
-        final CompactMealy<String, String> hyp2 = mealyProxy2.createMealyMachine(alphabet);
+        final CompactMealy<String, String> hyp1 = mealyProxy1.createMealyMachine(alphabet1);
+        final CompactMealy<String, String> hyp2 = mealyProxy2.createMealyMachine(alphabet1);
 
         // the words where the output differs
         final Set<SeparatingWord> diffs = new HashSet<>();
-        findDifferences(hyp1, hyp2, alphabet, diffs);
-        findDifferences(hyp2, hyp1, alphabet, diffs);
+        findDifferences(hyp1, hyp2, alphabet1, diffs);
+        findDifferences(hyp2, hyp1, alphabet1, diffs);
 
         // build tree
         // the tree is organized as an incomplete mealy machine
-        final CompactMealy<String, String> diffTree = new CompactMealy<>(alphabet);
+        final CompactMealy<String, String> diffTree = new CompactMealy<>(alphabet1);
         diffTree.addInitialState();
 
         for (final SeparatingWord diff : diffs) {
@@ -518,8 +514,8 @@ public class LearnerService {
         }
 
         // minimize the tree
-        final CompactMealy<String, String> target = new CompactMealy<>(alphabet);
-        Automata.minimize(diffTree, alphabet, target);
+        final CompactMealy<String, String> target = new CompactMealy<>(alphabet1);
+        Automata.minimize(diffTree, alphabet1, target);
 
         return target;
     }
@@ -572,6 +568,12 @@ public class LearnerService {
                         + user.getMaxAllowedProcesses()
                         + " concurrent test/learn processes.");
             }
+        }
+    }
+
+    private void checkAlphabetsAreIdentical(Alphabet<String> a1, Alphabet<String> a2) {
+        if (a1.size() != a2.size() || !a1.containsAll(a2)) {
+            throw new IllegalArgumentException("The alphabets of the hypotheses are not identical.");
         }
     }
 }
