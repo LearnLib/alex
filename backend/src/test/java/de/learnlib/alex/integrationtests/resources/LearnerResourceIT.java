@@ -46,11 +46,13 @@ import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.MealyRandomW
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
@@ -258,10 +260,15 @@ public class LearnerResourceIT extends AbstractResourceIT {
     }
 
     private LearnerResult learn(Long testNo) throws Exception {
-        await().atMost(10, TimeUnit.SECONDS).until(() -> {
-            final var result = getLearnerResult(project.getId(), testNo, jwt);
-            return !isLearnerProcessActive(result);
-        });
+        await().atMost(10, TimeUnit.SECONDS)
+                .pollInSameThread()
+                .pollDelay(Duration.ofSeconds(1))
+                .pollInterval(Duration.ofSeconds(1))
+                .until(() -> {
+                    final var result = getLearnerResult(project.getId(), testNo, jwt);
+                    return !isLearnerProcessActive(result);
+                });
+
         return getLearnerResult(project.getId(), testNo, jwt);
     }
 

@@ -29,6 +29,8 @@ import java.util.List;
 import javax.validation.ValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -80,31 +82,23 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
         assertThrows(ValidationException.class, () -> symbolGroupRepository.save(group));
     }
 
-    @Test
-    public void shouldSaveGroupsWithADuplicateIDsInDifferentProjects() {
+    @ParameterizedTest(name = "create groups with names: \"{0}, {1}\"")
+    @CsvSource({
+            "Test Group 1, Test Group 2",
+            "Test Group, Test Group"
+    })
+    public void shouldSaveGroupsWithADuplicateIDsInDifferentProjects(String groupName1, String groupName2) {
         Project project2 = createProject(user, "Test Project 2");
         project2 = projectRepository.save(project2);
 
-        SymbolGroup group1 = createGroup(project, 1L, "Test Group 1");
+        SymbolGroup group1 = createGroup(project, 1L, groupName1);
         symbolGroupRepository.save(group1);
-        SymbolGroup group2 = createGroup(project2, 1L, "Test Group 2");
-        group2 = symbolGroupRepository.save(group2);
+        SymbolGroup group2 = createGroup(project2, 1L, groupName2);
 
-        assertTrue(group2.getId() > 0L);
-    }
+        final var createdGroup = symbolGroupRepository.save(group2);
 
-    @Test
-    public void shouldSaveGroupsWithADuplicateNamesInDifferentProjects() {
-        Project project2 = createProject(user, "Test Project 2");
-        project2 = projectRepository.save(project2);
-
-        SymbolGroup group1 = createGroup(project, 1L, "Test Group");
-        symbolGroupRepository.save(group1);
-        SymbolGroup group2 = createGroup(project2, 1L, "Test Group");
-
-        group2 = symbolGroupRepository.save(group2);
-
-        assertTrue(group2.getId() > 0L);
+        assertNotNull(createdGroup);
+        assertTrue(createdGroup.getId() > 0L);
     }
 
     @Test
@@ -145,7 +139,7 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
 
     @Test
     public void shouldThrowAnExceptionWhenDeletingAnNonExistingGroup() {
-        assertThrows(EmptyResultDataAccessException.class, () -> symbolGroupRepository.deleteById(55L));
+        assertThrows(EmptyResultDataAccessException.class, () -> symbolGroupRepository.deleteById(-1L));
     }
 
     static SymbolGroup createGroup(Project project, Long id, String name) {
