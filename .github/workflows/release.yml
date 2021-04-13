@@ -12,10 +12,31 @@ jobs:
 
       - uses: actions/setup-node@v1
         with:
-          node-version: 12
+          node-version: 14
           registry-url: https://registry.npmjs.org/
       - run: cd cli
       - run: npm ci
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+
+  tag-docker-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to GitHub Container Registry
+        run: echo "${{ inputs.password }}" | docker login https://ghcr.io -u ${{ inputs.username }} --password-stdin
+
+      - name: Tag latest images with release version
+        run: |
+          VERSION="2.1.0"
+          IMAGES="alex-frontend alex-backend alex-cli alex-docs"
+
+          for img in $IMAGES
+          do
+            echo "ghcr.io/learnlib/alex/$img:$VERSION"
+            docker pull "ghcr.io/learnlib/alex/$img:unstable"
+            docker tag "ghcr.io/learnlib/alex/$img:unstable" "ghcr.io/learnlib/alex/$img:$VERSION"
+            docker tag "ghcr.io/learnlib/alex/$img:unstable" "ghcr.io/learnlib/alex/$img:latest"
+            docker push "ghcr.io/learnlib/alex/$img:$VERSION"
+            docker push "ghcr.io/learnlib/alex/$img:latest"
+          done
