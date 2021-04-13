@@ -53,8 +53,8 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 15
-      - name: Build with Maven
-        run: mvn surefire:test --file ./backend/pom.xml
+      - name: Run unit tests with Maven
+        run: mvn clean test --file ./backend/pom.xml
 
   test-integration-backend:
     needs: test-unit-backend
@@ -65,8 +65,8 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 15
-      - name: Build with Maven
-        run: mvn failsafe:integration-test --file ./backend/pom.xml
+      - name: Run integration tests with Maven
+        run: mvn clean verify -Dsurefire.skip=true --file ./backend/pom.xml
 
   package-backend:
     needs: test-integration-backend
