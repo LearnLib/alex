@@ -69,7 +69,7 @@ jobs:
         run: mvn failsafe:integration-test --file ./backend/pom.xml
 
   package-backend:
-    needs: test-backend
+    needs: test-integration-backend
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     steps:
