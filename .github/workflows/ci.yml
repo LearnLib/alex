@@ -92,8 +92,19 @@ jobs:
           node-version: '14'
       - run: cd ./frontend && npm ci && npm run lint
 
-  package-frontend:
+  test-unit-frontend:
     needs: lint-frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run Angular unit tests
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - run: cd ./frontend && npm ci && npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
+
+  package-frontend:
+    needs: test-unit-frontend
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     steps:
