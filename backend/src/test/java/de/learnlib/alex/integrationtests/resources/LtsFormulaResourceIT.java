@@ -242,7 +242,7 @@ public class LtsFormulaResourceIT extends AbstractResourceIT {
         final Response res = formulaApi.updateSuite(projectId1, s1.getId(), Arrays.asList(f1.getId(), f2.getId()), s2, jwtUser1);
         assertEquals(HttpStatus.OK.value(), res.getStatus());
 
-        final List<LtsFormula> updatedFormulas = res.readEntity(new GenericType<List<LtsFormula>>() {
+        final List<LtsFormula> updatedFormulas = res.readEntity(new GenericType<>() {
         });
         for (LtsFormula f : updatedFormulas) {
             assertEquals(s2.getId(), f.getSuiteId());

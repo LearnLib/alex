@@ -463,7 +463,7 @@ public class UserResourceIT extends AbstractResourceIT {
         final List<User> demoUsers = createDemoUsers();
         final Response res = userApi.getAll(Arrays.asList(demoUsers.get(0).getId(), demoUsers.get(1).getId()), adminJwt);
         assertEquals(HttpStatus.OK.value(), res.getStatus());
-        final List<User> users = res.readEntity(new GenericType<List<User>>() {
+        final List<User> users = res.readEntity(new GenericType<>() {
         });
         assertEquals(2, users.size());
         assertTrue(users.stream().anyMatch(u -> u.getId().equals(demoUsers.get(0).getId())));

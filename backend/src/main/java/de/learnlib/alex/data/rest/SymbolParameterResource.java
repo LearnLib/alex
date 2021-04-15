@@ -16,11 +16,9 @@
 
 package de.learnlib.alex.data.rest;
 
-import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.dao.SymbolParameterDAO;
 import de.learnlib.alex.data.entities.SymbolParameter;
 import de.learnlib.alex.security.AuthContext;
-import javax.validation.ValidationException;
 import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -70,8 +68,8 @@ public class SymbolParameterResource {
             @PathVariable("symbolId") Long symbolId,
             @RequestBody SymbolParameter parameter
     ) {
-        final User user = authContext.getUser();
-        final SymbolParameter createdParameter = symbolParameterDAO.create(user, projectId, symbolId, parameter);
+        final var user = authContext.getUser();
+        final var createdParameter = symbolParameterDAO.create(user, projectId, symbolId, parameter);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdParameter);
     }
 
@@ -95,7 +93,7 @@ public class SymbolParameterResource {
             @PathVariable("symbolId") Long symbolId,
             @PathVariable("parameterId") Long parameterId
     ) {
-        final User user = authContext.getUser();
+        final var user = authContext.getUser();
         symbolParameterDAO.delete(user, projectId, symbolId, parameterId);
         return ResponseEntity.noContent().build();
     }
@@ -124,12 +122,8 @@ public class SymbolParameterResource {
             @PathVariable("parameterId") Long parameterId,
             @RequestBody SymbolParameter parameter
     ) {
-        final User user = authContext.getUser();
-        if (!parameterId.equals(parameter.getId())) {
-            throw new ValidationException("The id of the parameter does not match with the one in the URL.");
-        }
-
-        final SymbolParameter updatedParameter = symbolParameterDAO.update(user, projectId, symbolId, parameter);
+        final var user = authContext.getUser();
+        final var updatedParameter = symbolParameterDAO.update(user, projectId, symbolId, parameterId, parameter);
         return ResponseEntity.ok(updatedParameter);
     }
 }

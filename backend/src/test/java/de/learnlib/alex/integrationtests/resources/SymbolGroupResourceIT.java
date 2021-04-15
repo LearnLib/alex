@@ -250,7 +250,7 @@ public class SymbolGroupResourceIT extends AbstractResourceIT {
         g2.setName("group2");
 
         final Response res = symbolGroupApi.create(projectId1, Arrays.asList(g1, g2), jwtUser1);
-        final List<SymbolGroup> createdGroups = res.readEntity(new GenericType<List<SymbolGroup>>() {
+        final List<SymbolGroup> createdGroups = res.readEntity(new GenericType<>() {
         });
 
         assertEquals(2, createdGroups.size());
@@ -258,7 +258,7 @@ public class SymbolGroupResourceIT extends AbstractResourceIT {
         assertEquals("group2", createdGroups.get(1).getName());
 
         final Response res1 = symbolGroupApi.getAll(projectId1, jwtUser1);
-        final List<SymbolGroup> allGroups = res1.readEntity(new GenericType<List<SymbolGroup>>() {
+        final List<SymbolGroup> allGroups = res1.readEntity(new GenericType<>() {
         });
         assertTrue(allGroups.containsAll(createdGroups));
     }

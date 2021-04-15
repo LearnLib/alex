@@ -178,9 +178,9 @@ public class SymbolGroupDAOTest {
 
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
         given(symbolGroupRepository.findById(GROUP_ID)).willReturn(Optional.of(group));
-        given(symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(PROJECT_ID)).willReturn(defaultGroup);
+        given(symbolGroupRepository.save(group)).willReturn(group);
 
-        symbolGroupDAO.update(user, group);
+        symbolGroupDAO.update(user, PROJECT_ID, GROUP_ID, group);
 
         verify(symbolGroupRepository).save(group);
     }
