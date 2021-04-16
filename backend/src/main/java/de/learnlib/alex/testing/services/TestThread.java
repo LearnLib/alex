@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.testing.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.auth.dao.UserDAO;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.utils.LoggerMarkers;
@@ -29,13 +30,8 @@ import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.entities.TestResult;
 import de.learnlib.alex.testing.events.TestEvent;
 import de.learnlib.alex.testing.events.TestExecutionStartedEventData;
+import de.learnlib.alex.testing.repositories.TestReportRepository;
 import de.learnlib.alex.webhooks.services.WebhookService;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -45,6 +41,14 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
  * The thread that executes tests. There should ever only be one test per project.
@@ -67,6 +71,8 @@ public class TestThread extends Thread {
     private final ProjectDAO projectDAO;
     private final UserDAO userDAO;
     private final TransactionTemplate transactionTemplate;
+    private final ObjectMapper objectMapper;
+    private final TestReportRepository testReportRepository;
 
     /** The finished listener. */
     private FinishedListener finishedListener;
@@ -93,7 +99,7 @@ public class TestThread extends Thread {
     private TestProcessQueueItem currentTestProcessQueueItem;
 
     /** Test results of the current test process. */
-    final Map<Long, TestResult> results = new HashMap<>();
+    final Map<Long, TestResult> results = new ConcurrentHashMap<>();
 
     @Autowired
     public TestThread(
@@ -103,7 +109,7 @@ public class TestThread extends Thread {
             ProjectDAO projectDAO,
             UserDAO userDAO,
             TransactionTemplate transactionTemplate,
-            ApplicationContext applicationContext
+            ObjectMapper objectMapper, TestReportRepository testReportRepository, ApplicationContext applicationContext
     ) {
         this.webhookService = webhookService;
         this.testDAO = testDAO;
@@ -111,6 +117,8 @@ public class TestThread extends Thread {
         this.projectDAO = projectDAO;
         this.userDAO = userDAO;
         this.transactionTemplate = transactionTemplate;
+        this.objectMapper = objectMapper;
+        this.testReportRepository = testReportRepository;
 
         this.testExecutor = applicationContext.getBean(TestExecutor.class);
     }
@@ -209,15 +217,17 @@ public class TestThread extends Thread {
     }
 
     public TestQueueItem getCurrentTest() {
-        if (report != null) {
-            final var item = new TestQueueItem();
-            item.setConfig(currentTestProcessQueueItem.config);
-            item.setResults(results);
-            item.setReport(report);
-            return item;
+
+        // Make sure that a queued but not yet created report doesnt break the status method
+        if (report == null || results.values().stream().map(TestResult::getTestReport).anyMatch(Objects::isNull)) {
+            return null;
         }
 
-        return null;
+        final var item = new TestQueueItem();
+        item.setConfig(currentTestProcessQueueItem.config);
+        item.setResults(results);
+        item.setReport(report);
+        return item;
     }
 
     public TestExecutor getTestExecutor() {

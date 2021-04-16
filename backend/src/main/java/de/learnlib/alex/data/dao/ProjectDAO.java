@@ -46,8 +46,10 @@ import de.learnlib.alex.modelchecking.dao.LtsFormulaSuiteDAO;
 import de.learnlib.alex.modelchecking.entities.LtsFormula;
 import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import de.learnlib.alex.testing.dao.TestDAO;
+import de.learnlib.alex.testing.dao.TestExecutionConfigDAO;
 import de.learnlib.alex.testing.dao.TestReportDAO;
 import de.learnlib.alex.testing.entities.Test;
+import de.learnlib.alex.testing.entities.TestExecutionConfig;
 import de.learnlib.alex.testing.entities.TestSuite;
 import de.learnlib.alex.testing.repositories.TestExecutionConfigRepository;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
@@ -60,6 +62,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import javax.validation.ValidationException;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -106,6 +109,7 @@ public class ProjectDAO {
     private final LtsFormulaDAO ltsFormulaDAO;
     private final LearnerResultStepRepository learnerResultStepRepository;
     private final LearnerSetupDAO learnerSetupDAO;
+    private final TestExecutionConfigDAO testExecutionConfigDAO;
 
     @Autowired
     public ProjectDAO(ProjectRepository projectRepository,
@@ -133,8 +137,8 @@ public class ProjectDAO {
                       @Lazy TestReportDAO testReportDAO,
                       @Lazy LtsFormulaSuiteDAO ltsFormulaSuiteDAO,
                       @Lazy LtsFormulaDAO ltsFormulaDAO,
-                      @Lazy LearnerSetupDAO learnerSetupDAO
-    ) {
+                      @Lazy LearnerSetupDAO learnerSetupDAO,
+                      @Lazy TestExecutionConfigDAO testExecutionConfigDAO) {
         this.projectRepository = projectRepository;
         this.learnerResultRepository = learnerResultRepository;
         this.fileDAO = fileDAO;
@@ -161,6 +165,7 @@ public class ProjectDAO {
         this.ltsFormulaDAO = ltsFormulaDAO;
         this.learnerResultStepRepository = learnerResultStepRepository;
         this.learnerSetupDAO = learnerSetupDAO;
+        this.testExecutionConfigDAO = testExecutionConfigDAO;
     }
 
     public Project create(final User user, final CreateProjectForm projectForm) {
@@ -243,13 +248,13 @@ public class ProjectDAO {
 
         symbolActionRepository.deleteAllBySymbol_Project_Id(projectId);
         symbolStepRepository.deleteAllBySymbol_Project_Id(projectId);
+        testExecutionConfigRepository.deleteAllByProject_Id(projectId);
         testReportRepository.deleteAllByProject_Id(projectId);
         testRepository.deleteAllByProject_Id(projectId);
         learnerResultStepRepository.deleteAllByResult_Project_Id(projectId);
         learnerResultRepository.deleteAllByProject_Id(projectId);
         learnerSetupRepository.deleteAllByProject_Id(projectId);
         parameterizedSymbolRepository.deleteAllBySymbol_Project_Id(projectId);
-        testExecutionConfigRepository.deleteAllByProject_Id(projectId);
         symbolParameterRepository.deleteAllBySymbol_Project_Id(projectId);
         uploadableFileRepository.deleteAllByProject_Id(projectId);
 
@@ -290,6 +295,7 @@ public class ProjectDAO {
         final List<Test> tests;
         final List<LtsFormulaSuite> formulaSuites;
         final List<LearnerSetup> learnerSetups;
+        final List<TestExecutionConfig> testExecutionConfigs;
 
         try {
             project = om.readValue(projectExportableEntity.getProject().toString(), Project.class);
@@ -297,6 +303,7 @@ public class ProjectDAO {
             tests = Arrays.asList(om.readValue(projectExportableEntity.getTests().toString(), Test[].class));
             formulaSuites = Arrays.asList(om.readValue(projectExportableEntity.getFormulaSuites().toString(), LtsFormulaSuite[].class));
             learnerSetups = Arrays.asList(om.readValue(projectExportableEntity.getLearnerSetups().toString(), LearnerSetup[].class));
+            testExecutionConfigs = Arrays.asList(om.readValue(projectExportableEntity.getTestExecutionConfigs().toString(), TestExecutionConfig[].class));
         } catch (IOException e) {
             e.printStackTrace();
             throw new ValidationException("The input is not formatted correctly");
@@ -331,8 +338,11 @@ public class ProjectDAO {
 
         symbolGroupDAO.importGroups(user, createdProject, groups, new HashMap<>());
 
+        //todo:
+        Map<Long, Long> configRefMap = new HashMap<>();
+
         if (!tests.isEmpty()) {
-            testDAO.importTests(user, createdProject.getId(), tests);
+            testDAO.importTests(user, createdProject.getId(), tests, configRefMap);
         }
 
         for (LtsFormulaSuite suite : formulaSuites) {
@@ -344,6 +354,10 @@ public class ProjectDAO {
 
         if (!learnerSetups.isEmpty()) {
             learnerSetupDAO.importLearnerSetups(user, createdProject, learnerSetups);
+        }
+
+        if (!testExecutionConfigs.isEmpty()) {
+            testExecutionConfigDAO.importTestExecutionConfigs(user, createdProject, testExecutionConfigs, configRefMap);
         }
 
         loadLazyRelations(createdProject);

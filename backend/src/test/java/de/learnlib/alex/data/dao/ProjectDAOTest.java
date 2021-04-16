@@ -40,6 +40,7 @@ import de.learnlib.alex.learning.repositories.LearnerSetupRepository;
 import de.learnlib.alex.modelchecking.dao.LtsFormulaDAO;
 import de.learnlib.alex.modelchecking.dao.LtsFormulaSuiteDAO;
 import de.learnlib.alex.testing.dao.TestDAO;
+import de.learnlib.alex.testing.dao.TestExecutionConfigDAO;
 import de.learnlib.alex.testing.dao.TestReportDAO;
 import de.learnlib.alex.testing.repositories.TestExecutionConfigRepository;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
@@ -143,6 +144,9 @@ public class ProjectDAOTest {
     @Mock
     private LearnerSetupDAO learnerSetupDAO;
 
+    @Mock
+    private TestExecutionConfigDAO testExecutionConfigDAO;
+
     private ProjectDAO projectDAO;
 
     private User user;
@@ -154,7 +158,7 @@ public class ProjectDAOTest {
                 projectUrlRepository, testExecutionConfigRepository, testDAO, userDAO, environmentRepository, symbolGroupDAO,
                 testRepository, symbolParameterRepository, uploadableFileRepository, learnerSetupRepository,
                 learnerResultStepRepository, testPresenceService, symbolPresenceService, projectPresenceService,
-                testReportDAO, ltsFormulaSuiteDAO, ltsFormulaDAO, learnerSetupDAO);
+                testReportDAO, ltsFormulaSuiteDAO, ltsFormulaDAO, learnerSetupDAO, testExecutionConfigDAO);
         user = new User();
         user.setId(USER_ID);
     }

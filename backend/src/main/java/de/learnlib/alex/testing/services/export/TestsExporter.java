@@ -106,6 +106,9 @@ public class TestsExporter extends EntityExporter {
     }
 
     private abstract static class IgnoreFieldsForTestMixin extends IgnoreIdFieldMixin {
+        @JsonIgnore(value = false)
+        abstract Long getId();
+
         @JsonIgnore
         abstract Long getProjectId();
 

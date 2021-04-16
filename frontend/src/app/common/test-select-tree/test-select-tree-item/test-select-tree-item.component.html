@@ -1,0 +1,13 @@
+<div class="test-item d-flex w-100">
+  <div>
+    <selectable-checkbox [item]="testCase" [selectable]="store.testsSelectable"></selectable-checkbox>
+  </div>
+  <div class="w-100 pl-3">
+    <a [routerLink]="[testCase.id]" [class.disabled]="false">
+      <strong>{{testCase.name}}</strong>
+    </a>
+  </div>
+  <div *ngIf="testCase.steps.length === 0" class="pl-3">
+    <span class="badge badge-info">Not implemented</span>
+  </div>
+</div>

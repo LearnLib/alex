@@ -229,7 +229,7 @@ import { NgxGraphModule } from '@swimlane/ngx-graph';
 import { JumpToLabelActionFormComponent } from './common/actions/misc/jump-to-label-action-form/jump-to-label-action-form.component';
 import { CreateLabelActionFormComponent } from './common/actions/misc/create-label-action-form/create-label-action-form.component';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { TestStatusComponent } from './common/test-status/test-status.component';
+import { TestStatusWidgetComponent } from './common/test-status-widget/test-status-widget.component';
 import { TestReportProgressComponent } from './common/test-report-progress/test-report-progress.component';
 import { ProjectUsersViewComponent } from './views/project-users-view/project-users-view.component';
 import { AddUserModalComponent } from './views/project-users-view/add-user-modal/add-user-modal.component';
@@ -264,6 +264,15 @@ import { FormatWebBrowserPipe } from './pipes/format-web-browser.pipe';
 import { LearnerResultStepApiService } from './services/api/learner-result-step-api.service';
 import { ModelValidationBadgeComponent } from './common/model-validation-badge/model-validation-badge.component';
 import { ModelCheckingResultsViewComponent } from './views/model-checking-results-view/model-checking-results-view.component';
+import { TestConfigsViewComponent } from "./views/test-configs-view/test-configs-view.component";
+import { TestConfigTableComponent } from "./common/test-config-table/test-config-table.component";
+import { TestConfigFormComponent } from "./common/test-config-form/test-config-form.component";
+import { TestConfigsCreateViewComponent } from "./views/test-configs-create-view/test-configs-create-view.component";
+import { TestConfigsEditViewComponent } from "./views/test-configs-edit-view/test-configs-edit-view.component";
+import { TestSelectTreeComponent } from './common/test-select-tree/test-select-tree.component';
+import { TestSelectTreeHeaderComponent } from "./common/test-select-tree/test-select-tree-header/test-select-tree-header.component";
+import { TestSelectTreeItemComponent } from "./common/test-select-tree/test-select-tree-item/test-select-tree-item.component";
+import { TestSelectTreeStore } from "./common/test-select-tree/test-select-tree.store";
 
 @NgModule({
   declarations: [
@@ -454,7 +463,7 @@ import { ModelCheckingResultsViewComponent } from './views/model-checking-result
     AboutModalComponent,
     JumpToLabelActionFormComponent,
     CreateLabelActionFormComponent,
-    TestStatusComponent,
+    TestStatusWidgetComponent,
     TestReportProgressComponent,
     ProjectUsersViewComponent,
     AddUserModalComponent,
@@ -477,6 +486,14 @@ import { ModelCheckingResultsViewComponent } from './views/model-checking-result
     ModelValidationBadgeComponent,
     ModelValidationBadgeComponent,
     ModelCheckingResultsViewComponent,
+    TestConfigsViewComponent,
+    TestConfigTableComponent,
+    TestConfigFormComponent,
+    TestConfigsCreateViewComponent,
+    TestConfigsEditViewComponent,
+    TestSelectTreeComponent,
+    TestSelectTreeHeaderComponent,
+    TestSelectTreeItemComponent
   ],
   imports: [
     BrowserModule,
@@ -545,6 +562,7 @@ import { ModelCheckingResultsViewComponent } from './views/model-checking-result
     TestResultApiService,
     LearnerResultStepApiService,
     EnvironmentProvider,
+    TestSelectTreeStore,
     {
       provide: APP_INITIALIZER,
       useFactory: initEnv,

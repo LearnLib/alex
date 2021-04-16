@@ -331,6 +331,9 @@ public class LearnerService {
             final var thread = learnerThreads.get(projectId);
             final var process = thread.getCurrentProcess();
 
+            // Make sure that a result has been persisted
+            if (process.getResult() == null) return new LearnerStatus();
+
             final var processStatus = new LearningProcessStatus();
             processStatus.setCurrentQueries(process.getCurrentQueries());
             processStatus.setPhase(process.getLearnerPhase());

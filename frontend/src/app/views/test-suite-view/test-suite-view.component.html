@@ -71,16 +71,16 @@
         </div>
 
         <div class="btn-group btn-group-sm float-right ml-2">
-          <button (click)="saveTestConfig()" class="btn btn-success" ngbTooltip="Save configuration" placement="left">
-            <i class="fas fa-fw fa-save"></i>
+          <button (click)="openCreateTestConfigModal()" class="btn btn-success" ngbTooltip="Save configuration" placement="left">
+            <i class="fas fa-fw fa-plus"></i> New Config
           </button>
         </div>
 
         <div class="btn-group btn-group-sm float-right">
-          <button (click)="executeSelected()" class="btn btn-primary" [disabled]="!selectedTests.isAnySelected()">
+          <button (click)="executeSelected()" class="btn btn-primary" [disabled]="!selectedTests.isAnySelected() || this.testConfig == undefined">
             Execute
           </button>
-          <button (click)="openTestConfigModal()" class="btn btn-primary">
+          <button (click)="openEditTestConfigModal()" class="btn btn-primary" [disabled]="this.testConfig == undefined">
             <i class="fas fa-fw fa-cog"></i>
           </button>
         </div>
@@ -190,13 +190,8 @@
             </div>
           </div>
 
-          <div class="card mt-4">
-            <div class="card-header">
-              <strong>Test runs</strong>
-            </div>
-            <div class="card-body p-0">
-              <test-status></test-status>
-            </div>
+          <div class="mt-4">
+            <test-status-widget [flush]="true"></test-status-widget>
           </div>
         </div>
       </div>

@@ -24,15 +24,23 @@ import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
+import de.learnlib.alex.learning.entities.WebDriverConfig;
+import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
 import de.learnlib.alex.testing.repositories.TestExecutionConfigRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -43,25 +51,36 @@ public class TestExecutionConfigDAO {
     private final TestExecutionConfigRepository testExecutionConfigRepository;
     private final ProjectEnvironmentRepository environmentRepository;
     private final ProjectEnvironmentDAO environmentDAO;
+    private final EntityManager entityManager;
+    private final TestDAO testDAO;
 
     @Autowired
     public TestExecutionConfigDAO(ProjectDAO projectDAO,
                                   ProjectRepository projectRepository,
                                   TestExecutionConfigRepository testExecutionConfigRepository,
                                   ProjectEnvironmentRepository environmentRepository,
-                                  ProjectEnvironmentDAO environmentDAO) {
+                                  ProjectEnvironmentDAO environmentDAO,
+                                  EntityManager entityManager,
+                                  TestDAO testDAO) {
         this.projectDAO = projectDAO;
         this.projectRepository = projectRepository;
         this.testExecutionConfigRepository = testExecutionConfigRepository;
         this.environmentRepository = environmentRepository;
         this.environmentDAO = environmentDAO;
+        this.entityManager = entityManager;
+        this.testDAO = testDAO;
     }
 
     public TestExecutionConfig create(User user, Long projectId, TestExecutionConfig config) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
-        config.setTests(new ArrayList<>());
+        List<Test> tests = new ArrayList<>();
+        Optional.ofNullable(config.getTestIds())
+                .ifPresent(testIds -> testIds.forEach(testId -> {
+                    tests.add(this.testDAO.get(user, projectId, testId));
+                }));
+        config.setTests(tests);
 
         final ProjectEnvironment projectUrl = environmentRepository.findById(config.getEnvironmentId()).orElse(null);
         environmentDAO.checkAccess(user, project, projectUrl);
@@ -121,9 +140,48 @@ public class TestExecutionConfigDAO {
             }
         }
 
+        configInDb.setDriverConfig(config.getDriverConfig());
+        configInDb.setEnvironmentId(config.getEnvironmentId());
+        configInDb.setName(config.getName());
+        configInDb.setDescription(config.getDescription());
+        configInDb.setTests(testDAO.get(user, projectId, config.getTestIds()));
+
         final TestExecutionConfig updatedConfig = testExecutionConfigRepository.save(configInDb);
         loadLazyRelations(updatedConfig);
         return updatedConfig;
+    }
+
+    public TestExecutionConfig copy(User user, Long projectId, Long configId) {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final TestExecutionConfig configInDb = testExecutionConfigRepository.findById(configId).orElse(null);
+        checkAccess(user, project, configInDb);
+
+        final TestExecutionConfig newConfig = new TestExecutionConfig();
+        newConfig.setProject(project);
+        newConfig.setName(configInDb.getName());
+        newConfig.setDescription(configInDb.getDescription());
+        newConfig.setEnvironment(configInDb.getEnvironment());
+        newConfig.setTests(List.copyOf(configInDb.getTests()));
+
+        final WebDriverConfig webDriverConfig = configInDb.getDriverConfig();
+        entityManager.detach(webDriverConfig);
+        webDriverConfig.setId(null);
+        newConfig.setDriverConfig(webDriverConfig);
+
+        final TestExecutionConfig copiedConfig = testExecutionConfigRepository.save(newConfig);
+        loadLazyRelations(newConfig);
+        return copiedConfig;
+    }
+
+    public List<TestExecutionConfig> importTestExecutionConfigs(User user, Project project, List<TestExecutionConfig> testExecutionConfigs, Map<Long, Long> configRefMap) {
+        testExecutionConfigs.forEach(testExecutionConfig -> {
+            testExecutionConfig.setProject(projectRepository.getOne(project.getId()));
+            testExecutionConfig.setEnvironment(environmentRepository.findByProject_IdAndName(project.getId(), testExecutionConfig.getEnvironment().getName()));
+            testExecutionConfig.setTests(testDAO.get(user, project.getId(), testExecutionConfig.getTestIds().stream().map(configRefMap::get).collect(Collectors.toList())));
+        });
+
+        List<TestExecutionConfig> importedConfigs = testExecutionConfigRepository.saveAll(testExecutionConfigs);
+        return importedConfigs;
     }
 
     public void checkAccess(User user, Project project, TestExecutionConfig config) {

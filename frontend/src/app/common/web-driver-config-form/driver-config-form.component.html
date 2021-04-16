@@ -1,7 +1,7 @@
 <div class="form-group">
   <label class="control-label">Platform</label>
   <select [(ngModel)]="config.platform" class="form-control" required>
-    <option [value]="null" disabled>Select a platform</option>
+    <option [value]="undefined" disabled>Select a platform</option>
     <optgroup [label]="platform.key" *ngFor="let platform of platforms | keyvalue">
       <option *ngFor="let p of platform.value | keyvalue" [value]="p.value">{{p.key}}</option>
     </optgroup>
@@ -11,7 +11,7 @@
 <div class="form-group">
   <label class="control-label">Browser</label>
   <select [(ngModel)]="config.browser" class="form-control" required>
-    <option [value]="''" disabled>Select a browser</option>
+    <option [value]="undefined" disabled>Select a browser</option>
     <option *ngFor="let item of browsers | keyvalue" [value]="item.value">{{item.key}}</option>
   </select>
 </div>

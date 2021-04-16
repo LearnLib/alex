@@ -32,6 +32,7 @@ import de.learnlib.alex.testing.services.TestService;
 import de.learnlib.alex.testing.services.export.TestsExporter;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import java.util.List;
+import javax.print.attribute.standard.Media;
 import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -114,7 +115,7 @@ public class TestResource {
     public ResponseEntity<List<Test>> createTests(@PathVariable("projectId") Long projectId,
                                                   @RequestBody List<Test> tests) {
         final var user = authContext.getUser();
-        final var createdTests = testDAO.create(user, projectId, tests);
+        final var createdTests = testDAO.create(user, projectId, tests, null);
         webhookService.fireEvent(user, new TestEvent.CreatedMany(createdTests));
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTests);
     }
@@ -154,6 +155,17 @@ public class TestResource {
         final var user = authContext.getUser();
         final var root = testDAO.getRoot(user, projectId);
         return ResponseEntity.ok(root);
+    }
+
+    @GetMapping(
+            value = "/batch/{testIds}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity<List<Test>> getMany(@PathVariable("projectId") Long projectId,
+                                              @PathVariable("testIds") List<Long> testIds) {
+        final var user = authContext.getUser();
+        final var tests = testDAO.get(user, projectId, testIds);
+        return ResponseEntity.ok(tests);
     }
 
     /**
@@ -215,7 +227,7 @@ public class TestResource {
     public ResponseEntity<List<Test>> importTests(@PathVariable("projectId") Long projectId,
                                                   @RequestBody List<Test> tests) {
         final var user = authContext.getUser();
-        final var importedTests = testDAO.importTests(user, projectId, tests);
+        final var importedTests = testDAO.importTests(user, projectId, tests, null);
         return ResponseEntity.ok(importedTests);
     }
 

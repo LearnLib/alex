@@ -31,14 +31,15 @@ import { Project } from '../../entities/project';
 import { SymbolGroup } from '../../entities/symbol-group';
 import { TestCase } from '../../entities/test-case';
 import { AppStoreService } from '../../services/app-store.service';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild, AfterViewInit, ViewChildren } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TestsImportModalComponent } from './tests-import-modal/tests-import-modal.component';
-import { TestConfigModalComponent } from '../tests-view/test-config-modal/test-config-modal.component';
+import { TestConfigModalAction, TestConfigModalComponent } from '../tests-view/test-config-modal/test-config-modal.component';
 import { TestsMoveModalComponent } from './tests-move-modal/tests-move-modal.component';
 import { TestReportStatus, TestStatus } from '../../entities/test-status';
 import { TestLockInfo, TestPresenceService } from '../../services/test-presence.service';
 import { WebDriverConfig } from '../../entities/web-driver-config';
+import { TestConfigListComponent } from "./test-config-list/test-config-list.component";
 
 @Component({
   selector: 'test-suite-view',
@@ -92,13 +93,6 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.selectedTests.addItems(this.testSuite.tests);
-
-    this.testConfig = {
-      tests: [],
-      environment: this.project.getDefaultEnvironment(),
-      driverConfig: new WebDriverConfig(),
-      description: ''
-    };
 
     this.testConfigApi.getAll(this.project.id).subscribe(
       testConfigs => {
@@ -255,7 +249,6 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
 
     const config = JSON.parse(JSON.stringify(this.testConfig));
     config.tests = selectedTests.map(t => t.id);
-    config.environment = config.environment.id;
 
     this.report = null;
     this.testStatus = null;
@@ -280,13 +273,31 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
       && this.testStatus.currentTest.id === test.id;
   }
 
-  openTestConfigModal(): void {
+  openCreateTestConfigModal(): void {
     const modalRef = this.modalService.open(TestConfigModalComponent);
+    modalRef.componentInstance.action = TestConfigModalAction.CREATE;
+    modalRef.componentInstance.configuration = {};
+    modalRef.componentInstance.configuration.driverConfig = {};
+    modalRef.componentInstance.project = this.project;
+    modalRef.result.then(config => {
+      this.testConfigApi.getAll(this.project.id).subscribe(
+        testConfigs => {
+          this.testConfigs = testConfigs;
+        },
+        console.error
+      )
+      }).catch(() => {
+    });
+  }
+
+  openEditTestConfigModal(): void {
+    const modalRef = this.modalService.open(TestConfigModalComponent);
+    modalRef.componentInstance.action = TestConfigModalAction.EDIT;
     modalRef.componentInstance.configuration = JSON.parse(JSON.stringify(this.testConfig));
     modalRef.componentInstance.project = this.project;
-    modalRef.result.then(data => {
-      this.toastService.success('The settings have been updated.');
-      this.testConfig = data;
+    modalRef.result.then(config => {
+      const i = this.testConfigs.findIndex(value => value.id === config.id);
+      this.testConfigs[i] = config;
     }).catch(() => {
     });
   }
@@ -356,29 +367,12 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  saveTestConfig(): void {
-    const config = JSON.parse(JSON.stringify(this.testConfig));
-    config.id = null;
-    config.driverConfig.id = null;
-    config.tests = [];
-    config.project = this.project.id;
-    config.environment = config.environment.id;
-
-    this.testConfigApi.create(this.project.id, config).subscribe(
-      createdConfig => {
-        this.testConfigs.push(createdConfig);
-        this.toastService.success('Config has been saved');
-      },
-      res => {
-        this.toastService.danger(`The config could not be saved. ${res.error.message}`);
-      }
-    );
-  }
-
   selectTestConfig(config: any): void {
     if (config != null) {
       this.testConfig = JSON.parse(JSON.stringify(config));
-      this.testConfig.environment = this.project.environments.find(e => e.id === config.environment);
+      this.testConfig.environment = this.project.environments.find(e => e.id === config.environmentId );
+    } else {
+      this.testConfig = null;
     }
   }
 

@@ -18,6 +18,7 @@ package de.learnlib.alex.testing.dao;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.EntityLockedException;
+import de.learnlib.alex.common.exceptions.ForbiddenOperationException;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.ParameterizedSymbolDAO;
 import de.learnlib.alex.data.dao.ProjectDAO;
@@ -40,6 +41,7 @@ import de.learnlib.alex.testing.entities.TestResult;
 import de.learnlib.alex.testing.entities.TestStatus;
 import de.learnlib.alex.testing.entities.TestSuite;
 import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
+import de.learnlib.alex.testing.repositories.TestExecutionConfigRepository;
 import de.learnlib.alex.testing.repositories.TestRepository;
 import de.learnlib.alex.testing.repositories.TestResultRepository;
 import de.learnlib.alex.testing.services.TestService;
@@ -80,12 +82,13 @@ public class TestDAO {
     private final TestResultRepository testResultRepository;
     private final TestPresenceService testPresenceService;
     private final TestService testService;
+    private final TestExecutionConfigRepository testExecutionConfigRepository;
 
     @Autowired
     public TestDAO(ProjectDAO projectDAO, TestRepository testRepository, SymbolDAO symbolDAO,
                    TestCaseStepRepository testCaseStepRepository, ProjectRepository projectRepository,
                    ParameterizedSymbolDAO parameterizedSymbolDAO, TestResultRepository testResultRepository,
-                   @Lazy TestPresenceService testPresenceService, @Lazy TestService testService) {
+                   @Lazy TestPresenceService testPresenceService, @Lazy TestService testService, @Lazy TestExecutionConfigRepository testExecutionConfigRepository) {
         this.projectDAO = projectDAO;
         this.testRepository = testRepository;
         this.symbolDAO = symbolDAO;
@@ -95,6 +98,7 @@ public class TestDAO {
         this.testResultRepository = testResultRepository;
         this.testPresenceService = testPresenceService;
         this.testService = testService;
+        this.testExecutionConfigRepository = testExecutionConfigRepository;
     }
 
     public Test createByGenerate(User user, Project project, Test test) {
@@ -164,17 +168,17 @@ public class TestDAO {
         return createdTest;
     }
 
-    public List<Test> create(User user, Long projectId, List<Test> tests) {
-        return create(user, projectId, new ArrayList<>(tests), null);
+    public List<Test> create(User user, Long projectId, List<Test> tests, Map<Long, Long> configRefMap) {
+        return create(user, projectId, new ArrayList<>(tests), null, configRefMap);
     }
 
-    public List<Test> importTests(User user, Long projectId, List<Test> tests) {
+    public List<Test> importTests(User user, Long projectId, List<Test> tests, Map<Long, Long> configRefMap) {
         projectDAO.getByID(user, projectId);
         final Map<String, Symbol> symbolMap = symbolDAO.getAll(user, projectId).stream()
                 .collect(Collectors.toMap(Symbol::getName, Function.identity()));
         mapSymbolsInTests(tests, symbolMap);
 
-        return create(user, projectId, tests);
+        return create(user, projectId, tests, configRefMap);
     }
 
     private void mapSymbolsInTests(List<Test> tests, Map<String, Symbol> symbolMap) {
@@ -196,7 +200,7 @@ public class TestDAO {
         }
     }
 
-    private List<Test> create(User user, Long projectId, List<Test> tests, TestSuite parent) {
+    private List<Test> create(User user, Long projectId, List<Test> tests, TestSuite parent, Map<Long, Long> configRefMap) {
         final List<Test> createdTests = new ArrayList<>();
 
         for (final Test test : tests) {
@@ -205,14 +209,24 @@ public class TestDAO {
             }
 
             if (test instanceof TestCase) {
-                createdTests.add(create(user, projectId, test));
+                var refTestId = test.getId();
+                Test createdTest = create(user, projectId, test);
+                if (configRefMap != null) {
+                    configRefMap.put(refTestId, createdTest.getId());
+                }
+                createdTests.add(createdTest);
             } else {
                 final TestSuite testSuite = (TestSuite) test;
                 final List<Test> testsInSuite = testSuite.getTests();
 
                 testSuite.setTests(new ArrayList<>());
-                createdTests.add(create(user, projectId, testSuite));
-                create(user, projectId, testsInSuite, testSuite);
+                var refSuiteId = test.getId();
+                Test createdTest = create(user, projectId, testSuite);
+                if (configRefMap != null) {
+                    configRefMap.put(refSuiteId, createdTest.getId());
+                }
+                createdTests.add(createdTest);
+                create(user, projectId, testsInSuite, testSuite, configRefMap);
             }
         }
 
@@ -332,6 +346,11 @@ public class TestDAO {
 
         // check lock status
         testPresenceService.checkLockStatusStrict(projectId, testId, user.getId());
+
+        // check test configs
+        if (!testExecutionConfigRepository.findAllByProject_IdAndTest_Id(projectId, testId).isEmpty()) {
+            throw new ForbiddenOperationException("The test " +  test.getName() + " is associated with one or more test configs.");
+        }
 
         final Test root = testRepository.findFirstByProject_IdOrderByIdAsc(projectId);
         if (root.getId().equals(testId)) {

@@ -30,6 +30,10 @@ export class TestConfigApiService extends BaseApiService {
     super();
   }
 
+  get(projectId: number, configId: number): Observable<any> {
+    return this.http.get(`${this.url(projectId)}/${configId}`, this.defaultHttpOptions);
+  }
+
   /**
    * Get all test configs in the project.
    *
@@ -67,6 +71,14 @@ export class TestConfigApiService extends BaseApiService {
    */
   update(projectId: number, config: any): Observable<any> {
     return this.http.put(`${this.url(projectId)}/${config.id}`, config, this.defaultHttpOptions);
+  }
+
+  copy(projectId: number, configId: number): Observable<any> {
+    return this.http.post(`${this.url(projectId)}/${configId}/copy`, {}, this.defaultHttpOptions);
+  }
+
+  run(projectId: number, configId: number): Observable<any> {
+    return this.http.post(`${this.url(projectId)}/${configId}/run`, {}, this.defaultHttpOptions);
   }
 
   private url(projectId: number) {

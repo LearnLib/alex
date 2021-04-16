@@ -22,11 +22,11 @@ import { Project } from '../../entities/project';
 import { ToastService } from '../../services/toast.service';
 
 @Component({
-  selector: 'test-status',
-  templateUrl: './test-status.component.html',
-  styleUrls: ['./test-status.component.scss']
+  selector: 'test-status-widget',
+  templateUrl: './test-status-widget.component.html',
+  styleUrls: ['./test-status-widget.component.scss']
 })
-export class TestStatusComponent implements OnInit, OnDestroy {
+export class TestStatusWidgetComponent implements OnInit, OnDestroy {
 
   @Input()
   flush = true;

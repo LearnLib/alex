@@ -51,6 +51,9 @@ public class TestExecutionConfig implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /** The name of the config. */
+    private String name;
+
     /** The ids of the tests to execute. */
     @ManyToMany
     @OrderBy
@@ -104,6 +107,14 @@ public class TestExecutionConfig implements Serializable {
         this.id = id;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name == null || name.trim().equals("") ? "" : name;
+    }
+
     public List<Test> getTests() {
         return tests;
     }
@@ -134,12 +145,12 @@ public class TestExecutionConfig implements Serializable {
     }
 
     @Transient
-    @JsonProperty("environment")
+    @JsonProperty("environmentId")
     public Long getEnvironmentId() {
         return environment.getId();
     }
 
-    @JsonProperty("environment")
+    @JsonProperty("environmentId")
     public void setEnvironmentId(Long environmentId) {
         this.environment = new ProjectEnvironment();
         this.environment.setId(environmentId);

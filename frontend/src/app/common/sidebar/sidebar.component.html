@@ -55,6 +55,9 @@
 
       <div class="sidebar-group">
         <strong class="sidebar-group-title">Tests</strong>
+        <a [routerLink]="['/app', 'projects', project.id, 'tests', 'configs']" [routerLinkActive]="'active'">
+          <i class="fas fa-fw fa-play"></i> <span>Configs</span>
+        </a>
         <a [routerLink]="['/app', 'projects', project.id, 'tests']" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{exact: true}">
           <i class="fas fa-fw fa-wrench"></i> <span>Management</span>
         </a>

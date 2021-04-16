@@ -37,6 +37,9 @@ import { TestGuard } from './guards/TestGuard';
 import { SymbolGuard } from './guards/SymbolGuard';
 import {TestReportScreenshotsViewComponent} from './views/test-report-screenshots-view/test-report-screenshots-view.component';
 import { ModelCheckingResultsViewComponent } from './views/model-checking-results-view/model-checking-results-view.component';
+import { TestConfigsViewComponent } from "./views/test-configs-view/test-configs-view.component";
+import { TestConfigsCreateViewComponent } from "./views/test-configs-create-view/test-configs-create-view.component";
+import { TestConfigsEditViewComponent } from "./views/test-configs-edit-view/test-configs-edit-view.component";
 
 const routes: Routes = [
   {
@@ -218,6 +221,24 @@ const routes: Routes = [
                   {
                     path: '',
                     component: TestsViewComponent
+                  },
+                  {
+                    path: 'configs',
+                    children: [
+                      {
+                        path: '',
+                        component: TestConfigsViewComponent,
+                        pathMatch: 'full'
+                      },
+                      {
+                        path: 'new',
+                        component: TestConfigsCreateViewComponent
+                      },
+                      {
+                        path: ':configId',
+                        component: TestConfigsEditViewComponent
+                      }
+                    ]
                   },
                   {
                     path: 'reports',

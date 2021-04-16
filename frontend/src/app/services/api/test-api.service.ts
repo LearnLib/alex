@@ -60,6 +60,10 @@ export class TestApiService extends BaseApiService {
     return this.http.get(`${this.env.apiUrl}/projects/${projectId}/tests/${testCaseId}`, this.defaultHttpOptions);
   }
 
+  getMany(projectId: number, testIds: number[]): Observable<any> {
+    return this.http.get(`${this.env.apiUrl}/projects/${projectId}/tests/batch/${testIds.join(',')}`, this.defaultHttpOptions);
+  }
+
   /**
    * Get the status of the current test process.
    *
@@ -117,7 +121,7 @@ export class TestApiService extends BaseApiService {
    * @param projectId The id of the project
    * @param testConfig The configuration for the web driver.
    */
-  executeMany(projectId: number, testConfig: number): Observable<any> {
+  executeMany(projectId: number, testConfig: any): Observable<any> {
     return this.http.post(`${this.env.apiUrl}/projects/${projectId}/tests/execute`, testConfig, this.defaultHttpOptions);
   }
 
