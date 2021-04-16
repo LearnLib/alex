@@ -16,10 +16,10 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -39,6 +39,7 @@ import de.learnlib.alex.integrationtests.resources.api.UserApi;
 import de.learnlib.alex.integrationtests.websocket.util.SymbolPresenceServiceWSMessages;
 import de.learnlib.alex.integrationtests.websocket.util.WebSocketUser;
 import java.io.File;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -46,12 +47,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
-import org.junit.Before;
-import org.junit.Test;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.http.HttpStatus;
 
 public class SymbolResourceIT extends AbstractResourceIT {
+
+    private final Duration defaultWaitTime = Duration.ofSeconds(5);
 
     private String jwtUser1;
 
@@ -77,7 +81,7 @@ public class SymbolResourceIT extends AbstractResourceIT {
 
     private SymbolPresenceServiceWSMessages symbolPresenceServiceWSMessages;
 
-    @Before
+    @BeforeEach
     public void pre() throws Exception {
         symbolGroupApi = new SymbolGroupApi(client, port);
         symbolApi = new SymbolApi(client, port);
@@ -158,6 +162,7 @@ public class SymbolResourceIT extends AbstractResourceIT {
         final Symbol s = createSymbol("s", (long) projectId1, jwtUser1);
 
         webSocketUser.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId1, s.getId()));
+        Awaitility.await().atMost(defaultWaitTime).until(() -> webSocketUser.assertNumberOfMessages("default", 1));
 
         s.setName("s2");
 
@@ -175,6 +180,7 @@ public class SymbolResourceIT extends AbstractResourceIT {
         final Symbol s = createSymbol("s", (long) projectId1, jwtUser1);
 
         webSocketUser.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId1, s.getId()));
+        Awaitility.await().atMost(defaultWaitTime).until(() -> webSocketUser.assertNumberOfMessages("default", 1));
 
         s.setName("s2");
 
@@ -375,7 +381,7 @@ public class SymbolResourceIT extends AbstractResourceIT {
         final Symbol s3 = createSymbol("s3", (long) projectId1, jwtUser1);
 
         final Response res = symbolApi.get(projectId1, Arrays.asList(s1.getId(), s3.getId()), jwtUser1);
-        final List<Symbol> symbols = res.readEntity(new GenericType<List<Symbol>>() {
+        final List<Symbol> symbols = res.readEntity(new GenericType<>() {
         });
         final List<Long> symbolIds = symbols.stream().map(Symbol::getId).collect(Collectors.toList());
 
@@ -462,6 +468,7 @@ public class SymbolResourceIT extends AbstractResourceIT {
         Symbol s1 = createSymbol("s1", (long) projectId1, jwtUser1);
 
         webSocketUser.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId1, s1.getId()));
+        Awaitility.await().atMost(defaultWaitTime).until(() -> webSocketUser.assertNumberOfMessages("default", 1));
 
         final Response res = symbolApi.move(projectId1, s1.getId(), g.getId(), webSocketUser.getJwt());
 
@@ -503,9 +510,12 @@ public class SymbolResourceIT extends AbstractResourceIT {
         symbolApi.archive(projectId1, s.getId().intValue(), jwtUser1);
 
         webSocketUser.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId1, s.getId()));
+        Awaitility.await().atMost(defaultWaitTime).until(() -> webSocketUser.assertNumberOfMessages("default", 1));
 
         final Response res = symbolApi.delete(projectId1, s.getId(), webSocketUser.getJwt());
         assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());
+
+        webSocketUser.forceDisconnectAll();
     }
 
     @Test
@@ -546,7 +556,7 @@ public class SymbolResourceIT extends AbstractResourceIT {
         symbolApi.archive(projectId1, s2.getId().intValue(), jwtUser1);
 
         final Response res = symbolApi.restore((long) projectId1, Arrays.asList(s1.getId(), s2.getId()), jwtUser1);
-        final List<Symbol> restoredSymbols = res.readEntity(new GenericType<List<Symbol>>() {
+        final List<Symbol> restoredSymbols = res.readEntity(new GenericType<>() {
         });
 
         s1 = symbolApi.get(projectId1, s1.getId(), jwtUser1).readEntity(Symbol.class);

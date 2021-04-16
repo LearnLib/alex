@@ -1,15 +1,31 @@
-import { async, TestBed } from '@angular/core/testing';
+import { waitForAsync, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
+import { AppStoreService } from './services/app-store.service';
+import { ClipboardService } from './services/clipboard.service';
+import { ProjectApiService } from './services/api/project-api.service';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { EnvironmentProvider } from '../environments/environment.provider';
+import { WebSocketService } from './services/websocket.service';
+import { WebSocketAPIService } from './services/api/websocket-api.service';
 
 describe('AppComponent', () => {
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
-        RouterTestingModule
+        RouterTestingModule,
+        HttpClientTestingModule
       ],
       declarations: [
         AppComponent
+      ],
+      providers: [
+        AppStoreService,
+        ClipboardService,
+        ProjectApiService,
+        EnvironmentProvider,
+        WebSocketService,
+        WebSocketAPIService
       ]
     }).compileComponents();
   }));
@@ -18,18 +34,5 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.debugElement.componentInstance;
     expect(app).toBeTruthy();
-  });
-
-  it(`should have as title 'alex-frontend'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app.title).toEqual('alex-frontend');
-  });
-
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('.content span').textContent).toContain('alex-frontend app is running!');
   });
 });

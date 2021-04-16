@@ -16,8 +16,8 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import com.jayway.jsonpath.JsonPath;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
@@ -30,9 +30,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.http.HttpStatus;
 
@@ -46,7 +45,7 @@ public class WebhookResourceIT extends AbstractResourceIT {
 
     private WebhookApi webhookApi;
 
-    @Before
+    @BeforeEach
     public void pre() {
         userApi = new UserApi(client, port);
         webhookApi = new WebhookApi(client, port);
@@ -98,7 +97,7 @@ public class WebhookResourceIT extends AbstractResourceIT {
 
         final Response res2 = webhookApi.update(webhook.getId().intValue(), objectMapper.writeValueAsString(webhook), jwtUser1);
 
-        Assert.assertEquals(Response.Status.OK.getStatusCode(), res2.getStatus());
+        assertEquals(Response.Status.OK.getStatusCode(), res2.getStatus());
         JSONAssert.assertEquals(objectMapper.writeValueAsString(webhook), res2.readEntity(String.class), true);
     }
 
@@ -111,7 +110,7 @@ public class WebhookResourceIT extends AbstractResourceIT {
         webhook.getEvents().clear();
 
         final Response res2 = webhookApi.update(webhook.getId().intValue(), objectMapper.writeValueAsString(webhook), jwtUser1);
-        Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), res2.getStatus());
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), res2.getStatus());
     }
 
     @Test
@@ -124,7 +123,7 @@ public class WebhookResourceIT extends AbstractResourceIT {
         webhook.setUrl("http://exists");
 
         final Response res2 = webhookApi.update(webhook.getId().intValue(), objectMapper.writeValueAsString(webhook), jwtUser1);
-        Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), res2.getStatus());
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), res2.getStatus());
     }
 
     @Test
@@ -192,7 +191,7 @@ public class WebhookResourceIT extends AbstractResourceIT {
     @Test
     public void shouldGetAllEvents() {
         final Response res = webhookApi.getEvents(jwtUser1);
-        final List<String> events = res.readEntity(new GenericType<List<String>>() {
+        final List<String> events = res.readEntity(new GenericType<>() {
         });
         assertFalse(events.isEmpty());
     }

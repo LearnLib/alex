@@ -16,15 +16,19 @@
 
 package de.learnlib.alex.data.entities.actions.web;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.NoAlertPresentException;
@@ -44,7 +48,7 @@ public class AlertGetTextActionTest {
 
     private WebDriver.TargetLocator targetLocator;
 
-    @Before
+    @BeforeEach
     public void before() {
         this.webSiteConnector = Mockito.mock(WebSiteConnector.class);
         this.variableStore = new VariableStoreConnector();
@@ -76,17 +80,17 @@ public class AlertGetTextActionTest {
         Mockito.when(alert.getText()).thenReturn("test");
 
         final ExecuteResult result = action.executeAction(connectors);
-        Assert.assertTrue(result.isSuccess());
-        Assert.assertEquals("test", variableStore.get(VARIABLE_NAME));
+        assertTrue(result.isSuccess());
+        assertEquals("test", variableStore.get(VARIABLE_NAME));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void shouldFailWhenNoAlertIsPresent() {
         Mockito.when(targetLocator.alert()).thenThrow(new NoAlertPresentException());
 
         final ExecuteResult result = action.executeAction(connectors);
-        Assert.assertFalse(result.isSuccess());
-        variableStore.get(VARIABLE_NAME);
+        assertFalse(result.isSuccess());
+        assertThrows(IllegalStateException.class, () -> variableStore.get(VARIABLE_NAME));
     }
 
 }

@@ -16,8 +16,8 @@
 
 package de.learnlib.alex.data.entities.actions.misc;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,8 +26,8 @@ import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class WaitActionTest {
 
@@ -35,7 +35,7 @@ public class WaitActionTest {
 
     private WaitAction w;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         w = new WaitAction();
         w.setDuration(ONE_SECOND);

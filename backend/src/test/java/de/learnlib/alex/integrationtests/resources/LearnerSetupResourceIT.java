@@ -17,11 +17,11 @@
 package de.learnlib.alex.integrationtests.resources;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -56,8 +56,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 public class LearnerSetupResourceIT extends AbstractResourceIT {
@@ -70,7 +70,7 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
     private List<Symbol> symbols;
     private String jwt;
 
-    @Before
+    @BeforeEach
     public void pre() throws Exception {
         final UserApi userApi = new UserApi(client, port);
         final ProjectApi projectApi = new ProjectApi(client, port);

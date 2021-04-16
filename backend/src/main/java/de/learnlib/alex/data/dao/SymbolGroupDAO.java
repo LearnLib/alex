@@ -252,31 +252,23 @@ public class SymbolGroupDAO {
         return group;
     }
 
-    public SymbolGroup update(User user, SymbolGroup group) {
-        final Project project = projectRepository.findById(group.getProjectId()).orElse(null);
-        final SymbolGroup groupInDB = symbolGroupRepository.findById(group.getId()).orElse(null);
+    public SymbolGroup update(User user, Long projectId, Long groupId, SymbolGroup group) {
+        final var project = projectRepository.findById(projectId).orElse(null);
+        final var groupInDB = symbolGroupRepository.findById(groupId).orElse(null);
         checkAccess(user, project, groupInDB);
 
-        // check symbolgroup lock status
+        // check group lock status
         this.symbolPresenceService.checkGroupLockStatus(project.getId(), group.getId());
 
+        // has name changed?
         if (!group.getName().equals(groupInDB.getName())) {
-            group.setName(createGroupName(project, group));
+            groupInDB.setName(createGroupName(project, group));
         }
 
-        if (group.getParentId() != null && group.getParentId().equals(groupInDB.getId())) {
-            throw new ValidationException("A group cannot have itself as child.");
-        }
+        final var updatedGroup = symbolGroupRepository.save(groupInDB);
+        loadLazyRelations(updatedGroup);
 
-        final SymbolGroup defaultGroup = symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(project.getId());
-        if (defaultGroup.equals(groupInDB) && group.getParentId() != null) {
-            throw new ValidationException("The default group cannot be a child of another group.");
-        }
-
-        groupInDB.setProject(project);
-        groupInDB.setName(group.getName());
-
-        return symbolGroupRepository.save(groupInDB);
+        return updatedGroup;
     }
 
     public SymbolGroup move(User user, SymbolGroup group) {
@@ -284,7 +276,7 @@ public class SymbolGroupDAO {
         final SymbolGroup groupInDB = symbolGroupRepository.findById(group.getId()).orElse(null);
         checkAccess(user, project, groupInDB);
 
-        // check symbolgroup lock status
+        // check group lock status
         this.symbolPresenceService.checkGroupLockStatus(project.getId(), group.getId());
 
         final SymbolGroup defaultGroup = symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(project.getId());
@@ -446,10 +438,8 @@ public class SymbolGroupDAO {
      *         The Group to take care of its Symbols.
      */
     private void beforePersistGroup(SymbolGroup group) {
-        final Project project = group.getProject();
-
         group.getSymbols().forEach(symbol -> {
-            project.addSymbol(symbol);
+            group.getProject().addSymbol(symbol);
             symbol.setGroup(group);
             SymbolDAO.beforeSymbolSave(symbol);
         });

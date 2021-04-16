@@ -14,24 +14,20 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.data.repositories;
+package de.learnlib.alex.integrationtests.websocket.util;
 
-import de.learnlib.alex.data.entities.SymbolPSymbolStep;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 
-/**
- * Repository for {@link SymbolPSymbolStep}.
- */
-@Repository
-public interface SymbolSymbolStepRepository extends JpaRepository<SymbolPSymbolStep, Long> {
+public abstract class WSMessages {
 
-    /**
-     * Count all symbol steps by a used symbol ID.
-     *
-     * @param symbolId
-     *         The ID of the symbol.
-     * @return The count.
-     */
-    Long countAllByPSymbol_Symbol_Id(Long symbolId);
+    protected final ObjectMapper objectMapper = new ObjectMapper();
+
+    protected String createContent(List<Long> projectIds) {
+        final var projects = objectMapper.createArrayNode();
+        projectIds.forEach(projects::add);
+        final var content = objectMapper.createObjectNode();
+        content.set("projectIds", projects);
+        return content.toString();
+    }
 }

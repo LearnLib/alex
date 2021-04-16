@@ -64,15 +64,16 @@ public class SymbolUsageService {
 
         final SymbolUsageResult usageResult = new SymbolUsageResult();
 
-        final Set<Symbol> foundInSymbols = symbolPSymbolStepRepository.findAllByPSymbol_Symbol_Id(symbol.getId()).stream()
+        final Set<Symbol> foundInSymbols = symbolPSymbolStepRepository.findAllBypSymbol_Symbol_Id(symbol.getId()).stream()
                 .map(SymbolPSymbolStep::getSymbol)
                 .collect(Collectors.toSet());
         foundInSymbols.forEach(s -> s.setSteps(new ArrayList<>()));
         usageResult.setSymbols(foundInSymbols);
 
-        final Set<TestCase> foundInTestCases = testCaseStepRepository.findAllByPSymbol_Symbol_Id(symbol.getId()).stream()
+        final Set<TestCase> foundInTestCases = testCaseStepRepository.findAllBypSymbol_Symbol_Id(symbol.getId()).stream()
                 .map(TestCaseStep::getTestCase)
                 .collect(Collectors.toSet());
+
         foundInTestCases.forEach(tc -> tc.setSteps(new ArrayList<>()));
         usageResult.setTestCases(foundInTestCases);
 

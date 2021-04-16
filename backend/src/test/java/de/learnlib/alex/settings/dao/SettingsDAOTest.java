@@ -1,7 +1,8 @@
 package de.learnlib.alex.settings.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -9,13 +10,13 @@ import static org.mockito.Mockito.verify;
 import de.learnlib.alex.settings.entities.Settings;
 import de.learnlib.alex.settings.repositories.SettingsRepository;
 import javax.validation.ValidationException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class SettingsDAOTest {
 
     @Mock
@@ -23,24 +24,24 @@ public class SettingsDAOTest {
 
     private SettingsDAO settingsDAO;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         settingsDAO = new SettingsDAO(settingsRepository);
     }
 
     @Test
-    public void shouldCreateTheSettings() throws ValidationException {
+    public void shouldCreateTheSettings() {
         Settings settings = new Settings();
         settingsDAO.create(settings);
         verify(settingsRepository).save(settings);
     }
 
-    @Test(expected = ValidationException.class)
-    public void shouldCreateTheSettingsOnlyOnce() throws ValidationException {
+    @Test
+    public void shouldCreateTheSettingsOnlyOnce() {
         Settings settings = new Settings();
         settingsDAO.create(settings);
         given(settingsRepository.count()).willReturn(1L);
-        settingsDAO.create(settings);
+        assertThrows(ValidationException.class, () -> settingsDAO.create(settings));
     }
 
     @Test

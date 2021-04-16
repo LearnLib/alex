@@ -16,10 +16,10 @@
 
 package de.learnlib.alex.integrationtests.websocket;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.jayway.jsonpath.JsonPath;
 import de.learnlib.alex.integrationtests.resources.AbstractResourceIT;
@@ -30,16 +30,20 @@ import de.learnlib.alex.integrationtests.websocket.util.SymbolPresenceServiceWSM
 import de.learnlib.alex.integrationtests.websocket.util.WebSocketUser;
 import de.learnlib.alex.websocket.entities.WebSocketMessage;
 import de.learnlib.alex.websocket.services.enums.SymbolPresenceServiceEnum;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.ws.rs.core.Response;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class SymbolPresenceServiceIT extends AbstractResourceIT {
+
+    private final Duration defaultWaitTime = Duration.ofSeconds(5);
 
     private WebSocketUser user1;
 
@@ -67,15 +71,28 @@ public class SymbolPresenceServiceIT extends AbstractResourceIT {
 
     private SymbolPresenceServiceWSMessages symbolPresenceServiceWSMessages;
 
-    @Before
+    /**
+     * Scenario:
+     *
+     * - Three users: user1, user2, user3.
+     * - two projects: project1, project2.
+     * - user1 is owner of project1.
+     * - user2 is owner of project2.
+     * - user2 is member of project1.
+     * - user3 has no project.
+     * - user3 is not a member of any project.
+     *
+     * @throws Exception If something goes wrong.
+     */
+    @BeforeEach
     public void pre() throws Exception {
         user1 = new WebSocketUser("user1", client, port);
         user2 = new WebSocketUser("user2", client, port);
         user3 = new WebSocketUser("user3", client, port);
 
-        ProjectApi projectApi = new ProjectApi(client, port);
-        SymbolGroupApi symbolGroupApi = new SymbolGroupApi(client, port);
-        SymbolApi symbolApi = new SymbolApi(client, port);
+        final var projectApi = new ProjectApi(client, port);
+        final var symbolGroupApi = new SymbolGroupApi(client, port);
+        final var symbolApi = new SymbolApi(client, port);
 
         symbolPresenceServiceWSMessages = new SymbolPresenceServiceWSMessages();
 
@@ -109,12 +126,13 @@ public class SymbolPresenceServiceIT extends AbstractResourceIT {
         symbolId4 = JsonPath.read(res9.readEntity(String.class), "id");
     }
 
-    @After
+    @AfterEach
     @Override
     public void post() throws Exception {
-        user1.forceDisconnectAll();
-        user2.forceDisconnectAll();
-        user3.forceDisconnectAll();
+        List.of(user1, user2, user3).forEach(u -> {
+            u.clearMessagesInAllSessions();
+            u.forceDisconnectAll();
+        });
 
         super.post();
     }
@@ -124,8 +142,9 @@ public class SymbolPresenceServiceIT extends AbstractResourceIT {
         user1.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId1, symbolId1));
         final WebSocketMessage response = user1.getNextMessage("default");
 
-        assertTrue(((List) JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].groups.['" + symbolGroupId1 + "'].locks")).contains("user1"));
-        assertEquals("user1", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].symbols.['" + symbolId1 + "'].username"));
+        final var content = response.getContent();
+        assertTrue(getLocks(content, projectId1, symbolGroupId1).contains("user1"));
+        assertEquals("user1", getUsername(content, projectId1, symbolId1));
     }
 
     @Test
@@ -133,14 +152,14 @@ public class SymbolPresenceServiceIT extends AbstractResourceIT {
         user1.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId1, symbolId1));
         WebSocketMessage response = user1.getNextMessage("default");
 
-        assertTrue(((List) JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].groups.['" + symbolGroupId1 + "'].locks")).contains("user1"));
-        assertEquals("user1", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].symbols.['" + symbolId1 + "'].username"));
+        assertTrue(getLocks(response.getContent(), projectId1, symbolGroupId1).contains("user1"));
+        assertEquals("user1", getUsername(response.getContent(), projectId1, symbolId1));
 
         user1.send("default", symbolPresenceServiceWSMessages.userLeftSymbol(projectId1, symbolId1));
         response = user1.getNextMessage("default");
 
-        assertEquals("{}", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].symbols").toString());
-        assertEquals("{}", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].groups").toString());
+        assertEquals("{}", getSymbolsAsString(response.getContent(), projectId1));
+        assertEquals("{}", getGroupsAsString(response.getContent(), projectId1));
     }
 
     @Test
@@ -150,24 +169,24 @@ public class SymbolPresenceServiceIT extends AbstractResourceIT {
         user1.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId1, symbolId1));
         WebSocketMessage response = user1.getNextMessage("default");
 
-        assertTrue(((List) JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].groups.['" + symbolGroupId1 + "'].locks")).contains("user1"));
-        assertEquals("user1", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].symbols.['" + symbolId1 + "'].username"));
+        assertTrue(getLocks(response.getContent(), projectId1, symbolGroupId1).contains("user1"));
+        assertEquals("user1", getUsername(response.getContent(), projectId1, symbolId1));
 
-        Date oldTimestamp = new Date((long) JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].symbols.['" + symbolId1 + "'].timestamp"));
+        Date oldTimestamp = new Date(getTimestamp(response.getContent(), projectId1, symbolId1));
 
         user1.send("otherSession", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId1, symbolId1));
         response = user1.getNextMessage("default");
 
-        assertTrue(((List) JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].groups.['" + symbolGroupId1 + "'].locks")).contains("user1"));
-        assertEquals("user1", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].symbols.['" + symbolId1 + "'].username"));
+        assertTrue(getLocks(response.getContent(), projectId1, symbolGroupId1).contains("user1"));
+        assertEquals("user1", getUsername(response.getContent(), projectId1, symbolId1));
 
         user1.send("default", symbolPresenceServiceWSMessages.userLeftSymbol(projectId1, symbolId1));
         response = user1.getNextMessage("default");
 
-        assertTrue(((List) JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].groups.['" + symbolGroupId1 + "'].locks")).contains("user1"));
-        assertEquals("user1", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].symbols.['" + symbolId1 + "'].username"));
+        assertTrue(getLocks(response.getContent(), projectId1, symbolGroupId1).contains("user1"));
+        assertEquals("user1", getUsername(response.getContent(), projectId1, symbolId1));
 
-        Date newTimestamp = new Date((long) JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].symbols.['" + symbolId1 + "'].timestamp"));
+        Date newTimestamp = new Date(getTimestamp(response.getContent(), projectId1, symbolId1));
 
         assertTrue(oldTimestamp.before(newTimestamp));
     }
@@ -179,26 +198,26 @@ public class SymbolPresenceServiceIT extends AbstractResourceIT {
         user1.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId1, symbolId1));
         WebSocketMessage response = user1.getNextMessage("default");
 
-        assertTrue(((List) JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].groups.['" + symbolGroupId1 + "'].locks")).contains("user1"));
-        assertEquals("user1", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].symbols.['" + symbolId1 + "'].username"));
+        assertTrue(getLocks(response.getContent(), projectId1, symbolGroupId1).contains("user1"));
+        assertEquals("user1", getUsername(response.getContent(), projectId1, symbolId1));
 
         user1.send("otherSession", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId1, symbolId1));
         response = user1.getNextMessage("default");
 
-        assertTrue(((List) JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].groups.['" + symbolGroupId1 + "'].locks")).contains("user1"));
-        assertEquals("user1", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].symbols.['" + symbolId1 + "'].username"));
+        assertTrue(getLocks(response.getContent(), projectId1, symbolGroupId1).contains("user1"));
+        assertEquals("user1", getUsername(response.getContent(), projectId1, symbolId1));
 
         user1.send("default", symbolPresenceServiceWSMessages.userLeftSymbol(projectId1, symbolId1));
         response = user1.getNextMessage("default");
 
-        assertTrue(((List) JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].groups.['" + symbolGroupId1 + "'].locks")).contains("user1"));
-        assertEquals("user1", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].symbols.['" + symbolId1 + "'].username"));
+        assertTrue(getLocks(response.getContent(), projectId1, symbolGroupId1).contains("user1"));
+        assertEquals("user1", getUsername(response.getContent(), projectId1, symbolId1));
 
         user1.send("otherSession", symbolPresenceServiceWSMessages.userLeftSymbol(projectId1, symbolId1));
         response = user1.getNextMessage("default");
 
-        assertEquals("{}", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].symbols").toString());
-        assertEquals("{}", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].groups").toString());
+        assertEquals("{}", getSymbolsAsString(response.getContent(), projectId1));
+        assertEquals("{}", getGroupsAsString(response.getContent(), projectId1));
     }
 
     @Test
@@ -211,22 +230,28 @@ public class SymbolPresenceServiceIT extends AbstractResourceIT {
         user2.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId1, symbolId3));
         user2.send("otherSession", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId2, symbolId4));
 
-        user2.clearMessages("default");
+        final var sessions = List.of("default", "otherSession");
+        Awaitility.await().atMost(defaultWaitTime).until(() ->
+                user1.assertNumberOfMessages(sessions, List.of(3, 3))
+                        && user2.assertNumberOfMessages(sessions, List.of(4, 4)));
+
+        user1.clearMessagesInAllSessions();
+        user2.clearMessagesInAllSessions();
 
         user2.send("default", symbolPresenceServiceWSMessages.requestStatus(Arrays.asList((long) projectId1, (long) projectId2)));
-        final WebSocketMessage response = user2.getNextMessage("default");
+        final var content = user2.getNextMessage("default").getContent();
 
-        assertTrue(((List) JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].groups.['" + symbolGroupId1 + "'].locks")).contains("user1"));
-        assertTrue(((List) JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].groups.['" + symbolGroupId1 + "'].locks")).contains("user2"));
-        assertTrue(((List) JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].groups.['" + symbolGroupId2 + "'].locks")).contains("user2"));
-        assertFalse(((List) JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].groups.['" + symbolGroupId2 + "'].locks")).contains("user1"));
-        assertTrue(((List) JsonPath.read(response.getContent(), "$.['" + projectId2 + "'].groups.['" + symbolGroupId3 + "'].locks")).contains("user2"));
-        assertFalse(((List) JsonPath.read(response.getContent(), "$.['" + projectId2 + "'].groups.['" + symbolGroupId3 + "'].locks")).contains("user1"));
+        assertTrue(getLocks(content, projectId1, symbolGroupId1).contains("user1"));
+        assertTrue(getLocks(content, projectId1, symbolGroupId1).contains("user2"));
+        assertTrue(getLocks(content, projectId1, symbolGroupId2).contains("user2"));
+        assertFalse(getLocks(content, projectId1, symbolGroupId2).contains("user1"));
+        assertTrue(getLocks(content, projectId2, symbolGroupId3).contains("user2"));
+        assertFalse(getLocks(content, projectId2, symbolGroupId3).contains("user1"));
 
-        assertEquals("user1", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].symbols.['" + symbolId1 + "'].username"));
-        assertEquals("user1", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].symbols.['" + symbolId2 + "'].username"));
-        assertEquals("user2", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].symbols.['" + symbolId3 + "'].username"));
-        assertEquals("user2", JsonPath.read(response.getContent(), "$.['" + projectId2 + "'].symbols.['" + symbolId4 + "'].username"));
+        assertEquals("user1", getUsername(content, projectId1, symbolId1));
+        assertEquals("user1", getUsername(content, projectId1, symbolId2));
+        assertEquals("user2", getUsername(content, projectId1, symbolId3));
+        assertEquals("user2", getUsername(content, projectId2, symbolId4));
     }
 
     @Test
@@ -239,17 +264,28 @@ public class SymbolPresenceServiceIT extends AbstractResourceIT {
         user2.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId1, symbolId3));
         user2.send("otherSession", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId2, symbolId4));
 
+        final var sessions = List.of("default", "otherSession");
+        Awaitility.await().atMost(defaultWaitTime).until(() ->
+                user1.assertNumberOfMessages(sessions, List.of(3, 3))
+                        && user2.assertNumberOfMessages(sessions, List.of(4, 4)));
+
         user1.send("default", symbolPresenceServiceWSMessages.userLeftSymbol(projectId1, symbolId1));
         user1.send("otherSession", symbolPresenceServiceWSMessages.userLeftSymbol(projectId1, symbolId2));
         user2.send("default", symbolPresenceServiceWSMessages.userLeftSymbol(projectId1, symbolId3));
         user2.send("otherSession", symbolPresenceServiceWSMessages.userLeftSymbol(projectId2, symbolId4));
 
-        user2.clearMessages("default");
+        Awaitility.await().atMost(defaultWaitTime).until(() ->
+                user1.assertNumberOfMessages(sessions, List.of(6, 6))
+                        && user2.assertNumberOfMessages(sessions, List.of(8, 8)));
+
+        user1.clearMessagesInAllSessions();
+        user2.clearMessagesInAllSessions();
+
         user2.send("default", symbolPresenceServiceWSMessages.requestStatus(Arrays.asList((long) projectId1, (long) projectId2)));
         final WebSocketMessage response = user2.getNextMessage("default");
 
-        assertEquals("{}", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].groups").toString());
-        assertEquals("{}", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].symbols").toString());
+        assertEquals("{}", getGroupsAsString(response.getContent(), projectId1));
+        assertEquals("{}", getSymbolsAsString(response.getContent(), projectId1));
         assertEquals("{}", JsonPath.read(response.getContent(), "$.['" + projectId2 + "'].groups").toString());
         assertEquals("{}", JsonPath.read(response.getContent(), "$.['" + projectId2 + "'].symbols").toString());
     }
@@ -259,13 +295,13 @@ public class SymbolPresenceServiceIT extends AbstractResourceIT {
         user2.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId1, symbolId1));
 
         WebSocketMessage response = user1.getNextMessage("default");
-        assertTrue(((List) JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].groups.['" + symbolGroupId1 + "'].locks")).contains("user2"));
-        assertEquals("user2", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].symbols.['" + symbolId1 + "'].username"));
+        assertTrue(getLocks(response.getContent(), projectId1, symbolGroupId1).contains("user2"));
+        assertEquals("user2", getUsername(response.getContent(), projectId1, symbolId1));
 
         user2.forceDisconnect("default");
         response = user1.getNextMessage("default");
-        assertEquals("{}", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].symbols").toString());
-        assertEquals("{}", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].groups").toString());
+        assertEquals("{}", getSymbolsAsString(response.getContent(), projectId1));
+        assertEquals("{}", getGroupsAsString(response.getContent(), projectId1));
     }
 
     @Test
@@ -273,8 +309,8 @@ public class SymbolPresenceServiceIT extends AbstractResourceIT {
         user1.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId1, symbolId1));
 
         WebSocketMessage response = user1.getNextMessage("default");
-        assertTrue(((List) JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].groups.['" + symbolGroupId1 + "'].locks")).contains("user1"));
-        assertEquals("user1", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].symbols.['" + symbolId1 + "'].username"));
+        assertTrue(getLocks(response.getContent(), projectId1, symbolGroupId1).contains("user1"));
+        assertEquals("user1", getUsername(response.getContent(), projectId1, symbolId1));
 
         user1.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId1, symbolId1));
         response = user1.getNextMessage("default");
@@ -286,13 +322,13 @@ public class SymbolPresenceServiceIT extends AbstractResourceIT {
         user1.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId1, symbolId1));
 
         WebSocketMessage response = user1.getNextMessage("default");
-        assertTrue(((List) JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].groups.['" + symbolGroupId1 + "'].locks")).contains("user1"));
-        assertEquals("user1", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].symbols.['" + symbolId1 + "'].username"));
+        assertTrue(getLocks(response.getContent(), projectId1, symbolGroupId1).contains("user1"));
+        assertEquals("user1", getUsername(response.getContent(), projectId1, symbolId1));
 
         user1.send("default", symbolPresenceServiceWSMessages.userLeftSymbol(projectId1, symbolId1));
         response = user1.getNextMessage("default");
-        assertEquals("{}", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].symbols").toString());
-        assertEquals("{}", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].groups").toString());
+        assertEquals("{}", getSymbolsAsString(response.getContent(), projectId1));
+        assertEquals("{}", getGroupsAsString(response.getContent(), projectId1));
 
         user1.send("default", symbolPresenceServiceWSMessages.userLeftSymbol(projectId1, symbolId1));
         response = user1.getNextMessage("default");
@@ -304,17 +340,17 @@ public class SymbolPresenceServiceIT extends AbstractResourceIT {
         user1.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId1, symbolId1));
 
         WebSocketMessage response = user1.getNextMessage("default");
-        assertTrue(((List) JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].groups.['" + symbolGroupId1 + "'].locks")).contains("user1"));
-        assertEquals("user1", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].symbols.['" + symbolId1 + "'].username"));
+        assertTrue(getLocks(response.getContent(), projectId1, symbolGroupId1).contains("user1"));
+        assertEquals("user1", getUsername(response.getContent(), projectId1, symbolId1));
 
         user1.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId1, symbolId2));
         response = user1.getNextMessage("default");
-        assertEquals("{}", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].symbols").toString());
-        assertEquals("{}", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].groups").toString());
+        assertEquals("{}", getSymbolsAsString(response.getContent(), projectId1));
+        assertEquals("{}", getGroupsAsString(response.getContent(), projectId1));
 
         response = user1.getNextMessage("default");
-        assertTrue(((List) JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].groups.['" + symbolGroupId1 + "'].locks")).contains("user1"));
-        assertEquals("user1", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].symbols.['" + symbolId2 + "'].username"));
+        assertTrue(getLocks(response.getContent(), projectId1, symbolGroupId1).contains("user1"));
+        assertEquals("user1", getUsername(response.getContent(), projectId1, symbolId2));
     }
 
     @Test
@@ -323,27 +359,27 @@ public class SymbolPresenceServiceIT extends AbstractResourceIT {
 
         user1.send("default", symbolPresenceServiceWSMessages.userEnteredSymbol(projectId1, symbolId1));
 
-        WebSocketMessage response = user1.getNextMessage("default");
-        assertTrue(((List) JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].groups.['" + symbolGroupId1 + "'].locks")).contains("user1"));
-        assertEquals("user1", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].symbols.['" + symbolId1 + "'].username"));
+        final var res1 = user1.getNextMessage("default");
+        assertTrue(getLocks(res1.getContent(), projectId1, symbolGroupId1).contains("user1"));
+        assertEquals("user1", getUsername(res1.getContent(), projectId1, symbolId1));
 
-        response = user2.getNextMessage("default");
-        assertTrue(((List) JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].groups.['" + symbolGroupId1 + "'].locks")).contains("user1"));
-        assertEquals("user1", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].symbols.['" + symbolId1 + "'].username"));
+        final var res2 = user2.getNextMessage("default");
+        assertTrue(getLocks(res2.getContent(), projectId1, symbolGroupId1).contains("user1"));
+        assertEquals("user1", getUsername(res2.getContent(), projectId1, symbolId1));
 
-        response = user2.getNextMessage("otherSession");
-        assertTrue(((List) JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].groups.['" + symbolGroupId1 + "'].locks")).contains("user1"));
-        assertEquals("user1", JsonPath.read(response.getContent(), "$.['" + projectId1 + "'].symbols.['" + symbolId1 + "'].username"));
+        final var res3 = user2.getNextMessage("otherSession");
+        assertTrue(getLocks(res3.getContent(), projectId1, symbolGroupId1).contains("user1"));
+        assertEquals("user1", getUsername(res3.getContent(), projectId1, symbolId1));
 
-        response = user3.getNextMessage("default");
-        assertNull(response);
+        final var res4 = user3.getNextMessage("default");
+        assertNull(res4);
     }
 
     @Test
     public void shouldNotSendProjectStatusToUnauthorizedUser() throws Exception {
         user3.send("default", symbolPresenceServiceWSMessages.requestStatus(Collections.singletonList((long) projectId1)));
 
-        final WebSocketMessage response = user3.getNextMessage("default");
+        final var response = user3.getNextMessage("default");
         assertEquals("You are not allowed to access the project.", JsonPath.read(response.getContent(), "$.description"));
     }
 
@@ -389,5 +425,25 @@ public class SymbolPresenceServiceIT extends AbstractResourceIT {
 
         final WebSocketMessage response = user1.getNextMessage("default");
         assertEquals("Project with id -1 not found.", JsonPath.read(response.getContent(), "$.description"));
+    }
+
+    private List<String> getLocks(String content, int projectId, int symbolGroupId) {
+        return JsonPath.read(content, "$.['" + projectId + "'].groups.['" + symbolGroupId + "'].locks");
+    }
+
+    private String getUsername(String content, int projectId, int symbolId) {
+        return JsonPath.read(content, "$.['" + projectId + "'].symbols.['" + symbolId + "'].username");
+    }
+
+    private String getGroupsAsString(String content, int projectId) {
+        return JsonPath.read(content, "$.['" + projectId + "'].groups").toString();
+    }
+
+    private String getSymbolsAsString(String content, int projectId) {
+        return JsonPath.read(content, "$.['" + projectId + "'].symbols").toString();
+    }
+
+    private Long getTimestamp(String content, int projectId, int symbolId) {
+        return JsonPath.read(content, "$.['" + projectId + "'].symbols.['" + symbolId + "'].timestamp");
     }
 }

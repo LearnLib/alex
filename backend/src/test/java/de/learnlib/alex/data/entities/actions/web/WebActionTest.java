@@ -16,7 +16,7 @@
 
 package de.learnlib.alex.data.entities.actions.web;
 
-import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
@@ -31,7 +31,6 @@ public abstract class WebActionTest {
     protected void setUp() {
         connectors = mock(ConnectorManager.class);
         webSiteConnector = mock(WebSiteConnector.class);
-
-        given(connectors.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);
+        lenient().when(connectors.getConnector(WebSiteConnector.class)).thenReturn(webSiteConnector);
     }
 }

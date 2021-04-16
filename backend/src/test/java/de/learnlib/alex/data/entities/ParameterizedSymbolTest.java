@@ -16,13 +16,13 @@
 
 package de.learnlib.alex.data.entities;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ParameterizedSymbolTest {
 
@@ -32,14 +32,26 @@ public class ParameterizedSymbolTest {
         final ParameterizedSymbol copy = ps.copy();
 
         assertNull(copy.getId());
+        assertEquals(ps.getAlias(), copy.getAlias());
         assertEquals(ps.getSymbol(), copy.getSymbol());
+        assertEquals(ps.getOutputMappings().size(), copy.getOutputMappings().size());
+        copy.getOutputMappings().forEach(pv -> assertNull(pv.getId()));
+        assertEquals(ps.getParameterValues().size(), copy.getParameterValues().size());
         copy.getParameterValues().forEach(pv -> assertNull(pv.getId()));
     }
 
     @Test
-    public void shouldGetTheComputedName() {
-        final ParameterizedSymbol ps = createDefaultPSymbol();
+    public void shouldGetTheComputedNameWhenNoAliasIsSpecified() {
+        final var ps = createDefaultPSymbol();
         assertEquals("s1 <v1, v2>", ps.getAliasOrComputedName());
+    }
+
+    @Test
+    public void shouldGetTheAliasAsComputedNameWhenAliasIsSpecified() {
+        final var ps = createDefaultPSymbol();
+        final var alias = "an alias";
+        ps.setAlias(alias);
+        assertEquals(alias, ps.getAliasOrComputedName());
     }
 
     @Test

@@ -25,24 +25,26 @@ import de.learnlib.alex.integrationtests.TestPostgresqlContainer;
 import de.learnlib.alex.settings.dao.SettingsDAO;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-@RunWith(SpringRunner.class)
+@Testcontainers
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 public abstract class AbstractResourceIT {
 
-    @ClassRule
+    @Container
     public static PostgreSQLContainer postgreSQLContainer = TestPostgresqlContainer.getInstance();
 
     protected static final String ADMIN_EMAIL = "admin@alex.example";
@@ -73,11 +75,11 @@ public abstract class AbstractResourceIT {
         return "http://localhost:" + port + "/rest";
     }
 
-    @Before
+    @BeforeEach
     public void pre() throws Exception {
     }
 
-    @After
+    @AfterEach
     @Transactional
     public void post() throws Exception {
         final var admin = userDAO.getByID(1L);

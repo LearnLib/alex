@@ -16,10 +16,10 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.Project;
@@ -35,8 +35,8 @@ import java.util.Collections;
 import java.util.List;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
@@ -51,7 +51,7 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
 
     private Project project;
 
-    @Before
+    @BeforeEach
     public void pre() {
         final UserApi userApi = new UserApi(client, port);
         projectApi = new ProjectApi(client, port);

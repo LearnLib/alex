@@ -16,12 +16,14 @@
 
 package de.learnlib.alex.data.entities.actions.web;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.NoAlertPresentException;
@@ -35,7 +37,7 @@ public class AlertAcceptDismissActionTest {
 
     private WebDriver.TargetLocator targetLocator;
 
-    @Before
+    @BeforeEach
     public void before() {
         final WebSiteConnector webSiteConnector = Mockito.mock(WebSiteConnector.class);
 
@@ -56,7 +58,7 @@ public class AlertAcceptDismissActionTest {
         Mockito.when(targetLocator.alert()).thenThrow(new NoAlertPresentException());
 
         final ExecuteResult result = action.execute(connectors);
-        Assert.assertFalse(result.isSuccess());
+        assertFalse(result.isSuccess());
     }
 
     @Test
@@ -66,12 +68,12 @@ public class AlertAcceptDismissActionTest {
 
         action.setAction(AlertAcceptDismissAction.Action.ACCEPT);
         final ExecuteResult res1 = action.execute(connectors);
-        Assert.assertTrue(res1.isSuccess());
+        assertTrue(res1.isSuccess());
         Mockito.verify(alert, Mockito.times(1)).accept();
 
         action.setAction(AlertAcceptDismissAction.Action.DISMISS);
         final ExecuteResult res2 = action.execute(connectors);
-        Assert.assertTrue(res2.isSuccess());
+        assertTrue(res2.isSuccess());
         Mockito.verify(alert, Mockito.times(1)).dismiss();
     }
 

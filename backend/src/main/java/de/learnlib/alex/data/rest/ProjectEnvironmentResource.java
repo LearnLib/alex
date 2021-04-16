@@ -240,7 +240,7 @@ public class ProjectEnvironmentResource {
             produces = MediaType.APPLICATION_JSON,
             consumes = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity<ProjectEnvironmentVariable> updateUrl(
+    public ResponseEntity<ProjectEnvironmentVariable> updateVariable(
             @PathVariable("projectId") Long projectId,
             @PathVariable("environmentId") Long environmentId,
             @PathVariable("varId") Long varId,

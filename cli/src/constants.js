@@ -19,4 +19,4 @@
  *
  * @type {string}
  */
-module.exports.VERSION = "2.0.0"
+module.exports.VERSION = "2.1.0"

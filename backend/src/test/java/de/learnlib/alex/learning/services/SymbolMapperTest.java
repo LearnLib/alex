@@ -16,6 +16,9 @@
 
 package de.learnlib.alex.learning.services;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Symbol;
@@ -24,9 +27,8 @@ import de.learnlib.alex.data.entities.SymbolParameter;
 import de.learnlib.alex.data.entities.SymbolParameterValue;
 import java.util.Arrays;
 import java.util.Collections;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class SymbolMapperTest {
 
@@ -36,7 +38,7 @@ public class SymbolMapperTest {
 
     private SymbolMapper sm;
 
-    @Before
+    @BeforeEach
     public void before() {
         final Symbol s1 = new Symbol();
         s1.setName("s1");
@@ -66,13 +68,13 @@ public class SymbolMapperTest {
 
     @Test
     public void shouldBeForkable() {
-        Assert.assertTrue(sm.canFork());
+        assertTrue(sm.canFork());
     }
 
     @Test
     public void shouldMapInputStringToCorrectSymbol() {
-        Assert.assertEquals(ps1, sm.mapInput("s1"));
-        Assert.assertEquals(ps2, sm.mapInput("s2 <test>"));
+        assertEquals(ps1, sm.mapInput("s1"));
+        assertEquals(ps2, sm.mapInput("s2 <test>"));
     }
 
     @Test
@@ -81,6 +83,6 @@ public class SymbolMapperTest {
         result.setSuccess(true);
         result.setMessage("ok");
 
-        Assert.assertEquals("Ok (ok)", sm.mapOutput(result));
+        assertEquals("Ok (ok)", sm.mapOutput(result));
     }
 }

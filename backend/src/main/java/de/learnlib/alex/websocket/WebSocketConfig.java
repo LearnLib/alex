@@ -45,17 +45,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/rest/ws/stomp").setAllowedOrigins("*").withSockJS();
+        registry.addEndpoint("/rest/ws/stomp").setAllowedOriginPatterns("*").withSockJS();
     }
 
     @Override
     public void configureWebSocketTransport(WebSocketTransportRegistration registry) {
-        registry.addDecoratorFactory(new WebSocketHandlerDecoratorFactory() {
-            @Override
-            public WebSocketHandler decorate(WebSocketHandler webSocketHandler) {
-                return customWebSocketHandlerDecorator(webSocketHandler);
-            }
-        });
+        registry.addDecoratorFactory(webSocketHandler -> customWebSocketHandlerDecorator(webSocketHandler));
     }
 
     @Bean

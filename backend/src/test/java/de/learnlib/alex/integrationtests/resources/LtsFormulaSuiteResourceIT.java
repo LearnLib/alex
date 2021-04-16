@@ -16,8 +16,8 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.integrationtests.SpringRestError;
@@ -31,8 +31,8 @@ import java.util.Arrays;
 import java.util.List;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 public class LtsFormulaSuiteResourceIT extends AbstractResourceIT {
@@ -43,7 +43,7 @@ public class LtsFormulaSuiteResourceIT extends AbstractResourceIT {
     private Project project;
     private String jwt;
 
-    @Before
+    @BeforeEach
     public void before() {
         final UserApi userApi = new UserApi(client, port);
         final ProjectApi projectApi = new ProjectApi(client, port);

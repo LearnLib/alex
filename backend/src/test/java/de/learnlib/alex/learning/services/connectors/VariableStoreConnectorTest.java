@@ -16,12 +16,12 @@
 
 package de.learnlib.alex.learning.services.connectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class VariableStoreConnectorTest {
 
@@ -30,7 +30,7 @@ public class VariableStoreConnectorTest {
 
     private VariableStoreConnector connector;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         connector = new VariableStoreConnector();
     }
@@ -43,17 +43,15 @@ public class VariableStoreConnectorTest {
         assertEquals(VARIABLE_VALUE, connector.get(VARIABLE_NAME));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void shouldResetTheStorage() {
         connector.set(VARIABLE_NAME, VARIABLE_VALUE);
-
         connector.reset();
-        assertNull(connector.get(VARIABLE_NAME));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void shouldFailWhenFetchingANotSetVariable() {
-        connector.get(VARIABLE_NAME);
+        assertThrows(IllegalStateException.class, () -> connector.get(VARIABLE_NAME));
     }
 
 }

@@ -16,14 +16,14 @@
 
 package de.learnlib.alex.data.entities;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 import de.learnlib.alex.data.entities.actions.web.ClickAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class SymbolActionStepTest {
 
@@ -33,7 +33,7 @@ public class SymbolActionStepTest {
 
     private SymbolActionStep step;
 
-    @Before
+    @BeforeEach
     public void setup() {
         this.connectors = mock(ConnectorManager.class);
         this.action = mock(ClickAction.class);

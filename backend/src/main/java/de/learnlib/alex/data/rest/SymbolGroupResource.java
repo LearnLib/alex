@@ -177,7 +177,7 @@ public class SymbolGroupResource {
                                               @PathVariable("groupId") Long groupId,
                                               @RequestBody SymbolGroup group) {
         final User user = authContext.getUser();
-        final var updatedGroup = symbolGroupDAO.update(user, group);
+        final var updatedGroup = symbolGroupDAO.update(user, projectId, groupId, group);
         webhookService.fireEvent(user, new SymbolGroupEvent.Updated(updatedGroup));
         return ResponseEntity.ok(updatedGroup);
     }

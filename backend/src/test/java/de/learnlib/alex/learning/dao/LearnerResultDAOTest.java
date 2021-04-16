@@ -16,8 +16,9 @@
 
 package de.learnlib.alex.learning.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
@@ -34,13 +35,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import javax.persistence.EntityManager;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class LearnerResultDAOTest {
 
     private static final long USER_ID = 21L;
@@ -67,7 +68,7 @@ public class LearnerResultDAOTest {
 
     private LearnerResultDAO learnerResultDAO;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         learnerResultDAO = new LearnerResultDAO(
                 projectDAO,
@@ -144,14 +145,14 @@ public class LearnerResultDAOTest {
         }
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void ensureThatGettingANonExistingResultThrowsAnException() {
         User user = new User();
 
         given(learnerResultRepository.findOneByProject_IdAndTestNo(PROJECT_ID, 0L))
                 .willReturn(null);
 
-        learnerResultDAO.getByTestNo(user, PROJECT_ID, 0L); // should fail
+        assertThrows(NotFoundException.class, () -> learnerResultDAO.getByTestNo(user, PROJECT_ID, 0L));
     }
 
     @Test
