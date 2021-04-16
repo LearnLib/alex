@@ -18,12 +18,17 @@ package de.learnlib.alex.integrationtests.resources;
 
 import com.jayway.jsonpath.JsonPath;
 import de.learnlib.alex.integrationtests.resources.api.ProjectApi;
+import de.learnlib.alex.integrationtests.resources.api.TestApi;
 import de.learnlib.alex.integrationtests.resources.api.TestExecutionConfigApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
 import javax.ws.rs.core.Response;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 public class ATestExecutionConfigResourceIT extends AbstractResourceIT {
 
@@ -68,6 +73,20 @@ public class ATestExecutionConfigResourceIT extends AbstractResourceIT {
     public void shouldCreateAConfig() throws Exception {
         final Response res = api.create(projectId1, createConfig(projectId1, envId1), jwtUser1);
         Assert.assertEquals(Response.Status.CREATED.getStatusCode(), res.getStatus());
+        Assert.assertEquals(1, getNumberOfConfigs(projectId1, jwtUser1));
+    }
+
+    @Test
+    public void shouldCreateAConfigWithTests() throws Exception {
+        final TestApi testApi = new TestApi(client, port);
+
+        final String tc = "{\"name\": \"tc\", \"type\": \"case\"}";
+        final Response res1 = testApi.create(projectId1, tc, jwtUser1);
+        assertEquals(Response.Status.CREATED.getStatusCode(), res1.getStatus());
+
+        final int tcId = JsonPath.read(res1.readEntity(String.class), "$.id");
+        final Response res2 = api.create(projectId1, createConfigWithTests(projectId1, envId1, List.of((long) tcId)), jwtUser1);
+        Assert.assertEquals(Response.Status.CREATED.getStatusCode(), res2.getStatus());
         Assert.assertEquals(1, getNumberOfConfigs(projectId1, jwtUser1));
     }
 
@@ -144,7 +163,16 @@ public class ATestExecutionConfigResourceIT extends AbstractResourceIT {
         return "{"
                 + "\"tests\":[]"
                 + ",\"driverConfig\":{\"browser\":\"chrome\"}"
-                + ",\"environment\":" + envId
+                + ",\"environmentId\":" + envId
+                + ",\"project\":" + projectId
+                + "}";
+    }
+
+    private String createConfigWithTests(int projectId, int envId, List<Long> testIds) {
+        return "{"
+                + "\"tests\":" + testIds.toString()
+                + ",\"driverConfig\":{\"browser\":\"chrome\"}"
+                + ",\"environmentId\":" + envId
                 + ",\"project\":" + projectId
                 + "}";
     }

@@ -115,7 +115,7 @@ public class TestResource {
     public ResponseEntity<List<Test>> createTests(@PathVariable("projectId") Long projectId,
                                                   @RequestBody List<Test> tests) {
         final var user = authContext.getUser();
-        final var createdTests = testDAO.create(user, projectId, tests, null);
+        final var createdTests = testDAO.create(user, projectId, tests);
         webhookService.fireEvent(user, new TestEvent.CreatedMany(createdTests));
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTests);
     }

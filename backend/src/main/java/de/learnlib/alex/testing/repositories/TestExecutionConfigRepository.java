@@ -45,4 +45,6 @@ public interface TestExecutionConfigRepository extends JpaRepository<TestExecuti
             +      "from TestExecutionConfig tc join tc.tests t "
             +      "where tc.project.id = :projectId and t.id = :testId")
     List<TestExecutionConfig> findAllByProject_IdAndTest_Id(@Param("projectId") Long projectId, @Param("testId") Long testId);
+
+    List<TestExecutionConfig> findAllByProject_IdAndEnvironment_Id(Long projectId, Long environmentId);
 }
