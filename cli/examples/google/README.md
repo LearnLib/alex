@@ -30,6 +30,18 @@ node alex-cli.js \
         --clean-up
 ```
 
+## With a project file by setup name
+
+```bash
+node alex-cli.js \
+        --uri "http://localhost:8000" \
+        -d "test" \
+        -u "admin@alex.example:admin" \
+        -p "./examples/google/project.json" \
+        --setup "test google" \
+        --clean-up
+```
+
 ## Learning
 
 ## With a config file

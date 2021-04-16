@@ -4,6 +4,7 @@
   "tests": [
     {
       "type": "case",
+      "id": 1,
       "name": "test",
       "preSteps": [],
       "steps": [

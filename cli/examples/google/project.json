@@ -94,7 +94,7 @@
             }
           ],
           "successOutput": null,
-          "updatedOn": "2020-12-18T09:19:24.142+00:00"
+          "updatedOn": "2021-04-16T09:32:14.432+00:00"
         },
         {
           "description": "",
@@ -138,7 +138,7 @@
             }
           ],
           "successOutput": null,
-          "updatedOn": "2020-12-18T09:19:24.216+00:00"
+          "updatedOn": "2021-04-16T09:32:14.468+00:00"
         },
         {
           "description": "",
@@ -164,7 +164,7 @@
             }
           ],
           "successOutput": null,
-          "updatedOn": "2020-12-18T09:29:44.338+00:00"
+          "updatedOn": "2021-04-16T09:32:14.483+00:00"
         }
       ],
       "groups": []
@@ -172,6 +172,7 @@
   ],
   "tests": [
     {
+      "id": 2,
       "name": "search",
       "preSteps": [
         {
@@ -224,8 +225,8 @@
       ],
       "postSteps": [],
       "generated": false,
-      "updatedOn": "2020-12-18T11:41:15.432+00:00",
       "status": "DONE",
+      "updatedOn": "2020-12-18T11:41:15.432+00:00",
       "type": "case"
     }
   ],
@@ -325,8 +326,31 @@
         ],
         "minUnfolds": 1,
         "multiplier": 0.1
+      }
+    }
+  ],
+  "testExecutionConfigs": [
+    {
+      "name": "test google",
+      "driverConfig": {
+        "width": 1920,
+        "height": 1080,
+        "implicitlyWait": 0,
+        "pageLoadTimeout": 10,
+        "scriptTimeout": 10,
+        "platform": "ANY",
+        "browser": "chrome",
+        "version": "",
+        "headless": false
       },
-      "project": 1
+      "environment": {
+        "name": "Production"
+      },
+      "description": "",
+      "default": true,
+      "tests": [
+        2
+      ]
     }
   ]
 }

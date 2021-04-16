@@ -147,6 +147,20 @@ module.exports = {
       });
     }
   },
+  testSetups: {
+    getAll: async function(projectId) {
+      return fetch(`${_uri}/projects/${projectId}/testConfigs`, {
+        method: 'get',
+        headers: _getDefaultHttpHeaders()
+      });
+    },
+    execute: async function(projectId, setupId) {
+      return fetch(`${_uri}/projects/${projectId}/testConfigs/${setupId}/run`, {
+        method: 'post',
+        headers: _getDefaultHttpHeaders()
+      });
+    }
+  },
   testReports: {
     get: async function(projectId, testReportId, format) {
       const params = format ? `?format=${encodeURIComponent(format)}` : '';

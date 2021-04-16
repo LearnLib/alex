@@ -271,23 +271,14 @@ function writeOutputFile(data) {
 async function startTesting() {
   console.log(chalk.white.dim(`Executing tests...`));
 
-  _config.tests = _tests.map(test => test.id);
-  _config.environment = _project.environments[0].id;
-
-  function printReport(report) {
-    report.testResults.forEach(tr => {
-      if (tr.passed) {
-        console.log(`${chalk.bgGreen("success")} ${tr.test.name}`);
-      } else {
-        console.log(`${chalk.bgRed("failed")} ${tr.test.name}`);
-      }
-    });
+  let result;
+  if (!program.setup) {
+    result = await startTestingFromConfig();
+  } else {
+    result = await startTestingFromSetup();
   }
 
-  // start test execution
-  const res1 = await api.tests.execute(_project.id, _config);
-  await utils.assertStatus(res1, 200);
-  let report = (await res1.json()).report;
+  let report = result.report;
 
   // poll for result
   const startTime = Date.now();
@@ -306,6 +297,16 @@ async function startTesting() {
     }
   }
 
+  function printReport(report) {
+    report.testResults.forEach(tr => {
+      if (tr.passed) {
+        console.log(`${chalk.bgGreen("success")} ${tr.test.name}`);
+      } else {
+        console.log(`${chalk.bgRed("failed")} ${tr.test.name}`);
+      }
+    });
+  }
+
   // print report to terminal
   printReport(report);
 
@@ -322,6 +323,36 @@ async function startTesting() {
   } else {
     throw `${report.numTestsFailed}/${report.numTests} tests failed.`;
   }
+}
+
+async function startTestingFromConfig() {
+  _config.tests = _tests.map(test => test.id);
+  _config.environment = _project.environments[0].id;
+
+  // start test execution
+  const res = await api.tests.execute(_project.id, _config);
+  await utils.assertStatus(res, 200);
+
+  return await res.json();
+}
+
+async function startTestingFromSetup() {
+  const setupName = program.setup;
+
+  const res1 = await api.testSetups.getAll(_project.id);
+  await utils.assertStatus(res1, 200);
+
+  const setups = await res1.json();
+  const setupsWithRequiredName = setups.filter(s => s.name === setupName);
+
+  if (setupsWithRequiredName.length === 0) {
+    throw `There is no test setup with the name "${setupName}" in the project.`;
+  }
+
+  const res2 = await api.testSetups.execute(_project.id, setupsWithRequiredName[0].id);
+  await utils.assertStatus(res2, 200);
+
+  return await res2.json();
 }
 
 
@@ -619,8 +650,12 @@ function processProgram() {
   }
 
   if (_action === Actions.TEST) {
-    if (!program.config) {
-      throw `You haven't specified a config file`;
+    if (program.setup && program.config) {
+      throw 'You cannot specify a test setup and a config file together.';
+    }
+
+    if (!program.setup && !program.config) {
+      throw `You haven't specified a test setup or a config file.`;
     }
 
     if (program.formulas) {
