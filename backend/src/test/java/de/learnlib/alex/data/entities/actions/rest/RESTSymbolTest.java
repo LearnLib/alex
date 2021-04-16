@@ -16,8 +16,8 @@
 
 package de.learnlib.alex.data.entities.actions.rest;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -29,8 +29,8 @@ import de.learnlib.alex.data.entities.SymbolActionStep;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class RESTSymbolTest {
 
@@ -40,7 +40,7 @@ public class RESTSymbolTest {
 
     private ConnectorManager connectors;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         action1 = mock(RESTSymbolAction.class);
         action2 = mock(RESTSymbolAction.class);

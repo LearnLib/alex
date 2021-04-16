@@ -16,28 +16,29 @@
 
 package de.learnlib.alex.integrationtests.repositories;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
 import java.util.List;
-import javax.inject.Inject;
 import javax.validation.ValidationException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 public class ProjectRepositoryIT extends AbstractRepositoryIT {
 
-    @Inject
+    @Autowired
     private SymbolGroupRepository symbolGroupRepository;
 
     private User user;
 
-    @Before
+    @BeforeEach
     public void before() {
         User user = createUser("alex@test.example");
         this.user = userRepository.save(user);
@@ -51,11 +52,11 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
         assertTrue(project.getId() > 0L);
     }
 
-    @Test(expected = ValidationException.class)
+    @Test
     public void shouldFailToSaveAProjectWithoutAName() {
         Project project = new Project();
         project.addOwner(user);
-        projectRepository.save(project); // should fail
+        assertThrows(ValidationException.class, () -> projectRepository.save(project)); // should fail
     }
 
     @Test
@@ -121,13 +122,6 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
     }
 
     @Test
-    public void shouldReturnNullWhenFetchingANonExistingProjectsOfAUserByItsName() {
-        Project projectFromDB = projectRepository.findById(-1L).orElse(null);
-
-        assertNull(projectFromDB);
-    }
-
-    @Test
     public void shouldDeleteAProject() {
         Project project = createProject(user, "Test Project");
         project = projectRepository.save(project);
@@ -140,8 +134,8 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
         assertEquals(0L, symbolGroupRepository.count());
     }
 
-    @Test(expected = EmptyResultDataAccessException.class)
+    @Test
     public void shouldThrowAnExceptionWhenDeletingAnNonExistingProject() {
-        projectRepository.deleteById(-1L);
+        assertThrows(EmptyResultDataAccessException.class, () -> projectRepository.deleteById(-1L));
     }
 }

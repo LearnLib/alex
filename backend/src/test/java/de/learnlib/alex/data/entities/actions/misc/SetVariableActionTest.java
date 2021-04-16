@@ -16,8 +16,8 @@
 
 package de.learnlib.alex.data.entities.actions.misc;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -33,8 +33,8 @@ import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class SetVariableActionTest {
 
@@ -45,7 +45,7 @@ public class SetVariableActionTest {
 
     private SetVariableAction setAction;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         Symbol symbol = new Symbol();
 

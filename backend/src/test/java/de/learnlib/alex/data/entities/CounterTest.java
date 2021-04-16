@@ -17,9 +17,9 @@
 package de.learnlib.alex.data.entities;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 public class CounterTest {
@@ -28,12 +28,12 @@ public class CounterTest {
 
     private Counter c;
 
-    @BeforeClass
+    @BeforeAll
     public static void init() {
         om = new ObjectMapper();
     }
 
-    @Before
+    @BeforeEach
     public void before() {
         final Project project = new Project(1L);
         c = new Counter();

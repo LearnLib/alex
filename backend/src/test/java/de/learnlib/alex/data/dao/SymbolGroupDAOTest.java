@@ -16,8 +16,9 @@
 
 package de.learnlib.alex.data.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
@@ -30,19 +31,17 @@ import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
-import de.learnlib.alex.learning.dao.LearnerSetupDAO;
-import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.websocket.services.SymbolPresenceService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class SymbolGroupDAOTest {
 
     private static final long USER_ID = 21L;
@@ -67,26 +66,20 @@ public class SymbolGroupDAOTest {
     private SymbolDAO symbolDAO;
 
     @Mock
-    private TestDAO testDAO;
-
-    @Mock
     private ObjectMapper objectMapper;
 
     @Mock
     private SymbolPresenceService symbolPresenceService;
 
-    @Mock
-    private LearnerSetupDAO learnerSetupDAO;
-
     private SymbolGroupDAO symbolGroupDAO;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         symbolGroupDAO = new SymbolGroupDAO(projectRepository, projectDAO, symbolGroupRepository, symbolRepository, symbolDAO, objectMapper, symbolPresenceService);
     }
 
     @Test
-    public void shouldCreateAValidGroup() throws NotFoundException {
+    public void shouldCreateAValidGroup() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -106,7 +99,7 @@ public class SymbolGroupDAOTest {
     }
 
     @Test
-    public void shouldGetAllGroupsOfAProject() throws NotFoundException {
+    public void shouldGetAllGroupsOfAProject() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -127,19 +120,19 @@ public class SymbolGroupDAOTest {
         }
     }
 
-    @Test(expected = NotFoundException.class)
-    public void shouldThrowAnExceptionIfYouWantToGetAllGroupsOfANonExistingProject() throws NotFoundException {
+    @Test
+    public void shouldThrowAnExceptionIfYouWantToGetAllGroupsOfANonExistingProject() {
         User user = new User();
         user.setId(USER_ID);
 
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.empty());
         doThrow(NotFoundException.class).when(projectDAO).checkAccess(user, null);
 
-        symbolGroupDAO.getAll(user, PROJECT_ID);
+        assertThrows(NotFoundException.class, () -> symbolGroupDAO.getAll(user, PROJECT_ID));
     }
 
     @Test
-    public void shouldGetAGroupByItsID() throws NotFoundException {
+    public void shouldGetAGroupByItsID() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -158,16 +151,16 @@ public class SymbolGroupDAOTest {
         assertEquals(group, g);
     }
 
-    @Test(expected = NotFoundException.class)
-    public void shouldThrowAnExceptionIfTheGroupCanNotBeFound() throws NotFoundException {
+    @Test
+    public void shouldThrowAnExceptionIfTheGroupCanNotBeFound() {
         User user = new User();
         user.setId(USER_ID);
 
-        symbolGroupDAO.get(user, -1L, -1L); // should fail
+        assertThrows(NotFoundException.class, () -> symbolGroupDAO.get(user, -1L, -1L));
     }
 
     @Test
-    public void shouldUpdateAGroup() throws NotFoundException {
+    public void shouldUpdateAGroup() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -185,15 +178,15 @@ public class SymbolGroupDAOTest {
 
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
         given(symbolGroupRepository.findById(GROUP_ID)).willReturn(Optional.of(group));
-        given(symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(PROJECT_ID)).willReturn(defaultGroup);
+        given(symbolGroupRepository.save(group)).willReturn(group);
 
-        symbolGroupDAO.update(user, group);
+        symbolGroupDAO.update(user, PROJECT_ID, GROUP_ID, group);
 
         verify(symbolGroupRepository).save(group);
     }
 
     @Test
-    public void shouldDeleteAGroup() throws NotFoundException {
+    public void shouldDeleteAGroup() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -217,8 +210,8 @@ public class SymbolGroupDAOTest {
         verify(symbolGroupRepository).delete(group);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldNotDeleteTheDefaultGroupOfAProject() throws NotFoundException {
+    @Test
+    public void shouldNotDeleteTheDefaultGroupOfAProject() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -235,15 +228,15 @@ public class SymbolGroupDAOTest {
         given(symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(PROJECT_ID)).willReturn(group);
         given(symbolGroupRepository.findById(DEFAULT_GROUP_ID)).willReturn(Optional.of(group));
 
-        symbolGroupDAO.delete(user, PROJECT_ID, DEFAULT_GROUP_ID); // should fail
+        assertThrows(IllegalArgumentException.class, () -> symbolGroupDAO.delete(user, PROJECT_ID, DEFAULT_GROUP_ID));
     }
 
-    @Test(expected = NotFoundException.class)
-    public void shouldFailToDeleteAProjectThatDoesNotExist() throws NotFoundException {
+    @Test
+    public void shouldFailToDeleteAProjectThatDoesNotExist() {
         User user = new User();
         user.setId(USER_ID);
 
-        symbolGroupDAO.delete(user, PROJECT_ID, -1L);
+        assertThrows(NotFoundException.class, () -> symbolGroupDAO.delete(user, PROJECT_ID, -1L));
     }
 
 

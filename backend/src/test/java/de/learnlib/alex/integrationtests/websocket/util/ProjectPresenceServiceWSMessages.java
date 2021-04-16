@@ -16,55 +16,39 @@
 
 package de.learnlib.alex.integrationtests.websocket.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.learnlib.alex.websocket.entities.WebSocketMessage;
 import de.learnlib.alex.websocket.services.enums.ProjectPresenceServiceEnum;
 import java.util.List;
 
-public class ProjectPresenceServiceWSMessages {
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
+public class ProjectPresenceServiceWSMessages extends WSMessages {
 
     public WebSocketMessage requestStatus(List<Long> projectIds) {
-        final WebSocketMessage msg = new WebSocketMessage();
+        final var msg = new WebSocketMessage();
         msg.setEntity(ProjectPresenceServiceEnum.PROJECT_PRESENCE_SERVICE.name());
         msg.setType(ProjectPresenceServiceEnum.STATUS_REQUEST.name());
-
-        final ArrayNode projects = objectMapper.createArrayNode();
-        final ObjectNode content = objectMapper.createObjectNode();
-
-        projectIds.forEach(projects::add);
-        content.set("projectIds", projects);
-        msg.setContent(content.toString());
-
+        msg.setContent(createContent(projectIds));
         return msg;
     }
 
     public WebSocketMessage userEnteredProject(long projectId) {
-        final WebSocketMessage msg = new WebSocketMessage();
+        final var msg = new WebSocketMessage();
         msg.setEntity(ProjectPresenceServiceEnum.PROJECT_PRESENCE_SERVICE.name());
         msg.setType(ProjectPresenceServiceEnum.USER_ENTERED.name());
-
-        final ObjectNode content = objectMapper.createObjectNode();
-
-        content.put("projectId", projectId);
-        msg.setContent(content.toString());
-
+        msg.setContent(createContent(projectId));
         return msg;
     }
 
     public WebSocketMessage userLeftProject(long projectId) {
-        final WebSocketMessage msg = new WebSocketMessage();
+        final var msg = new WebSocketMessage();
         msg.setEntity(ProjectPresenceServiceEnum.PROJECT_PRESENCE_SERVICE.name());
         msg.setType(ProjectPresenceServiceEnum.USER_LEFT.name());
-
-        final ObjectNode content = objectMapper.createObjectNode();
-
-        content.put("projectId", projectId);
-        msg.setContent(content.toString());
-
+        msg.setContent(createContent(projectId));
         return msg;
+    }
+
+    private String createContent(long projectId) {
+        final var content = objectMapper.createObjectNode();
+        content.put("projectId", projectId);
+        return content.toString();
     }
 }

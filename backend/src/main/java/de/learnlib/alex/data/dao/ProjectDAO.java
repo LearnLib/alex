@@ -320,6 +320,11 @@ public class ProjectDAO {
         newProject.setDescription(project.getDescription());
         newProject.addOwner(user);
 
+        final TestSuite rootTestSuite = new TestSuite();
+        rootTestSuite.setName("Root");
+        rootTestSuite.setProject(newProject);
+        newProject.getTests().add(rootTestSuite);
+
         final var createdProject = projectRepository.save(newProject);
         createdProject.getEnvironments().addAll(project.getEnvironments().stream()
                 .map(e -> {
@@ -330,11 +335,6 @@ public class ProjectDAO {
                 })
                 .collect(Collectors.toList())
         );
-
-        final TestSuite testSuite = new TestSuite();
-        testSuite.setName("Root");
-        testSuite.setProject(createdProject);
-        testDAO.create(user, createdProject.getId(), testSuite);
 
         symbolGroupDAO.importGroups(user, createdProject, groups, new HashMap<>());
 

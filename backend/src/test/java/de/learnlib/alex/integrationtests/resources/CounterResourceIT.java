@@ -16,7 +16,7 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import de.learnlib.alex.data.entities.Counter;
 import de.learnlib.alex.data.entities.Project;
@@ -29,9 +29,8 @@ import java.util.List;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 public class CounterResourceIT extends AbstractResourceIT {
@@ -46,7 +45,7 @@ public class CounterResourceIT extends AbstractResourceIT {
     private ProjectApi projectApi;
     private CounterApi counterApi;
 
-    @Before
+    @BeforeEach
     public void pre() {
         userApi = new UserApi(client, port);
         projectApi = new ProjectApi(client, port);
@@ -94,8 +93,8 @@ public class CounterResourceIT extends AbstractResourceIT {
         final Counter counter = createCounter("counter", new Project(-1L), 1);
         final Response res1 = counterApi.create(-1L, counter, jwtUser1);
 
-        Assert.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), res1.getStatus());
-        Assert.assertEquals(0, getNumberOfCounters(project1.getId(), jwtUser1));
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), res1.getStatus());
+        assertEquals(0, getNumberOfCounters(project1.getId(), jwtUser1));
     }
 
     @Test

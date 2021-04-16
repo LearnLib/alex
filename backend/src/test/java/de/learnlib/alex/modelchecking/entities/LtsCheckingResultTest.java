@@ -16,24 +16,26 @@
 
 package de.learnlib.alex.modelchecking.entities;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import net.automatalib.words.Word;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class LtsCheckingResultTest {
 
     @Test
     public void shouldOnlyPassIfPrefixAndLoopAreEmpty() {
         LtsCheckingResult result = new LtsCheckingResult(new LtsFormula(), 1L, 1L);
-        Assert.assertTrue(result.isPassed());
+        assertTrue(result.isPassed());
 
         result = new LtsCheckingResult(new LtsFormula(), 1L, 1L, Word.fromSymbols("a"), Word.epsilon());
-        Assert.assertFalse(result.isPassed());
+        assertFalse(result.isPassed());
 
         result = new LtsCheckingResult(new LtsFormula(), 1L, 1L, Word.epsilon(), Word.fromSymbols("a"));
-        Assert.assertFalse(result.isPassed());
+        assertFalse(result.isPassed());
 
         result = new LtsCheckingResult(new LtsFormula(), 1L, 1L, Word.fromSymbols("b"), Word.fromSymbols("a"));
-        Assert.assertFalse(result.isPassed());
+        assertFalse(result.isPassed());
     }
 }

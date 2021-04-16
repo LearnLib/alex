@@ -16,14 +16,14 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import de.learnlib.alex.integrationtests.resources.api.SettingsApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
 import de.learnlib.alex.settings.entities.Settings;
 import javax.ws.rs.core.Response;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.http.HttpStatus;
 
@@ -34,7 +34,7 @@ public class SettingsResourceIT extends AbstractResourceIT {
     private String adminJwt;
     private String userJwt;
 
-    @Before
+    @BeforeEach
     public void pre() {
         this.settingsApi = new SettingsApi(client, port);
 

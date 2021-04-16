@@ -40,7 +40,7 @@ services:
         network_mode: "host"
 
     alex-backend:
-        image: maven:3-jdk-11
+        image: maven:3.8-openjdk-15
         depends_on:
             - selenium-hub
             - alex-database
@@ -58,11 +58,11 @@ services:
             - alex-backend-ltsmin:/var/ltsmin
         command:
             bash -c "if [ ! -d "/var/ltsmin/bin" ]; then
-            wget -P /var/ltsmin http://github.com/utwente-fmt/ltsmin/releases/download/v3.0.2/ltsmin-v3.0.2-linux.tgz;
+            curl -fsSL -o /var/ltsmin/ltsmin-v3.0.2-linux.tgz https://github.com/utwente-fmt/ltsmin/releases/download/v3.0.2/ltsmin-v3.0.2-linux.tgz;
             tar -xzf /var/ltsmin/ltsmin-v3.0.2-linux.tgz -C /var/ltsmin;
             mv /var/ltsmin/v3.0.2/* /var/ltsmin/;
             rm -rf /var/ltsmin/v3.0.2 /var/ltsmin/ltsmin-v3.0.2-linux.tgz;
-            fi && mvn spring-boot:run -Dspring-boot.run.arguments=--ltsmin.path=/var/ltsmin/bin,--webdriver.remote.url=http://selenium-hub:4444/wd/hub,--spring.datasource.url=jdbc:postgresql://$${DATABASE_HOST}:$${DATABASE_PORT}/$${DATABASE_NAME},--spring.datasource.username=$${DATABASE_USER}"
+            fi && mvn spring-boot:run -Dspring-boot.run.arguments=\"--ltsmin.path=/var/ltsmin/bin --webdriver.remote.url=http://selenium-hub:4444/wd/hub --spring.datasource.url=jdbc:postgresql://$${DATABASE_HOST}:$${DATABASE_PORT}/$${DATABASE_NAME} --spring.datasource.username=$${DATABASE_USER}\""
         extra_hosts:
           - "alex-database:127.0.0.1"
           - "selenium-hub:127.0.0.1"

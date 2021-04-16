@@ -1,0 +1,37 @@
+spring:
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+    hibernate:
+      ddl-auto: "update"
+  datasource:
+    initialization-mode: "always"
+    platform: "postgres"
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+server:
+  port: ${alex.port:8000}
+  compression:
+    enabled: "true"
+    mime-types: "text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json"
+    min-response-size: "1024"
+
+alex:
+  filesRootDir: "./target/test-files"
+  version: "2.1.0"
+  admin:
+    email: "admin@alex.example"
+    password: "admin"
+    username: "admin"
+
+ltsmin:
+  path: ""
+
+webdriver:
+  remote:
+    url: ""

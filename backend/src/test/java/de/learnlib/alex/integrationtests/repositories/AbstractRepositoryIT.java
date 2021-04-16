@@ -27,22 +27,24 @@ import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.integrationtests.TestPostgresqlContainer;
 import de.learnlib.alex.settings.dao.SettingsDAO;
-import org.junit.After;
-import org.junit.ClassRule;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-@RunWith(SpringRunner.class)
+@Testcontainers
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 public abstract class AbstractRepositoryIT {
 
-    @ClassRule
+    @Container
     public static PostgreSQLContainer postgreSQLContainer = TestPostgresqlContainer.getInstance();
 
     @Autowired
@@ -60,7 +62,7 @@ public abstract class AbstractRepositoryIT {
     @Autowired
     private SettingsDAO settingsDAO;
 
-    @After
+    @AfterEach
     @Transactional
     public void tearDown() {
         final var admin = userDAO.getByID(1L);

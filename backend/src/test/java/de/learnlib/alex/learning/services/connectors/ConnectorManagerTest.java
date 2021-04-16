@@ -19,7 +19,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import de.learnlib.alex.data.entities.ProjectEnvironment;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 public class ConnectorManagerTest {

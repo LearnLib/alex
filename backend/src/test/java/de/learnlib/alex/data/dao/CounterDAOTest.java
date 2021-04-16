@@ -16,8 +16,9 @@
 
 package de.learnlib.alex.data.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -32,13 +33,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CounterDAOTest {
 
     private static final long USER_ID = 21L;
@@ -58,7 +59,7 @@ public class CounterDAOTest {
 
     private CounterDAO counterDAO;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         counterDAO = new CounterDAO(projectDAO, counterRepository, projectRepository);
     }
@@ -82,7 +83,7 @@ public class CounterDAOTest {
     }
 
     @Test
-    public void shouldGetAllCounterOfAProject() throws NotFoundException {
+    public void shouldGetAllCounterOfAProject() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -102,7 +103,7 @@ public class CounterDAOTest {
     }
 
     @Test
-    public void shouldUpdateACounter() throws NotFoundException {
+    public void shouldUpdateACounter() {
         final Long counterId = 1L;
 
         User user = new User();
@@ -125,7 +126,7 @@ public class CounterDAOTest {
     }
 
     @Test
-    public void shouldDeleteACounter() throws NotFoundException {
+    public void shouldDeleteACounter() {
         final Long counterId = 1L;
 
         User user = new User();
@@ -147,12 +148,11 @@ public class CounterDAOTest {
         verify(counterRepository).deleteAll(counterAsList);
     }
 
-    @Test(expected = NotFoundException.class)
-    public void shouldFailToDeleteACounterThatDoesNotExist() throws NotFoundException {
+    @Test
+    public void shouldFailToDeleteACounterThatDoesNotExist() {
         User user = new User();
-        counterDAO.delete(user, PROJECT_ID, Collections.singletonList(-1L));
+        assertThrows(NotFoundException.class, () -> counterDAO.delete(user, PROJECT_ID, Collections.singletonList(-1L)));
     }
-
 
     private List<Counter> createCounterList() {
         List<Counter> counters = new ArrayList<>();

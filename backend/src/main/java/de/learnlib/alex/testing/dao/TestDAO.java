@@ -154,6 +154,7 @@ public class TestDAO {
         // make sure the name of the test case is unique
         String name = test.getName();
         int i = 1;
+
         while (testRepository.findOneByParent_IdAndName(test.getParentId(), name) != null) {
             name = test.getName() + " - " + i;
             i++;
@@ -164,8 +165,7 @@ public class TestDAO {
         test.setProject(project);
         test.setParent(getParent(user, projectId, test.getParentId()));
 
-        final Test createdTest = createByGenerate(user, project, test);
-        return createdTest;
+        return createByGenerate(user, project, test);
     }
 
     public List<Test> create(User user, Long projectId, List<Test> tests) {

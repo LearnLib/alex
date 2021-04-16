@@ -81,11 +81,12 @@ public class SymbolParameterDAO {
         return create(user, project, symbol, parameter);
     }
 
-    public SymbolParameter update(User user, Long projectId, Long symbolId, SymbolParameter parameter) {
-        final Project project = projectRepository.findById(projectId).orElse(null);
-        final Symbol symbol = symbolRepository.findById(symbolId).orElse(null);
+    public SymbolParameter update(User user, Long projectId, Long symbolId, Long parameterId, SymbolParameter parameter) {
+        final var project = projectRepository.findById(projectId).orElse(null);
+        final var symbol = symbolRepository.findById(symbolId).orElse(null);
+        final var parameterInDB = symbolParameterRepository.findById(parameterId).orElse(null);
 
-        checkAccess(user, project, symbol, parameter);
+        checkAccess(user, project, symbol, parameterInDB);
         checkIfTypeWithNameExists(symbol, parameter);
 
         // check symbol lock status
@@ -94,7 +95,10 @@ public class SymbolParameterDAO {
         symbol.setUpdatedOn(ZonedDateTime.now());
         symbolRepository.save(symbol);
 
-        return symbolParameterRepository.save(parameter);
+        parameterInDB.setName(parameter.getName());
+        parameterInDB.setParameterType(parameter.getParameterType());
+
+        return symbolParameterRepository.save(parameterInDB);
     }
 
     public void delete(User user, Long projectId, Long symbolId, Long parameterId) {

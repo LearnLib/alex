@@ -159,7 +159,7 @@ public class AlexComponent {
     public CorsConfigurationSource corsConfigurationSource() {
         final CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("*");
+        config.addAllowedOriginPattern("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
 

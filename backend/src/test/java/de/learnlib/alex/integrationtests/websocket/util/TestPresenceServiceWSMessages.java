@@ -16,57 +16,40 @@
 
 package de.learnlib.alex.integrationtests.websocket.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.learnlib.alex.websocket.entities.WebSocketMessage;
 import de.learnlib.alex.websocket.services.enums.TestPresenceServiceEnum;
 import java.util.List;
 
-public class TestPresenceServiceWSMessages {
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
+public class TestPresenceServiceWSMessages extends WSMessages {
 
     public WebSocketMessage requestStatus(List<Long> projectIds) {
-        final WebSocketMessage msg = new WebSocketMessage();
+        final var msg = new WebSocketMessage();
         msg.setEntity(TestPresenceServiceEnum.TEST_PRESENCE_SERVICE.name());
         msg.setType(TestPresenceServiceEnum.STATUS_REQUEST.name());
-
-        final ArrayNode projects = objectMapper.createArrayNode();
-        final ObjectNode content = objectMapper.createObjectNode();
-
-        projectIds.forEach(projects::add);
-        content.set("projectIds", projects);
-        msg.setContent(content.toString());
-
+        msg.setContent(createContent(projectIds));
         return msg;
     }
 
     public WebSocketMessage userEnteredTest(long projectId, long testId) {
-        final WebSocketMessage msg = new WebSocketMessage();
+        final var msg = new WebSocketMessage();
         msg.setEntity(TestPresenceServiceEnum.TEST_PRESENCE_SERVICE.name());
         msg.setType(TestPresenceServiceEnum.USER_ENTERED.name());
-
-        final ObjectNode content = objectMapper.createObjectNode();
-
-        content.put("projectId", projectId);
-        content.put("testId", testId);
-        msg.setContent(content.toString());
-
+        msg.setContent(createContent(projectId, testId));
         return msg;
     }
 
     public WebSocketMessage userLeftTest(long projectId, long testId) {
-        final WebSocketMessage msg = new WebSocketMessage();
+        final var msg = new WebSocketMessage();
         msg.setEntity(TestPresenceServiceEnum.TEST_PRESENCE_SERVICE.name());
         msg.setType(TestPresenceServiceEnum.USER_LEFT.name());
+        msg.setContent(createContent(projectId, testId));
+        return msg;
+    }
 
-        final ObjectNode content = objectMapper.createObjectNode();
-
+    private String createContent(long projectId, long testId) {
+        final var content = objectMapper.createObjectNode();
         content.put("projectId", projectId);
         content.put("testId", testId);
-        msg.setContent(content.toString());
-
-        return msg;
+        return content.toString();
     }
 }

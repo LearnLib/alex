@@ -24,5 +24,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SymbolPSymbolStepRepository extends JpaRepository<SymbolPSymbolStep, Long> {
 
-    List<SymbolPSymbolStep> findAllByPSymbol_Symbol_Id(Long symbolId);
+    List<SymbolPSymbolStep> findAllBypSymbol_Symbol_Id(Long symbolId);
+
+    Long countAllBypSymbol_Symbol_Id(Long symbolId);
 }

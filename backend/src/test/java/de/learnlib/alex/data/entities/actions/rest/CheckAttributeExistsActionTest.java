@@ -16,9 +16,9 @@
 
 package de.learnlib.alex.data.entities.actions.rest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,13 +27,13 @@ import de.learnlib.alex.data.entities.Symbol;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CheckAttributeExistsActionTest extends RestActionTest {
 
     @Mock
@@ -41,7 +41,7 @@ public class CheckAttributeExistsActionTest extends RestActionTest {
 
     private CheckAttributeExistsAction c;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         super.setUp();
 
