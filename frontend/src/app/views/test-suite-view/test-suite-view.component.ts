@@ -282,11 +282,12 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.project = this.project;
     modalRef.result.then(_ => {
       this.testConfigApi.getAll(this.project.id).subscribe(
-      testConfigs => {
-        this.testConfigs = testConfigs;
-      },
-      console.error
-    )}).catch(() => {
+        testConfigs => {
+          this.testConfigs = testConfigs;
+        },
+        console.error
+      );
+    }).catch(() => {
     });
   }
 
@@ -370,7 +371,7 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
   selectTestConfig(config: any): void {
     if (config != null) {
       this.testConfig = JSON.parse(JSON.stringify(config));
-      this.testConfig.environment = this.project.environments.find(e => e.id === config.environmentId );
+      this.testConfig.environment = this.project.environments.find(e => e.id === config.environmentId);
     } else {
       this.testConfig = null;
     }
