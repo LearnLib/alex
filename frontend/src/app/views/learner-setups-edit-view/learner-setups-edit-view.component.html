@@ -12,7 +12,7 @@
         <button
           class="btn btn-sm btn-success ml-2"
           (click)="updateSetup()"
-          [disabled]="!canStartOrSaveLearningSetup"
+          [disabled]="!isValidLearnerSetup()"
         >
           <i class="fas fa-fw fa-save"></i> Save
         </button>

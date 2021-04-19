@@ -10,7 +10,7 @@
       'fa-minus-square': !store.isSuiteCollapsed(suite),
       'fa-plus-square': store.isSuiteCollapsed(suite)
     }"
-    (click)="store.toogleCollapseSuite(suite)"
+    (click)="store.toggleCollapseSuite(suite)"
     class="far fa-fw cursor-pointer"
     style="margin-top: 2px"
   >
@@ -22,7 +22,7 @@
   >
   </selectable-checkbox-multiple>
   <div class="pl-3 w-100">
-    <div class="test-select-tree-name cursor-pointer" (click)="store.toogleCollapseSuite(suite)">
+    <div class="test-select-tree-name cursor-pointer" (click)="store.toggleCollapseSuite(suite)">
       {{suite.name}}
     </div>
   </div>

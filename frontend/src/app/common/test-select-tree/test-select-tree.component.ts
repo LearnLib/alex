@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { Component, Input, OnInit } from "@angular/core";
-import { AppStoreService } from "../../services/app-store.service";
-import { TestSelectTreeStore } from "./test-select-tree.store";
+import { Component, Input, OnInit } from '@angular/core';
+import { AppStoreService } from '../../services/app-store.service';
+import { TestSelectTreeStore } from './test-select-tree.store';
 
 @Component({
   selector: 'test-select-tree',

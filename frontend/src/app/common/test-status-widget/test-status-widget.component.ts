@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { TestApiService } from '../../services/api/test-api.service';
 import { AppStoreService } from '../../services/app-store.service';
 import { TestQueueItem, TestReport, TestReportStatus, TestStatus } from '../../entities/test-status';

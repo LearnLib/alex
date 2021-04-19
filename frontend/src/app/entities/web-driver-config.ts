@@ -37,8 +37,8 @@ export class WebDriverConfig {
     }
   };
 
-  width = 0;
-  height = 0;
+  width = 1920;
+  height = 1080;
   implicitlyWait = 0;
   pageLoadTimeout = 10;
   scriptTimeout = 10;

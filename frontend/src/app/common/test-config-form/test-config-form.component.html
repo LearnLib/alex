@@ -4,9 +4,6 @@
 
 <div class="row">
   <div class="col-md-4 col-lg-8 pl-4 mt-3">
-    <h5><strong>Description</strong></h5>
-    <hr class="hr-sm">
-    <textarea class="config-description" placeholder="Enter a description for the config" [(ngModel)]="config.description"></textarea>
     <h5><strong>Tests</strong></h5>
     <hr class="hr-sm">
     <test-select-tree *ngIf="testRoot != null" [suite]="testRoot"></test-select-tree>
@@ -47,6 +44,22 @@
                 >
                   {{env.name}}
                 </div>
+              </div>
+            </ng-template>
+          </ng-container>
+          <ng-container ngbNavItem>
+            <a ngbNavLink>Config</a>
+            <ng-template ngbNavContent>
+              <br>
+
+              <div class="form-group mb-0">
+                <label>Description</label>
+                <textarea
+                  class="form-control"
+                  placeholder="Enter a description for the config"
+                  [(ngModel)]="config.description"
+                >
+                  </textarea>
               </div>
             </ng-template>
           </ng-container>

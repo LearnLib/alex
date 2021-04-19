@@ -18,22 +18,21 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LearnerSetupApiService } from '../../services/api/learner-setup-api.service';
 import { AppStoreService } from '../../services/app-store.service';
-import { LearnerSetup } from '../../entities/learner-setup';
 import { ToastService } from '../../services/toast.service';
+import { LearnerSetupsCreateEditView } from '../learner-setups-create-view/learner-setups-create-edit-view';
 
 @Component({
   selector: 'learner-setups-edit-view',
   templateUrl: './learner-setups-edit-view.component.html'
 })
-export class LearnerSetupsEditViewComponent implements OnInit {
-
-  setup: LearnerSetup;
+export class LearnerSetupsEditViewComponent extends LearnerSetupsCreateEditView implements OnInit {
 
   constructor(private route: ActivatedRoute,
               private appStore: AppStoreService,
               private learnerSetupApi: LearnerSetupApiService,
               private router: Router,
               private toastService: ToastService) {
+    super();
   }
 
   ngOnInit() {
@@ -50,18 +49,11 @@ export class LearnerSetupsEditViewComponent implements OnInit {
 
   updateSetup() {
     this.learnerSetupApi.update(this.appStore.project.id, this.setup).subscribe(
-      setup => {
+      _ => {
         this.toastService.success('The learning setup has been updated.');
         this.router.navigate(['/app', 'projects', this.appStore.project.id, 'learner', 'setups']);
       },
       res => this.toastService.danger(`The setup could not be updated. ${res.error.message}`)
     );
-  }
-
-  get canStartOrSaveLearningSetup(): boolean {
-    return !(this.setup == null
-      || this.setup.preSymbol == null
-      || this.setup.symbols.length === 0
-      || this.setup.environments.length === 0);
   }
 }

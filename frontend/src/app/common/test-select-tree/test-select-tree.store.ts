@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { Injectable } from "@angular/core";
-import { Selectable } from "../../utils/selectable";
-import { AppStoreService } from "../../services/app-store.service";
-import { TestApiService } from "../../services/api/test-api.service";
+import { Injectable } from '@angular/core';
+import { Selectable } from '../../utils/selectable';
+import { AppStoreService } from '../../services/app-store.service';
+import { TestApiService } from '../../services/api/test-api.service';
 
 @Injectable()
 export class TestSelectTreeStore {
@@ -53,19 +53,13 @@ export class TestSelectTreeStore {
     }
   }
 
-  toogleCollapseSuite(suite: any): void {
+  toggleCollapseSuite(suite: any): void {
     const collapsed = this.suitesCollapsedMap.get(suite.id);
     if (collapsed == null) {
       this.suitesCollapsedMap.set(suite.id, false);
     } else {
       this.suitesCollapsedMap.set(suite.id, !collapsed);
     }
-  }
-
-  collapseAll(collapse: boolean): void {
-    this.suitesCollapsedMap.forEach((_, id) => {
-      this.suitesCollapsedMap.set(id, collapse);
-    })
   }
 
   extractDescendantTests(suite: any): any[] {

@@ -18,8 +18,12 @@ import { Project } from '../../../entities/project';
 import { ProjectEnvironment } from '../../../entities/project-environment';
 import { Component, Input, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { TestConfigApiService } from "../../../services/api/test-config-api.service";
-import { ToastService } from "../../../services/toast.service";
+import { TestConfigApiService } from '../../../services/api/test-config-api.service';
+import { ToastService } from '../../../services/toast.service';
+
+export enum TestConfigModalAction {
+  CREATE, EDIT
+}
 
 /**
  * A modal dialog for the web driver configuration.
@@ -69,7 +73,7 @@ export class TestConfigModalComponent implements OnInit {
     }, res => {
       this.toastService.danger(`The config couldn't be created. ${res.error.message}`);
       this.modal.dismiss();
-    })
+    });
   }
 
   /**
@@ -77,21 +81,16 @@ export class TestConfigModalComponent implements OnInit {
    */
   update(): void {
     this.configuration.environmentId = this.selectedEnvironment.id;
-    console.log(this.configuration)
     this.testConfigApi.update(this.project.id, this.configuration).subscribe(config => {
       this.toastService.success('The config has been updated.');
       this.modal.close(config);
     }, res => {
       this.toastService.danger(`The config couldn't be updated. ${res.error.message}`);
       this.modal.dismiss();
-    })
+    });
   }
 
   get TestConfigModalAction() {
     return TestConfigModalAction;
   }
-}
-
-export enum TestConfigModalAction {
-  CREATE, EDIT
 }

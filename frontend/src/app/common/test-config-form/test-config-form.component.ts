@@ -14,28 +14,9 @@
  * limitations under the License.
  */
 
-
 import { Component, Input, OnInit } from '@angular/core';
-import { LearnerSetup } from '../../entities/learner-setup';
-import { SelectSymbolModalComponent } from '../modals/select-symbol-modal/select-symbol-modal.component';
-import { AlphabetSymbol } from '../../entities/alphabet-symbol';
-import { ParametrizedSymbol } from '../../entities/parametrized-symbol';
-import { SymbolGroup } from '../../entities/symbol-group';
 import { AppStoreService } from '../../services/app-store.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { LearningAlgorithmService } from '../../services/learning-algorithm.service';
-import { learningAlgorithm } from '../../constants';
-import { Selectable } from '../../utils/selectable';
-import { ProjectEnvironment } from '../../entities/project-environment';
-import { FormGroup } from '@angular/forms';
-import { Project } from '../../entities/project';
-import { SettingsApiService } from '../../services/api/settings-api.service';
-import { SymbolGroupApiService } from '../../services/api/symbol-group-api.service';
-import { LtlFormulaSuite } from '../../entities/ltl-formula-suite';
-import { LtsFormulaApiService } from '../../services/api/lts-formula-api.service';
-import { LtsFormulaSuiteApiService } from '../../services/api/lts-formula-suite-api.service';
-import { TestApiService } from "../../services/api/test-api.service";
-import { TestSelectTreeStore } from "../test-select-tree/test-select-tree.store";
+import { TestApiService } from '../../services/api/test-api.service';
 
 @Component({
   selector: 'test-config-form',
@@ -52,8 +33,8 @@ export class TestConfigFormComponent implements OnInit {
   selectedEnvironment: any;
 
   constructor(public appStore: AppStoreService,
-              private testApi: TestApiService,
-              private store: TestSelectTreeStore) { }
+              private testApi: TestApiService) {
+  }
 
   ngOnInit(): void {
     this.testApi.getRoot(this.appStore.project.id).subscribe(testRoot => {

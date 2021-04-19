@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-import { Component, Input } from '@angular/core';
-import { TestSelectTreeStore } from '../test-select-tree.store';
+import { LearnerSetup } from '../../entities/learner-setup';
 
-@Component({
-  selector: 'test-select-tree-item',
-  templateUrl: './test-select-tree-item.component.html',
-  styleUrls: ['./test-select-tree-item.component.scss']
-})
-export class TestSelectTreeItemComponent {
+export abstract class LearnerSetupsCreateEditView {
 
-  @Input()
-  testCase: any;
+  setup: LearnerSetup;
 
-  constructor(public store: TestSelectTreeStore) {
+  isValidLearnerSetup(): boolean {
+    return this.setup != null
+      && this.setup.preSymbol != null
+      && this.setup.symbols.length > 0
+      && this.setup.environments.length > 0
+      && this.setup.webDriver.browser != null
+      && this.setup.webDriver.browser !== ''
+      && this.setup.webDriver.platform != null
+      && this.setup.webDriver.width > 0
+      && this.setup.webDriver.height > 0;
   }
 }

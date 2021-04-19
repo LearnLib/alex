@@ -31,15 +31,16 @@ import { Project } from '../../entities/project';
 import { SymbolGroup } from '../../entities/symbol-group';
 import { TestCase } from '../../entities/test-case';
 import { AppStoreService } from '../../services/app-store.service';
-import { Component, Input, OnDestroy, OnInit, ViewChild, AfterViewInit, ViewChildren } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TestsImportModalComponent } from './tests-import-modal/tests-import-modal.component';
-import { TestConfigModalAction, TestConfigModalComponent } from '../tests-view/test-config-modal/test-config-modal.component';
+import {
+  TestConfigModalAction,
+  TestConfigModalComponent
+} from '../tests-view/test-config-modal/test-config-modal.component';
 import { TestsMoveModalComponent } from './tests-move-modal/tests-move-modal.component';
 import { TestReportStatus, TestStatus } from '../../entities/test-status';
 import { TestLockInfo, TestPresenceService } from '../../services/test-presence.service';
-import { WebDriverConfig } from '../../entities/web-driver-config';
-import { TestConfigListComponent } from "./test-config-list/test-config-list.component";
 
 @Component({
   selector: 'test-suite-view',
@@ -279,14 +280,13 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.configuration = {};
     modalRef.componentInstance.configuration.driverConfig = {};
     modalRef.componentInstance.project = this.project;
-    modalRef.result.then(config => {
+    modalRef.result.then(_ => {
       this.testConfigApi.getAll(this.project.id).subscribe(
-        testConfigs => {
-          this.testConfigs = testConfigs;
-        },
-        console.error
-      )
-      }).catch(() => {
+      testConfigs => {
+        this.testConfigs = testConfigs;
+      },
+      console.error
+    )}).catch(() => {
     });
   }
 

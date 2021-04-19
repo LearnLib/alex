@@ -32,7 +32,6 @@ import { Project } from '../../entities/project';
 import { SettingsApiService } from '../../services/api/settings-api.service';
 import { SymbolGroupApiService } from '../../services/api/symbol-group-api.service';
 import { LtlFormulaSuite } from '../../entities/ltl-formula-suite';
-import { LtsFormulaApiService } from '../../services/api/lts-formula-api.service';
 import { LtsFormulaSuiteApiService } from '../../services/api/lts-formula-suite-api.service';
 
 @Component({

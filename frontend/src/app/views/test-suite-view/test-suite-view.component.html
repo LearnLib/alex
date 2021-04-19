@@ -176,7 +176,7 @@
             <div class="card-header">
               <strong>Test configs</strong>
             </div>
-            <div class="card-body p-0">
+            <div class="card-body" [class.p-0]="testConfigs.length > 0">
               <test-config-list
                 (selected)="selectTestConfig($event)"
                 *ngIf="testConfigs.length > 0"
@@ -184,7 +184,7 @@
               >
               </test-config-list>
 
-              <div *ngIf="testConfigs.length === 0" class="alert alert-info no-border-radius mb-0">
+              <div *ngIf="testConfigs.length === 0" class="alert alert-info mb-0">
                 There are no saved configurations yet.
               </div>
             </div>
