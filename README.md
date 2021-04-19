@@ -1,5 +1,8 @@
+![master branch ci](https://github.com/learnlib/alex/actions/workflows/ci.yml/badge.svg?branch=master)
+![version](https://img.shields.io/badge/version-v2.1.0-blue)
+
 <p align="center">
-    <img src="backend/src/main/resources/images/logo.png" style="max-width:100%;">
+  <img src="backend/src/main/resources/images/logo.png" style="max-width:40%;">
 </p>
 
 # ALEX
@@ -15,17 +18,21 @@ an automaton model (a [Mealy machine][mealy]), which represents the behavior of 
 
 To run ALEX, install the following software on your machine:
 
-- [Docker][docker]
-- [Docker Compose][docker-compose]
+For **Linux / OSX**
+* Docker (v20.10.\*) and 
+* Docker Compose (v1.28.*) 
+
+For **Windows 10**
+* Docker for Windows
 
 
 ## Installation
 
 ### Production
 
-1. [Download](https://github.com/LearnLib/alex/releases/latest) the `docker-compose.deploy.yml` file for the latest version.
-2. Run `docker-compose -f docker-compose.deploy.yml pull` once.
-3. Run `docker-compose -f docker-compose.deploy.yml up`.
+1. [Download](https://github.com/LearnLib/alex/releases/latest) the `docker-compose.alex-2.1.0.yml` file.
+2. Run `docker-compose -f docker-compose.alex-2.1.0.yml pull` once.
+3. Run `docker-compose -f docker-compose.alex-2.1.0.yml up`.
 4. Open `127.0.0.1` in a web browser to access the frontend.
 
 **Services**
@@ -63,7 +70,7 @@ Email: *admin@alex.example* <br>
 Password: *admin*
 
 
-## Further links
+## Further reading
 
 ### Documentation
 
@@ -74,8 +81,10 @@ Password: *admin*
 ### Background
 
 * [Active automata learning](https://scholar.google.de/scholar?hl=de&q=active+automata+learning)
+* [ALEX: Mixed-Mode Learning of Web Applications at Ease](https://link.springer.com/chapter/10.1007/978-3-319-47169-3_51)
 
-### Used libraries
+
+## Used libraries
 
 * [LearnLib][learnlib]
 * [AutomataLib][automatalib]
