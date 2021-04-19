@@ -28,7 +28,6 @@ export class TestSelectTreeHeaderComponent {
   @Input()
   suite: any;
 
-  constructor(private appStore: AppStoreService,
-              public store: TestSelectTreeStore) {
+  constructor(public store: TestSelectTreeStore) {
   }
 }

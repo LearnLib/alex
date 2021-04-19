@@ -93,7 +93,7 @@ public class TestService {
         final var project = projectDAO.getByID(user, projectId);
         User userInDb = this.userDAO.getByID(user.getId());
 
-        final var createdReport = transactionTemplate.execute((t) -> {
+        final var createdReport = transactionTemplate.execute(t -> {
             checkRunningProcesses(userInDb, projectId);
 
             final var r = new TestReport();
@@ -102,7 +102,10 @@ public class TestService {
             r.setProject(project);
             r.setDescription(config.getDescription());
 
-            return testReportDAO.create(user, projectId, r);
+            final var cr = testReportDAO.create(user, projectId, r);
+            t.flush();
+
+            return cr;
         });
 
         final var item = new TestProcessQueueItem(
