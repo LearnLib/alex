@@ -34,11 +34,10 @@ import de.learnlib.alex.modelchecking.services.export.LtsFormulaSuitesExporter;
 import de.learnlib.alex.testing.entities.export.TestExecutionConfigExportableEntity;
 import de.learnlib.alex.testing.entities.export.TestsExportableEntity;
 import de.learnlib.alex.testing.services.export.TestsExporter;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(rollbackFor = Exception.class, readOnly = true)
