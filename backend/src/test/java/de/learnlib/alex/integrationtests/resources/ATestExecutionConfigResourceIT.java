@@ -16,20 +16,18 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import com.jayway.jsonpath.JsonPath;
 import de.learnlib.alex.integrationtests.resources.api.ProjectApi;
 import de.learnlib.alex.integrationtests.resources.api.TestApi;
 import de.learnlib.alex.integrationtests.resources.api.TestExecutionConfigApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
-import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.ws.rs.core.Response;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ATestExecutionConfigResourceIT extends AbstractResourceIT {
 
@@ -87,8 +85,8 @@ public class ATestExecutionConfigResourceIT extends AbstractResourceIT {
 
         final int tcId = JsonPath.read(res1.readEntity(String.class), "$.id");
         final Response res2 = api.create(projectId1, createConfigWithTests(projectId1, envId1, List.of((long) tcId)), jwtUser1);
-        Assert.assertEquals(Response.Status.CREATED.getStatusCode(), res2.getStatus());
-        Assert.assertEquals(1, getNumberOfConfigs(projectId1, jwtUser1));
+        assertEquals(Response.Status.CREATED.getStatusCode(), res2.getStatus());
+        assertEquals(1, getNumberOfConfigs(projectId1, jwtUser1));
     }
 
     @Test
