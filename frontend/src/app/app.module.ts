@@ -264,15 +264,15 @@ import { FormatWebBrowserPipe } from './pipes/format-web-browser.pipe';
 import { LearnerResultStepApiService } from './services/api/learner-result-step-api.service';
 import { ModelValidationBadgeComponent } from './common/model-validation-badge/model-validation-badge.component';
 import { ModelCheckingResultsViewComponent } from './views/model-checking-results-view/model-checking-results-view.component';
-import { TestConfigsViewComponent } from "./views/test-configs-view/test-configs-view.component";
-import { TestConfigTableComponent } from "./common/test-config-table/test-config-table.component";
-import { TestConfigFormComponent } from "./common/test-config-form/test-config-form.component";
-import { TestConfigsCreateViewComponent } from "./views/test-configs-create-view/test-configs-create-view.component";
-import { TestConfigsEditViewComponent } from "./views/test-configs-edit-view/test-configs-edit-view.component";
+import { TestConfigsViewComponent } from './views/test-configs-view/test-configs-view.component';
+import { TestConfigTableComponent } from './common/test-config-table/test-config-table.component';
+import { TestConfigFormComponent } from './common/test-config-form/test-config-form.component';
+import { TestConfigsCreateViewComponent } from './views/test-configs-create-view/test-configs-create-view.component';
+import { TestConfigsEditViewComponent } from './views/test-configs-edit-view/test-configs-edit-view.component';
 import { TestSelectTreeComponent } from './common/test-select-tree/test-select-tree.component';
-import { TestSelectTreeHeaderComponent } from "./common/test-select-tree/test-select-tree-header/test-select-tree-header.component";
-import { TestSelectTreeItemComponent } from "./common/test-select-tree/test-select-tree-item/test-select-tree-item.component";
-import { TestSelectTreeStore } from "./common/test-select-tree/test-select-tree.store";
+import { TestSelectTreeHeaderComponent } from './common/test-select-tree/test-select-tree-header/test-select-tree-header.component';
+import { TestSelectTreeItemComponent } from './common/test-select-tree/test-select-tree-item/test-select-tree-item.component';
+import { TestSelectTreeStore } from './common/test-select-tree/test-select-tree.store';
 
 @NgModule({
   declarations: [

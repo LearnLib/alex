@@ -37,7 +37,7 @@ export class TestSelectTreeStore {
       const extractedTests = this.extractDescendantTests(root);
       extractedTests.forEach(test => {
         this.suitesCollapsedMap.set(test.id, true);
-      })
+      });
       this.testsSelectable.addItems(extractedTests);
       this.testsSelectable.selectMany(selectedTests);
     });
@@ -66,7 +66,7 @@ export class TestSelectTreeStore {
     const descTests: any[] = [];
     suite.tests.filter(test => test.type === 'suite').forEach(childSuite => {
       descTests.push(...this.extractDescendantTests(childSuite));
-    })
+    });
     return [...descTests, ...suite.tests];
   }
 }

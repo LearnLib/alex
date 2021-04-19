@@ -37,7 +37,7 @@ export class TestConfigTableComponent implements OnInit {
   ngOnInit() {
     if (this.config.tests.length > 0) {
       this.testApi.getMany(this.appStore.project.id, this.config.tests).subscribe(tests => {
-        this.tests = tests
+        this.tests = tests;
       });
     }
   }
