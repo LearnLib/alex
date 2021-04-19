@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,6 @@ import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotEmpty;
@@ -38,11 +35,9 @@ import javax.validation.constraints.NotEmpty;
 @JsonTypeName("setVariableByHttpResponse")
 public class SetVariableByHttpResponseAction extends SymbolAction {
 
-    private static final long serialVersionUID = -1062817486843997759L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
-
-    /** The name of the variable. */
+    /**
+     * The name of the variable.
+     */
     @NotEmpty
     private String name;
 
@@ -55,10 +50,10 @@ public class SetVariableByHttpResponseAction extends SymbolAction {
             final String body = webServiceConnector.getBody();
             variableStore.set(name, body);
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Set variable '{}' to HTTP body.", name);
+            logger.info(LoggerMarkers.LEARNER, "Set variable '{}' to HTTP body.", name);
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not set variable '{}' to HTTP body.", name);
+            logger.info(LoggerMarkers.LEARNER, "Could not set variable '{}' to HTTP body.", name);
             return getFailedOutput();
         }
     }

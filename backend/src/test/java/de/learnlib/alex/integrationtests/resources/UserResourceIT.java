@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,11 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
@@ -25,20 +30,18 @@ import de.learnlib.alex.integrationtests.SpringRestError;
 import de.learnlib.alex.integrationtests.resources.api.SettingsApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
 import de.learnlib.alex.settings.entities.Settings;
-import org.junit.Before;
-import org.junit.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.springframework.http.HttpStatus;
-
+import java.util.Arrays;
+import java.util.List;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.springframework.http.HttpStatus;
 
 public class UserResourceIT extends AbstractResourceIT {
 
@@ -48,7 +51,7 @@ public class UserResourceIT extends AbstractResourceIT {
 
     private String adminJwt;
 
-    @Before
+    @BeforeEach
     public void pre() {
         userApi = new UserApi(client, port);
         settingsApi = new SettingsApi(client, port);
@@ -71,7 +74,7 @@ public class UserResourceIT extends AbstractResourceIT {
         JsonPath.read(res.readEntity(String.class), "id");
     }
 
-    @Test(expected = PathNotFoundException.class)
+    @Test
     public void shouldFailToGetAJwtIfUserIsInvalid() {
         final Response res = client.target(userApi.url() + "/login").request()
                 .post(Entity.json(createUserJson("test@test.de", "test")));
@@ -79,7 +82,7 @@ public class UserResourceIT extends AbstractResourceIT {
         assertEquals(HttpStatus.NOT_FOUND.value(), res.getStatus());
 
         final String body = res.readEntity(String.class);
-        JsonPath.read(body, "token");
+        assertThrows(PathNotFoundException.class, () -> JsonPath.read(body, "token"));
     }
 
     @Test
@@ -98,15 +101,10 @@ public class UserResourceIT extends AbstractResourceIT {
         assertEquals("ADMIN", JsonPath.read(res.readEntity(String.class), "role"));
     }
 
-    @Test
-    public void shouldNotCreateAUserWithoutEmail() {
-        final Response res = userApi.create(createUserJson("", "test"));
-        assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
-    }
-
-    @Test
-    public void shouldNotCreateAccountWithInvalidEmail() {
-        final Response res = userApi.create(createUserJson("asdasd", "test"));
+    @ParameterizedTest(name = "Use value \"{0}\" for the test")
+    @ValueSource(strings = { "", "asd", "@test.de" })
+    public void shouldNotCreateAUserWithInvalidEmail(String email) {
+        final Response res = userApi.create(createUserJson(email, "test"));
         assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
     }
 
@@ -296,19 +294,19 @@ public class UserResourceIT extends AbstractResourceIT {
         shouldNotLoginWith404("test@test.de", "test");
     }
 
-    private void shouldLogin(String email, String password) throws Exception {
+    private void shouldLogin(String email, String password) {
         final Response res = userApi.loginRaw(email, password);
         assertEquals(HttpStatus.OK.value(), res.getStatus());
         JsonPath.read(res.readEntity(String.class), "token");
     }
 
-    private void shouldNotLoginWith404(String email, String password) throws Exception {
+    private void shouldNotLoginWith404(String email, String password) {
         final Response res = userApi.loginRaw(email, password);
         assertEquals(HttpStatus.NOT_FOUND.value(), res.getStatus());
         checkIsRestError(res.readEntity(String.class));
     }
 
-    private void shouldNotLoginWith400(String email, String password) throws Exception {
+    private void shouldNotLoginWith400(String email, String password) {
         final Response res = userApi.loginRaw(email, password);
         assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
         checkIsRestError(res.readEntity(String.class));
@@ -330,7 +328,6 @@ public class UserResourceIT extends AbstractResourceIT {
         final String jwt = userApi.login(user.getEmail(), "test");
 
         final Response res = userApi.changePassword(user.getId(), "test", "new", jwt);
-        System.out.println(res.readEntity(String.class));
         assertEquals(HttpStatus.OK.value(), res.getStatus());
 
         shouldNotLoginWith400("test@test.de", "test");
@@ -409,7 +406,7 @@ public class UserResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void shouldGetTheCurrentProfileAsAdmin() throws Exception {
+    public void shouldGetTheCurrentProfileAsAdmin() {
         final Response res = userApi.getProfile(adminJwt);
         final String email = JsonPath.read(res.readEntity(String.class), "email");
         assertEquals(email, ADMIN_EMAIL);
@@ -430,28 +427,25 @@ public class UserResourceIT extends AbstractResourceIT {
         assertEquals(3, objectMapper.readTree(res4.readEntity(String.class)).size());
     }
 
-    @Test
-    public void shouldSearchUserByEmail() {
+
+    @ParameterizedTest(name = "search for \"{0}\", expect user \"{1}, {2}\" for the test")
+    @CsvSource({
+            "abc, abc, abc@test.de",
+            "abc@test.de, abc, abc@test.de",
+            "def, def, def@test.de",
+            "def@test.de, def, def@test.de"
+    })
+    public void shouldSearchUserByEmail(String searchValue, String expectedUsername, String expectedEmail) {
         userApi.create(createUserJson("abc@test.de", "abc", "test", "REGISTERED"));
         userApi.create(createUserJson("def@test.de", "def", "test", "REGISTERED"));
 
-        final Response res = userApi.search("abc", adminJwt);
+        final Response res = userApi.search(searchValue, adminJwt);
         assertEquals(HttpStatus.OK.value(), res.getStatus());
-        final List<User> users = res.readEntity(new GenericType<List<User>>(){});
+        final List<User> users = res.readEntity(new GenericType<>() {
+        });
         assertEquals(1, users.size());
-        assertEquals("abc", users.get(0).getUsername());
-    }
-
-    @Test
-    public void shouldSearchUserByUsername() {
-        userApi.create(createUserJson("abc@test.de", "abc", "test", "REGISTERED"));
-        userApi.create(createUserJson("def@test.de", "def", "test", "REGISTERED"));
-
-        final Response res = userApi.search("def@test.de", adminJwt);
-        assertEquals(HttpStatus.OK.value(), res.getStatus());
-        final List<User> users = res.readEntity(new GenericType<List<User>>(){});
-        assertEquals(1, users.size());
-        assertEquals("def@test.de", users.get(0).getEmail());
+        assertEquals(expectedUsername, users.get(0).getUsername());
+        assertEquals(expectedEmail, users.get(0).getEmail());
     }
 
     @Test
@@ -459,7 +453,8 @@ public class UserResourceIT extends AbstractResourceIT {
         createDemoUsers();
         final Response res = userApi.search("unknown", adminJwt);
         assertEquals(HttpStatus.OK.value(), res.getStatus());
-        final List<User> users = res.readEntity(new GenericType<List<User>>(){});
+        final List<User> users = res.readEntity(new GenericType<>() {
+        });
         assertEquals(0, users.size());
     }
 
@@ -468,7 +463,8 @@ public class UserResourceIT extends AbstractResourceIT {
         final List<User> demoUsers = createDemoUsers();
         final Response res = userApi.getAll(Arrays.asList(demoUsers.get(0).getId(), demoUsers.get(1).getId()), adminJwt);
         assertEquals(HttpStatus.OK.value(), res.getStatus());
-        final List<User> users = res.readEntity(new GenericType<List<User>>(){});
+        final List<User> users = res.readEntity(new GenericType<>() {
+        });
         assertEquals(2, users.size());
         assertTrue(users.stream().anyMatch(u -> u.getId().equals(demoUsers.get(0).getId())));
         assertTrue(users.stream().anyMatch(u -> u.getId().equals(demoUsers.get(1).getId())));

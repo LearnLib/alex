@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,16 @@ import de.learnlib.alex.testing.entities.TestReport;
 /**
  * Create a report of a test result.
  *
- * @param <T> The type of the report.
+ * @param <T>
+ *         The type of the report.
  */
 public abstract class TestResultReporter<T> {
 
     /**
      * Create a report of a test result.
      *
-     * @param testReport The rest report.
+     * @param testReport
+     *         The rest report.
      * @return The report.
      */
     public abstract T createReport(TestReport testReport);

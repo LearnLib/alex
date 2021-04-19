@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,22 +20,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.learning.entities.LearnerResult;
+import de.learnlib.alex.learning.entities.LearnerSetup;
 import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
 import de.learnlib.alex.testing.entities.TestReport;
-import org.hibernate.validator.constraints.Length;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,6 +34,18 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
+import org.hibernate.validator.constraints.Length;
 
 /**
  * Representation of a testing project with different symbols.
@@ -61,7 +63,7 @@ public class Project implements Serializable {
      * The project ID.
      */
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
@@ -107,14 +109,16 @@ public class Project implements Serializable {
      */
     @OneToMany(
             mappedBy = "project",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
     )
     @JsonIgnore
     private Set<SymbolGroup> groups;
 
     @OneToMany(
             mappedBy = "project",
-            cascade = {CascadeType.REMOVE}
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
     )
     private List<ProjectEnvironment> environments;
 
@@ -123,7 +127,8 @@ public class Project implements Serializable {
      */
     @OneToMany(
             mappedBy = "project",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
     )
     @JsonIgnore
     private Set<TestReport> testReports;
@@ -133,21 +138,26 @@ public class Project implements Serializable {
      */
     @OneToMany(
             mappedBy = "project",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
     @JsonIgnore
     private Set<Symbol> symbols;
 
     /** The tests of this project. */
     @OneToMany(
             mappedBy = "project",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
     @JsonIgnore
     private Set<Test> tests;
 
     /** The test configurations of this project. */
     @OneToMany(
             mappedBy = "project",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
     )
     @JsonIgnore
     private List<TestExecutionConfig> testExecutionConfigs;
@@ -157,16 +167,42 @@ public class Project implements Serializable {
      */
     @OneToMany(
             mappedBy = "project",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
     @JsonIgnore
     private Set<Counter> counters;
+
+    /**
+     * The counters of the project.
+     */
+    @OneToMany(
+            mappedBy = "project",
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JsonIgnore
+    private List<LearnerResult> learnerResults;
+
+    /**
+     * The counters of the project.
+     */
+    @OneToMany(
+            mappedBy = "project",
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    @JsonIgnore
+    private List<LearnerSetup> learnerSetups;
 
     /**
      * The lts formulas of the project.
      */
     @OneToMany(
             mappedBy = "project",
-            cascade = {CascadeType.REMOVE})
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
     @JsonIgnore
     private List<LtsFormulaSuite> ltsFormulaSuites;
 
@@ -180,7 +216,8 @@ public class Project implements Serializable {
     /**
      * Constructor which set the ID.
      *
-     * @param projectId The ID.
+     * @param projectId
+     *         The ID.
      */
 
     public Project(Long projectId) {
@@ -194,6 +231,8 @@ public class Project implements Serializable {
         this.environments = new ArrayList<>();
         this.owners = new ArrayList<>();
         this.members = new ArrayList<>();
+        this.learnerResults = new ArrayList<>();
+        this.learnerSetups = new ArrayList<>();
     }
 
     /**
@@ -208,7 +247,8 @@ public class Project implements Serializable {
     /**
      * Set the ID of this project.
      *
-     * @param id The new ID.
+     * @param id
+     *         The new ID.
      */
     public void setId(Long id) {
         this.id = id;
@@ -227,7 +267,8 @@ public class Project implements Serializable {
     /**
      * Add an user as an owner to the project.
      *
-     * @param owner The user who will be added as an owner.
+     * @param owner
+     *         The user who will be added as an owner.
      */
     @JsonIgnore
     public void addOwner(User owner) {
@@ -237,12 +278,12 @@ public class Project implements Serializable {
     /**
      * Set a list of users as the owners of the project.
      *
-     * @param owners The new list of owners.
+     * @param owners
+     *         The new list of owners.
      */
     @JsonIgnore
     public void setOwners(List<User> owners) {
-
-        if ( owners != null) {
+        if (owners != null) {
             this.owners = owners;
         }
     }
@@ -250,7 +291,8 @@ public class Project implements Serializable {
     /**
      * Remove an owner from the project.
      *
-     * @param owner The user user who will be removed from the list of owners.
+     * @param owner
+     *         The user user who will be removed from the list of owners.
      * @return True if the user was successfully removed
      */
     @JsonIgnore
@@ -302,7 +344,8 @@ public class Project implements Serializable {
     /**
      * Set a new name for the project. The name must be there and be unique.
      *
-     * @param name The new name.
+     * @param name
+     *         The new name.
      */
     public void setName(String name) {
         this.name = name;
@@ -320,7 +363,8 @@ public class Project implements Serializable {
     /**
      * Set the description of this project.
      *
-     * @param description The new description.
+     * @param description
+     *         The new description.
      */
     public void setDescription(String description) {
         this.description = description;
@@ -338,7 +382,8 @@ public class Project implements Serializable {
     /**
      * Set a new set of groups that are used in the project.
      *
-     * @param groups The new set of groups.
+     * @param groups
+     *         The new set of groups.
      */
     public void setGroups(Set<SymbolGroup> groups) {
         this.groups = groups;
@@ -347,26 +392,19 @@ public class Project implements Serializable {
     /**
      * Add one group to the project.
      *
-     * @param group The group to add.
+     * @param group
+     *         The group to add.
      */
     public void addGroup(SymbolGroup group) {
         this.groups.add(group);
         group.setProject(this);
     }
 
-    /**
-     * Get the set of symbols in the project.
-     *
-     * @return The Set of Symbols.
-     */
     @JsonIgnore
     public Collection<Symbol> getSymbols() {
         return symbols;
     }
 
-    /**
-     * @param symbols the symbols to set
-     */
     @JsonIgnore
     public void setSymbols(Set<Symbol> symbols) {
         this.symbols = symbols;
@@ -385,7 +423,8 @@ public class Project implements Serializable {
      * This only establishes the bidirectional relation does nothing else,
      * e.g. it does not take care of the right id.
      *
-     * @param symbol The Symbol to add.
+     * @param symbol
+     *         The Symbol to add.
      */
     public void addSymbol(Symbol symbol) {
         this.symbols.add(symbol);
@@ -412,18 +451,12 @@ public class Project implements Serializable {
         this.testReports = testReports;
     }
 
-    /**
-     * @return All the counters of the Project.
-     */
     @JsonProperty
     @JsonIgnore
     public Set<Counter> getCounters() {
         return counters;
     }
 
-    /**
-     * @param counters The new set of counters for the project.
-     */
     @JsonIgnore
     public void setCounters(Set<Counter> counters) {
         this.counters = counters;
@@ -445,6 +478,22 @@ public class Project implements Serializable {
         this.testExecutionConfigs = testExecutionConfigs;
     }
 
+    public List<LearnerResult> getLearnerResults() {
+        return learnerResults;
+    }
+
+    public void setLearnerResults(List<LearnerResult> learnerResults) {
+        this.learnerResults = learnerResults;
+    }
+
+    public List<LearnerSetup> getLearnerSetups() {
+        return learnerSetups;
+    }
+
+    public void setLearnerSetups(List<LearnerSetup> learnerSetups) {
+        this.learnerSetups = learnerSetups;
+    }
+
     @Transient
     @JsonIgnore
     public ProjectEnvironment getDefaultEnvironment() {
@@ -456,8 +505,12 @@ public class Project implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Project project = (Project) o;
         return Objects.equals(id, project.id);
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,22 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import de.learnlib.alex.data.entities.Counter;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.integrationtests.SpringRestError;
 import de.learnlib.alex.integrationtests.resources.api.CounterApi;
 import de.learnlib.alex.integrationtests.resources.api.ProjectApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.http.HttpStatus;
-
+import java.util.Arrays;
+import java.util.List;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 
 public class CounterResourceIT extends AbstractResourceIT {
 
@@ -47,7 +45,7 @@ public class CounterResourceIT extends AbstractResourceIT {
     private ProjectApi projectApi;
     private CounterApi counterApi;
 
-    @Before
+    @BeforeEach
     public void pre() {
         userApi = new UserApi(client, port);
         projectApi = new ProjectApi(client, port);
@@ -60,7 +58,7 @@ public class CounterResourceIT extends AbstractResourceIT {
         jwtUser2 = userApi.login("test2@test.de", "test");
 
         project1 = projectApi.create("{\"name\":\"test\",\"url\":\"http://localhost:8080\"}", jwtUser1)
-            .readEntity(Project.class);
+                .readEntity(Project.class);
 
         project2 = projectApi.create("{\"name\":\"test\",\"url\":\"http://localhost:8080\"}", jwtUser2)
                 .readEntity(Project.class);
@@ -95,8 +93,8 @@ public class CounterResourceIT extends AbstractResourceIT {
         final Counter counter = createCounter("counter", new Project(-1L), 1);
         final Response res1 = counterApi.create(-1L, counter, jwtUser1);
 
-        Assert.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), res1.getStatus());
-        Assert.assertEquals(0, getNumberOfCounters(project1.getId(), jwtUser1));
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), res1.getStatus());
+        assertEquals(0, getNumberOfCounters(project1.getId(), jwtUser1));
     }
 
     @Test
@@ -107,10 +105,12 @@ public class CounterResourceIT extends AbstractResourceIT {
         assertEquals(HttpStatus.UNAUTHORIZED.value(), res1.getStatus());
 
         final Response res2 = counterApi.getAll(project1.getId(), jwtUser1);
-        assertEquals(0, res2.readEntity(new GenericType<List<Counter>>() {}).size());
+        assertEquals(0, res2.readEntity(new GenericType<List<Counter>>() {
+        }).size());
 
         final Response res3 = counterApi.getAll(project2.getId(), jwtUser2);
-        assertEquals(0, res3.readEntity(new GenericType<List<Counter>>() {}).size());
+        assertEquals(0, res3.readEntity(new GenericType<List<Counter>>() {
+        }).size());
     }
 
     @Test
@@ -161,8 +161,7 @@ public class CounterResourceIT extends AbstractResourceIT {
         counter.setName("updatedName");
 
         final Response res1 = counterApi.update(project1.getId(), counter.getId(), counter, jwtUser1);
-        assertEquals(HttpStatus.BAD_REQUEST.value(), res1.getStatus());
-        res1.readEntity(SpringRestError.class);
+        assertEquals(HttpStatus.OK.value(), res1.getStatus());
 
         counter = getCounterById(project1.getId(), counter.getId(), jwtUser1);
         assertCounter(counter, "counter1", 1);
@@ -254,13 +253,14 @@ public class CounterResourceIT extends AbstractResourceIT {
 
     private int getNumberOfCounters(Long projectId, String jwt) {
         return counterApi.getAll(projectId, jwt)
-                .readEntity(new GenericType<List<Counter>>(){})
+                .readEntity(new GenericType<List<Counter>>() {
+                })
                 .size();
     }
 
     private Counter getCounterById(Long projectId, Long counterId, String jwt) {
         return counterApi.getAll(projectId, jwt)
-                .readEntity(new GenericType<List<Counter>>(){
+                .readEntity(new GenericType<List<Counter>>() {
                 })
                 .stream()
                 .filter(c -> c.getId().equals(counterId))

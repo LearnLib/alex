@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Repository for test results.
@@ -38,7 +37,5 @@ public interface TestResultRepository extends JpaRepository<TestResult, Long> {
      *         The pageable object.
      * @return The test results in descending order.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     Page<TestResult> findAllByTest_IdOrderByTestReport_StartDateDesc(Long testId, Pageable pageable);
 }

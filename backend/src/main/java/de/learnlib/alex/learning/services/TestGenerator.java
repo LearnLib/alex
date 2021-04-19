@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,17 +41,6 @@ import de.learnlib.api.algorithm.LearningAlgorithm;
 import de.learnlib.datastructure.discriminationtree.model.AbstractDTNode;
 import de.learnlib.datastructure.discriminationtree.model.AbstractDiscriminationTree;
 import de.learnlib.datastructure.discriminationtree.model.AbstractWordBasedDiscriminationTree;
-import net.automatalib.automata.transducers.MealyMachine;
-import net.automatalib.util.automata.Automata;
-import net.automatalib.util.automata.conformance.WMethodTestsIterator;
-import net.automatalib.util.automata.conformance.WpMethodTestsIterator;
-import net.automatalib.words.Alphabet;
-import net.automatalib.words.Word;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.inject.Inject;
-import javax.validation.ValidationException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -61,6 +50,16 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import javax.validation.ValidationException;
+import net.automatalib.automata.transducers.MealyMachine;
+import net.automatalib.util.automata.Automata;
+import net.automatalib.util.automata.conformance.WMethodTestsIterator;
+import net.automatalib.util.automata.conformance.WpMethodTestsIterator;
+import net.automatalib.words.Alphabet;
+import net.automatalib.words.Word;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Generate a test suite from a discrimination tree in a learner results. Credits to Philipp Koch.
@@ -72,7 +71,7 @@ public class TestGenerator {
     private final ProjectDAO projectDAO;
     private final TestDAO testDAO;
 
-    @Inject
+    @Autowired
     public TestGenerator(LearnerResultDAO learnerResultDAO,
                          TestDAO testDAO,
                          ProjectDAO projectDAO) {
@@ -104,7 +103,7 @@ public class TestGenerator {
     public TestSuite generate(User user, Long projectId, Long testNo, TestSuiteGenerationConfig config)
             throws NotFoundException, IOException, ClassNotFoundException {
 
-        final LearnerResult result = learnerResultDAO.get(user, projectId, testNo);
+        final LearnerResult result = learnerResultDAO.getByTestNo(user, projectId, testNo);
         final LearnerResultStep step = result.getSteps().stream()
                 .filter(s -> s.getStepNo().equals(config.getStepNo()))
                 .findFirst()
@@ -138,7 +137,7 @@ public class TestGenerator {
 
         final List<TestCase> generatedTestCases = new ArrayList<>();
 
-        final Function <String, TestCase> testCaseFn = (n) -> _createTestCase(user, project, testSuite, n);
+        final Function<String, TestCase> testCaseFn = (n) -> _createTestCase(user, project, testSuite, n);
 
         switch (config.getMethod()) {
             case DT:
@@ -169,7 +168,7 @@ public class TestGenerator {
                 break;
         }
 
-        for (TestCase tc: testSuite.getTestCases()) {
+        for (TestCase tc : testSuite.getTestCases()) {
             testDAO.update(user, project.getId(), tc);
         }
 
@@ -196,7 +195,7 @@ public class TestGenerator {
             throws NotFoundException {
 
         int testNum = 0;
-        for (Word<String> word: Automata.transitionCover(hypothesis, alphabet)) {
+        for (Word<String> word : Automata.transitionCover(hypothesis, alphabet)) {
             final List<Long> pSymbolIds = convertWordToPSymbolIds(word, lr.getSetup().getSymbols());
             final TestCase testCase = createTestCaseFn.apply(String.valueOf(testNum++));
             setTestCaseSteps(testCase, lr, pSymbolIds, hypothesis.computeOutput(word), generatedTestCases);

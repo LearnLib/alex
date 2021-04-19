@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,10 +35,10 @@ public final class CSSUtils {
 
     /**
      * Escape special characters in css id selectors.
-     *
      * Port of https://github.com/mathiasbynens/CSS.escape/blob/master/css.escape.js
      *
-     * @param id The id selector of an element starting with #
+     * @param id
+     *         The id selector of an element starting with #
      * @return The escaped id
      */
     private static String escapeIdentifier(String id) {
@@ -53,21 +53,21 @@ public final class CSSUtils {
             }
 
             if (
-                unit <= UNIT_SEPARATOR_CHARACTER || unit == DELETE_CHARACTER // the non printable ASCII characters
-                || (i == 0 && unit >= '0' && unit <= '9')
-                || (i == 1 && unit >= '0' && unit <= '9' && firstUnit == '-')
+                    unit <= UNIT_SEPARATOR_CHARACTER || unit == DELETE_CHARACTER // the non printable ASCII characters
+                            || (i == 0 && unit >= '0' && unit <= '9')
+                            || (i == 1 && unit >= '0' && unit <= '9' && firstUnit == '-')
             ) {
                 result.append("\\").append(Integer.toHexString(unit)).append(" ");
                 continue;
             }
 
             if (
-                unit > DELETE_CHARACTER // "second half" of the (extended) ASCII table
-                || unit == '-'
-                || unit == '_'
-                || unit >= '0' && unit <= '9'
-                || unit >= 'A' && unit <= 'Z'
-                || unit >= 'a' && unit <= 'z'
+                    unit > DELETE_CHARACTER // "second half" of the (extended) ASCII table
+                            || unit == '-'
+                            || unit == '_'
+                            || unit >= '0' && unit <= '9'
+                            || unit >= 'A' && unit <= 'Z'
+                            || unit >= 'a' && unit <= 'z'
             ) {
                 result.append(unit);
                 continue;
@@ -82,20 +82,21 @@ public final class CSSUtils {
     /**
      * Escapes special characters in CSS selectors in case it contains ids.
      *
-     * @param css The css string to escape
+     * @param css
+     *         The css string to escape
      * @return The escaped css string
      */
     public static String escapeSelector(String css) {
 
         if (!css.contains(" ") && css.startsWith("#")) {
-            return "#" + escapeIdentifier(css.substring(1, css.length()));
+            return "#" + escapeIdentifier(css.substring(1));
         } else {
             StringBuilder result = new StringBuilder();
             String[] pieces = css.split(" ");
 
             for (String p : pieces) {
                 if (p.startsWith("#")) {
-                    result.append("#").append(escapeIdentifier(p.substring(1, p.length()))).append(" ");
+                    result.append("#").append(escapeIdentifier(p.substring(1))).append(" ");
                 } else {
                     result.append(p).append(" ");
                 }

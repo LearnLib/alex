@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,16 +22,13 @@ import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.common.utils.SearchHelper;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 /**
  * RESTSymbolAction to check the HTTP Header fields of the last request.
@@ -40,10 +37,6 @@ import java.util.List;
 @DiscriminatorValue("rest_checkHeaderField")
 @JsonTypeName("rest_checkHeaderField")
 public class CheckHeaderFieldAction extends RESTSymbolAction {
-
-    private static final long serialVersionUID = -7234083244640666736L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The key of the header field to check for the value. */
     @NotBlank
@@ -64,7 +57,7 @@ public class CheckHeaderFieldAction extends RESTSymbolAction {
     public ExecuteResult execute(WebServiceConnector connector) {
         List<Object> headerFieldValues = connector.getHeaders().get(key);
         if (headerFieldValues == null) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could header {} against the value {}, because the header was not found (regExp: {}).",
+            logger.info(LoggerMarkers.LEARNER, "Could header {} against the value {}, because the header was not found (regExp: {}).",
                     key, value, regexp);
             return getFailedOutput();
         }
@@ -76,7 +69,7 @@ public class CheckHeaderFieldAction extends RESTSymbolAction {
             result = search(headerFieldValues);
         }
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Checked header {} with the value {} against {} => {} (regExp: {}).",
+        logger.info(LoggerMarkers.LEARNER, "Checked header {} with the value {} against {} => {} (regExp: {}).",
                 key, headerFieldValues, value, result, regexp);
         if (result) {
             return getSuccessOutput();

@@ -1,0 +1,47 @@
+name: build-and-deply
+description: build and deploy docker images
+
+inputs:
+  username:
+    description: 'GitHub username'
+    required: true
+  password:
+    description: 'GitHub password'
+    required: true
+  context:
+    description: 'Docker build context'
+    required: true
+  tag:
+    description: 'Docker image name'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Build Docker Image
+      shell: bash
+      run: docker build ${{ inputs.context }} --file ${{ inputs.context }}/Dockerfile --tag ${{ inputs.tag }}
+
+    - name: Login to GitHub Container Registry
+      shell: bash
+      run: echo "${{ inputs.password }}" | docker login https://ghcr.io -u ${{ inputs.username }} --password-stdin
+
+    - name: Push to GitHub Container Registry
+      shell: bash
+      run: |
+        IMAGE_ID=ghcr.io/learnlib/alex/${{ inputs.tag }}
+        BRANCH=${GITHUB_REF#"refs/heads/"}
+        VERSION=
+
+        if [ "$BRANCH" == "developer" ]
+        then
+          VERSION="unstable"
+        elif [ "$BRANCH" == "master" ]
+        then
+          VERSION="latest"
+        else
+          VERSION="$GITHUB_SHA"
+        fi
+
+        docker tag ${{ inputs.tag }} $IMAGE_ID:$VERSION
+        docker push $IMAGE_ID:$VERSION

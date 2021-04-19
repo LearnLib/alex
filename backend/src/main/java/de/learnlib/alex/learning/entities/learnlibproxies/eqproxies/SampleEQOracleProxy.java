@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,14 +20,13 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.api.oracle.EquivalenceOracle;
 import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.oracle.equivalence.SampleSetEQOracle;
-import net.automatalib.automata.transducers.MealyMachine;
-import net.automatalib.words.Word;
-
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
+import javax.validation.constraints.NotBlank;
+import net.automatalib.automata.transducers.MealyMachine;
+import net.automatalib.words.Word;
 
 /**
  * Proxy around a {@link de.learnlib.oracle.equivalence.SampleSetEQOracle}.
@@ -61,8 +60,11 @@ public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy implemen
 
         /**
          * Constructor.
-         * @param input The input symbol.
-         * @param output The output symbol.
+         *
+         * @param input
+         *         The input symbol.
+         * @param output
+         *         The output symbol.
          */
         public InputOutputPair(String input, String output) {
             this.input = input;
@@ -71,6 +73,7 @@ public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy implemen
 
         /**
          * Get the input.
+         *
          * @return The input.
          */
         public String getInput() {
@@ -79,7 +82,9 @@ public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy implemen
 
         /**
          * Set the input.
-         * @param input The input.
+         *
+         * @param input
+         *         The input.
          */
         public void setInput(String input) {
             this.input = input;
@@ -87,6 +92,7 @@ public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy implemen
 
         /**
          * Get the output.
+         *
          * @return The output.
          */
         public String getOutput() {
@@ -95,7 +101,9 @@ public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy implemen
 
         /**
          * Set the output.
-         * @param output The output.
+         *
+         * @param output
+         *         The output.
          */
         public void setOutput(String output) {
             this.output = output;

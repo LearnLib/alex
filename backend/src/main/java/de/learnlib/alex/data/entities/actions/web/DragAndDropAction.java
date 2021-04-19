@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,12 +21,6 @@ import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
-
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
@@ -34,15 +28,14 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
 @Entity
 @DiscriminatorValue("web_dragAndDrop")
 @JsonTypeName("web_dragAndDrop")
 public class DragAndDropAction extends WebSymbolAction {
-
-    private static final long serialVersionUID = 8417345026318123297L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     @NotNull
     @Embedded
@@ -72,10 +65,10 @@ public class DragAndDropAction extends WebSymbolAction {
             final WebElement source = connector.getElement(sourceNodeWithVariables);
             final WebElement target = connector.getElement(targetNodeWithVariables);
             new Actions(connector.getDriver()).dragAndDrop(source, target).build().perform();
-            LOGGER.info(LoggerMarkers.LEARNER, "Drag element '({})' to element '({})'.", source, target);
+            logger.info(LoggerMarkers.LEARNER, "Drag element '({})' to element '({})'.", source, target);
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not perform drag and drop");
+            logger.info(LoggerMarkers.LEARNER, "Could not perform drag and drop");
             return getFailedOutput();
         }
     }

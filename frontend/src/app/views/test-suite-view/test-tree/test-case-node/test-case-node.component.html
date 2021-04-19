@@ -1,0 +1,22 @@
+<div class="test-case-node">
+  <div class="header d-flex flex-row align-items-center">
+    <div class="test-icon">
+      <i class="fas fa-fw fa-file"></i>
+    </div>
+    <a [routerLink]="['/app', 'projects', case.project, 'tests', case.id]" [class.disabled]="lockInfo != null && lockInfo.username !== this.appStore.getUsername()" class="test-name w-100">
+      <span>
+        <strong>{{case.name}}</strong>
+        <em class="text-muted ml-1" *ngIf="case.generated">(generated)</em>
+      </span>
+      <lock-info-badge class="ml-2" *ngIf="lockInfo != null" [lockInfo]="lockInfo"></lock-info-badge>
+      <span class="ml-2">
+        <span *ngIf="case.status === 'EMPTY'" class="badge badge-warning">Empty</span>
+        <span *ngIf="case.status === 'WORK_IN_PROGRESS'" class="badge badge-info">WIP</span>
+      </span>
+    </a>
+    <div class="ml-3" *ngIf="result">
+      <span *ngIf="result.passed" class="badge badge-success">Passed</span>
+      <span *ngIf="!result.passed" class="badge badge-danger">Failed</span>
+    </div>
+  </div>
+</div>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,10 @@
 
 package de.learnlib.alex.modelchecking.entities;
 
-import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import javax.validation.ValidationException;
 
 /** Configuration object for checking lts properties on a learned model. */
 public class LtsCheckingConfig {
@@ -32,6 +33,9 @@ public class LtsCheckingConfig {
     /** The formulas to check. */
     private List<LtsFormula> formulas;
 
+    /** The IDs of the formulas to check. */
+    private List<Long> formulaIds;
+
     /** How many unfolds are used for checking. */
     private Integer minUnfolds;
 
@@ -41,6 +45,7 @@ public class LtsCheckingConfig {
     /** Constructor. */
     public LtsCheckingConfig() {
         this.formulas = new ArrayList<>();
+        this.formulaIds = new ArrayList<>();
         this.minUnfolds = 0;
         this.multiplier = 1.0;
     }
@@ -66,7 +71,7 @@ public class LtsCheckingConfig {
     }
 
     public void setFormulas(List<LtsFormula> formulas) {
-        this.formulas = formulas;
+        this.formulas = Optional.ofNullable(formulas).orElse(new ArrayList<>());
     }
 
     public Integer getMinUnfolds() {
@@ -85,6 +90,14 @@ public class LtsCheckingConfig {
         this.multiplier = multiplier;
     }
 
+    public List<Long> getFormulaIds() {
+        return formulaIds;
+    }
+
+    public void setFormulaIds(List<Long> formulaIds) {
+        this.formulaIds = Optional.ofNullable(formulaIds).orElse(new ArrayList<>());
+    }
+
     /**
      * Validate the config.
      *
@@ -96,8 +109,8 @@ public class LtsCheckingConfig {
             throw new ValidationException("The ID of the learner result has to be > 0.");
         } else if (stepNo == null || stepNo < 1) {
             throw new ValidationException("The step number has to be > 0.");
-        } else if (formulas.isEmpty()) {
-            throw new ValidationException("There has to be at least one formula ID.");
+        } else if (formulas.size() + formulaIds.size() == 0) {
+            throw new ValidationException("There has to be at least one formula.");
         } else if (minUnfolds < 0) {
             throw new ValidationException("minUnfolds has to be >= 0.");
         } else if (multiplier <= 0.0) {

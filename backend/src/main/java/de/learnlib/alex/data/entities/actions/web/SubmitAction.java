@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,11 @@ import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.NoSuchElementException;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
+import org.openqa.selenium.NoSuchElementException;
 
 /**
  * Action to submit a specific element.
@@ -37,10 +34,6 @@ import javax.validation.constraints.NotNull;
 @DiscriminatorValue("web_submit")
 @JsonTypeName("web_submit")
 public class SubmitAction extends WebSymbolAction {
-
-    private static final long serialVersionUID = 3054489976413991003L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The information to identify the element. */
     @NotNull
@@ -55,10 +48,10 @@ public class SubmitAction extends WebSymbolAction {
         try {
             connector.getElement(nodeWithVariables).submit();
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Submitted '{}'.", nodeWithVariables);
+            logger.info(LoggerMarkers.LEARNER, "Submitted '{}'.", nodeWithVariables);
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not submit '{}'.", nodeWithVariables, e);
+            logger.info(LoggerMarkers.LEARNER, "Could not submit '{}'.", nodeWithVariables, e);
             return getFailedOutput();
         }
     }

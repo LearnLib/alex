@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,37 +16,38 @@
 
 package de.learnlib.alex.common.utils;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 public class CSSUtilsTest {
 
     @Test
     public void shouldLeaveUncriticalSelectorsUntouched() {
         final String s1 = ".some-class";
-        Assert.assertEquals(".some-class", CSSUtils.escapeSelector(s1));
+        assertEquals(".some-class", CSSUtils.escapeSelector(s1));
 
         final String s2 = "body";
-        Assert.assertEquals("body", CSSUtils.escapeSelector(s2));
+        assertEquals("body", CSSUtils.escapeSelector(s2));
 
         final String s3 = "body > div > ul:nth-child(3)";
-        Assert.assertEquals("body > div > ul:nth-child(3)", CSSUtils.escapeSelector(s3));
+        assertEquals("body > div > ul:nth-child(3)", CSSUtils.escapeSelector(s3));
 
         final String s4 = "#some-element";
-        Assert.assertEquals("#some-element", CSSUtils.escapeSelector(s4));
+        assertEquals("#some-element", CSSUtils.escapeSelector(s4));
     }
 
     @Test
     public void shouldEscapeIdsWithSpecialCharacters() {
         final String[] specialChars = {"!", "\"", "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", ".", "/", ":", ";",
-            "<", "=", ">", "?", "@", "[", "\\", "]", "^", "`", "{", "|", "}", "~"};
+                "<", "=", ">", "?", "@", "[", "\\", "]", "^", "`", "{", "|", "}", "~"};
 
-        for (int i = 0; i < specialChars.length; i++) {
-            final String s1 = "#some" + specialChars[i] + "el";
-            Assert.assertEquals("#some\\" + specialChars[i] + "el", CSSUtils.escapeSelector(s1));
+        for (String specialChar : specialChars) {
+            final String s1 = "#some" + specialChar + "el";
+            assertEquals("#some\\" + specialChar + "el", CSSUtils.escapeSelector(s1));
 
-            final String s2 = "body > #some" + specialChars[i] + "el";
-            Assert.assertEquals("body > #some\\" + specialChars[i] + "el", CSSUtils.escapeSelector(s2));
+            final String s2 = "body > #some" + specialChar + "el";
+            assertEquals("body > #some\\" + specialChar + "el", CSSUtils.escapeSelector(s2));
         }
     }
 }

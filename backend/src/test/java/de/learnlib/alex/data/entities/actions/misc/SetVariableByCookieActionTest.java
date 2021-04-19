@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,26 +16,8 @@
 
 package de.learnlib.alex.data.entities.actions.misc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.learnlib.alex.data.entities.SymbolAction;
-import de.learnlib.alex.learning.services.connectors.ConnectorManager;
-import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
-import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
-import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.junit.Before;
-import org.junit.Test;
-import org.openqa.selenium.Cookie;
-import org.openqa.selenium.WebDriver;
-
-import javax.ws.rs.core.NewCookie;
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -43,16 +25,33 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.learnlib.alex.data.entities.SymbolAction;
+import de.learnlib.alex.learning.services.connectors.ConnectorManager;
+import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
+import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
+import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Map;
+import javax.ws.rs.core.NewCookie;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.openqa.selenium.Cookie;
+import org.openqa.selenium.WebDriver;
+
 public class SetVariableByCookieActionTest {
 
-    private static final String VARIABLE_NAME  = "foobar";
+    private static final String VARIABLE_NAME = "foobar";
 
-    private static final String COOKIE_NAME  = "cookie";
+    private static final String COOKIE_NAME = "cookie";
     private static final String COOKIE_VALUE = "hello world";
 
     private SetVariableByCookieAction setAction;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         setAction = new SetVariableByCookieAction();
         setAction.setName(VARIABLE_NAME);

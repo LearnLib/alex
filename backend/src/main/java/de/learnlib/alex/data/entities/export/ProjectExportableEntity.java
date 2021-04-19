@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,12 @@ public class ProjectExportableEntity extends ExportableEntity {
     private JsonNode groups;
 
     private JsonNode tests;
+
+    private JsonNode formulaSuites;
+
+    private JsonNode learnerSetups;
+
+    private JsonNode testExecutionConfigs;
 
     public ProjectExportableEntity() {
         super("-1", "project");
@@ -57,5 +63,29 @@ public class ProjectExportableEntity extends ExportableEntity {
 
     public void setTests(JsonNode tests) {
         this.tests = tests;
+    }
+
+    public JsonNode getFormulaSuites() {
+        return formulaSuites;
+    }
+
+    public void setFormulaSuites(JsonNode formulaSuites) {
+        this.formulaSuites = formulaSuites;
+    }
+
+    public JsonNode getLearnerSetups() {
+        return learnerSetups;
+    }
+
+    public void setLearnerSetups(JsonNode learnerSetups) {
+        this.learnerSetups = learnerSetups;
+    }
+
+    public JsonNode getTestExecutionConfigs() {
+        return testExecutionConfigs;
+    }
+
+    public void setTestExecutionConfigs(JsonNode testExecutionConfigs) {
+        this.testExecutionConfigs = testExecutionConfigs;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@
 
 package de.learnlib.alex.modelchecking.rest;
 
-import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.modelchecking.dao.LtsFormulaSuiteDAO;
 import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import de.learnlib.alex.security.AuthContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.util.List;
+import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,20 +34,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.ws.rs.core.MediaType;
-import java.util.List;
-
 /** The lts formula endpoints for the REST API. */
 @RestController
 @Transactional(rollbackFor = Exception.class)
 @RequestMapping("/rest/projects/{projectId}/ltsFormulaSuites")
 public class LtsFormulaSuiteResource {
 
-    private static final Logger LOGGER = LogManager.getLogger();
-
-    /** The security context containing the user of the request. */
-    private AuthContext authContext;
-    private LtsFormulaSuiteDAO ltsFormulaSuiteDAO;
+    private final AuthContext authContext;
+    private final LtsFormulaSuiteDAO ltsFormulaSuiteDAO;
 
     @Autowired
     public LtsFormulaSuiteResource(AuthContext authContext,
@@ -61,11 +54,8 @@ public class LtsFormulaSuiteResource {
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity<List<LtsFormulaSuite>> getAll(@PathVariable("projectId") Long projectId) {
-        LOGGER.traceEntry("enter getAll(projectId: {})", projectId);
-        final User user = authContext.getUser();
-        final List<LtsFormulaSuite> suites = ltsFormulaSuiteDAO.getAll(user, projectId);
-
-        LOGGER.traceExit("leave getAll()");
+        final var user = authContext.getUser();
+        final var suites = ltsFormulaSuiteDAO.getAll(user, projectId);
         return ResponseEntity.ok(suites);
     }
 
@@ -75,11 +65,8 @@ public class LtsFormulaSuiteResource {
     )
     public ResponseEntity<LtsFormulaSuite> get(@PathVariable("projectId") Long projectId,
                                                @PathVariable("suiteId") Long suiteId) {
-        LOGGER.traceEntry("enter get(projectId: {})", projectId);
-        final User user = authContext.getUser();
-        final LtsFormulaSuite suite = ltsFormulaSuiteDAO.get(user, projectId, suiteId);
-
-        LOGGER.traceExit("leave get()");
+        final var user = authContext.getUser();
+        final var suite = ltsFormulaSuiteDAO.get(user, projectId, suiteId);
         return ResponseEntity.ok(suite);
     }
 
@@ -89,11 +76,8 @@ public class LtsFormulaSuiteResource {
     )
     public ResponseEntity<LtsFormulaSuite> create(@PathVariable("projectId") Long projectId,
                                                   @RequestBody LtsFormulaSuite suite) {
-        LOGGER.traceEntry("enter create(projectId: {})", projectId);
-        final User user = authContext.getUser();
-        final LtsFormulaSuite createdSuite = ltsFormulaSuiteDAO.create(user, projectId, suite);
-
-        LOGGER.traceExit("leave create()");
+        final var user = authContext.getUser();
+        final var createdSuite = ltsFormulaSuiteDAO.create(user, projectId, suite);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdSuite);
     }
 
@@ -105,11 +89,8 @@ public class LtsFormulaSuiteResource {
     public ResponseEntity<LtsFormulaSuite> update(@PathVariable("projectId") Long projectId,
                                                   @PathVariable("suiteId") Long suiteId,
                                                   @RequestBody LtsFormulaSuite suite) {
-        LOGGER.traceEntry("enter update(projectId: {})", projectId);
-        final User user = authContext.getUser();
-        final LtsFormulaSuite updatedSuite = ltsFormulaSuiteDAO.update(user, projectId, suiteId, suite);
-
-        LOGGER.traceExit("leave update()");
+        final var user = authContext.getUser();
+        final var updatedSuite = ltsFormulaSuiteDAO.update(user, projectId, suiteId, suite);
         return ResponseEntity.ok(updatedSuite);
     }
 
@@ -119,11 +100,8 @@ public class LtsFormulaSuiteResource {
     )
     public ResponseEntity<String> delete(@PathVariable("projectId") Long projectId,
                                          @PathVariable("suiteId") Long suiteId) {
-        LOGGER.traceEntry("enter delete(projectId: {})", projectId);
-        final User user = authContext.getUser();
+        final var user = authContext.getUser();
         ltsFormulaSuiteDAO.delete(user, projectId, suiteId);
-
-        LOGGER.traceExit("leave delete()");
         return ResponseEntity.noContent().build();
     }
 
@@ -133,11 +111,8 @@ public class LtsFormulaSuiteResource {
     )
     public ResponseEntity<String> delete(@PathVariable("projectId") Long projectId,
                                          @PathVariable("suiteIds") List<Long> suiteIds) {
-        LOGGER.traceEntry("enter delete(projectId: {})", projectId);
-        final User user = authContext.getUser();
+        final var user = authContext.getUser();
         ltsFormulaSuiteDAO.delete(user, projectId, suiteIds);
-
-        LOGGER.traceExit("leave delete()");
         return ResponseEntity.noContent().build();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package de.learnlib.alex.data.dao;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.common.exceptions.EntityLockedException;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
@@ -28,16 +29,7 @@ import de.learnlib.alex.data.entities.export.SymbolImportConflictResolutionStrat
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.hibernate.Hibernate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.validation.ValidationException;
+import de.learnlib.alex.websocket.services.SymbolPresenceService;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -47,8 +39,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.validation.ValidationException;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Implementation of a SymbolGroupDAO using Spring Data.
@@ -60,43 +60,51 @@ public class SymbolGroupDAO {
     /** The format for archived symbols. */
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd-HH:mm:ss");
 
-    private static final Logger LOGGER = LogManager.getLogger();
-
-    private ProjectRepository projectRepository;
-    private ProjectDAO projectDAO;
-    private SymbolGroupRepository symbolGroupRepository;
-    private SymbolRepository symbolRepository;
-    private SymbolDAO symbolDAO;
-    private ObjectMapper objectMapper;
+    private final ProjectRepository projectRepository;
+    private final ProjectDAO projectDAO;
+    private final SymbolGroupRepository symbolGroupRepository;
+    private final SymbolRepository symbolRepository;
+    private final SymbolDAO symbolDAO;
+    private final ObjectMapper objectMapper;
+    private final SymbolPresenceService symbolPresenceService;
 
     @Autowired
-    public SymbolGroupDAO(ProjectRepository projectRepository, ProjectDAO projectDAO,
-                          SymbolGroupRepository symbolGroupRepository, SymbolRepository symbolRepository,
-                          @Lazy SymbolDAO symbolDAO, ObjectMapper objectMapper) {
+    public SymbolGroupDAO(
+            ProjectRepository projectRepository,
+            ProjectDAO projectDAO,
+            SymbolGroupRepository symbolGroupRepository,
+            SymbolRepository symbolRepository,
+            @Lazy SymbolDAO symbolDAO,
+            ObjectMapper objectMapper,
+            @Lazy SymbolPresenceService symbolPresenceService) {
         this.projectRepository = projectRepository;
         this.projectDAO = projectDAO;
         this.symbolGroupRepository = symbolGroupRepository;
         this.symbolRepository = symbolRepository;
         this.symbolDAO = symbolDAO;
         this.objectMapper = objectMapper;
+        this.symbolPresenceService = symbolPresenceService;
     }
 
     public List<SymbolGroup> importGroups(User user, Long projectId, SymbolGroupsImportableEntity importableEntity) {
-        LOGGER.traceEntry("import()");
-
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
         try {
-            final SymbolGroup[] symbolGroups = objectMapper.readValue(importableEntity.getSymbolGroups().toString(), SymbolGroup[].class);
+            final var symbolGroupsAsString = importableEntity.getSymbolGroups().toString();
+            final var symbolGroups = objectMapper.readValue(symbolGroupsAsString, SymbolGroup[].class);
             return importGroups(user, project, Arrays.asList(symbolGroups), importableEntity.getConflictResolutions());
         } catch (IOException e) {
             throw new ValidationException("The input could not be parsed");
         }
     }
 
-    public List<SymbolGroup> importGroups(User user, Project project, List<SymbolGroup> groups, Map<String, SymbolImportConflictResolutionStrategy> conflictResolutions) {
-        LOGGER.traceEntry("import({})", groups);
+    public List<SymbolGroup> importGroups(
+            User user,
+            Project project,
+            List<SymbolGroup> groups,
+            Map<String, SymbolImportConflictResolutionStrategy> conflictResolutions
+    ) {
         projectDAO.checkAccess(user, project);
 
         // name -> symbol
@@ -125,9 +133,15 @@ public class SymbolGroupDAO {
         return importedGroups;
     }
 
-    private List<SymbolGroup> importGroups(User user, Project project, List<SymbolGroup> groups, SymbolGroup parent, Map<String, SymbolImportConflictResolutionStrategy> conflictResolutions) {
+    private List<SymbolGroup> importGroups(
+            User user,
+            Project project,
+            List<SymbolGroup> groups,
+            SymbolGroup parent, Map<String,
+            SymbolImportConflictResolutionStrategy> conflictResolutions
+    ) {
         final List<SymbolGroup> importedGroups = new ArrayList<>();
-        for (SymbolGroup group: groups) {
+        for (SymbolGroup group : groups) {
             final List<SymbolGroup> children = group.getGroups();
             final Set<Symbol> symbols = group.getSymbols();
 
@@ -146,21 +160,20 @@ public class SymbolGroupDAO {
             });
             symbolDAO.importSymbols(user, project, new ArrayList<>(symbols), conflictResolutions);
 
-            final List<SymbolGroup> createdChildren = importGroups(user, project, children, createdGroup, conflictResolutions);
-            createdGroup.setGroups(createdChildren);
+            final var createdChildGroups = importGroups(user, project, children, createdGroup, conflictResolutions);
+            createdGroup.setGroups(createdChildGroups);
             importedGroups.add(createdGroup);
         }
         return importedGroups;
     }
 
-    public void create(User user, SymbolGroup group) throws NotFoundException, ValidationException {
-        LOGGER.traceEntry("create({})", group);
-
-        final Project project = projectRepository.findById(group.getProjectId()).orElse(null);
+    public SymbolGroup create(User user, Long projectId, SymbolGroup group) {
+        final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
         group.setId(null);
         group.setName(createGroupName(project, group));
+        group.setProject(project);
         project.addGroup(group);
         beforePersistGroup(group);
 
@@ -173,15 +186,10 @@ public class SymbolGroupDAO {
             symbolGroupRepository.save(parent);
         }
 
-        symbolGroupRepository.save(group);
-
-        LOGGER.traceExit(group);
+        return symbolGroupRepository.save(group);
     }
 
-    public List<SymbolGroup> create(User user, Long projectId, List<SymbolGroup> groups)
-            throws NotFoundException, ValidationException {
-        LOGGER.traceEntry("create({})", groups);
-
+    public List<SymbolGroup> create(User user, Long projectId, List<SymbolGroup> groups) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
@@ -190,8 +198,7 @@ public class SymbolGroupDAO {
         return groups;
     }
 
-    private List<SymbolGroup> create(User user, Project project, List<SymbolGroup> groups, SymbolGroup parent)
-            throws NotFoundException, ValidationException {
+    private List<SymbolGroup> create(User user, Project project, List<SymbolGroup> groups, SymbolGroup parent) {
         final List<SymbolGroup> createdGroups = new ArrayList<>();
         for (SymbolGroup group : groups) {
             createdGroups.add(create(user, project, group, parent));
@@ -199,8 +206,7 @@ public class SymbolGroupDAO {
         return createdGroups;
     }
 
-    private SymbolGroup create(User user, Project project, SymbolGroup group, SymbolGroup parent)
-            throws NotFoundException, ValidationException {
+    private SymbolGroup create(User user, Project project, SymbolGroup group, SymbolGroup parent) {
         final List<SymbolGroup> children = group.getGroups();
         final Set<Symbol> symbols = group.getSymbols();
 
@@ -224,12 +230,11 @@ public class SymbolGroupDAO {
         return createdGroup;
     }
 
-    public List<SymbolGroup> getAll(User user, long projectId)
-            throws NotFoundException {
+    public List<SymbolGroup> getAll(User user, long projectId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
-        final List<SymbolGroup> groups = symbolGroupRepository.findAllByProject_IdAndParent_id(projectId, null);
+        final var groups = symbolGroupRepository.findAllByProject_IdAndParent_id(projectId, null);
         for (SymbolGroup group : groups) {
             loadLazyRelations(group);
         }
@@ -237,8 +242,7 @@ public class SymbolGroupDAO {
         return groups;
     }
 
-    public SymbolGroup get(User user, long projectId, Long groupId)
-            throws NotFoundException {
+    public SymbolGroup get(User user, long projectId, Long groupId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final SymbolGroup group = symbolGroupRepository.findById(groupId).orElse(null);
         checkAccess(user, project, group);
@@ -248,33 +252,32 @@ public class SymbolGroupDAO {
         return group;
     }
 
-    public void update(User user, SymbolGroup group) throws NotFoundException, ValidationException {
-        final Project project = projectRepository.findById(group.getProjectId()).orElse(null);
-        final SymbolGroup groupInDB = symbolGroupRepository.findById(group.getId()).orElse(null);
+    public SymbolGroup update(User user, Long projectId, Long groupId, SymbolGroup group) {
+        final var project = projectRepository.findById(projectId).orElse(null);
+        final var groupInDB = symbolGroupRepository.findById(groupId).orElse(null);
         checkAccess(user, project, groupInDB);
 
+        // check group lock status
+        this.symbolPresenceService.checkGroupLockStatus(project.getId(), group.getId());
+
+        // has name changed?
         if (!group.getName().equals(groupInDB.getName())) {
-            group.setName(createGroupName(project, group));
+            groupInDB.setName(createGroupName(project, group));
         }
 
-        if (group.getParentId() != null && group.getParentId().equals(groupInDB.getId())) {
-            throw new ValidationException("A group cannot have itself as child.");
-        }
+        final var updatedGroup = symbolGroupRepository.save(groupInDB);
+        loadLazyRelations(updatedGroup);
 
-        final SymbolGroup defaultGroup = symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(project.getId());
-        if (defaultGroup.equals(groupInDB) && group.getParentId() != null) {
-            throw new ValidationException("The default group cannot be a child of another group.");
-        }
-
-        groupInDB.setProject(project);
-        groupInDB.setName(group.getName());
-        symbolGroupRepository.save(groupInDB);
+        return updatedGroup;
     }
 
-    public SymbolGroup move(User user, SymbolGroup group) throws NotFoundException, ValidationException {
+    public SymbolGroup move(User user, SymbolGroup group) {
         final Project project = projectRepository.findById(group.getProjectId()).orElse(null);
         final SymbolGroup groupInDB = symbolGroupRepository.findById(group.getId()).orElse(null);
         checkAccess(user, project, groupInDB);
+
+        // check group lock status
+        this.symbolPresenceService.checkGroupLockStatus(project.getId(), group.getId());
 
         final SymbolGroup defaultGroup = symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(project.getId());
         if (defaultGroup.equals(groupInDB)) {
@@ -317,10 +320,14 @@ public class SymbolGroupDAO {
         return movedGroup;
     }
 
-    public void delete(User user, long projectId, Long groupId) throws IllegalArgumentException, NotFoundException {
+    public void delete(User user, long projectId, Long groupId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final SymbolGroup group = symbolGroupRepository.findById(groupId).orElse(null);
         checkAccess(user, project, group);
+        checkRunningProcesses(user, project, group);
+
+        // check symbolgroup lock status
+        this.symbolPresenceService.checkGroupLockStatus(projectId, groupId);
 
         final SymbolGroup defaultGroup = symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(projectId);
         if (defaultGroup.equals(group)) {
@@ -351,8 +358,7 @@ public class SymbolGroupDAO {
         }
     }
 
-    public void checkAccess(User user, Project project, SymbolGroup group)
-            throws NotFoundException, UnauthorizedException {
+    public void checkAccess(User user, Project project, SymbolGroup group) {
         projectDAO.checkAccess(user, project);
 
         if (group == null) {
@@ -362,6 +368,47 @@ public class SymbolGroupDAO {
         if (!group.getProject().equals(project)) {
             throw new UnauthorizedException("You are not allowed to access the group.");
         }
+    }
+
+    public void checkRunningProcesses(User user, Project project, SymbolGroup symbolGroup) {
+        if (this.getActiveSymbolGroups(user, project).stream().anyMatch(sg -> sg.getId().equals(symbolGroup.getId()))) {
+            throw new EntityLockedException("The SymbolGroup is currently used in the active test or learning process.");
+        }
+    }
+
+    public Set<SymbolGroup> getActiveSymbolGroups(User user, Project project) {
+        Set<SymbolGroup> result = new HashSet<>();
+
+        this.symbolDAO.getActiveSymbols(user, project).forEach(s -> {
+            result.add(s.getGroup());
+            result.addAll(extractAncestorSymbolGroups(s.getGroup()));
+            result.addAll(extractDescendantSymbolGroups(s.getGroup()));
+        });
+
+        return result;
+    }
+
+    private Set<SymbolGroup> extractDescendantSymbolGroups(SymbolGroup symbolGroup) {
+        Set<SymbolGroup> result = new HashSet<>();
+
+        symbolGroup.getGroups().forEach(descendant -> {
+            result.add(descendant);
+            result.addAll(extractDescendantSymbolGroups(descendant));
+        });
+
+        return result;
+    }
+
+    public Set<SymbolGroup> extractAncestorSymbolGroups(SymbolGroup symbolGroup) {
+        Set<SymbolGroup> result = new HashSet<>();
+
+        Optional.ofNullable(symbolGroup.getParent())
+                .ifPresent(ancestor -> {
+                    result.add(ancestor);
+                    result.addAll(extractAncestorSymbolGroups(ancestor));
+                });
+
+        return result;
     }
 
     private String createGroupName(Project project, SymbolGroup group) {
@@ -379,7 +426,7 @@ public class SymbolGroupDAO {
         Hibernate.initialize(group.getSymbols());
         group.getSymbols().forEach(SymbolDAO::loadLazyRelations);
 
-        for (SymbolGroup g: group.getGroups()) {
+        for (SymbolGroup g : group.getGroups()) {
             loadLazyRelations(g);
         }
     }
@@ -391,16 +438,10 @@ public class SymbolGroupDAO {
      *         The Group to take care of its Symbols.
      */
     private void beforePersistGroup(SymbolGroup group) {
-        LOGGER.traceEntry("beforePersistGroup({})", group);
-
-        final Project project = group.getProject();
-
         group.getSymbols().forEach(symbol -> {
-            project.addSymbol(symbol);
+            group.getProject().addSymbol(symbol);
             symbol.setGroup(group);
             SymbolDAO.beforeSymbolSave(symbol);
         });
-
-        LOGGER.traceExit();
     }
 }

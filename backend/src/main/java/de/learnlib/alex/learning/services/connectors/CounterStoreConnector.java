@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,33 +21,32 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.CounterDAO;
 import de.learnlib.alex.data.entities.Counter;
 import de.learnlib.alex.data.entities.Project;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Connector to store and manage counters.
  */
-public class CounterStoreConnector implements Connector {
+public class CounterStoreConnector implements Connector, Cloneable {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(CounterStoreConnector.class);
 
     /** The map that keeps track of all counters used by different urls. url -> (counterName -> counterValue). */
-    private Map<String, Integer> countersMap;
+    private final Map<String, Integer> countersMap;
 
     /** An instance of the counterDAO. */
-    private CounterDAO counterDAO;
+    private final CounterDAO counterDAO;
 
     /** The current project. */
-    private Project project;
+    private final Project project;
 
     /** The user that executes the experiment. */
-    private User user;
+    private final User user;
 
     /**
      * Constructor.
@@ -83,7 +82,7 @@ public class CounterStoreConnector implements Connector {
         final Map<String, Counter> counters = new HashMap<>();
         try {
             counterDAO.getAll(user, project.getId()).forEach(c -> counters.put(c.getName(), c));
-        } catch (NotFoundException e) {
+        } catch (NotFoundException ignored) {
         }
 
         // create counters that have not yet been created
@@ -129,7 +128,7 @@ public class CounterStoreConnector implements Connector {
      */
     public void set(Long projectId, String name, Integer value) {
         countersMap.put(name, value);
-        LOGGER.debug("Set the counter '{}' in the project <{}> to '{}'.", name, projectId, value);
+        logger.debug("Set the counter '{}' in the project <{}> to '{}'.", name, projectId, value);
     }
 
     /**
@@ -151,7 +150,7 @@ public class CounterStoreConnector implements Connector {
 
         countersMap.put(name, countersMap.get(name) + incrementBy);
 
-        LOGGER.debug("Incremented the counter '{}' in the project <{}> of user <{}> to '{}'.", name, projectId,
+        logger.debug("Incremented the counter '{}' in the project <{}> of user <{}>.", name, projectId,
                 countersMap.get(name));
     }
 
@@ -177,6 +176,7 @@ public class CounterStoreConnector implements Connector {
 
     /**
      * Get the store as read only map.
+     *
      * @return The store.
      */
     public Map<String, Integer> getStore() {
@@ -188,7 +188,8 @@ public class CounterStoreConnector implements Connector {
      *
      * @return A copy of the connector.
      */
-    public CounterStoreConnector copy() {
+    @Override
+    public CounterStoreConnector clone() {
         return new CounterStoreConnector(counterDAO, user, project, new ArrayList<>());
     }
 }

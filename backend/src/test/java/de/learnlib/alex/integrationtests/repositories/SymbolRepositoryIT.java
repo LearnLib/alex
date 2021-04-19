@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,39 +16,37 @@
 
 package de.learnlib.alex.integrationtests.repositories;
 
+import static de.learnlib.alex.integrationtests.repositories.SymbolGroupRepositoryIT.createGroup;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.transaction.TransactionSystemException;
-
-import javax.inject.Inject;
 import java.util.Arrays;
 import java.util.List;
-
-import static de.learnlib.alex.integrationtests.repositories.SymbolGroupRepositoryIT.createGroup;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import javax.validation.ValidationException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 
 public class SymbolRepositoryIT extends AbstractRepositoryIT {
 
-    @Inject
+    @Autowired
     private SymbolGroupRepository symbolGroupRepository;
 
-    @Inject
+    @Autowired
     private SymbolRepository symbolRepository;
 
     private Project project;
 
-    @Before
+    @BeforeEach
     public void before() {
         User user = createUser("alex@test.example");
         user = userRepository.save(user);
@@ -68,43 +66,28 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         assertNotNull(symbol.getId());
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
+    @Test
     public void shouldFailToSaveASymbolWithoutAProject() {
         SymbolGroup group = createGroup(project, 1L, "Test Group");
         group = symbolGroupRepository.save(group);
 
         Symbol symbol = createSymbol(null, group, 0L, "Test Symbol");
-        symbolRepository.save(symbol); // should fail
+        assertThrows(DataIntegrityViolationException.class, () -> symbolRepository.save(symbol));
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
+    @Test
     public void shouldFailToSaveASymbolWithoutAGroup() {
         Symbol symbol = createSymbol(project, null, 0L, "Test Symbol");
-        symbolRepository.save(symbol); // should fail
+        assertThrows(DataIntegrityViolationException.class, () -> symbolRepository.save(symbol));
     }
 
-    @Test(expected = TransactionSystemException.class)
+    @Test
     public void shouldFailToSaveASymbolWithoutAName() {
         SymbolGroup group = createGroup(project, 1L, "Test Group");
         group = symbolGroupRepository.save(group);
 
         Symbol symbol = createSymbol(project, group, 0L, null);
-        symbolRepository.save(symbol); // should fail
-    }
-
-    @Test(expected = DataIntegrityViolationException.class)
-    public void shouldSaveSymbolsWithADuplicateIdRevisionPairInDifferentGroups() {
-        SymbolGroup group1 = createGroup(project, 1L, "Test Group 1");
-        group1 = symbolGroupRepository.save(group1);
-        SymbolGroup group2 = createGroup(project, 2L, "Test Group 2");
-        group2 = symbolGroupRepository.save(group2);
-
-        Symbol symbol1 = createSymbol(project, group1, 0L, "Test Symbol");
-        symbolRepository.save(symbol1);
-        Symbol symbol2 = createSymbol(project, group2, 0L, "Test Symbol");
-        symbol2 = symbolRepository.save(symbol2);
-
-        assertNotNull(symbol2.getId());
+        assertThrows(ValidationException.class, () -> symbolRepository.save(symbol));
     }
 
     @Test
@@ -119,7 +102,7 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
 
         Symbol symbolFromDB = symbolRepository.findById(s1.getId()).orElse(null);
 
-        assertThat(symbolFromDB, is(equalTo(s1)));
+        assertEquals(s1, symbolFromDB);
     }
 
     @Test
@@ -134,9 +117,9 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
 
         List<Symbol> symbolsFromDB = symbolRepository.findAllByIdIn(Arrays.asList(s1.getId(), s2.getId()));
 
-        assertThat(symbolsFromDB.size(), is(equalTo(2)));
-        assertThat(symbolsFromDB, hasItem(equalTo(s1)));
-        assertThat(symbolsFromDB, hasItem(equalTo(s2)));
+        assertEquals(2, symbolsFromDB.size());
+        assertTrue(symbolsFromDB.contains(s1));
+        assertTrue(symbolsFromDB.contains(s2));
     }
 
     private Symbol createSymbol(Project project, SymbolGroup group, Long id, String name) {

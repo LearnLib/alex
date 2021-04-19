@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,6 @@ import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.common.utils.SearchHelper;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -39,10 +36,6 @@ import javax.validation.constraints.NotNull;
 @DiscriminatorValue("rest_checkForText")
 @JsonTypeName("rest_checkForText")
 public class CheckTextRestAction extends RESTSymbolAction {
-
-    private static final long serialVersionUID = -681951086735590790L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The expected text in the response body of the last request. */
     @NotBlank
@@ -59,8 +52,8 @@ public class CheckTextRestAction extends RESTSymbolAction {
         String body = target.getBody();
         boolean result = SearchHelper.search(getValueWithVariableValues(), body, regexp);
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Check if the value '{}' is in '{}' => {} (regexp: {}).",
-                value, value, body, result, regexp);
+        logger.info(LoggerMarkers.LEARNER, "Check if the value '{}' is in '{}' => {} (regexp: {}).",
+                value, body, result, regexp);
         if (result) {
             return getSuccessOutput();
         } else {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,13 +21,12 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.learnlib.api.Resumable;
 import de.learnlib.api.algorithm.LearningAlgorithm;
 import de.learnlib.api.oracle.MembershipOracle;
-import net.automatalib.words.Alphabet;
-import net.automatalib.words.Word;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import net.automatalib.words.Alphabet;
+import net.automatalib.words.Word;
 
 /**
  * Parent class of all algorithms.
@@ -59,7 +58,7 @@ public abstract class AbstractLearningAlgorithm<I, O> implements Serializable {
      * @return An instance of the learner.
      */
     public abstract LearningAlgorithm.MealyLearner<I, O> createLearner(Alphabet<I> alphabet,
-            MembershipOracle<I, Word<O>> oracle);
+                                                                       MembershipOracle<I, Word<O>> oracle);
 
     /**
      * Get the internal data structures as string representation.

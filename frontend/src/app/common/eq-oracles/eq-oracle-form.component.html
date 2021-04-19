@@ -1,0 +1,61 @@
+<div>
+  <div class="form-group">
+    <select
+      (change)="selectEqOracle()"
+      [(ngModel)]="selectedType"
+      class="form-control"
+    >
+      <option [value]="null" disabled>Select an EQ Oracle</option>
+      <option *ngFor="let i of types | keyvalue" [value]="i.value">{{i.value | formatEqOracle}}</option>
+    </select>
+  </div>
+
+  <random-eq-oracle-form
+    *ngIf="oracle.type === types.RANDOM"
+    [form]="form"
+    [oracle]="oracle"
+  >
+  </random-eq-oracle-form>
+  <complete-eq-oracle-form
+    *ngIf="oracle.type === types.COMPLETE"
+    [form]="form"
+    [oracle]="oracle"
+  >
+  </complete-eq-oracle-form>
+  <w-method-eq-oracle-form
+    *ngIf="oracle.type === types.WMETHOD"
+    [form]="form"
+    [oracle]="oracle"
+  >
+  </w-method-eq-oracle-form>
+  <wp-method-eq-oracle-form
+    *ngIf="oracle.type === types.WP_METHOD"
+    [form]="form"
+    [oracle]="oracle"
+  >
+  </wp-method-eq-oracle-form>
+  <hypothesis-eq-oracle-form
+    *ngIf="oracle.type === types.HYPOTHESIS"
+    [form]="form"
+    [oracle]="oracle"
+  >
+  </hypothesis-eq-oracle-form>
+  <test-suite-eq-oracle-form
+    *ngIf="oracle.type === types.TEST_SUITE"
+    [form]="form"
+    [oracle]="oracle"
+  >
+  </test-suite-eq-oracle-form>
+
+  <div class="form-group" *ngIf="oracle != null">
+    <label>Batch size</label>
+    <input
+      [(ngModel)]="oracle.batchSize"
+      class="form-control"
+      min="0"
+      name="eq_oracle_batch_size"
+      placeholder="Enter a batch size"
+      type="number"
+    >
+  </div>
+</div>

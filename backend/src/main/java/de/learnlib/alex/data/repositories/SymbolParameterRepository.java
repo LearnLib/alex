@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,9 @@ import de.learnlib.alex.data.entities.SymbolParameter;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
-
 /** Repository for symbol parameters. */
 @Repository
 public interface SymbolParameterRepository extends JpaRepository<SymbolParameter, Long> {
 
-    @Transactional()
     void deleteAllBySymbol_Project_Id(Long projectId);
 }

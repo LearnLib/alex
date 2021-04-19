@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,13 +22,12 @@ import de.learnlib.algorithms.kv.mealy.KearnsVaziraniMealyBuilder;
 import de.learnlib.algorithms.kv.mealy.KearnsVaziraniMealyState;
 import de.learnlib.api.algorithm.LearningAlgorithm;
 import de.learnlib.api.oracle.MembershipOracle;
-import net.automatalib.words.Alphabet;
-import net.automatalib.words.Word;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import net.automatalib.words.Alphabet;
+import net.automatalib.words.Word;
 
 /**
  * Class that provides the LearnLib implementation of the Kearns Vazirani algorithm for ALEX.
@@ -40,7 +39,7 @@ public class KearnsVazirani extends AbstractLearningAlgorithm<String, String> im
 
     @Override
     public LearningAlgorithm.MealyLearner<String, String> createLearner(Alphabet<String> alphabet,
-            MembershipOracle<String, Word<String>> membershipOracle) {
+                                                                        MembershipOracle<String, Word<String>> membershipOracle) {
         return new KearnsVaziraniMealyBuilder<String, String>()
                 .withAlphabet(alphabet)
                 .withOracle(membershipOracle)

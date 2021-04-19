@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,17 @@ package de.learnlib.alex.data.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import de.learnlib.alex.testing.entities.TestScreenshot;
+import java.io.Serializable;
+import java.util.StringJoiner;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
-import java.io.Serializable;
-import java.util.StringJoiner;
 
 /** Class to determine if a symbol has been executed successfully. */
 @Entity
@@ -41,7 +44,7 @@ public class ExecuteResult implements Serializable {
 
     /** The id of the execute result in the db. */
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
 
@@ -51,11 +54,16 @@ public class ExecuteResult implements Serializable {
     /** The output of the SUL. */
     private String message;
 
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(columnDefinition = "TEXT")
     private String trace;
 
     /** The time in ms it took to execute the step. */
     private Long time;
+
+    @OneToOne(
+            cascade = {CascadeType.ALL}
+    )
+    private TestScreenshot testScreenshot;
 
     /** Constructor. */
     public ExecuteResult() {
@@ -71,14 +79,15 @@ public class ExecuteResult implements Serializable {
     }
 
     public ExecuteResult(boolean success, String message, Long time) {
-        this(success, message, "", time);
+        this(success, message, "", time, null);
     }
 
-    public ExecuteResult(boolean success, String message, String trace, Long time) {
+    public ExecuteResult(boolean success, String message, String trace, Long time, TestScreenshot testScreenshot) {
         this.success = success;
         this.message = message;
         this.time = time;
         this.trace = trace;
+        this.testScreenshot = testScreenshot;
     }
 
     public void addTrace(Symbol symbol, ExecuteResult result) {
@@ -149,5 +158,13 @@ public class ExecuteResult implements Serializable {
                 .add("success = " + success)
                 .add("output = " + getOutput())
                 .toString();
+    }
+
+    public TestScreenshot getTestScreenshot() {
+        return testScreenshot;
+    }
+
+    public void setTestScreenshot(TestScreenshot testScreenshot) {
+        this.testScreenshot = testScreenshot;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,13 +23,15 @@ import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.learning.entities.algorithms.AbstractLearningAlgorithm;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
-import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
-
+import de.learnlib.alex.modelchecking.entities.ModelCheckingConfig;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -37,10 +39,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 @Entity
 public class LearnerSetup implements Serializable {
@@ -48,7 +48,7 @@ public class LearnerSetup implements Serializable {
     private static final long serialVersionUID = 4839405295048332641L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(optional = false)
@@ -79,18 +79,23 @@ public class LearnerSetup implements Serializable {
     private ParameterizedSymbol postSymbol;
 
     @NotNull
-    @Column(columnDefinition = "BLOB")
+    @Column(columnDefinition = "BYTEA")
     private AbstractEquivalenceOracleProxy equivalenceOracle;
 
     @NotNull
-    @OneToOne(cascade = {javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.MERGE, javax.persistence.CascadeType.REMOVE})
-    private AbstractWebDriverConfig webDriver;
+    @OneToOne(cascade = javax.persistence.CascadeType.ALL)
+    private WebDriverConfig webDriver;
+
+    @NotNull
+    @OneToOne(cascade = javax.persistence.CascadeType.ALL)
+    private ModelCheckingConfig modelCheckingConfig;
 
     public LearnerSetup() {
         this.environments = new ArrayList<>();
         this.symbols = new ArrayList<>();
         this.enableCache = false;
         this.saved = false;
+        this.modelCheckingConfig = new ModelCheckingConfig();
     }
 
     @Transient
@@ -192,11 +197,11 @@ public class LearnerSetup implements Serializable {
         this.equivalenceOracle = equivalenceOracle;
     }
 
-    public AbstractWebDriverConfig getWebDriver() {
+    public WebDriverConfig getWebDriver() {
         return webDriver;
     }
 
-    public void setWebDriver(AbstractWebDriverConfig webDriver) {
+    public void setWebDriver(WebDriverConfig webDriver) {
         this.webDriver = webDriver;
     }
 
@@ -206,5 +211,13 @@ public class LearnerSetup implements Serializable {
 
     public void setSaved(boolean saved) {
         this.saved = saved;
+    }
+
+    public ModelCheckingConfig getModelCheckingConfig() {
+        return modelCheckingConfig;
+    }
+
+    public void setModelCheckingConfig(ModelCheckingConfig modelCheckingConfig) {
+        this.modelCheckingConfig = modelCheckingConfig;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,24 +18,27 @@ package de.learnlib.alex.data.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-import java.util.Objects;
 
 /** The class for the URL of a target system. */
 @Entity
-public class ProjectUrl {
+public class ProjectUrl implements Serializable {
+
+    private static final long serialVersionUID = 2091513737646022637L;
 
     /** The id in the db. */
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /** The project the URL belongs to. */
@@ -106,10 +109,13 @@ public class ProjectUrl {
     }
 
     @Override
-    @SuppressWarnings("checkstyle:needbraces")
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ProjectUrl)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ProjectUrl)) {
+            return false;
+        }
         ProjectUrl that = (ProjectUrl) o;
         return Objects.equals(getId(), that.getId());
     }

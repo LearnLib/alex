@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,15 +20,12 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.Alert;
-import org.openqa.selenium.ElementNotSelectableException;
-import org.openqa.selenium.NoAlertPresentException;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
+import org.openqa.selenium.Alert;
+import org.openqa.selenium.ElementNotSelectableException;
+import org.openqa.selenium.NoAlertPresentException;
 
 /**
  * Sends text to a prompt alert from window.prompt("...").
@@ -37,10 +34,6 @@ import javax.validation.constraints.NotNull;
 @DiscriminatorValue("web_alertSendKeys")
 @JsonTypeName("web_alertSendKeys")
 public class AlertSendKeysAction extends WebSymbolAction {
-
-    private static final long serialVersionUID = -1561905659822411588L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The text to send to the prompt alert. */
     @NotNull
@@ -53,10 +46,10 @@ public class AlertSendKeysAction extends WebSymbolAction {
             alert.sendKeys(insertVariableValues(text));
             alert.accept();
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Send text '{}' to prompt window.", text);
+            logger.info(LoggerMarkers.LEARNER, "Send text '{}' to prompt window.", text);
             return getSuccessOutput();
         } catch (NoAlertPresentException | ElementNotSelectableException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Failed to send text '{}' to prompt window.", text);
+            logger.info(LoggerMarkers.LEARNER, "Failed to send text '{}' to prompt window.", text);
             return getFailedOutput();
         }
     }

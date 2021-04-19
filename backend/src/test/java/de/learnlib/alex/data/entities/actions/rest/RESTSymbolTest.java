@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,21 @@
 
 package de.learnlib.alex.data.entities.actions.rest;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolActionStep;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
-import org.junit.Before;
-import org.junit.Test;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class RESTSymbolTest {
 
@@ -40,7 +40,7 @@ public class RESTSymbolTest {
 
     private ConnectorManager connectors;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         action1 = mock(RESTSymbolAction.class);
         action2 = mock(RESTSymbolAction.class);

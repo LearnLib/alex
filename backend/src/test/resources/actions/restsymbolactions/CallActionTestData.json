@@ -1,12 +1,12 @@
 {
-  "type" : "rest_call",
-  "method" : "GET",
-  "url" : "http://example.com/api",
+  "type": "rest_call",
+  "method": "GET",
+  "url": "http://example.com/api",
   "headers": {
     "X-MyHeader": "Foobar, Bar"
   },
   "cookies": {
     "cookie": "Lorem Ipsum"
   },
-  "data" : "{}"
+  "data": "{}"
 }

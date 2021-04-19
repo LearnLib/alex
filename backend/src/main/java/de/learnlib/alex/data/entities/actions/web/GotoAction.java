@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,11 @@
 package de.learnlib.alex.data.entities.actions.web;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.actions.Credentials;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -38,12 +34,7 @@ import javax.validation.constraints.NotBlank;
 @Entity
 @DiscriminatorValue("web_goto")
 @JsonTypeName("web_goto")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class GotoAction extends WebSymbolAction {
-
-    private static final long serialVersionUID = -9158530821188611940L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * The URL of the site.
@@ -65,10 +56,10 @@ public class GotoAction extends WebSymbolAction {
     public ExecuteResult execute(WebSiteConnector connector) {
         try {
             connector.get(baseUrl, getURLWithVariableValues(), getCredentialsWithVariableValues());
-            LOGGER.info(LoggerMarkers.LEARNER, "Could goto '{}'.", url);
+            logger.info(LoggerMarkers.LEARNER, "Could goto '{}'.", url);
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not goto '{}'.", url, e);
+            logger.info(LoggerMarkers.LEARNER, "Could not goto '{}'.", url, e);
             return getFailedOutput();
         }
     }

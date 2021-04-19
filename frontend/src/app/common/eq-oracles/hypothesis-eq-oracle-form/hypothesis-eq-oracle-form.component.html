@@ -1,0 +1,10 @@
+<div class="mb-2">
+  <file-dropzone (loaded)="fileLoaded($event)">
+  <span *ngIf="oracle.hypothesis.nodes == null">
+    Drag and drop *.json file here or click to upload
+  </span>
+    <span *ngIf="oracle.hypothesis.nodes != null">
+    Use a hypothesis with {{ oracle.hypothesis.nodes.length }} states
+  </span>
+  </file-dropzone>
+</div>

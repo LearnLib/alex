@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,9 @@ package de.learnlib.alex.webhooks.repositories;
 
 import de.learnlib.alex.webhooks.entities.EventType;
 import de.learnlib.alex.webhooks.entities.Webhook;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /** The repository for webhooks. */
 @Repository
@@ -37,8 +35,6 @@ public interface WebhookRepository extends JpaRepository<Webhook, Long> {
      *         The url of the webhook.
      * @return The webhook.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     Webhook findByUser_IdAndUrl(Long userId, String url);
 
     /**
@@ -48,11 +44,7 @@ public interface WebhookRepository extends JpaRepository<Webhook, Long> {
      *         The id of the user.
      * @return The list of webhooks.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     List<Webhook> findByUser_id(Long userId);
 
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     List<Webhook> findAllByEventsContains(EventType event);
 }

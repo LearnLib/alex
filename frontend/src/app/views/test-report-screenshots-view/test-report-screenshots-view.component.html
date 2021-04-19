@@ -1,0 +1,77 @@
+<div class="view">
+
+  <action-bar>
+    <div class="d-flex flex-row align-items-center">
+      <button (click)="downloadScreenshots()" class="btn btn-sm btn-default">
+        <i class="fas fa-fw fa-download"></i> Download ZIP
+      </button>
+    </div>
+  </action-bar>
+
+  <div class="view-body">
+    <div class="container-fluid">
+
+      <h4 class="d-flex">
+        <strong>{{testResult?.test.name}}</strong>
+      </h4>
+      <hr>
+
+      <table *ngIf="testResult" class="table table-striped vertical-aligned">
+        <thead>
+        <tr>
+          <th>Step</th>
+          <th>Symbol</th>
+          <th>Result</th>
+          <th>Screenshot</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td style="width: 0">0)</td>
+          <td>---</td>
+          <td>---</td>
+          <td>
+            <img
+              *ngIf="testResult.beforeScreenshot"
+              style="height: 200px"
+              [alt]="'before step'"
+              [src]="getBeforeScreenshotImageUrl() | fetchImgSecure | async"
+              (click)="viewScreenshot(getBeforeScreenshotImageUrl(), '0) Screenshot before first symbol execution')"
+            >
+          </td>
+        </tr>
+        <tr *ngFor="let output of testResult.outputs; index as i">
+          <td style="width: 0">{{i+1}})</td>
+          <td>
+            <a
+              [routerLink]="['/app', 'projects', testResult.project, 'symbols', output.symbol.id]"
+              class="badge badge-secondary cursor-pointer"
+            >
+              {{output.symbol.name}}
+            </a>
+          </td>
+          <td>
+            <span
+              [ngClass]="{'badge-success': output.success,'badge-danger':!output.success}"
+              class="badge"
+            >
+              {{output.output}}
+            </span>
+          </td>
+          <td>
+            <img
+              style="height: 200px"
+              [alt]="'step ' + (i+1)"
+              *ngIf="output.testScreenshot"
+              [src]="getScreenshotImageUrl(output.testScreenshot.filename) | fetchImgSecure | async"
+              (click)="viewScreenshot(getScreenshotImageUrl(output.testScreenshot.filename), (i+1) + ')' + '  ' + output.symbol.name + ' => ' + output.output)"
+            >
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+
+</div>

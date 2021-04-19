@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,13 @@
 
 package de.learnlib.alex.data.entities.actions.web;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
@@ -23,31 +30,24 @@ import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CheckTextWebActionTest extends WebActionTest {
 
     private CheckTextWebAction checkText;
 
     private ObjectMapper mapper;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         super.setUp();
         mapper = new ObjectMapper();
@@ -61,9 +61,9 @@ public class CheckTextWebActionTest extends WebActionTest {
         checkText.setRegexp(false);
         checkText.setNode(new WebElementLocator("document", WebElementLocator.Type.CSS));
 
-        given(connectors.getConnector(VariableStoreConnector.class)).willReturn(mock(VariableStoreConnector.class));
-        given(connectors.getConnector(CounterStoreConnector.class)).willReturn(mock(CounterStoreConnector.class));
-        given(webSiteConnector.getDriver()).willReturn(mock(WebDriver.class));
+        lenient().when(connectors.getConnector(VariableStoreConnector.class)).thenReturn(mock(VariableStoreConnector.class));
+        lenient().when(connectors.getConnector(CounterStoreConnector.class)).thenReturn(mock(CounterStoreConnector.class));
+        lenient().when(webSiteConnector.getDriver()).thenReturn(mock(WebDriver.class));
     }
 
     @Test

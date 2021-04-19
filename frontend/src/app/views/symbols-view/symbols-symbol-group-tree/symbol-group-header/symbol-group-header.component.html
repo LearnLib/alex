@@ -1,0 +1,53 @@
+<div
+  [ngClass]="{
+    'collapse': store.isGroupCollapsed(group),
+    'has-parent': group.parent != null
+  }"
+  class="symbol-group-header d-flex flex-row"
+>
+  <i
+    [ngClass]="{
+      'fa-minus-square': !store.isGroupCollapsed(group),
+      'fa-plus-square': store.isGroupCollapsed(group)
+    }"
+    (click)="toggleCollapse()"
+    class="far fa-fw cursor-pointer"
+    style="margin-top: 2px"
+  >
+  </i>
+  <selectable-checkbox-multiple
+    [items]="group.symbols"
+    [selectable]="store.symbolsSelectable"
+    style="margin-left: .8rem"
+  >
+  </selectable-checkbox-multiple>
+  <div class="pl-3 w-100">
+    <div class="symbol-group-name cursor-pointer" (click)="store.toggleCollapseGroup(group)">
+      {{group.name}}
+    </div>
+    <lock-info-list *ngIf="lockInfo != null" [lockInfo]="lockInfo"></lock-info-list>
+  </div>
+  <div *ngIf="group.symbols.length === 0 && group.groups.length === 0" class="mr-3">
+    <span class="badge badge-secondary">Empty</span>
+  </div>
+  <div>
+    <div class="btn-group btn-group-sm" ngbDropdown>
+      <button class="btn btn-icon no-caret" ngbDropdownToggle type="button">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu role="menu">
+        <button (click)="store.updateGroup(group)" ngbDropdownItem [disabled]="store.isGroupLocked(group.id)">
+          <i class="fas fa-edit fa-fw"></i> Edit
+        </button>
+        <button (click)="store.moveGroup(group)" ngbDropdownItem [disabled]="store.isGroupLocked(group.id)">
+          <i class="fas fa-exchange-alt fa-fw"></i> Move
+        </button>
+        <button (click)="store.deleteGroup(group)" ngbDropdownItem [disabled]="store.isGroupLocked(group.id)">
+          <i class="fas fa-trash fa-fw"></i> Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+

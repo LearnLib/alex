@@ -1,0 +1,93 @@
+# Testing
+
+ALEX has integration testing abilities on board. 
+So, instead of learning, you can model and execute single test cases.
+The corresponding functionality is available under the item **Manage** in the group **Testing** in the sidebar.
+
+We differentiate between test cases and test suites.
+A test case is a use case of the application and is modelled via a sequence of symbols.
+A test suite bundles multiple test cases.
+You can navigate through all test cases and test suites like in a typical directory structure.
+Test cases are indicated by a file icon, test suites by a folder icon.
+
+![Testing](./assets/testing-1.jpg)
+
+The option to create a test case or a test suite is available in the dropdown menu <span class="label">1</span>.
+The name of a test case has to be unique within the parent test suite.
+This means that it is possible to have multiple test cases with the same name as long as they are in different groups.
+
+Via <span class="label">2</span>, you can navigate directly in the test suite.
+Clicking on a test case redirects you to a view where the test case can be modelled, which is covered in the next section.
+<span class="label">3</span> allows you to copy and paste test cases and test suites.
+
+For executing tests setup more quickly, select the tests you want to execute and save the current configuration with <span class="label">4</span>.
+
+
+## Test cases
+
+![Testing](./assets/testing-2.png)
+
+A test case consists of:
+
+* A list of **Pre steps** which are actions that are used to initialize the test, e.g. to clear the system and to create necessary data.
+  If one of the pre steps fails, the execution is aborted and the test is considered failed.
+  Steps can be added to the list of pre steps via drag and drop.
+  
+* A list of **Steps** which is the list of symbols that model the actual test case.
+  In order to model the test, click together a sequence of symbols from the symbol tree on the left.
+  You can always reorder the symbols in the test by drag-and-drop.
+
+* A list of **Post steps** which are actions that can be used to clean up after the test.
+  The test will not fail, if one of the post steps can not be executed.
+  Further, steps can be added to the list of post steps via drag and drop.
+
+If a symbol has input parameters defined, they are displayed in the corresponding step.
+At first, they are assigned a null value which indirectly means that the values are read from the global data context that is created during the execution of the test.
+If you specify a value yourself, that value overwrites the value from the global context.
+
+A test always has to pass and it passes, if the **Expected output** matches the **Actual output** column for all steps.
+It fails if the execute of one of its steps fails and the remaining steps are not executed.
+
+### Changing the expected output
+
+Sometimes, you want to assert that an certain step can not be executed.
+Instead of modeling an additional symbol, you can change the expected output.
+By clicking on the value in the **Expected output** column, you can negate the expected result.
+
+### Disabling steps
+
+For debugging purposes, it can be useful to disable steps.
+The toggle button in each row allows that.
+A step that is disabled is skipped during the test execution.
+
+
+## Executing tests
+
+![Testing](./assets/testing-3.jpg)
+
+Back in the overview, select the test cases and test suites that should be executed.
+The button group <span class="label">1</span> behaves like in the test case view.
+
+When the execution finished, labels beside each test case and test suite indicate its result. 
+A yellow label indicates that some, but not all test cases inside the test suite did not pass. 
+
+Below the list, The result over all tests is displayed in a table <span class="label">2</span>.
+The results of the test execution are not saved in the database in the current version of ALEX, but you can export the results as a *[JUnit XML Report][junit]*.
+
+
+## Test reports
+
+For each executed test case or test suite, a test report is created. 
+All reports of all tests can be found under **Testing > Reports** in the sidebar in descending order.
+To get details of a report, click on the **Details** link in the corresponding column of a test run.
+
+For test results of an individual test:
+
+1. Navigate to **Testing > Manage** in the sidebar
+2. Navigate to the test suite that contains the test of interest
+3. In the dropdown menu of the corresponding test, click on **Results**
+
+There, all individual test reports for a single test case are listed in descending order.
+
+
+[junit]: https://www.ibm.com/support/knowledgecenter/en/SSQ2R2_9.5.0/com.ibm.rsar.analysis.codereview.cobol.doc/topics/cac_useresults_junit.html

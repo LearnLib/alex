@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,26 +16,25 @@
 
 package de.learnlib.alex.data.entities.actions.rest;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.BDDMockito.given;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import javax.ws.rs.core.Response;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.BDDMockito.given;
-
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CheckStatusActionTest {
 
     @Mock
@@ -43,7 +42,7 @@ public class CheckStatusActionTest {
 
     private CheckStatusAction c;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         c = new CheckStatusAction();
         c.setStatus(Response.Status.OK.getStatusCode());

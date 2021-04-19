@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,12 +21,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
-
+import java.io.Serializable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -34,7 +35,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 
 /** The step of a test case. */
 @Entity
@@ -44,7 +44,7 @@ public class TestCaseStep implements Serializable {
 
     /** The database id. */
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /** The text case. */
@@ -72,7 +72,7 @@ public class TestCaseStep implements Serializable {
     private ParameterizedSymbol pSymbol;
 
     /** The expected result of the step in a natural language. */
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(columnDefinition = "TEXT")
     private String expectedResult;
 
     @NotNull

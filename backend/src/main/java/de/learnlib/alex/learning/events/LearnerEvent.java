@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,8 @@ public class LearnerEvent {
         /**
          * Constructor.
          *
-         * @param result The configuration used for starting the learner.
+         * @param result
+         *         The configuration used for starting the learner.
          */
         public Started(LearnerResult result) {
             super(result, EventType.LEARNER_STARTED);
@@ -42,7 +43,8 @@ public class LearnerEvent {
         /**
          * Constructor.
          *
-         * @param result The configuration used for resuming the learner.
+         * @param result
+         *         The configuration used for resuming the learner.
          */
         public Resumed(LearnerResult result) {
             super(result, EventType.LEARNER_RESUMED);
@@ -55,7 +57,8 @@ public class LearnerEvent {
         /**
          * Constructor.
          *
-         * @param result The learner result.
+         * @param result
+         *         The learner result.
          */
         public Finished(LearnerResult result) {
             super(result, EventType.LEARNER_FINISHED);

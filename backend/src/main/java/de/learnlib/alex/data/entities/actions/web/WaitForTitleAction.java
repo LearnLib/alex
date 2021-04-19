@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,17 +21,14 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * Action to wait for the title of a page to change.
@@ -40,10 +37,6 @@ import javax.validation.constraints.NotNull;
 @DiscriminatorValue("web_waitForTitle")
 @JsonTypeName("web_waitForTitle")
 public class WaitForTitleAction extends WebSymbolAction {
-
-    private static final long serialVersionUID = -7416267361597106520L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * Enumeration to specify the wait criterion.
@@ -123,7 +116,7 @@ public class WaitForTitleAction extends WebSymbolAction {
 
             return getSuccessOutput();
         } catch (TimeoutException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Waiting on the title '{}' (criterion: '{}') timed out. "
+            logger.info(LoggerMarkers.LEARNER, "Waiting on the title '{}' (criterion: '{}') timed out. "
                             + "Last known title was '{}'.",
                     valueWithVariables, waitCriterion, connector.getDriver().getTitle());
             return getFailedOutput();

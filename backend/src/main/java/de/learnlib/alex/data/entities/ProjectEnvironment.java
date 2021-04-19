@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,16 @@ package de.learnlib.alex.data.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -29,11 +35,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotEmpty;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(
@@ -44,13 +45,13 @@ public class ProjectEnvironment implements Serializable {
     private static final long serialVersionUID = -1700444925209588234L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotEmpty
     private String name;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JsonIgnore
     private Project project;
 
@@ -91,7 +92,8 @@ public class ProjectEnvironment implements Serializable {
     @Transient
     @JsonIgnore
     public Map<String, String> getVariablesAsMap() {
-        return this.variables.stream().collect(Collectors.toMap(ProjectEnvironmentVariable::getName, ProjectEnvironmentVariable::getValue));
+        return this.variables.stream()
+                .collect(Collectors.toMap(ProjectEnvironmentVariable::getName, ProjectEnvironmentVariable::getValue));
     }
 
     public Long getId() {

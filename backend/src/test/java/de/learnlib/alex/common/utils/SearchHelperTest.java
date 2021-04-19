@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
 
 package de.learnlib.alex.common.utils;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.ProjectEnvironmentVariable;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
@@ -23,11 +27,7 @@ import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import de.learnlib.alex.learning.services.connectors.FileStoreConnector;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
+import org.junit.jupiter.api.Test;
 
 public class SearchHelperTest {
 

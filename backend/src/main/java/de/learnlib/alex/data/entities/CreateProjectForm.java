@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@
 
 package de.learnlib.alex.data.entities;
 
-import org.hibernate.validator.constraints.Length;
+import static de.learnlib.alex.data.entities.Project.MAX_DESCRIPTION_LENGTH;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-
-import static de.learnlib.alex.data.entities.Project.MAX_DESCRIPTION_LENGTH;
+import org.hibernate.validator.constraints.Length;
 
 public class CreateProjectForm {
 

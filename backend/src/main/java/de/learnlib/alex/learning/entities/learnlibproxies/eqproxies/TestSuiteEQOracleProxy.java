@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +23,6 @@ import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.api.oracle.EquivalenceOracle;
 import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.api.query.DefaultQuery;
-import net.automatalib.automata.transducers.MealyMachine;
-import net.automatalib.words.Word;
-
-import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.Collection;
@@ -34,6 +30,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
+import net.automatalib.automata.transducers.MealyMachine;
+import net.automatalib.words.Word;
 
 /**
  * Use tests in a test suite as equivalence oracle.
@@ -57,7 +56,7 @@ public class TestSuiteEQOracleProxy extends AbstractEquivalenceOracleProxy
     private int batchSize;
 
     /** The test cases in the test suite. Once a test case has been tried, it is removed from the queue. */
-    private Queue<Word<String>> testCases;
+    private final Queue<Word<String>> testCases;
 
     /** Constructor. */
     public TestSuiteEQOracleProxy() {
@@ -82,7 +81,7 @@ public class TestSuiteEQOracleProxy extends AbstractEquivalenceOracleProxy
      *         How many membership queries can be posed together.
      */
     public TestSuiteEQOracleProxy(Long testSuiteId, TestDAO testDAO, User user, LearnerResult result,
-            MembershipOracle<String, Word<String>> oracle, int batchSize) {
+                                  MembershipOracle<String, Word<String>> oracle, int batchSize) {
         this();
         this.testSuiteId = testSuiteId;
         this.oracle = oracle;
@@ -92,7 +91,7 @@ public class TestSuiteEQOracleProxy extends AbstractEquivalenceOracleProxy
             Map<String, String> symbolNameMapping = new HashMap<>();
             result.getSetup().getSymbols().forEach(s -> symbolNameMapping.put(s.getComputedName(), s.getAliasOrComputedName()));
 
-            testDAO.getTestCases(user, result.getProjectId(), testSuiteId, includeChildTestSuites).forEach(tc -> {
+            testDAO.getTestCases(user, result.getProjectId(), testSuiteId).forEach(tc -> {
                 final Word<String> input = Word.fromList(
                         tc.getSteps().stream()
                                 .map(step -> symbolNameMapping.get(step.getPSymbol().getComputedName()))
@@ -142,7 +141,7 @@ public class TestSuiteEQOracleProxy extends AbstractEquivalenceOracleProxy
     @Nullable
     @Override
     public DefaultQuery<String, Word<String>> findCounterExample(MealyMachine<?, String, ?, String> hyp,
-            Collection<? extends String> alphabet) {
+                                                                 Collection<? extends String> alphabet) {
 
         while (!testCases.isEmpty()) {
             try {

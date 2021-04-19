@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,14 +22,13 @@ import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.api.exception.SULException;
 import de.learnlib.mapper.api.ContextExecutableInput;
 import de.learnlib.mapper.api.SULMapper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class to map the Symbols and their result to the values used in the learning process.
@@ -40,7 +39,7 @@ public class SymbolMapper implements SULMapper<
         ContextExecutableInput<ExecuteResult, ConnectorManager>,
         ExecuteResult> {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(SymbolMapper.class);
 
     /** Map to manage the symbols according to their name in the Alphabet. */
     private final Map<String, ParameterizedSymbol> symbolMap;
@@ -91,13 +90,13 @@ public class SymbolMapper implements SULMapper<
 
     @Override
     public MappedException<? extends String> mapUnwrappedException(RuntimeException e) throws RuntimeException {
-        LOGGER.info("mapper mapped unwrapped exception", e);
+        logger.info("mapper mapped unwrapped exception", e);
         return null;
     }
 
     @Override
     public MappedException<? extends String> mapWrappedException(SULException e) throws SULException {
-        LOGGER.info("mapper mapped wrapped exception", e);
+        logger.info("mapper mapped wrapped exception", e);
         return null;
     }
 

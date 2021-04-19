@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package de.learnlib.alex.testing.repositories;
 import de.learnlib.alex.testing.entities.TestExecutionResult;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 /** The repository for test results. */
 @Repository
@@ -32,7 +31,5 @@ public interface TestExecutionResultRepository extends JpaRepository<TestExecuti
      *         The ID of the symbol.
      * @return The count.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     Long countAllBySymbol_Id(Long symbolId);
 }

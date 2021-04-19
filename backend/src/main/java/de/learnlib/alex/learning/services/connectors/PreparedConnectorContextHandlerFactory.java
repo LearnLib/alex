@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,9 @@ import de.learnlib.alex.data.dao.CounterDAO;
 import de.learnlib.alex.data.dao.FileDAO;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
-import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
+import de.learnlib.alex.learning.entities.WebDriverConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.inject.Inject;
 
 /**
  * Factor to create a ContextHandler which knows all available connectors.
@@ -32,21 +31,10 @@ import javax.inject.Inject;
 @Service
 public class PreparedConnectorContextHandlerFactory {
 
-    /** The {@link CounterDAO}. */
-    private CounterDAO counterDAO;
+    private final CounterDAO counterDAO;
+    private final FileDAO fileDAO;
 
-    /** The {@link FileDAO}. */
-    private FileDAO fileDAO;
-
-    /**
-     * Constructor.
-     *
-     * @param counterDAO
-     *         {@link CounterDAO}.
-     * @param fileDAO
-     *         {@link FileDAO}.
-     */
-    @Inject
+    @Autowired
     public PreparedConnectorContextHandlerFactory(CounterDAO counterDAO, FileDAO fileDAO) {
         this.counterDAO = counterDAO;
         this.fileDAO = fileDAO;
@@ -69,7 +57,7 @@ public class PreparedConnectorContextHandlerFactory {
      */
     public PreparedContextHandler createPreparedContextHandler(User user,
                                                                Project project,
-                                                               AbstractWebDriverConfig driverConfig,
+                                                               WebDriverConfig driverConfig,
                                                                ParameterizedSymbol resetSymbol,
                                                                ParameterizedSymbol postSymbol) {
         return new PreparedContextHandler(counterDAO, fileDAO, user, project, driverConfig, resetSymbol, postSymbol);

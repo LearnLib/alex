@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package de.learnlib.alex.data.entities.actions.misc;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
@@ -23,16 +26,14 @@ import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebElement;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebElement;
 
 public class SetVariableByNodeCountActionTest {
 
@@ -46,7 +47,7 @@ public class SetVariableByNodeCountActionTest {
 
     private List<WebElement> elements;
 
-    @Before
+    @BeforeEach
     public void before() {
         this.webSiteConnector = Mockito.mock(WebSiteConnector.class);
         this.variableStore = new VariableStoreConnector();
@@ -75,8 +76,8 @@ public class SetVariableByNodeCountActionTest {
 
         final ExecuteResult result = action.executeAction(connectors);
 
-        Assert.assertTrue(result.isSuccess());
-        Assert.assertEquals(String.valueOf(elements.size()), variableStore.get("var"));
+        assertTrue(result.isSuccess());
+        assertEquals(String.valueOf(elements.size()), variableStore.get("var"));
     }
 
     @Test
@@ -85,8 +86,8 @@ public class SetVariableByNodeCountActionTest {
 
         final ExecuteResult result = action.executeAction(connectors);
 
-        Assert.assertTrue(result.isSuccess());
-        Assert.assertEquals(String.valueOf(0), variableStore.get("var"));
+        assertTrue(result.isSuccess());
+        assertEquals(String.valueOf(0), variableStore.get("var"));
     }
 
     @Test
@@ -95,8 +96,8 @@ public class SetVariableByNodeCountActionTest {
 
         final ExecuteResult result = action.executeAction(connectors);
 
-        Assert.assertTrue(result.isSuccess());
-        Assert.assertEquals(String.valueOf(0), variableStore.get("var"));
+        assertTrue(result.isSuccess());
+        assertEquals(String.valueOf(0), variableStore.get("var"));
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.learnlib.alex.data.entities.Project;
-
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -29,17 +31,16 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The entity for a test.
@@ -136,6 +137,7 @@ public class Test implements Serializable {
     protected String name;
 
     /** The results where the test appears. */
+    @OrderBy
     private List<TestResult> testResults;
 
     /** Constructor. */
@@ -215,7 +217,7 @@ public class Test implements Serializable {
      * @return The ID.
      */
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty
     public Long getId() {
         return this.id;

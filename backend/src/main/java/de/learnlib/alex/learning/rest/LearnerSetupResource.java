@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,10 +26,13 @@ import de.learnlib.alex.learning.entities.LearnerSetup;
 import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
 import de.learnlib.alex.learning.services.LearnerService;
 import de.learnlib.alex.security.AuthContext;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,14 +42,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import javax.ws.rs.core.MediaType;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @RestController
 @RequestMapping("/rest/projects/{projectId}/learner/setups")
-@Transactional(rollbackFor = Exception.class)
 public class LearnerSetupResource {
 
     private final AuthContext authContext;
@@ -92,7 +89,7 @@ public class LearnerSetupResource {
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity<LearnerSetup> create(@PathVariable("projectId") Long projectId,
-                                               @RequestBody @Valid LearnerSetup learnerSetup) {
+                                               @RequestBody @Validated LearnerSetup learnerSetup) {
         final User user = authContext.getUser();
         learnerSetup.setSaved(true);
         final LearnerSetup createdSetup = learnerSetupDAO.create(user, projectId, learnerSetup);

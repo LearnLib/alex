@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,34 +16,32 @@
 
 package de.learnlib.alex.integrationtests.repositories;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.Counter;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.repositories.CounterRepository;
-import org.junit.Before;
-import org.junit.Test;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
-import javax.inject.Inject;
-import java.util.List;
-
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-
 public class CounterRepositoryIT extends AbstractRepositoryIT {
 
-    @Inject
+    @Autowired
     private CounterRepository counterRepository;
 
     private User user;
 
     private Project project;
 
-    @Before
+    @BeforeEach
     public void before() {
         User user = createUser("alex@test.example");
         this.user = userRepository.save(user);
@@ -58,22 +56,23 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
         counter = counterRepository.save(counter);
 
         assertNotNull(counter.getId());
-        assertThat(counterRepository.count(), is(equalTo(1L)));
+        assertEquals(1, counterRepository.count());
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
+    @Test
     public void shouldFailToSaveACounterWithoutAProject() {
         Counter counter = createCounter(null, "TestCounter");
-        counterRepository.save(counter); // should fail
+
+        assertThrows(DataIntegrityViolationException.class, () -> counterRepository.save(counter));
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
+    @Test
     public void shouldFailToSaveACounterWithADuplicateNames() {
         Counter counter1 = createCounter(project, "TestCounter");
         counterRepository.save(counter1);
         Counter counter2 = createCounter(project, "TestCounter");
 
-        counterRepository.save(counter2); // should fail
+        assertThrows(DataIntegrityViolationException.class, () -> counterRepository.save(counter2));
     }
 
     @Test
@@ -98,9 +97,9 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
 
         List<Counter> counters = counterRepository.findAllByProject(project);
 
-        assertThat(counters.size(), is(equalTo(2)));
-        assertThat(counters, hasItem(equalTo(counter1)));
-        assertThat(counters, hasItem(equalTo(counter2)));
+        assertEquals(2, counters.size());
+        assertTrue(counters.contains(counter1));
+        assertTrue(counters.contains(counter2));
     }
 
     @Test
@@ -110,7 +109,7 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
 
         Counter counterFromDB = counterRepository.findByProjectAndName(project, "TestCounter1");
 
-        assertThat(counterFromDB, is(equalTo(counter)));
+        assertEquals(counter, counterFromDB);
     }
 
     @Test
@@ -120,14 +119,13 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
 
         counterRepository.deleteById(counter.getId());
 
-        assertThat(counterRepository.count(), is(equalTo(0L)));
+        assertEquals(0L, counterRepository.count());
     }
 
-    @Test(expected = EmptyResultDataAccessException.class)
+    @Test
     public void shouldThrowAnExceptionWhenDeletingAnNonExistingCounter() {
-        counterRepository.deleteById(-1L);
+        assertThrows(EmptyResultDataAccessException.class, () -> counterRepository.deleteById(-1L));
     }
-
 
     private Counter createCounter(Project project, String name) {
         Counter counter = new Counter();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,9 @@
 package de.learnlib.alex.data.repositories;
 
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * The JPA repository for parameterized symbols {@link ParameterizedSymbol}.
@@ -36,8 +34,6 @@ public interface ParameterizedSymbolRepository extends JpaRepository<Parameteriz
      *         The ID of the symbol.
      * @return The parameterized symbols.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     List<ParameterizedSymbol> findAllBySymbol_Id(Long symbolId);
 
     /**
@@ -47,8 +43,6 @@ public interface ParameterizedSymbolRepository extends JpaRepository<Parameteriz
      *         The ID of the symbol.
      * @return The count.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     Long countAllBySymbol_Id(Long symbolId);
 
     /**
@@ -58,7 +52,5 @@ public interface ParameterizedSymbolRepository extends JpaRepository<Parameteriz
      *         The ID of the project.
      * @return The number of deleted parameterized symbols.
      */
-    @Transactional
-    @SuppressWarnings("checkstyle:methodname")
     Long deleteAllBySymbol_Project_Id(Long projectId);
 }

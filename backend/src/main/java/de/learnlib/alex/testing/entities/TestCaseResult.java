@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,16 @@ package de.learnlib.alex.testing.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Transient;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The result of the execution of a test case.
@@ -43,9 +45,16 @@ public class TestCaseResult extends TestResult {
             mappedBy = "result",
             cascade = {CascadeType.ALL}
     )
+    @OrderBy
     private List<TestExecutionResult> outputs;
 
     private Long failedStep;
+
+    @OneToOne(
+            cascade = {CascadeType.ALL}
+    )
+    @JoinColumn(name = "beforeTestScreenshotId")
+    private TestScreenshot beforeScreenshot;
 
     /**
      * Constructor.
@@ -73,7 +82,9 @@ public class TestCaseResult extends TestResult {
         this.time = time;
         this.failedStep = failedStep;
 
-        this.outputs.forEach(out -> out.setResult(this));
+        this.outputs.forEach(out -> {
+            out.setResult(this);
+        });
     }
 
     public List<TestExecutionResult> getOutputs() {
@@ -116,5 +127,13 @@ public class TestCaseResult extends TestResult {
     @JsonIgnore
     @JsonProperty("failureMessage")
     public void setFailureMessage(String failureMessage) {
+    }
+
+    public TestScreenshot getBeforeScreenshot() {
+        return beforeScreenshot;
+    }
+
+    public void setBeforeScreenshot(TestScreenshot beforeScreenshot) {
+        this.beforeScreenshot = beforeScreenshot;
     }
 }

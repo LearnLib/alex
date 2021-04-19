@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,11 @@
 
 package de.learnlib.alex.common.utils;
 
-import de.learnlib.alex.data.entities.actions.rest.CheckAttributeTypeAction.JsonType;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import de.learnlib.alex.data.entities.actions.rest.CheckAttributeTypeAction.JsonType;
+import org.junit.jupiter.api.Test;
 
 public class JSONHelpersTest {
 
@@ -121,7 +118,7 @@ public class JSONHelpersTest {
 
     @Test
     public void shouldReturnCorrectTypeIfJSONIsNotStrictJSONOnGetType() {
-        assertThat(JSONHelpers.getAttributeType("{field: Test}", "field"), is(equalTo(JsonType.STRING)));
+        assertEquals(JsonType.STRING, JSONHelpers.getAttributeType("{field: Test}", "field"));
     }
 
     @Test

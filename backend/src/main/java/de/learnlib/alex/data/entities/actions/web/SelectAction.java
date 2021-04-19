@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,16 +22,13 @@ import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.UnexpectedTagNameException;
-
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.validation.constraints.NotNull;
 
 /**
  * Action to select an entry from a select field by its value.
@@ -40,8 +37,6 @@ import javax.validation.constraints.NotNull;
 @DiscriminatorValue("web_select")
 @JsonTypeName("web_select")
 public class SelectAction extends FillAction {
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * Enum to choose how to interact with the selection input.
@@ -109,11 +104,11 @@ public class SelectAction extends FillAction {
                     break;
             }
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Selected '{}' of '{}' by '{}'.",
+            logger.info(LoggerMarkers.LEARNER, "Selected '{}' of '{}' by '{}'.",
                     value, nodeWithVariables, selectBy);
             return getSuccessOutput();
         } catch (NoSuchElementException | NumberFormatException | UnexpectedTagNameException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not select '{}' of '{}' by '{}'.",
+            logger.info(LoggerMarkers.LEARNER, "Could not select '{}' of '{}' by '{}'.",
                     value, nodeWithVariables, selectBy, e);
             return getFailedOutput();
         }

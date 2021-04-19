@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,9 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.learnlib.api.oracle.EquivalenceOracle;
 import de.learnlib.api.oracle.MembershipOracle;
+import java.io.Serializable;
 import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.words.Word;
-
-import java.io.Serializable;
 
 /**
  * Base class for Proxies around a the different EquivalenceOracles from the LearnLib. The Proxy is needed to make it

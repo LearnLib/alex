@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,6 @@ import de.learnlib.alex.common.utils.JSONHelpers;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
@@ -38,10 +35,6 @@ import javax.validation.constraints.NotBlank;
 @JsonTypeName("rest_checkAttributeExists")
 public class CheckAttributeExistsAction extends RESTSymbolAction {
 
-    private static final long serialVersionUID = 6739027451651950338L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
-
     /** The name of the attribute to check for. */
     @NotBlank
     private String attribute;
@@ -52,7 +45,7 @@ public class CheckAttributeExistsAction extends RESTSymbolAction {
 
         boolean result = JSONHelpers.getAttributeValue(body, getAttributeWithVariableValues()) != null;
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Check if the attribute '{}' exists in '{}' => {}.",
+        logger.info(LoggerMarkers.LEARNER, "Check if the attribute '{}' exists in '{}' => {}.",
                 attribute, body, result);
         if (result) {
             return getSuccessOutput();

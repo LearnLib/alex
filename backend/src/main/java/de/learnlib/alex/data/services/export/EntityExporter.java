@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,8 @@ public abstract class EntityExporter {
     }
 
     /** Ignores 'id' fields in JSON documents. */
-    protected static abstract class IgnoreIdFieldMixin {
-        @JsonIgnore abstract Long getId();
+    protected abstract static class IgnoreIdFieldMixin {
+        @JsonIgnore
+        abstract Long getId();
     }
 }

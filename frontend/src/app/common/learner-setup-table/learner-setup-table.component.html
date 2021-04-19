@@ -1,0 +1,46 @@
+<div>
+  <h5 class="setup-name" *ngIf="setup.name != null && setup.name.trim().length > 0">{{setup.name}}</h5>
+  <table class="table table-sm mb-0">
+    <tbody>
+    <tr>
+      <td  class="border-0" style="width: 120px">Algorithm</td>
+      <td class="border-0">{{setup.algorithm.name | formatLearningAlgorithm}}</td>
+    </tr>
+    <tr>
+      <td>WebDriver</td>
+      <td>
+        {{setup.webDriver.browser | formatWebBrowser}}
+        <span class="text-muted">({{setup.webDriver.width}}px <i class="fas fa-times"></i> {{setup.webDriver.height}}px)</span>
+      </td>
+    </tr>
+    <tr>
+      <td>Equivalence test</td>
+      <td>{{setup.equivalenceOracle.type | formatEqOracle}}</td>
+    </tr>
+    <tr>
+      <td>Environments</td>
+      <td>
+        <span *ngFor="let env of setup.environments" class="badge badge-secondary mr-2">{{env.name}}</span>
+      </td>
+    </tr>
+    <tr>
+      <td>Reset symbol</td>
+      <td>
+        {{setup.preSymbol.getAliasOrComputedName()}}
+      </td>
+    </tr>
+    <tr>
+      <td>Input alphabet</td>
+      <td>
+        <span *ngFor="let s of setup.symbols; let last = last">{{s.getAliasOrComputedName()}}{{last ? '' : ', '}}</span>
+      </td>
+    </tr>
+    <tr *ngIf="setup.postSymbol != null">
+      <td>Post symbol</td>
+      <td>
+        {{setup.postSymbol.getAliasOrComputedName()}}
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

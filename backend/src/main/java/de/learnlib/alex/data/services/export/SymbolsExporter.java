@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,31 +39,35 @@ import de.learnlib.alex.data.entities.export.SymbolsExportConfig;
 import de.learnlib.alex.data.entities.export.SymbolsExportableEntity;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
+@Transactional(rollbackFor = Exception.class, readOnly = true)
 public class SymbolsExporter extends EntityExporter {
 
-    @Autowired
-    private SymbolRepository symbolRepository;
+    private final SymbolRepository symbolRepository;
+    private final SymbolGroupRepository symbolGroupRepository;
+    private final SymbolGroupDAO symbolGroupDAO;
+    private final SymbolDAO symbolDAO;
 
     @Autowired
-    private SymbolGroupRepository symbolGroupRepository;
-
-    @Autowired
-    private SymbolGroupDAO symbolGroupDAO;
-
-    @Autowired
-    private SymbolDAO symbolDAO;
-
-    public SymbolsExporter() {
+    public SymbolsExporter(
+            SymbolRepository symbolRepository,
+            SymbolGroupRepository symbolGroupRepository,
+            SymbolGroupDAO symbolGroupDAO,
+            SymbolDAO symbolDAO
+    ) {
         super();
+
+        this.symbolRepository = symbolRepository;
+        this.symbolGroupRepository = symbolGroupRepository;
+        this.symbolGroupDAO = symbolGroupDAO;
+        this.symbolDAO = symbolDAO;
 
         om.addMixIn(SymbolGroup.class, IgnoreFieldsForSymbolGroupMixin.class);
         om.addMixIn(Symbol.class, IgnoreFieldsForSymbolMixin.class);
@@ -78,17 +82,16 @@ public class SymbolsExporter extends EntityExporter {
         om.registerModule(module);
     }
 
-    @Transactional
     public ExportableEntity export(User user, Long projectId, SymbolsExportConfig config) throws Exception {
         if (config.isSymbolsOnly()) {
             final List<Symbol> symbols = symbolRepository.findAllByProject_idAndIdIn(projectId, config.getSymbolIds());
-            for (Symbol s: symbols) {
+            for (Symbol s : symbols) {
                 symbolDAO.checkAccess(user, s.getProject(), s);
             }
             return new SymbolsExportableEntity(version, om.readTree(om.writeValueAsString(symbols)));
         } else {
             final List<SymbolGroup> groups = symbolGroupRepository.findAllByProject_IdAndParent_id(projectId, null);
-            for (SymbolGroup g: groups) {
+            for (SymbolGroup g : groups) {
                 symbolGroupDAO.checkAccess(user, g.getProject(), g);
             }
             final List<SymbolGroup> groupsToExport = getExportableGroups(groups, config);
@@ -96,10 +99,9 @@ public class SymbolsExporter extends EntityExporter {
         }
     }
 
-    @Transactional
     public ExportableEntity exportAll(User user, Long projectId) throws Exception {
         final List<SymbolGroup> groups = symbolGroupRepository.findAllByProject_IdAndParent_id(projectId, null);
-        for (SymbolGroup g: groups) {
+        for (SymbolGroup g : groups) {
             symbolGroupDAO.checkAccess(user, g.getProject(), g);
         }
         return new SymbolGroupsExportableEntity(version, om.readTree(om.writeValueAsString(groups)));
@@ -117,7 +119,7 @@ public class SymbolsExporter extends EntityExporter {
 
     public static class ParameterizedSymbolSerializer extends StdSerializer<ParameterizedSymbol> {
 
-        private ObjectMapper om;
+        private final ObjectMapper om;
 
         public ParameterizedSymbolSerializer(ObjectMapper om, Class<ParameterizedSymbol> t) {
             super(t);
@@ -136,19 +138,31 @@ public class SymbolsExporter extends EntityExporter {
         }
     }
 
-    private static abstract class IgnoreFieldsForSymbolGroupMixin extends IgnoreIdFieldMixin {
-        @JsonIgnore abstract Long getProjectId();
-        @JsonIgnore abstract Long getParentId();
+    private abstract static class IgnoreFieldsForSymbolGroupMixin extends IgnoreIdFieldMixin {
+        @JsonIgnore
+        abstract Long getProjectId();
+
+        @JsonIgnore
+        abstract Long getParentId();
     }
 
-    private static abstract class IgnoreFieldsForSymbolMixin extends IgnoreIdFieldMixin {
-        @JsonIgnore abstract Long getProjectId();
-        @JsonIgnore abstract Long getGroupId();
+    private abstract static class IgnoreFieldsForSymbolMixin extends IgnoreIdFieldMixin {
+        @JsonIgnore
+        abstract Long getProjectId();
+
+        @JsonIgnore
+        abstract Long getGroupId();
+
+        @JsonIgnore
+        abstract User getLastUpdatedBy();
     }
 
-    private static abstract class IgnoreFieldsForSymbolStepMixin extends IgnoreIdFieldMixin {
-        @JsonIgnore abstract Long getPosition();
-        @JsonIgnore abstract Long getSymbolId();
+    private abstract static class IgnoreFieldsForSymbolStepMixin extends IgnoreIdFieldMixin {
+        @JsonIgnore
+        abstract Long getPosition();
+
+        @JsonIgnore
+        abstract Long getSymbolId();
     }
 
 }

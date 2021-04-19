@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@
 
 package de.learnlib.alex.common.utils;
 
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 /** Markers for logging. */
 public final class LoggerMarkers {
 
     /** Marker for learning processes. */
-    public static final Marker LEARNER = MarkerManager.getMarker("LEARNER");
+    public static final Marker LEARNER = MarkerFactory.getMarker("LEARNER");
 
     private LoggerMarkers() {
     }

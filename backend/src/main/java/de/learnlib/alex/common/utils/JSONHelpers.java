@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,18 +20,17 @@ import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.JsonPath;
 import de.learnlib.alex.data.entities.actions.rest.CheckAttributeTypeAction.JsonType;
-import net.minidev.json.JSONArray;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.util.LinkedHashMap;
+import net.minidev.json.JSONArray;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Helper class for some JSON stuff.
  */
 public final class JSONHelpers {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(JSONHelpers.class);
 
     /**
      * Disabled default constructor, this is only a utility class with static methods.
@@ -51,16 +50,16 @@ public final class JSONHelpers {
     public static String getAttributeValue(String json, String attribute) {
         try {
             String value = JsonPath.read(json, attribute).toString();
-            LOGGER.info("The attribute '{}' has the value '{}' in the body '{}'.", attribute, value, json);
+            logger.info("The attribute '{}' has the value '{}' in the body '{}'.", attribute, value, json);
             return value;
         } catch (InvalidJsonException e) {
-            LOGGER.info("JSON was not valid, e.g. the body was empty.", e);
+            logger.info("JSON was not valid, e.g. the body was empty.", e);
             return null;
         } catch (InvalidPathException e) {
-            LOGGER.info("Could not parse the JSON to get the value of an attribute.", e);
+            logger.info("Could not parse the JSON to get the value of an attribute.", e);
             return null;
         } catch (IllegalArgumentException e) {
-            LOGGER.info("Wrong arguments passed.", e);
+            logger.info("Wrong arguments passed.", e);
             return null;
         }
     }
@@ -90,17 +89,17 @@ public final class JSONHelpers {
             } else if (o instanceof Boolean) {
                 return JsonType.BOOLEAN;
             } else {
-                LOGGER.info("Unsupported JSON type.");
+                logger.info("Unsupported JSON type.");
                 return null;
             }
         } catch (InvalidJsonException e) {
-            LOGGER.info("JSON was not valid, e.g. the body was empty.", e);
+            logger.info("JSON was not valid, e.g. the body was empty.", e);
             return null;
         } catch (InvalidPathException e) {
-            LOGGER.info("Could not parse the JSON to get the type of an attribute.", e);
+            logger.info("Could not parse the JSON to get the type of an attribute.", e);
             return null;
         } catch (IllegalArgumentException e) {
-            LOGGER.info("Wrong arguments passed.", e);
+            logger.info("Wrong arguments passed.", e);
             return null;
         }
     }

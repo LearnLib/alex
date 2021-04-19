@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,20 +21,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.learnlib.alex.data.entities.Project;
-
+import java.io.Serializable;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
-import java.io.Serializable;
 
 /**
  * The result of a test execution.
@@ -54,8 +54,7 @@ public abstract class TestResult implements Serializable {
 
     /** The ID of the test result in the database. */
     @Id
-    @GeneratedValue
-    @JsonIgnore
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /** The test that has been executed. */
@@ -153,12 +152,17 @@ public abstract class TestResult implements Serializable {
 
     @JsonProperty("project")
     public Long getProjectId() {
-        return this.project == null ? 0L : this.project.getId();
+        return this.project == null ? 0 : this.project.getId();
     }
 
     @JsonProperty("project")
     public void setProjectId(Long projectId) {
         this.project = new Project(projectId);
+    }
+
+    @JsonProperty("report")
+    public Long getReportId() {
+        return this.testReport.getId();
     }
 
     /**

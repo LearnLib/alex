@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,22 +17,21 @@
 package de.learnlib.alex.learning.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import net.automatalib.words.Word;
-
 import java.util.List;
 import java.util.Objects;
+import net.automatalib.words.Word;
 
 /** Helper class for the output difference of two hypotheses. */
 public class SeparatingWord {
 
     /** The input. */
-    private Word<String> input;
+    private final Word<String> input;
 
     /** The The output of the first hypothesis. */
-    private Word<String> output1;
+    private final Word<String> output1;
 
     /** The output of the second hypothesis. */
-    private Word<String> output2;
+    private final Word<String> output2;
 
     /** Constructor. */
     public SeparatingWord() {
@@ -83,14 +82,17 @@ public class SeparatingWord {
     }
 
     @Override
-    @SuppressWarnings({"checkstyle:needbraces", "checkstyle:operatorwrap"})
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof SeparatingWord)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SeparatingWord)) {
+            return false;
+        }
         SeparatingWord that = (SeparatingWord) o;
-        return Objects.equals(getInput(), that.getInput()) &&
-                Objects.equals(getOutput1(), that.getOutput1()) &&
-                Objects.equals(getOutput2(), that.getOutput2());
+        return Objects.equals(getInput(), that.getInput())
+                && Objects.equals(getOutput1(), that.getOutput1())
+                && Objects.equals(getOutput2(), that.getOutput2());
     }
 
     @Override

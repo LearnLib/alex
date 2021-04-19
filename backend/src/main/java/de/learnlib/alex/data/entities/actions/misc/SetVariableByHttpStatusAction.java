@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,6 @@ import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotEmpty;
@@ -35,10 +32,6 @@ import javax.validation.constraints.NotEmpty;
 @DiscriminatorValue("setVariableByHttpStatus")
 @JsonTypeName("setVariableByHttpStatus")
 public class SetVariableByHttpStatusAction extends SymbolAction {
-
-    private static final long serialVersionUID = 7175288271151692417L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The name of the variable. */
     @NotEmpty
@@ -53,10 +46,10 @@ public class SetVariableByHttpStatusAction extends SymbolAction {
             final int status = webServiceConnector.getStatus();
             variableStore.set(name, String.valueOf(status));
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Set variable '{}' to status '{}'.", status);
+            logger.info(LoggerMarkers.LEARNER, "Set variable '{}' to status '{}'.", name, status);
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not set variable '{}'");
+            logger.info(LoggerMarkers.LEARNER, "Could not set variable '{}'", name);
             return getFailedOutput();
         }
     }

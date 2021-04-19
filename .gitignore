@@ -18,11 +18,6 @@ frontend/src/main/javascript/node_modules
 frontend/src/main/javascript/dist
 frontend/src/main/javascript/test/coverage
 frontend/src/main/javascript/npm-debug\.log
-frontend/src/main/javascript/dist
 
 # uploaded files
 main/uploads
-
-# genereated user documentation
-documentation/src/main/docs/.vuepress/dist
-documentation/src/main/docs/node_modules

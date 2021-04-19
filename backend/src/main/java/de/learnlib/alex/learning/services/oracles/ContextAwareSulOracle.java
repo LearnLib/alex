@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,11 +27,12 @@ import de.learnlib.mapper.ContextExecutableInputSUL;
 import de.learnlib.mapper.SULMappers;
 import de.learnlib.mapper.api.ContextExecutableInput;
 import de.learnlib.oracle.membership.SULOracle;
+import java.util.Collection;
 import net.automatalib.words.Word;
 
-import java.util.Collection;
-
-/** Wrapper for a {@link SULOracle} that knows its context. */
+/**
+ * Wrapper for a {@link SULOracle} that knows its context.
+ */
 public class ContextAwareSulOracle implements MembershipOracle<String, Word<String>> {
 
     /** The oracle to pose queries to. */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.jayway.jsonpath.JsonPath;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.integrationtests.resources.api.LtsFormulaApi;
@@ -24,17 +27,13 @@ import de.learnlib.alex.integrationtests.resources.api.ProjectApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
 import de.learnlib.alex.modelchecking.entities.LtsFormula;
 import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.http.HttpStatus;
-
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.List;
-
-import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
-import static org.junit.Assert.assertEquals;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.Response;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 
 public class LtsFormulaResourceIT extends AbstractResourceIT {
 
@@ -52,7 +51,7 @@ public class LtsFormulaResourceIT extends AbstractResourceIT {
     private LtsFormulaSuite suite1;
     private LtsFormulaSuite suite2;
 
-    @Before
+    @BeforeEach
     public void before() {
         this.formulaApi = new LtsFormulaApi(client, port);
 
@@ -185,7 +184,7 @@ public class LtsFormulaResourceIT extends AbstractResourceIT {
         final List<Long> ids = Arrays.asList(
                 createFormula(projectId1, suite1.getId(), "test", "<> true", jwtUser1).getId(),
                 createFormula(projectId1, suite1.getId(), "test", "<> true", jwtUser1).getId()
-                -1
+                        - 1
         );
         final Response res = formulaApi.delete(projectId1, suite1.getId(), ids, jwtUser1);
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), res.getStatus());
@@ -221,8 +220,8 @@ public class LtsFormulaResourceIT extends AbstractResourceIT {
 
     @Test
     public void shouldMoveFormulaToAnotherSuite() {
-        LtsFormulaSuite s1 = createFormulaSuite(projectId1,"s1", jwtUser1);
-        LtsFormulaSuite s2 = createFormulaSuite(projectId1,"s2", jwtUser1);
+        LtsFormulaSuite s1 = createFormulaSuite(projectId1, "s1", jwtUser1);
+        LtsFormulaSuite s2 = createFormulaSuite(projectId1, "s2", jwtUser1);
 
         LtsFormula formula = createFormula(projectId1, s1.getId(), "test", "true", jwtUser1);
 
@@ -234,8 +233,8 @@ public class LtsFormulaResourceIT extends AbstractResourceIT {
 
     @Test
     public void shouldMoveMultipleFormulasToAnotherSuite() throws Exception {
-        LtsFormulaSuite s1 = createFormulaSuite(projectId1,"s1", jwtUser1);
-        LtsFormulaSuite s2 = createFormulaSuite(projectId1,"s2", jwtUser1);
+        LtsFormulaSuite s1 = createFormulaSuite(projectId1, "s1", jwtUser1);
+        LtsFormulaSuite s2 = createFormulaSuite(projectId1, "s2", jwtUser1);
 
         LtsFormula f1 = createFormula(projectId1, s1.getId(), "test", "true", jwtUser1);
         LtsFormula f2 = createFormula(projectId1, s1.getId(), "test", "true", jwtUser1);
@@ -243,8 +242,9 @@ public class LtsFormulaResourceIT extends AbstractResourceIT {
         final Response res = formulaApi.updateSuite(projectId1, s1.getId(), Arrays.asList(f1.getId(), f2.getId()), s2, jwtUser1);
         assertEquals(HttpStatus.OK.value(), res.getStatus());
 
-        final List<LtsFormula> updatedFormulas = res.readEntity(new GenericType<List<LtsFormula>>(){});
-        for (LtsFormula f: updatedFormulas) {
+        final List<LtsFormula> updatedFormulas = res.readEntity(new GenericType<>() {
+        });
+        for (LtsFormula f : updatedFormulas) {
             assertEquals(s2.getId(), f.getSuiteId());
         }
 

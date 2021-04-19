@@ -1,0 +1,30 @@
+<div class="view">
+
+  <action-bar>
+    <div class="d-flex">
+      <div class="ml-auto">
+        <a
+          class="btn btn-sm btn-default ml-2"
+          [routerLink]="['..']"
+        >
+          <i class="fas fa-fw fa-times"></i> Cancel
+        </a>
+        <button
+          class="btn btn-sm btn-success ml-2"
+          (click)="updateSetup()"
+          [disabled]="!isValidLearnerSetup()"
+        >
+          <i class="fas fa-fw fa-save"></i> Save
+        </button>
+      </div>
+    </div>
+  </action-bar>
+
+  <div class="view-body">
+    <div class="container-fluid">
+
+      <learner-setup-form [setup]="setup" *ngIf="setup != null"></learner-setup-form>
+
+    </div>
+  </div>
+</div>

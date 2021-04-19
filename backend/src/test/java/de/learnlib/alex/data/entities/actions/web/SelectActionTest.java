@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,33 +16,31 @@
 
 package de.learnlib.alex.data.entities.actions.web;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.WebElementLocator;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebElement;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class SelectActionTest extends WebActionTest {
 
     private static final long PROJECT_ID = 1;
@@ -51,7 +49,7 @@ public class SelectActionTest extends WebActionTest {
 
     private WebElementLocator node;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         super.setUp();
 
@@ -159,18 +157,7 @@ public class SelectActionTest extends WebActionTest {
         given(selectElement.getTagName()).willReturn("select");
         s.setValue("definite not a number");
         s.setSelectBy(SelectAction.SelectByType.INDEX);
-
         ExecuteResult result = s.executeAction(connectors);
-
-        assertFalse(result.isSuccess());
-    }
-
-    @Test
-    public void shouldReturnFailedIfTheNodeCouldNotBeFound() {
-        given(webSiteConnector.getElement(node)).willThrow(NoSuchElementException.class);
-
-        ExecuteResult result = s.executeAction(connectors);
-
         assertFalse(result.isSuccess());
     }
 

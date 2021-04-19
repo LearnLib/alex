@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,11 @@
 package de.learnlib.alex.testing.repositories;
 
 import de.learnlib.alex.testing.entities.TestReport;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /** The repository for test reports. */
 @Repository
@@ -36,8 +34,6 @@ public interface TestReportRepository extends JpaRepository<TestReport, Long> {
      *         The id of the project.
      * @return The latest test report.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     TestReport findFirstByProject_IdOrderByIdDesc(Long projectId);
 
     /**
@@ -49,11 +45,8 @@ public interface TestReportRepository extends JpaRepository<TestReport, Long> {
      *         The pageable object.
      * @return The test reports.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     Page<TestReport> findAllByProject_Id(Long projectId, Pageable pageable);
 
-    @Transactional(readOnly = true)
     List<TestReport> findAllByStatusIn(List<TestReport.Status> statusList);
 
     /**
@@ -63,11 +56,7 @@ public interface TestReportRepository extends JpaRepository<TestReport, Long> {
      *         The id of the project.
      * @return The number of deleted test reports.
      */
-    @Transactional
-    @SuppressWarnings("checkstyle:methodname")
     Long deleteAllByProject_Id(Long projectId);
 
-    @Transactional
-    @SuppressWarnings("checkstyle:methodname")
     void deleteAllByEnvironment_Id(Long envId);
 }

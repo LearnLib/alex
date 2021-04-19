@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,16 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import de.learnlib.alex.integrationtests.resources.api.SettingsApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
 import de.learnlib.alex.settings.entities.Settings;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import javax.ws.rs.core.Response;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.http.HttpStatus;
-
-import javax.ws.rs.core.Response;
-
-import static org.junit.Assert.assertEquals;
 
 public class SettingsResourceIT extends AbstractResourceIT {
 
@@ -36,7 +34,7 @@ public class SettingsResourceIT extends AbstractResourceIT {
     private String adminJwt;
     private String userJwt;
 
-    @Before
+    @BeforeEach
     public void pre() {
         this.settingsApi = new SettingsApi(client, port);
 
@@ -73,19 +71,6 @@ public class SettingsResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void shouldNotUpdateWithInvalidDefaultDriver() throws Exception {
-        final Settings settings = settingsApi.get().readEntity(Settings.class);
-        final String defaultDriver = settings.getDriverSettings().getDefaultDriver();
-        settings.getDriverSettings().setDefaultDriver("qwertz");
-
-        final Response res = settingsApi.update(settings, adminJwt);
-        assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
-
-        final Settings settingsPost = settingsApi.get().readEntity(Settings.class);
-        assertEquals(defaultDriver, settingsPost.getDriverSettings().getDefaultDriver());
-    }
-
-    @Test
     public void adminShouldUpdateSettings() throws Exception {
         final Response res = settingsApi.get();
         final Settings settings = res.readEntity(Settings.class);
@@ -98,16 +83,6 @@ public class SettingsResourceIT extends AbstractResourceIT {
 
         final Response res3 = settingsApi.get();
         JSONAssert.assertEquals(objectMapper.writeValueAsString(settings), res3.readEntity(String.class), true);
-    }
-
-    @Test
-    public void shouldNotHaveEmptyDefaultDriver() throws Exception {
-        final Response res = settingsApi.get();
-        final Settings settings = res.readEntity(Settings.class);
-        settings.getDriverSettings().setDefaultDriver(null);
-
-        final Response res2 = settingsApi.update(settings, adminJwt);
-        Assert.assertEquals(HttpStatus.BAD_REQUEST.value(), res2.getStatus());
     }
 
     private void shouldNotUpdateSettings(String jwt) throws Exception {

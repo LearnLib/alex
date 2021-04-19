@@ -1,0 +1,81 @@
+<div class="modal-header">
+  <h4 class="modal-title">Configure the test run</h4>
+  <a (click)="modal.dismiss()" class="btn btn-icon float-right">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<div class="modal-body">
+
+  <nav ngbNav #nav="ngbNav" class="nav-tabs">
+    <ng-container ngbNavItem>
+      <a ngbNavLink>WebDriver</a>
+      <ng-template ngbNavContent>
+        <br>
+
+        <driver-config-form
+          *ngIf="configuration.driverConfig != null"
+          [(config)]="configuration.driverConfig"
+        >
+        </driver-config-form>
+      </ng-template>
+    </ng-container>
+    <ng-container ngbNavItem>
+      <a ngbNavLink>Targets</a>
+      <ng-template ngbNavContent>
+        <br>
+
+        <p class="text-muted">
+          Select an environment for testing.
+        </p>
+
+        <div class="list-group">
+          <div
+            (click)="selectedEnvironment = env"
+            *ngFor="let env of project.environments"
+            [ngClass]="{'active': env.id === selectedEnvironment.id}"
+            class="list-group-item cursor-pointer"
+          >
+            {{env.name}}
+          </div>
+        </div>
+      </ng-template>
+    </ng-container>
+    <ng-container ngbNavItem>
+      <a ngbNavLink>Test</a>
+      <ng-template ngbNavContent>
+        <br>
+
+        <div class="form-group">
+          <label>Name</label>
+          <textarea
+            [(ngModel)]="configuration.name"
+            class="form-control"
+            rows="1"
+            placeholder="Enter a name for the test config"
+          >
+          </textarea>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea
+            [(ngModel)]="configuration.description"
+            class="form-control"
+            rows="3"
+            placeholder="Enter a description for the test config"
+          >
+          </textarea>
+        </div>
+      </ng-template>
+    </ng-container>
+  </nav>
+
+  <div [ngbNavOutlet]="nav"></div>
+
+</div>
+
+<div class="modal-footer">
+  <button *ngIf="action === TestConfigModalAction.CREATE" (click)="create()" class="btn btn-success btn-sm">Create</button>
+  <button *ngIf="action === TestConfigModalAction.EDIT" (click)="update()" class="btn btn-primary btn-sm">Update</button>
+  <button (click)="modal.dismiss(); $event.preventDefault()" class="btn btn-default btn-sm">Cancel</button>
+</div>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,18 +18,19 @@ package de.learnlib.alex.learning.services.oracles;
 
 import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.api.query.Query;
-import net.automatalib.words.Word;
-
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import javax.annotation.ParametersAreNonnullByDefault;
+import net.automatalib.words.Word;
 
 /**
  * Oracle that allows query pre and post processing.
  *
- * @param <I> Input symbol type.
- * @param <O> Output symbol type.
+ * @param <I>
+ *         Input symbol type.
+ * @param <O>
+ *         Output symbol type.
  */
 @ParametersAreNonnullByDefault
 public class QueryMonitorOracle<I, O> implements MembershipOracle<I, Word<O>> {
@@ -37,12 +38,19 @@ public class QueryMonitorOracle<I, O> implements MembershipOracle<I, Word<O>> {
     /**
      * The query listener interface.
      *
-     * @param <I> Input symbol type.
-     * @param <O> Output symbol type.
+     * @param <I>
+     *         Input symbol type.
+     * @param <O>
+     *         Output symbol type.
      */
     public interface QueryProcessingListener<I, O> {
 
-        /** @param queries The queries that are or have been processed. */
+        /**
+         * Process incoming queries.
+         *
+         * @param queries
+         *         The queries that are or have been processed.
+         */
         void process(Collection<? extends Query<I, Word<O>>> queries);
     }
 
@@ -50,15 +58,16 @@ public class QueryMonitorOracle<I, O> implements MembershipOracle<I, Word<O>> {
     private final MembershipOracle<I, Word<O>> delegate;
 
     /** The pre process listeners. */
-    private List<QueryProcessingListener<I, O>> preProcessListeners;
+    private final List<QueryProcessingListener<I, O>> preProcessListeners;
 
     /** The pre process listeners. */
-    private List<QueryProcessingListener<I, O>> postProcessListeners;
+    private final List<QueryProcessingListener<I, O>> postProcessListeners;
 
     /**
      * Constructor.
      *
-     * @param delegate The membership oracle the queries are delegated to.
+     * @param delegate
+     *         The membership oracle the queries are delegated to.
      */
     public QueryMonitorOracle(MembershipOracle<I, Word<O>> delegate) {
         this.delegate = delegate;
@@ -69,7 +78,8 @@ public class QueryMonitorOracle<I, O> implements MembershipOracle<I, Word<O>> {
     /**
      * Adds a pre process listener to the list.
      *
-     * @param listener The listener.
+     * @param listener
+     *         The listener.
      */
     public void addPreProcessingListener(QueryProcessingListener<I, O> listener) {
         this.preProcessListeners.add(listener);
@@ -78,7 +88,8 @@ public class QueryMonitorOracle<I, O> implements MembershipOracle<I, Word<O>> {
     /**
      * Adds a post process listener to the list.
      *
-     * @param listener The listener.
+     * @param listener
+     *         The listener.
      */
     public void addPostProcessingListener(QueryProcessingListener<I, O> listener) {
         this.preProcessListeners.add(listener);

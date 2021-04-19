@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,38 +19,47 @@ package de.learnlib.alex.modelchecking.dao;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.repositories.ProjectRepository;
+import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;
 import de.learnlib.alex.modelchecking.entities.LtsFormula;
 import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import de.learnlib.alex.modelchecking.repositories.LtsFormulaRepository;
+import de.learnlib.alex.modelchecking.repositories.ModelCheckingResultRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 import net.automatalib.modelcheckers.ltsmin.LTSminLTLParser;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(rollbackOn = Exception.class)
+@Transactional(rollbackFor = Exception.class)
 public class LtsFormulaDAO {
 
     private final LtsFormulaRepository ltsFormulaRepository;
     private final LtsFormulaSuiteDAO ltsFormulaSuiteDAO;
+    private final ProjectRepository projectRepository;
+    private final LearnerResultStepRepository learnerResultStepRepository;
+    private final ModelCheckingResultRepository modelCheckingResultRepository;
 
-    /**
-     * Constructor.
-     *
-     * @param ltsFormulaRepository
-     *         {@link #ltsFormulaRepository}
-     */
     @Autowired
-    public LtsFormulaDAO(LtsFormulaRepository ltsFormulaRepository,
-                         LtsFormulaSuiteDAO ltsFormulaSuiteDAO) {
+    public LtsFormulaDAO(
+            LtsFormulaRepository ltsFormulaRepository,
+            @Lazy LtsFormulaSuiteDAO ltsFormulaSuiteDAO,
+            ProjectRepository projectRepository,
+            LearnerResultStepRepository learnerResultStepRepository,
+            ModelCheckingResultRepository modelCheckingResultRepository
+    ) {
         this.ltsFormulaRepository = ltsFormulaRepository;
         this.ltsFormulaSuiteDAO = ltsFormulaSuiteDAO;
+        this.projectRepository = projectRepository;
+        this.learnerResultStepRepository = learnerResultStepRepository;
+        this.modelCheckingResultRepository = modelCheckingResultRepository;
     }
 
-    public LtsFormula create(User user, Long projectId, Long suiteId, LtsFormula formula) throws NotFoundException {
+    public LtsFormula create(User user, Long projectId, Long suiteId, LtsFormula formula) {
         LTSminLTLParser.requireValidIOFormula(formula.getFormula());
 
         final LtsFormulaSuite suite = ltsFormulaSuiteDAO.get(user, projectId, suiteId);
@@ -63,7 +72,19 @@ public class LtsFormulaDAO {
         return ltsFormulaRepository.save(f);
     }
 
-    public LtsFormula update(User user, Long projectId, Long suiteId, LtsFormula formula) throws NotFoundException {
+    public List<LtsFormula> getByIds(User user, Long projectId, List<Long> formulaIds) {
+        final Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new NotFoundException("Project could not be found"));
+
+        final List<LtsFormula> formulas = ltsFormulaRepository.findAllByIdIn(formulaIds);
+        for (LtsFormula formula : formulas) {
+            checkAccess(user, project, formula.getSuite(), formula);
+        }
+
+        return formulas;
+    }
+
+    public LtsFormula update(User user, Long projectId, Long suiteId, LtsFormula formula) {
         LTSminLTLParser.requireValidIOFormula(formula.getFormula());
 
         final LtsFormulaSuite suite = ltsFormulaSuiteDAO.get(user, projectId, suiteId);
@@ -81,7 +102,7 @@ public class LtsFormulaDAO {
         final LtsFormulaSuite newSuite = ltsFormulaSuiteDAO.get(user, projectId, targetSuite.getId());
 
         final List<LtsFormula> formulas = ltsFormulaRepository.findAllBySuite_IdAndIdIn(suiteId, formulaIds);
-        for (LtsFormula f: formulas) {
+        for (LtsFormula f : formulas) {
             checkAccess(user, oldSuite.getProject(), oldSuite, f);
             f.setSuite(newSuite);
         }
@@ -89,21 +110,35 @@ public class LtsFormulaDAO {
         return ltsFormulaRepository.saveAll(formulas);
     }
 
-    public void delete(User user, Long projectId, Long suiteId, Long formulaId) throws NotFoundException {
-        final LtsFormulaSuite suite = ltsFormulaSuiteDAO.get(user, projectId, suiteId);
-        final LtsFormula formula = ltsFormulaRepository.findById(formulaId).orElse(null);
+    public void delete(User user, Long projectId, Long suiteId, Long formulaId) {
+        final var suite = ltsFormulaSuiteDAO.get(user, projectId, suiteId);
+        final var formula = ltsFormulaRepository.findById(formulaId).orElse(null);
         checkAccess(user, suite.getProject(), suite, formula);
-
-        ltsFormulaRepository.deleteById(formulaId);
+        delete(projectId, formula);
     }
 
-    public void delete(User user, Long projectId, Long suiteId, List<Long> formulaIds) throws NotFoundException {
+    public void delete(User user, Long projectId, Long suiteId, List<Long> formulaIds) {
         for (final Long id : formulaIds) {
             delete(user, projectId, suiteId, id);
         }
     }
 
-    public void checkAccess(User user, Project project, LtsFormulaSuite suite, LtsFormula formula) throws NotFoundException {
+    public void delete(Long projectId, LtsFormula formula) {
+        // remove model checking results that reference the formula
+        final var learnerResultSteps = learnerResultStepRepository.findAllByResult_Project_Id(projectId).stream()
+                .filter(s -> !s.getModelCheckingResults().isEmpty())
+                .collect(Collectors.toList());
+
+        learnerResultSteps.forEach(s ->
+                s.getModelCheckingResults().removeIf(r -> r.getFormula().getId().equals(formula.getId()))
+        );
+
+        learnerResultStepRepository.saveAll(learnerResultSteps);
+        modelCheckingResultRepository.deleteAllByFormula_Id(formula.getId());
+        ltsFormulaRepository.delete(formula);
+    }
+
+    public void checkAccess(User user, Project project, LtsFormulaSuite suite, LtsFormula formula) {
         ltsFormulaSuiteDAO.checkAccess(user, project, suite);
 
         if (formula == null) {

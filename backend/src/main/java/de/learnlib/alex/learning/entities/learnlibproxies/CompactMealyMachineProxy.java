@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,21 +20,20 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
-import net.automatalib.automata.concepts.StateIDs;
-import net.automatalib.automata.transducers.MealyMachine;
-import net.automatalib.automata.transducers.impl.compact.CompactMealy;
-import net.automatalib.words.Alphabet;
-import net.automatalib.words.impl.GrowingMapAlphabet;
-
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.Transient;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.Transient;
+import net.automatalib.automata.concepts.StateIDs;
+import net.automatalib.automata.transducers.MealyMachine;
+import net.automatalib.automata.transducers.impl.compact.CompactMealy;
+import net.automatalib.words.Alphabet;
+import net.automatalib.words.impl.GrowingMapAlphabet;
 
 /**
  * Proxy around a {@link net.automatalib.automata.transducers.impl.compact.CompactMealy} from the LearnLib.
@@ -72,7 +71,7 @@ public class CompactMealyMachineProxy implements Serializable {
     }
 
     private static <S, T> CompactMealyMachineProxy createProxy(MealyMachine<S, String, T, String> machine,
-            Alphabet<String> alphabet) {
+                                                               Alphabet<String> alphabet) {
         final StateIDs<S> stateIDs = machine.stateIDs();
 
         final Integer initialStateId = stateIDs.getStateId(machine.getInitialState());
@@ -200,7 +199,7 @@ public class CompactMealyMachineProxy implements Serializable {
      *
      * @return The Edges of the machine as JSON string.
      */
-    @Column(name = "edges", columnDefinition = "MEDIUMTEXT")
+    @Column(name = "edges", columnDefinition = "TEXT")
     @JsonIgnore
     public String getEdgesDB() {
         try {

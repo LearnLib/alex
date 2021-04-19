@@ -1,8 +1,8 @@
 package de.learnlib.alex.learning.entities;
 
-import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Transient;
 
 public class LearnerStatus {
 

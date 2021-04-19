@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,17 @@
 
 package de.learnlib.alex.learning.entities.learnlibproxies.eqproxies;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class CompleteExplorationEQOracleProxyTest {
 
     public static final int MAX_DEPTH = 10;
     private CompleteExplorationEQOracleProxy eqOracle;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         eqOracle = new CompleteExplorationEQOracleProxy();
         eqOracle.setMinDepth(1);
@@ -36,26 +38,26 @@ public class CompleteExplorationEQOracleProxyTest {
         eqOracle.checkParameters(); // nothing should happen
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void ensureThatAnExceptionIsThrownIfMinDepthIsGreaterThanMaxDepth() {
         eqOracle.setMinDepth(MAX_DEPTH);
         eqOracle.setMaxDepth(1);
 
-        eqOracle.checkParameters(); // should fail
+        assertThrows(IllegalArgumentException.class, () -> eqOracle.checkParameters());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void ensureThatAnExceptionIsThrownIfMinDepthIsNegative() {
         eqOracle.setMinDepth(-1);
 
-        eqOracle.checkParameters(); // should fail
+        assertThrows(IllegalArgumentException.class, () -> eqOracle.checkParameters());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void ensureThatAnExceptionIsThrownIfMaxDepthIsNegative() {
         eqOracle.setMaxDepth(-1);
 
-        eqOracle.checkParameters(); // should fail
+        assertThrows(IllegalArgumentException.class, () -> eqOracle.checkParameters());
     }
 
 }

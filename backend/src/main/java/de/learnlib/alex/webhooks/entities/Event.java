@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,8 @@ package de.learnlib.alex.webhooks.entities;
 /**
  * The event.
  *
- * @param <T> The type of the data that is passed by the event.
+ * @param <T>
+ *         The type of the data that is passed by the event.
  */
 public abstract class Event<T> {
 
@@ -32,8 +33,10 @@ public abstract class Event<T> {
     /**
      * Constructor.
      *
-     * @param data      {@link #data}
-     * @param eventType {@link #eventType}
+     * @param data
+     *         {@link #data}
+     * @param eventType
+     *         {@link #eventType}
      */
     public Event(T data, EventType eventType) {
         this.data = data;

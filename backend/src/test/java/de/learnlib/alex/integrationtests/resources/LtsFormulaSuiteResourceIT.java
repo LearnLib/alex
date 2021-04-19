@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.integrationtests.SpringRestError;
 import de.learnlib.alex.integrationtests.resources.api.LtsFormulaApi;
@@ -24,17 +27,13 @@ import de.learnlib.alex.integrationtests.resources.api.ProjectApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
 import de.learnlib.alex.modelchecking.entities.LtsFormula;
 import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.http.HttpStatus;
-
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.Response;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 
 public class LtsFormulaSuiteResourceIT extends AbstractResourceIT {
 
@@ -44,7 +43,7 @@ public class LtsFormulaSuiteResourceIT extends AbstractResourceIT {
     private Project project;
     private String jwt;
 
-    @Before
+    @BeforeEach
     public void before() {
         final UserApi userApi = new UserApi(client, port);
         final ProjectApi projectApi = new ProjectApi(client, port);
@@ -137,7 +136,7 @@ public class LtsFormulaSuiteResourceIT extends AbstractResourceIT {
         assertEquals(HttpStatus.OK.value(), res.getStatus());
 
         final LtsFormulaSuite updatedSuite = res.readEntity(LtsFormulaSuite.class);
-        assertFormulaSuite(updatedSuite,"updatedName", 0);
+        assertFormulaSuite(updatedSuite, "updatedName", 0);
     }
 
     @Test
@@ -181,7 +180,8 @@ public class LtsFormulaSuiteResourceIT extends AbstractResourceIT {
 
     private int getNumberOfFormulaSuites(Long projectId, String jwt) {
         return formulaSuiteApi.getAll(projectId, jwt)
-                .readEntity(new GenericType<List<LtsFormulaSuite>>() {})
+                .readEntity(new GenericType<List<LtsFormulaSuite>>() {
+                })
                 .size();
     }
 }

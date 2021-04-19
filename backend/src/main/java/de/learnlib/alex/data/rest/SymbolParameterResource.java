@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,10 @@
 
 package de.learnlib.alex.data.rest;
 
-import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.dao.SymbolParameterDAO;
 import de.learnlib.alex.data.entities.SymbolParameter;
 import de.learnlib.alex.security.AuthContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,9 +31,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.ValidationException;
-import javax.ws.rs.core.MediaType;
-
 /**
  * The resource for symbol parameters.
  */
@@ -43,16 +38,12 @@ import javax.ws.rs.core.MediaType;
 @RequestMapping("/rest/projects/{projectId}/symbols/{symbolId}/parameters")
 public class SymbolParameterResource {
 
-    private static final Logger LOGGER = LogManager.getLogger();
-
-    /** The security context containing the user of the request. */
-    private AuthContext authContext;
-
-    /** The {@link SymbolParameterDAO} to use. */
-    private SymbolParameterDAO symbolParameterDAO;
+    private final AuthContext authContext;
+    private final SymbolParameterDAO symbolParameterDAO;
 
     @Autowired
-    public SymbolParameterResource(AuthContext authContext, SymbolParameterDAO symbolParameterDAO) {
+    public SymbolParameterResource(AuthContext authContext,
+                                   SymbolParameterDAO symbolParameterDAO) {
         this.authContext = authContext;
         this.symbolParameterDAO = symbolParameterDAO;
     }
@@ -72,15 +63,13 @@ public class SymbolParameterResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity create(@PathVariable("projectId") Long projectId,
-                                 @PathVariable("symbolId") Long symbolId,
-                                 @RequestBody SymbolParameter parameter) {
-
-        final User user = authContext.getUser();
-        LOGGER.traceEntry("create({}, {}, {}) for user {}.", projectId, symbolId, parameter, user);
-
-        final SymbolParameter createdParameter = symbolParameterDAO.create(user, projectId, symbolId, parameter);
-        LOGGER.traceExit(createdParameter);
+    public ResponseEntity<SymbolParameter> create(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("symbolId") Long symbolId,
+            @RequestBody SymbolParameter parameter
+    ) {
+        final var user = authContext.getUser();
+        final var createdParameter = symbolParameterDAO.create(user, projectId, symbolId, parameter);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdParameter);
     }
 
@@ -99,15 +88,13 @@ public class SymbolParameterResource {
             value = "/{parameterId}",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity delete(@PathVariable("projectId") Long projectId,
-                                 @PathVariable("symbolId") Long symbolId,
-                                 @PathVariable("parameterId") Long parameterId) {
-
-        final User user = authContext.getUser();
-        LOGGER.traceEntry("delete({}, {}, {}) for user {}.", projectId, symbolId, parameterId, user);
-
+    public ResponseEntity<?> delete(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("symbolId") Long symbolId,
+            @PathVariable("parameterId") Long parameterId
+    ) {
+        final var user = authContext.getUser();
         symbolParameterDAO.delete(user, projectId, symbolId, parameterId);
-        LOGGER.traceExit("Parameter {} deleted.", parameterId);
         return ResponseEntity.noContent().build();
     }
 
@@ -129,20 +116,14 @@ public class SymbolParameterResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity update(@PathVariable("projectId") Long projectId,
-                                 @PathVariable("symbolId") Long symbolId,
-                                 @PathVariable("parameterId") Long parameterId,
-                                 @RequestBody SymbolParameter parameter) {
-
-        final User user = authContext.getUser();
-        LOGGER.traceEntry("update({}, {}, {}, {}) for user {}.", projectId, symbolId, parameterId, parameter, user);
-
-        if (!parameterId.equals(parameter.getId())) {
-            throw new ValidationException("The id of the parameter does not match with the one in the URL.");
-        }
-
-        final SymbolParameter updatedParameter = symbolParameterDAO.update(user, projectId, symbolId, parameter);
-        LOGGER.traceExit(updatedParameter);
+    public ResponseEntity<SymbolParameter> update(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("symbolId") Long symbolId,
+            @PathVariable("parameterId") Long parameterId,
+            @RequestBody SymbolParameter parameter
+    ) {
+        final var user = authContext.getUser();
+        final var updatedParameter = symbolParameterDAO.update(user, projectId, symbolId, parameterId, parameter);
         return ResponseEntity.ok(updatedParameter);
     }
 }

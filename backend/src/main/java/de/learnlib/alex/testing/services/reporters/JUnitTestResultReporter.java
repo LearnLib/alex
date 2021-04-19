@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,9 @@ import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestCaseResult;
 import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.entities.TestSuiteResult;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -30,9 +30,8 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Map;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Creates a JUnit report of a test result.
@@ -42,7 +41,8 @@ public class JUnitTestResultReporter extends TestResultReporter<String> {
     /**
      * Creates a report.
      *
-     * @param report The config to create a report from.
+     * @param report
+     *         The config to create a report from.
      * @return The serialized and formatted xml report as string.
      */
     @Override

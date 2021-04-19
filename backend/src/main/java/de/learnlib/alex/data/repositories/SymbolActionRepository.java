@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,10 @@
 package de.learnlib.alex.data.repositories;
 
 import de.learnlib.alex.data.entities.SymbolAction;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * The repository for symbol actions.
@@ -36,8 +34,6 @@ public interface SymbolActionRepository extends JpaRepository<SymbolAction, Long
      * @param symbolId
      *         The ID of the symbol.
      */
-    @Transactional
-    @SuppressWarnings("checkstyle:methodname")
     void deleteAllBySymbol_Id(Long symbolId);
 
     /**
@@ -46,11 +42,8 @@ public interface SymbolActionRepository extends JpaRepository<SymbolAction, Long
      * @param projectId
      *         The ID of the project.
      */
-    @Transactional
-    @SuppressWarnings("checkstyle:methodname")
     void deleteAllBySymbol_Project_Id(Long projectId);
 
     @Query("SELECT a FROM  SymbolAction a WHERE a.symbol.project.id = ?1 AND BASE_URL = ?2 AND (TYPE = 'web_goto' OR TYPE = 'rest_call')")
-    @Transactional(readOnly = true)
     List<SymbolAction> findAllWithBaseUrl(Long projectId, String baseUrl);
 }

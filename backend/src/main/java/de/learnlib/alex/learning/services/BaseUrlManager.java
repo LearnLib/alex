@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package de.learnlib.alex.learning.services;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.actions.Credentials;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +27,7 @@ import java.util.Map;
  */
 public class BaseUrlManager {
 
-    private Map<String, ProjectUrl> urlMap;
+    private final Map<String, ProjectUrl> urlMap;
 
     /** Advanced constructor which sets the base url field. */
     public BaseUrlManager(ProjectEnvironment environment) {

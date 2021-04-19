@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,45 +16,33 @@
 
 package de.learnlib.alex.learning.services;
 
+import de.learnlib.alex.auth.dao.UserDAO;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
+import de.learnlib.alex.common.exceptions.ResourcesExhaustedException;
 import de.learnlib.alex.common.utils.LoggerMarkers;
+import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.dao.LearnerSetupDAO;
-import de.learnlib.alex.learning.entities.LearnerOptions;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
-import de.learnlib.alex.learning.entities.LearnerSetup;
 import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStatus;
 import de.learnlib.alex.learning.entities.LearningProcessStatus;
 import de.learnlib.alex.learning.entities.ReadOutputConfig;
 import de.learnlib.alex.learning.entities.SeparatingWord;
-import de.learnlib.alex.learning.entities.SymbolSet;
+import de.learnlib.alex.learning.entities.WebDriverConfig;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
-import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.learning.exceptions.LearnerException;
-import de.learnlib.alex.learning.repositories.LearnerResultRepository;
-import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.PreparedConnectorContextHandlerFactory;
-import de.learnlib.alex.learning.services.connectors.PreparedContextHandler;
-import de.learnlib.alex.testing.dao.TestDAO;
-import de.learnlib.alex.webhooks.services.WebhookService;
-import net.automatalib.automata.transducers.impl.compact.CompactMealy;
-import net.automatalib.util.automata.Automata;
-import net.automatalib.util.automata.conformance.WpMethodTestsIterator;
-import net.automatalib.words.Alphabet;
-import net.automatalib.words.Word;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
+import de.learnlib.alex.testing.services.TestService;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -62,6 +50,21 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import net.automatalib.automata.transducers.impl.compact.CompactMealy;
+import net.automatalib.util.automata.Automata;
+import net.automatalib.util.automata.conformance.WpMethodTestsIterator;
+import net.automatalib.words.Alphabet;
+import net.automatalib.words.Word;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * Basic class to control and monitor a learn process. This class is a high level abstraction of the LearnLib.
@@ -69,7 +72,7 @@ import java.util.stream.Collectors;
 @Service
 public class LearnerService {
 
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(LearnerService.class);
 
     /** Indicator for in which phase the learner currently is. */
     public enum LearnerPhase {
@@ -83,10 +86,12 @@ public class LearnerService {
 
     private final LearnerSetupDAO learnerSetupDAO;
     private final LearnerResultDAO learnerResultDAO;
-    private final WebhookService webhookService;
     private final PreparedConnectorContextHandlerFactory contextHandlerFactory;
-    private final TestDAO testDAO;
-    private final LearnerResultRepository learnerResultRepository;
+    private final ProjectDAO projectDAO;
+    private final ApplicationContext applicationContext;
+    private final TestService testService;
+    private final UserDAO userDAO;
+    private final TransactionTemplate transactionTemplate;
 
     /** The learner threads for users (userId -> thread). */
     private final Map<Long, LearnerThread> learnerThreads;
@@ -94,16 +99,20 @@ public class LearnerService {
     @Autowired
     public LearnerService(LearnerSetupDAO learnerSetupDAO,
                           LearnerResultDAO learnerResultDAO,
-                          WebhookService webhookService,
+                          ApplicationContext applicationContext,
                           PreparedConnectorContextHandlerFactory contextHandlerFactory,
-                          TestDAO testDAO,
-                          LearnerResultRepository learnerResultRepository) {
+                          ProjectDAO projectDAO,
+                          @Lazy TestService testService,
+                          UserDAO userDAO,
+                          TransactionTemplate transactionTemplate) {
         this.learnerSetupDAO = learnerSetupDAO;
         this.learnerResultDAO = learnerResultDAO;
-        this.webhookService = webhookService;
         this.contextHandlerFactory = contextHandlerFactory;
-        this.testDAO = testDAO;
-        this.learnerResultRepository = learnerResultRepository;
+        this.projectDAO = projectDAO;
+        this.applicationContext = applicationContext;
+        this.testService = testService;
+        this.userDAO = userDAO;
+        this.transactionTemplate = transactionTemplate;
 
         this.learnerThreads = new HashMap<>();
     }
@@ -125,28 +134,34 @@ public class LearnerService {
      *         If the symbols specified in the configuration could not be found.
      */
     public LearnerResult start(User user, Project project, LearnerStartConfiguration startConfiguration) {
-        final LearnerSetup setup = startConfiguration.getSetup();
-        final LearnerSetup createdSetup = setup.getId() != null ? setup : learnerSetupDAO.create(user, project.getId(), setup);
+        final var userInDb = this.userDAO.getByID(user.getId());
+        checkRunningProcesses(userInDb, project.getId());
 
-        final LearnerOptions options = startConfiguration.getOptions();
-        if (options.getComment() == null || options.getComment().trim().equals("")) {
-            options.setComment(createdSetup.getName());
-        }
+        final var createdResult = transactionTemplate.execute(t -> {
+            final var setup = startConfiguration.getSetup();
+            final var createdSetup = setup.getId() != null ? setup : learnerSetupDAO.create(user, project.getId(), setup);
 
-        LearnerResult result = new LearnerResult();
-        result.setSetup(createdSetup);
-        result.setComment(startConfiguration.getOptions().getComment());
-        result = learnerResultDAO.create(user, project, result);
+            final var options = startConfiguration.getOptions();
+            if (options.getComment() == null || options.getComment().trim().equals("")) {
+                options.setComment(createdSetup.getName());
+            }
 
-        final PreparedContextHandler contextHandler = contextHandlerFactory
-                .createPreparedContextHandler(user, project, createdSetup.getWebDriver(), createdSetup.getPreSymbol(), createdSetup.getPostSymbol());
+            final var result = new LearnerResult();
+            result.setSetup(createdSetup);
+            result.setComment(startConfiguration.getOptions().getComment());
 
-        final AbstractLearnerProcess learnThread = new StartingLearnerProcess(user, learnerResultDAO, webhookService,
-                testDAO, contextHandler, result, createdSetup);
+            final var r = learnerResultDAO.create(user, project.getId(), result);
+            t.flush();
 
-        enqueueLearningProcess(project.getId(), learnThread);
+            return r;
+        });
 
-        return result;
+        enqueueLearningProcess(
+                project.getId(),
+                new StartingLearnerProcessQueueItem(user.getId(), project.getId(), createdResult.getId())
+        );
+
+        return createdResult;
     }
 
     /**
@@ -154,21 +169,25 @@ public class LearnerService {
      *
      * @param user
      *         The user that wants to restart his latest thread.
-     * @param project
+     * @param projectId
      *         The project that is learned.
-     * @param result
+     * @param testNo
      *         The result of a previous process.
      * @param configuration
      *         The configuration to use for the next learning steps.
-     * @throws IllegalArgumentException
-     *         If the new configuration has errors.
-     * @throws IllegalStateException
-     *         If a learning process is already active or if now process to resume was found.
-     * @throws NotFoundException
-     *         If the symbols specified in the configuration could not be found.
      */
-    public void resume(User user, Project project, LearnerResult result, LearnerResumeConfiguration configuration)
-            throws IllegalArgumentException, IllegalStateException, NotFoundException {
+    @Transactional(rollbackFor = Exception.class)
+    public LearnerResult resume(User user, Long projectId, Long testNo, LearnerResumeConfiguration configuration) {
+        final var userInDb = this.userDAO.getByID(user.getId());
+        checkRunningProcesses(userInDb, projectId);
+
+        configuration.checkConfiguration();
+        var result = learnerResultDAO.getByTestNo(user, projectId, testNo);
+
+        if (configuration.getStepNo() > result.getSteps().size()) {
+            throw new IllegalArgumentException("The step number is not valid.");
+        }
+
         if (result.getSteps().get(configuration.getStepNo() - 1).isError()) {
             throw new IllegalStateException("You cannot resume from a failed step.");
         }
@@ -177,14 +196,12 @@ public class LearnerService {
             validateCounterexample(user, result, configuration);
         }
 
-        final LearnerSetup setup = result.getSetup();
-        final PreparedContextHandler contextHandler = contextHandlerFactory.createPreparedContextHandler(
-                user, project, setup.getWebDriver(), setup.getPreSymbol(), setup.getPostSymbol());
+        enqueueLearningProcess(
+                result.getProjectId(),
+                new ResumingLearnerProcessQueueItem(user.getId(), result.getProjectId(), result.getId(), configuration)
+        );
 
-        final AbstractLearnerProcess learnThread = new ResumingLearnerProcess(user, learnerResultDAO, learnerSetupDAO,
-                webhookService, testDAO, contextHandler, result, setup, configuration);
-
-        enqueueLearningProcess(project.getId(), learnThread);
+        return result;
     }
 
     /**
@@ -192,19 +209,18 @@ public class LearnerService {
      *
      * @param projectId
      *         The id of the project.
-     * @param learnerProcess
+     * @param item
      *         The thread to start.
      */
-    private void enqueueLearningProcess(Long projectId, AbstractLearnerProcess learnerProcess) {
+    private void enqueueLearningProcess(Long projectId, AbstractLearnerProcessQueueItem item) {
         if (learnerThreads.containsKey(projectId)) {
-            learnerThreads.get(projectId).enqueue(learnerProcess);
+            learnerThreads.get(projectId).enqueue(item);
         } else {
-            final LearnerThread thread = new LearnerThread(
-                    learnerResultRepository,
-                    () -> learnerThreads.remove(projectId)
-            );
-            thread.enqueue(learnerProcess);
+            final var thread = applicationContext.getBean(LearnerThread.class);
+            thread.onFinished(() -> learnerThreads.remove(projectId));
+
             learnerThreads.put(projectId, thread);
+            thread.enqueue(item);
             thread.start();
         }
     }
@@ -233,14 +249,16 @@ public class LearnerService {
                 }
             }
 
-            // finally check if the given sample matches the behavior of the SUL
-            List<String> results = readOutputs(user,
+            // check if the given sample matches the behavior of the SUL
+            final List<String> results = readOutputs(
+                    user,
                     result.getProject(),
+                    result.getSetup().getEnvironments().get(0),
                     result.getSetup().getPreSymbol(),
                     symbolsFromCounterexample,
                     result.getSetup().getPostSymbol(),
-                    result.getSetup().getWebDriver())
-                    .stream()
+                    result.getSetup().getWebDriver()
+            ).stream()
                     .map(ExecuteResult::getOutput)
                     .collect(Collectors.toList());
 
@@ -257,9 +275,21 @@ public class LearnerService {
      * @param projectId
      *         The id of the project that is learned.
      */
-    public void stop(Long projectId, Long testNo) {
+    @Transactional(rollbackFor = Exception.class)
+    public void abort(User user, Long projectId, Long testNo) {
+        final var project = projectDAO.getByID(user, projectId); // access check
+        final var result = learnerResultDAO.getByTestNo(user, projectId, testNo);
+
+        final var userIsOwner = project.getOwners().stream()
+                .map(User::getId)
+                .anyMatch(ownerId -> ownerId.equals(user.getId()));
+
+        if (!userIsOwner && (result.getExecutedBy() != null && !result.getExecutedBy().equals(user))) {
+            throw new UnauthorizedException("You are not allowed to abort this learning process.");
+        }
+
         if (isActive(projectId)) {
-            learnerThreads.get(projectId).abort(testNo);
+            learnerThreads.get(projectId).abort(result.getId());
         }
     }
 
@@ -274,6 +304,33 @@ public class LearnerService {
         return learnerThreads.containsKey(projectId);
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public boolean hasRunningOrPendingTasks(User user, Long projectId) {
+        if (!isActive(projectId)) {
+            return false;
+        }
+
+        LearnerStatus learnerStatus = this.getStatus(user, projectId);
+
+        List<LearnerResult> currentProcessSingletonList = Optional.ofNullable(learnerStatus.getCurrentProcess())
+                .map(LearningProcessStatus::getResult)
+                .map(List::of)
+                .orElse(Collections.emptyList());
+
+        return Stream.of(currentProcessSingletonList, learnerStatus.getQueue())
+                .flatMap(List::stream)
+                .map(LearnerResult::getStatus)
+                .anyMatch(status -> status.equals(LearnerResult.Status.IN_PROGRESS)
+                        || status.equals(LearnerResult.Status.PENDING));
+    }
+
+    public long getNumberOfUserOwnedLearnProcesses(User user) {
+        return user.getProjectsOwner().stream()
+                .map(Project::getId)
+                .filter(projectId -> hasRunningOrPendingTasks(user, projectId))
+                .count();
+    }
+
     /**
      * Get the status of the Learner as immutable object.
      *
@@ -281,19 +338,29 @@ public class LearnerService {
      *         The id of the project.
      * @return A snapshot of the Learner status.
      */
-    public LearnerStatus getStatus(Long projectId) {
+    @Transactional(rollbackFor = Exception.class)
+    public LearnerStatus getStatus(User user, Long projectId) {
         if (isActive(projectId)) {
-            final LearnerThread thread = learnerThreads.get(projectId);
-            final AbstractLearnerProcess process = thread.getCurrentProcess();
+            final var thread = learnerThreads.get(projectId);
+            final var process = thread.getCurrentProcess();
 
-            final LearningProcessStatus processStatus = new LearningProcessStatus();
+            // Make sure that a result has been persisted
+            if (process.getResult() == null) return new LearnerStatus();
+
+            final var processStatus = new LearningProcessStatus();
             processStatus.setCurrentQueries(process.getCurrentQueries());
             processStatus.setPhase(process.getLearnerPhase());
             processStatus.setResult(process.getResult());
 
-            final LearnerStatus status = new LearnerStatus();
+            final var status = new LearnerStatus();
             status.setCurrentProcess(processStatus);
-            status.setQueue(thread.getProcessQueue());
+
+            final var results = learnerResultDAO.getByIDs(user, projectId, thread.getProcessQueue().stream()
+                    .map(c -> c.resultId)
+                    .collect(Collectors.toList())
+            );
+
+            status.setQueue(results);
             return status;
         } else {
             return new LearnerStatus();
@@ -319,17 +386,20 @@ public class LearnerService {
      * @throws LearnerException
      *         If something went wrong while testing the symbols.
      */
-    public List<ExecuteResult> readOutputs(User user, Project project, ParameterizedSymbol resetSymbol,
-                                           List<ParameterizedSymbol> symbols, ParameterizedSymbol postSymbol, AbstractWebDriverConfig driverConfig)
+    @Transactional(rollbackFor = Exception.class)
+    public List<ExecuteResult> readOutputs(User user, Project project, ProjectEnvironment environment, ParameterizedSymbol resetSymbol,
+                                           List<ParameterizedSymbol> symbols, ParameterizedSymbol postSymbol, WebDriverConfig driverConfig)
             throws LearnerException {
-        logger.traceEntry();
         logger.info(LoggerMarkers.LEARNER, "Learner.readOutputs({}, {}, {}, {}, {})", user, project, resetSymbol, symbols, driverConfig);
 
-        SymbolSet symbolSet = new SymbolSet(resetSymbol, symbols, postSymbol);
-        ReadOutputConfig config = new ReadOutputConfig(symbolSet, driverConfig);
+        final ReadOutputConfig config = new ReadOutputConfig(
+                resetSymbol,
+                symbols,
+                postSymbol,
+                driverConfig
+        );
 
-        logger.traceExit();
-        return readOutputs(user, project, config);
+        return readOutputs(user, project, environment, config);
     }
 
     /**
@@ -343,12 +413,24 @@ public class LearnerService {
      *         The config to use.
      * @return The outputs of the SUL.
      */
-    public List<ExecuteResult> readOutputs(User user, Project project, ReadOutputConfig readOutputConfig) {
-        PreparedContextHandler ctxHandler = contextHandlerFactory.createPreparedContextHandler(user, project, readOutputConfig.getDriverConfig(), readOutputConfig.getSymbols().getResetSymbol(), readOutputConfig.getSymbols().getPostSymbol());
-        ConnectorManager connectors = ctxHandler.create(project.getDefaultEnvironment()).createContext();
+    @Transactional(rollbackFor = Exception.class)
+    public List<ExecuteResult> readOutputs(
+            User user,
+            Project project,
+            ProjectEnvironment environment,
+            ReadOutputConfig readOutputConfig
+    ) {
+        final var ctxHandler = contextHandlerFactory.createPreparedContextHandler(
+                user,
+                project,
+                readOutputConfig.getDriverConfig(),
+                readOutputConfig.getPreSymbol(),
+                readOutputConfig.getPostSymbol()
+        );
+        final var connectors = ctxHandler.create(environment).createContext();
 
         try {
-            List<ExecuteResult> outputs = readOutputConfig.getSymbols().getSymbols().stream()
+            final var outputs = readOutputConfig.getSymbols().stream()
                     .map(s -> s.execute(connectors))
                     .collect(Collectors.toList());
             connectors.dispose();
@@ -372,16 +454,14 @@ public class LearnerService {
      * @return If the machines are different: The corresponding separating word; otherwise: ""
      */
     public SeparatingWord separatingWord(CompactMealyMachineProxy mealy1, CompactMealyMachineProxy mealy2) {
-        final Alphabet<String> alphabetProxy1 = mealy1.createAlphabet();
-        final Alphabet<String> alphabetProxy2 = mealy1.createAlphabet();
-        if (alphabetProxy1.size() != alphabetProxy2.size() || !alphabetProxy1.containsAll(alphabetProxy2)) {
-            throw new IllegalArgumentException("The alphabets of the hypotheses are not identical!");
-        }
+        final Alphabet<String> alphabet1 = mealy1.createAlphabet();
+        final Alphabet<String> alphabet2 = mealy2.createAlphabet();
+        checkAlphabetsAreIdentical(alphabet1, alphabet2);
 
-        final CompactMealy<String, String> mealyMachine1 = mealy1.createMealyMachine(alphabetProxy1);
-        final CompactMealy<String, String> mealyMachine2 = mealy2.createMealyMachine(alphabetProxy2);
+        final CompactMealy<String, String> mealyMachine1 = mealy1.createMealyMachine(alphabet1);
+        final CompactMealy<String, String> mealyMachine2 = mealy2.createMealyMachine(alphabet2);
 
-        final Word<String> separatingWord = Automata.findSeparatingWord(mealyMachine1, mealyMachine2, alphabetProxy1);
+        final Word<String> separatingWord = Automata.findSeparatingWord(mealyMachine1, mealyMachine2, alphabet1);
 
         if (separatingWord != null) {
             return new SeparatingWord(
@@ -405,25 +485,23 @@ public class LearnerService {
      */
     public CompactMealy<String, String> differenceTree(
             final CompactMealyMachineProxy mealyProxy1,
-            final CompactMealyMachineProxy mealyProxy2) {
+            final CompactMealyMachineProxy mealyProxy2
+    ) {
+        final Alphabet<String> alphabet1 = mealyProxy1.createAlphabet();
+        final Alphabet<String> alphabet2 = mealyProxy2.createAlphabet();
+        checkAlphabetsAreIdentical(alphabet1, alphabet2);
 
-        final Alphabet<String> alphabet = mealyProxy1.createAlphabet();
-        final Alphabet<String> alph2 = mealyProxy2.createAlphabet();
-        if (alphabet.size() != alph2.size() || !alphabet.containsAll(alph2)) {
-            throw new IllegalArgumentException("The alphabets of the hypotheses are not identical!");
-        }
-
-        final CompactMealy<String, String> hyp1 = mealyProxy1.createMealyMachine(alphabet);
-        final CompactMealy<String, String> hyp2 = mealyProxy2.createMealyMachine(alphabet);
+        final CompactMealy<String, String> hyp1 = mealyProxy1.createMealyMachine(alphabet1);
+        final CompactMealy<String, String> hyp2 = mealyProxy2.createMealyMachine(alphabet1);
 
         // the words where the output differs
         final Set<SeparatingWord> diffs = new HashSet<>();
-        findDifferences(hyp1, hyp2, alphabet, diffs);
-        findDifferences(hyp2, hyp1, alphabet, diffs);
+        findDifferences(hyp1, hyp2, alphabet1, diffs);
+        findDifferences(hyp2, hyp1, alphabet1, diffs);
 
         // build tree
         // the tree is organized as an incomplete mealy machine
-        final CompactMealy<String, String> diffTree = new CompactMealy<>(alphabet);
+        final CompactMealy<String, String> diffTree = new CompactMealy<>(alphabet1);
         diffTree.addInitialState();
 
         for (final SeparatingWord diff : diffs) {
@@ -454,8 +532,8 @@ public class LearnerService {
         }
 
         // minimize the tree
-        final CompactMealy<String, String> target = new CompactMealy<>(alphabet);
-        Automata.minimize(diffTree, alphabet, target);
+        final CompactMealy<String, String> target = new CompactMealy<>(alphabet1);
+        Automata.minimize(diffTree, alphabet1, target);
 
         return target;
     }
@@ -494,6 +572,26 @@ public class LearnerService {
                     }
                 }
             }
+        }
+    }
+
+    private void checkRunningProcesses(User user, Long projectId) {
+        final var numberOfCurrentProcesses = getNumberOfUserOwnedLearnProcesses(user)
+                + testService.getNumberOfUserOwnedTestProcesses(user);
+
+        if (numberOfCurrentProcesses >= user.getMaxAllowedProcesses()) {
+            // check if there are already running/pending tests in this project
+            if (!this.hasRunningOrPendingTasks(user, projectId)) {
+                throw new ResourcesExhaustedException("You are not allowed to have more than "
+                        + user.getMaxAllowedProcesses()
+                        + " concurrent test/learn processes.");
+            }
+        }
+    }
+
+    private void checkAlphabetsAreIdentical(Alphabet<String> a1, Alphabet<String> a2) {
+        if (a1.size() != a2.size() || !a1.containsAll(a2)) {
+            throw new IllegalArgumentException("The alphabets of the hypotheses are not identical.");
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,18 @@
 
 package de.learnlib.alex.learning.services;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import de.learnlib.alex.learning.services.oracles.QueryMonitorOracle;
 import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.api.query.DefaultQuery;
-import net.automatalib.words.Word;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import net.automatalib.words.Word;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 public class QueryMonitorOracleTest {
 
@@ -38,7 +38,7 @@ public class QueryMonitorOracleTest {
     private int count1;
     private int count2;
 
-    @Before
+    @BeforeEach
     public void before() {
         this.mqOracle = Mockito.mock(MembershipOracle.class);
         Mockito.doNothing().when(mqOracle).processQueries(Mockito.anyCollection());
@@ -58,8 +58,8 @@ public class QueryMonitorOracleTest {
     public void shouldDoNothingIfNoQueriesAreProcessed() {
         monitorOracle.processQueries(Collections.emptyList());
         Mockito.verify(mqOracle, Mockito.never()).processQueries(Mockito.anyCollection());
-        Assert.assertEquals(0, count1);
-        Assert.assertEquals(0, count2);
+        assertEquals(0, count1);
+        assertEquals(0, count2);
     }
 
     @Test
@@ -70,7 +70,7 @@ public class QueryMonitorOracleTest {
 
         monitorOracle.processQueries(queries);
         Mockito.verify(mqOracle, Mockito.times(1)).processQueries(queries);
-        Assert.assertEquals(2, count1);
-        Assert.assertEquals(2, count2);
+        assertEquals(2, count1);
+        assertEquals(2, count2);
     }
 }

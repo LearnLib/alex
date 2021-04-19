@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,6 @@ import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
@@ -33,6 +28,8 @@ import javax.persistence.Entity;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * Action to wait for a node attribute value.
@@ -41,10 +38,6 @@ import javax.validation.constraints.NotNull;
 @DiscriminatorValue("web_waitForNodeAttribute")
 @JsonTypeName("web_waitForNodeAttribute")
 public class WaitForNodeAttributeAction extends WebSymbolAction {
-
-    private static final long serialVersionUID = 1759832996792561200L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** Enum to specify the wait criterion. */
     public enum WaitCriterion {
@@ -109,7 +102,7 @@ public class WaitForNodeAttributeAction extends WebSymbolAction {
 
             return getSuccessOutput();
         } catch (TimeoutException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Waiting on the attribute '{}' (criterion: '{}') timed out. ",
+            logger.info(LoggerMarkers.LEARNER, "Waiting on the attribute '{}' (criterion: '{}') timed out. ",
                     attribute, waitCriterion);
             return getFailedOutput();
         }

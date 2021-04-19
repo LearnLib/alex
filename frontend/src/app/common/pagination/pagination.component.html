@@ -1,0 +1,13 @@
+<nav>
+  <ul class="pagination mt-0">
+    <li [ngClass]="{'disabled': page.first}" class="page-item">
+      <button (click)="handlePrevious()" class="page-link">Previous</button>
+    </li>
+    <li class="page-item disabled">
+      <span class="page-link">{{(page.number + 1)}} / {{page.totalPages}}</span>
+    </li>
+    <li [ngClass]="{'disabled': page.last}" class="page-item">
+      <button (click)="handleNext()" class="page-link">Next</button>
+    </li>
+  </ul>
+</nav>

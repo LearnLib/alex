@@ -1,0 +1,191 @@
+@import "bootstrap";
+@import "variables";
+@import "mixins";
+@import "compat";
+@import "font-awesome";
+
+*, *:after, *:before {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: .75rem; // 12 px
+}
+
+body {
+  overflow-x: hidden;
+  background: #f2f2f2;
+}
+
+.text-black {
+  color: #000;
+
+  &:hover {
+    color: #000;
+  }
+}
+
+#toast-container {
+  margin-bottom: 2rem;
+}
+
+.hr-sm {
+  margin: 10px 0;
+}
+
+.table.table-hollow {
+  background: none;
+
+  tr td {
+    border-top: 0;
+    padding: 2px;
+  }
+}
+
+.visibility-hidden {
+  visibility: hidden;
+}
+
+.visually-hidden {
+  visibility: hidden;
+  overflow: hidden;
+  width: 0;
+  height: 0;
+}
+
+.text-wrap {
+  word-wrap: break-word;
+}
+
+.cursor-pointer {
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.cursor-grabbing {
+  &:hover {
+    cursor: grabbing;
+  }
+}
+
+.no-border-radius {
+  border-radius: 0 !important;
+}
+
+.view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.view-body {
+  padding: 15px 0;
+  flex-grow: 1;
+  overflow: auto;
+}
+
+#alex {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  background: #fff;
+}
+
+.no-caret {
+  &::after {
+    display: none;
+  }
+}
+
+/* Bootstrap Extensions & Modifications
+============================================================================== */
+
+.form-condensed {
+  .form-group {
+    margin-bottom: 5px;
+  }
+}
+
+.alert-condensed {
+  padding: 5px 15px;
+}
+
+.btn {
+  &.btn-icon {
+    background: none;
+    border: 0;
+    opacity: 0.5;
+    &:hover {
+      opacity: 1;
+    }
+    &:active {
+      box-shadow: none;
+      outline: none;
+    }
+  }
+}
+
+.list-group-condensed {
+  .list-group-item {
+    padding: 6px 15px;
+  }
+}
+
+/* Other Stuff
+============================================================================== */
+
+.learner-wrapper {
+  .panel-sidebar {
+    min-width: 320px;
+    max-width: 320px;
+    padding: .75rem 1rem;
+    background: #f7f7f7;
+    overflow: auto;
+  }
+}
+
+.table-rest-call-action {
+  display: block;
+  max-height: 200px;
+  overflow: auto;
+  width: 100%;
+
+  td, th {
+    min-width: 120px;
+  }
+}
+
+
+ngb-accordion {
+  div[role="tab"] {
+    padding: .5rem;
+
+    > button {
+      display: block;
+      color: #555555;
+
+      &:hover {
+        text-decoration: none;
+        color: #000;
+      }
+    }
+  }
+}
+
+create-action-modal ngb-accordion .card-body {
+  padding: 0;
+}
+
+a.disabled {
+  pointer-events: none;
+  cursor: default;
+  color: #757575;
+}
+
+.table-danger {
+  code {
+    color: #7a1515;
+  }
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,30 +20,32 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.webhooks.entities.Webhook;
-import org.apache.shiro.crypto.SecureRandomNumberGenerator;
-import org.apache.shiro.crypto.hash.Sha512Hash;
-import org.hibernate.annotations.Cascade;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator;
+import org.apache.shiro.crypto.hash.Sha512Hash;
+import org.hibernate.annotations.Cascade;
 
 /**
  * The model for a user.
  */
 @Entity
+@Table(name = "user", schema = "public")
 public class User implements Serializable {
 
     /** Auto generated id for saving it into the db. */
@@ -54,7 +56,7 @@ public class User implements Serializable {
 
     /** The unique id of the user. */
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /** The username of the user. */
@@ -93,6 +95,9 @@ public class User implements Serializable {
     @JsonIgnore
     private List<Webhook> webhooks;
 
+    @Min(value = 1, message = "The number of allowed processes has to be greater than 0.")
+    private int maxAllowedProcesses;
+
     /**
      * Default constructor that gives the user the role of "registered".
      */
@@ -100,141 +105,84 @@ public class User implements Serializable {
         this.projectsOwner = new HashSet<>();
         this.projectsMember = new HashSet<>();
         this.webhooks = new ArrayList<>();
-        role = UserRole.REGISTERED;
+        this.role = UserRole.REGISTERED;
+        this.maxAllowedProcesses = 1;
     }
 
     /**
      * Constructor that sets a specific ID and gives the user the role of "registered".
      *
-     * @param id The ID of the User.
+     * @param id
+     *         The ID of the User.
      */
     public User(Long id) {
-        role = UserRole.REGISTERED;
+        this();
         this.id = id;
     }
 
-    /**
-     * @return The ID of the User in the DB.
-     */
     public Long getId() {
         return id;
     }
 
-    /**
-     * @param id The ID of the user.
-     */
     public void setId(Long id) {
         this.id = id;
     }
 
-    /**
-     * @return The current username of the user.
-     */
     public String getUsername() {
         return username;
     }
 
-    /**
-     * @param username The new username of the user.
-     */
     public void setUsername(String username) {
         this.username = username;
     }
 
-    /**
-     * @return The current EMail of the User.
-     */
     public String getEmail() {
         return email;
     }
 
-    /**
-     * @param email The new EMail of the User.
-     */
     public void setEmail(String email) {
         this.email = email;
     }
 
-    /**
-     * @return The current Role of the User.
-     */
     public UserRole getRole() {
         return role;
     }
 
-    /**
-     * @param role The new Role of the User.
-     */
     public void setRole(UserRole role) {
         this.role = role;
     }
 
-    /**
-     * @return The set of projects in which the user is an owner.
-     */
-    @JsonIgnore
     public Set<Project> getProjectsOwner() {
         return projectsOwner;
     }
 
-    /**
-     * @param projectsOwner The set of projects in which the user is an owner.
-     */
-    @JsonIgnore
     public void setProjectsOwner(Set<Project> projectsOwner) {
         this.projectsOwner = projectsOwner;
     }
 
-    /**
-     * @return The set of projects in which the user is a member.
-     */
-    @JsonIgnore
     public Set<Project> getProjectsMember() {
         return projectsMember;
     }
 
-    /**
-     * @param projectsMember The set of projects in which the user is a member.
-     */
-    @JsonIgnore
     public void setProjectsMember(Set<Project> projectsMember) {
         this.projectsMember = projectsMember;
     }
 
-    /**
-     * @return The list of ids of projects in which the user is a member.
-     */
-    @JsonIgnore
-    public List<Long> getProjectsMemberIds() {
-        return this.projectsMember.stream().map(Project::getId).collect(Collectors.toList());
-    }
-
-    /**
-     * @return The list of ids of projects in which the user is an owner.
-     */
-    @JsonIgnore
-    public List<Long> getProjectsOwnerIds() {
-        return this.projectsOwner.stream().map(Project::getId).collect(Collectors.toList());
-    }
-
-    /**
-     * @return The hashed password of the User.
-     */
     @JsonIgnore
     @JsonProperty("password")
     public String getPassword() {
         return password;
     }
 
-    /**
-     * @param password The new (already hashed) password of the User.
-     */
     public void setPassword(String password) {
         this.password = password;
     }
 
     /**
-     * @param plainPassword The new password of the User as plain text.
+     * Encrypt and set a given password.
+     *
+     * @param plainPassword
+     *         The new password of the User as plain text.
      */
     @JsonIgnore
     public void setEncryptedPassword(String plainPassword) {
@@ -245,27 +193,22 @@ public class User implements Serializable {
     /**
      * Checks if the given password equals the password of the user.
      *
-     * @param plainPasswordToCheck The password to check.
+     * @param plainPasswordToCheck
+     *         The password to check.
      * @return True, if both passwords matched, false otherwise.
      */
     @JsonIgnore
     public boolean isValidPassword(String plainPasswordToCheck) {
-        String hashedPassword = new Sha512Hash(plainPasswordToCheck, this.salt, HASH_ITERATIONS).toBase64();
+        final var hashedPassword = new Sha512Hash(plainPasswordToCheck, this.salt, HASH_ITERATIONS).toBase64();
         return hashedPassword.equals(this.password);
     }
 
-    /**
-     * @return The current salt to ahs the password of the user.
-     */
     @JsonIgnore
     @JsonProperty("salt")
     public String getSalt() {
         return salt;
     }
 
-    /**
-     * @param salt The new Salt to hash the password of the user.
-     */
     public void setSalt(String salt) {
         this.salt = salt;
     }
@@ -278,11 +221,22 @@ public class User implements Serializable {
         this.webhooks = webhooks;
     }
 
+    public void setMaxAllowedProcesses(int maxAllowedProcesses) {
+        this.maxAllowedProcesses = maxAllowedProcesses;
+    }
+
+    public int getMaxAllowedProcesses() {
+        return this.maxAllowedProcesses;
+    }
+
     @Override
-    @SuppressWarnings("checkstyle:needbraces") // Auto generated by IntelliJ
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof User)) {
+            return false;
+        }
         User user = (User) o;
         return Objects.equals(id, user.getId());
     }
@@ -294,6 +248,11 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "<" + id + "> '" + email + "'";
+        return "User{"
+                + "id=" + id
+                + ", username='" + username + '\''
+                + ", email='" + email + '\''
+                + ", role=" + role
+                + '}';
     }
 }

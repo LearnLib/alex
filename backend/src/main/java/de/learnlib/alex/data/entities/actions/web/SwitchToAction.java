@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,13 +21,10 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.WebDriver;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
+import org.openqa.selenium.WebDriver;
 
 /**
  * Action to submit a specific element.
@@ -36,10 +33,6 @@ import javax.validation.constraints.NotNull;
 @DiscriminatorValue("web_switchTo")
 @JsonTypeName("web_switchTo")
 public class SwitchToAction extends WebSymbolAction {
-
-    private static final long serialVersionUID = 5072169613597915144L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * The target to switch to.
@@ -83,7 +76,7 @@ public class SwitchToAction extends WebSymbolAction {
                     wd.switchTo().frame(connector.getLastFrame());
                     break;
                 case WINDOW:
-                    for (final String handle: wd.getWindowHandles()) {
+                    for (final String handle : wd.getWindowHandles()) {
                         wd.switchTo().window(handle);
                     }
                     break;
@@ -94,10 +87,10 @@ public class SwitchToAction extends WebSymbolAction {
                 default:
                     throw new Exception("Undefined target type.");
             }
-            LOGGER.info(LoggerMarkers.LEARNER, "Switch to '{}'", target);
+            logger.info(LoggerMarkers.LEARNER, "Switch to '{}'", target);
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not switch to '{}'", target, e);
+            logger.info(LoggerMarkers.LEARNER, "Could not switch to '{}'", target, e);
             return getFailedOutput();
         }
     }

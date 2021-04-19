@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,16 +23,13 @@ import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Action that, given a regular expression, searches in the page source for matches. If a match is found, it extracts
@@ -42,10 +39,6 @@ import java.util.regex.Pattern;
 @DiscriminatorValue("setVariableByRegexGroup")
 @JsonTypeName("setVariableByRegexGroup")
 public class SetVariableByRegexGroupAction extends SymbolAction {
-
-    private static final long serialVersionUID = -5562530206394874225L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The name of the variable. */
     @NotBlank
@@ -90,11 +83,11 @@ public class SetVariableByRegexGroupAction extends SymbolAction {
             }
 
             if (!matchFound) {
-                LOGGER.info(LoggerMarkers.LEARNER, "Could not find a string that matches regex '{}' ", regex);
+                logger.info(LoggerMarkers.LEARNER, "Could not find a string that matches regex '{}' ", regex);
                 return getFailedOutput();
             }
         } catch (IndexOutOfBoundsException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not find group {} in regex '{}' ", mthGroup, regex);
+            logger.info(LoggerMarkers.LEARNER, "Could not find group {} in regex '{}' ", mthGroup, regex);
             return getFailedOutput();
         }
 

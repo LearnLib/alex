@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,6 @@ import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
@@ -37,8 +34,6 @@ import javax.validation.constraints.NotNull;
 @DiscriminatorValue("incrementCounter")
 @JsonTypeName("incrementCounter")
 public class IncrementCounterAction extends SymbolAction {
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The name of the counter to increment. */
     @NotBlank
@@ -53,7 +48,7 @@ public class IncrementCounterAction extends SymbolAction {
         CounterStoreConnector counterConnector = connector.getConnector(CounterStoreConnector.class);
         counterConnector.incrementBy(symbol.getProjectId(), name, incrementBy);
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Incremented counter '{}' by '{}'.", name, incrementBy);
+        logger.info(LoggerMarkers.LEARNER, "Incremented counter '{}' by '{}'.", name, incrementBy);
         return getSuccessOutput();
     }
 

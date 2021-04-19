@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package de.learnlib.alex.integrationtests.resources.api;
 import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
 import de.learnlib.alex.learning.entities.ReadOutputConfig;
-
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.HttpHeaders;
@@ -44,7 +43,7 @@ public class LearnerApi extends AbstractApi {
     }
 
     public Response abort(Long projectId, Long testNo, String jwt) {
-        return client.target(url(projectId)+ "/" +  testNo + "/stop").request()
+        return client.target(url(projectId) + "/" + testNo + "/stop").request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .get();
     }

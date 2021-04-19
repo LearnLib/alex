@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,20 +24,19 @@ import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.persistence.EntityManager;
+import javax.validation.ValidationException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.validation.ValidationException;
-import java.util.List;
 
 /**
  * Implementation of a LearnerResultDAO using Spring Data.
@@ -46,103 +45,98 @@ import java.util.List;
 @Transactional(rollbackFor = Exception.class)
 public class LearnerResultDAO {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private final EntityManager entityManager;
+    private final ProjectDAO projectDAO;
+    private final LearnerResultRepository learnerResultRepository;
+    private final LearnerResultStepRepository learnerResultStepRepository;
+    private final LearnerSetupDAO learnerSetupDAO;
+    private final LearnerResultStepDAO learnerResultStepDAO;
 
-    /** The ProjectDAO to use. Will be injected. */
-    private ProjectDAO projectDAO;
-
-    /** The LearnerResultRepository to use. Will be injected. */
-    private LearnerResultRepository learnerResultRepository;
-
-    /** The LearnerResultStepRepository to use. Will be injected. */
-    private LearnerResultStepRepository learnerResultStepRepository;
-
-    private LearnerSetupDAO learnerSetupDAO;
-
-    /** The entity manager. */
-    private EntityManager entityManager;
-
-    /**
-     * Creates a new LearnerResultDAO.
-     *
-     * @param projectDAO
-     *         The ProjectDAO to use.
-     * @param learnerResultRepository
-     *         The LearnerResultRepository to use.
-     * @param learnerResultStepRepository
-     *         The {@link LearnerResultStepRepository} to use.
-     * @param entityManager
-     *         The entity manager.
-     */
     @Autowired
-    public LearnerResultDAO(ProjectDAO projectDAO, LearnerResultRepository learnerResultRepository,
-                            LearnerResultStepRepository learnerResultStepRepository, EntityManager entityManager,
-                            LearnerSetupDAO learnerSetupDAO) {
+    public LearnerResultDAO(
+            ProjectDAO projectDAO,
+            LearnerResultRepository learnerResultRepository,
+            LearnerResultStepRepository learnerResultStepRepository,
+            LearnerSetupDAO learnerSetupDAO,
+            EntityManager entityManager,
+            LearnerResultStepDAO learnerResultStepDAO
+    ) {
         this.projectDAO = projectDAO;
         this.learnerResultRepository = learnerResultRepository;
         this.learnerResultStepRepository = learnerResultStepRepository;
-        this.entityManager = entityManager;
         this.learnerSetupDAO = learnerSetupDAO;
+        this.entityManager = entityManager;
+        this.learnerResultStepDAO = learnerResultStepDAO;
     }
 
-    public LearnerResult create(User user, Project project, LearnerResult learnerResult) throws NotFoundException, ValidationException {
+    public LearnerResult create(User user, Long projectId, LearnerResult learnerResult) {
+        final var project = projectDAO.getByID(user, projectId);
         projectDAO.checkAccess(user, project);
+
         learnerResult.setProject(project);
         learnerResult.setExecutedBy(user);
 
         // get the current highest test no in the project and add 1 for the next id
-        Long maxTestNo = learnerResultRepository.findHighestTestNo(learnerResult.getProjectId());
-        if (maxTestNo == null) {
-            maxTestNo = -1L;
+        var highestTestNo = learnerResultRepository.findHighestTestNo(learnerResult.getProjectId());
+        if (highestTestNo == null) {
+            highestTestNo = -1L;
         }
 
-        long nextTestNo = maxTestNo + 1;
+        var nextTestNo = highestTestNo + 1;
         learnerResult.setTestNo(nextTestNo);
 
-        try {
-            final LearnerResult createdLearnerResult = learnerResultRepository.saveAndFlush(learnerResult);
-            initializeLazyRelations(learnerResult);
-            return createdLearnerResult;
-        } catch (DataIntegrityViolationException e) {
-            LOGGER.info("LearnerResult creation failed:", e);
-            throw new ValidationException("LearnerResult could not be created.", e);
+        final LearnerResult createdLearnerResult = learnerResultRepository.save(learnerResult);
+        initializeLazyRelations(learnerResult);
+        return createdLearnerResult;
+    }
+
+    public List<LearnerResult> getByIDs(User user, Long projectId, List<Long> resultIds) {
+        final var project = projectDAO.getByID(user, projectId);
+
+        final var results = learnerResultRepository.findByIdIn(resultIds);
+        for (var result : results) {
+            checkAccess(user, project, result);
+            initializeLazyRelations(result);
         }
+
+        return results;
     }
 
-    public List<LearnerResult> getAll(User user, Long projectId)
-            throws NotFoundException {
+    public List<LearnerResult> getAll(User user, Long projectId) {
         projectDAO.getByID(user, projectId); // access check
 
-        final List<LearnerResult> results = learnerResultRepository.findByProject_Id(projectId);
+        final var results = learnerResultRepository.findByProject_Id(projectId);
         results.forEach(this::initializeLazyRelations);
 
         return results;
     }
 
-    public List<LearnerResult> getAll(User user, Long projectId, List<Long> testNos)
-            throws NotFoundException {
+    public List<LearnerResult> getAll(User user, Long projectId, List<Long> testNos) {
+        final var project = projectDAO.getByID(user, projectId); // access check
+
+        final var results = learnerResultRepository.findByProject_IdAndTestNoIn(projectId, testNos);
+        for (var result : results) {
+            checkAccess(user, project, result);
+            initializeLazyRelations(result);
+        }
+
+        return results;
+    }
+
+    public Page<LearnerResult> getAll(User user, Long projectId, PageRequest pr) {
         projectDAO.getByID(user, projectId); // access check
 
-        final List<LearnerResult> results = learnerResultRepository.findByProject_IdAndTestNoIn(projectId, testNos);
+        final var results = learnerResultRepository.findByProject_Id(projectId, pr);
         results.forEach(this::initializeLazyRelations);
 
         return results;
     }
 
-    public Page<LearnerResult> getAll(User user, Long projectId, PageRequest pr)
-            throws NotFoundException {
-        projectDAO.getByID(user, projectId); // access check
-
-        final Page<LearnerResult> results = learnerResultRepository.findByProject_Id(projectId, pr);
-        results.forEach(this::initializeLazyRelations);
-
-        return results;
-    }
-
-    public LearnerResult getLatest(User user, Long projectId) throws NotFoundException {
+    public LearnerResult getLatest(User user, Long projectId) {
         projectDAO.getByID(user, projectId);
 
-        final LearnerResult result = learnerResultRepository.findFirstByProject_IdOrderByTestNoDesc(projectId);
+        final var result = learnerResultRepository.findFirstByProject_IdOrderByTestNoDesc(projectId);
+
         if (result != null) {
             initializeLazyRelations(result);
             return result;
@@ -151,7 +145,7 @@ public class LearnerResultDAO {
         }
     }
 
-    public LearnerResult get(User user, Long projectId, Long testNo) throws NotFoundException {
+    public LearnerResult getByTestNo(User user, Long projectId, Long testNo) {
         final Project project = projectDAO.getByID(user, projectId); // access check
         final LearnerResult result = learnerResultRepository.findOneByProject_IdAndTestNo(projectId, testNo);
         checkAccess(user, project, result);
@@ -161,38 +155,54 @@ public class LearnerResultDAO {
         return result;
     }
 
-    public LearnerResultStep createStep(LearnerResult result) throws ValidationException {
-        final LearnerResultStep latestStep = result.getSteps().get(result.getSteps().size() - 1);
-
-        final LearnerResultStep step = new LearnerResultStep();
-        step.setResult(result);
-        result.getSteps().add(step);
-        step.setStepNo(latestStep.getStepNo() + 1);
-        step.setEqOracle(latestStep.getEqOracle());
-
-        learnerResultStepRepository.save(step);
-
-        return step;
-    }
-
-    public LearnerResult copy(User user, Long projectId, Long testNo) throws NotFoundException, UnauthorizedException {
-        final Project project = projectDAO.getByID(user, projectId);
-        final LearnerResult result = learnerResultRepository.findOneByProject_IdAndTestNo(projectId, testNo);
+    public LearnerResult getByID(User user, Long projectId, Long resultId) {
+        final Project project = projectDAO.getByID(user, projectId); // access check
+        final LearnerResult result = learnerResultRepository.getOne(resultId);
         checkAccess(user, project, result);
 
-        final LearnerResult resultToClone = new LearnerResult();
+        initializeLazyRelations(result);
+
+        return result;
+    }
+
+    public List<LearnerResult> abortActiveLearnerResults() {
+        final List<LearnerResult> pendingLearnerProcesses = learnerResultRepository.findAllByStatusIn(
+                Arrays.asList(LearnerResult.Status.IN_PROGRESS, LearnerResult.Status.PENDING)
+        );
+        pendingLearnerProcesses.forEach(p -> p.setStatus(LearnerResult.Status.ABORTED));
+        return learnerResultRepository.saveAll(pendingLearnerProcesses);
+    }
+
+    public LearnerResult updateStatus(Long resultId, LearnerResult.Status status) {
+        var result = learnerResultRepository.findById(resultId)
+                .orElseThrow(() -> new NotFoundException("result not found."));
+
+        result.setStatus(status);
+        result = learnerResultRepository.save(result);
+
+        initializeLazyRelations(result);
+        return result;
+    }
+
+    public LearnerResult copy(User user, Long projectId, Long testNo) {
+        final var project = projectDAO.getByID(user, projectId);
+        final var result = learnerResultRepository.findOneByProject_IdAndTestNo(projectId, testNo);
+        checkAccess(user, project, result);
+
+        final var resultToClone = new LearnerResult();
         resultToClone.setTestNo(learnerResultRepository.findHighestTestNo(projectId) + 1);
         resultToClone.setComment(result.getComment());
         resultToClone.setProject(project);
         resultToClone.setSetup(learnerSetupDAO.copy(user, projectId, result.getSetup().getId(), false));
         learnerResultRepository.save(resultToClone);
 
-        result.getSteps().forEach(step -> {
+        for (var step : result.getSteps()) {
             entityManager.detach(step);
             step.setId(null);
             step.setResult(resultToClone);
+            step.setModelCheckingResults(new ArrayList<>());
             resultToClone.getSteps().add(step);
-        });
+        }
 
         learnerResultStepRepository.saveAll(resultToClone.getSteps());
         learnerResultRepository.save(resultToClone);
@@ -202,49 +212,76 @@ public class LearnerResultDAO {
         return resultToClone;
     }
 
-    public LearnerResultStep createStep(LearnerResult result, LearnerResultStep step) {
-        step.setResult(result);
+    public LearnerResult addStep(Long resultId, LearnerResultStep step) {
+        var result = learnerResultRepository.findById(resultId)
+                .orElseThrow(() -> new NotFoundException("result not found"));
+
         step.setStepNo(result.getSteps().size() + 1L);
-        result.getSteps().add(step);
-        return learnerResultStepRepository.save(step);
+        step.setResult(result);
+        final var createdStep = learnerResultStepRepository.save(step);
+
+        result.getSteps().add(createdStep);
+
+        final var updatedResult = learnerResultRepository.save(result);
+        initializeLazyRelations(updatedResult);
+
+        return updatedResult;
     }
 
-    public LearnerResultStep updateStep(LearnerResultStep step) {
-        return learnerResultStepRepository.save(step);
+    public LearnerResult removeSteps(Long resultId, List<LearnerResultStep> steps) {
+        final var result = learnerResultRepository.findById(resultId)
+                .orElseThrow(() -> new NotFoundException("result not found"));
+
+        final var stepIds = steps.stream()
+                .map(LearnerResultStep::getId)
+                .collect(Collectors.toList());
+
+        learnerResultStepRepository.deleteAllByIdIn(stepIds);
+
+        result.getSteps().removeIf(s -> stepIds.contains(s.getId()));
+        result.getStatistics().setEqsUsed(result.getSteps().size());
+        final var updatedResult = learnerResultRepository.save(result);
+
+        initializeLazyRelations(updatedResult);
+        return updatedResult;
     }
 
-    public void deleteAll(User user, Long projectId, List<Long> testNos)
-            throws NotFoundException, ValidationException {
-        final Project project = projectDAO.getByID(user, projectId);
-        final List<LearnerResult> results = learnerResultRepository.findByProject_IdAndTestNoIn(projectId, testNos);
-        for (LearnerResult result: results) {
+    public void deleteByTestNos(User user, Long projectId, List<Long> testNos) {
+        final var project = projectDAO.getByID(user, projectId);
+        final var results = learnerResultRepository.findByProject_IdAndTestNoIn(projectId, testNos);
+
+        for (LearnerResult result : results) {
             checkAccess(user, project, result);
         }
+
         checkIfResultsCanBeDeleted(results);
+
         learnerResultRepository.deleteByProject_IdAndTestNoIn(projectId, testNos);
     }
 
     public void initializeLazyRelations(LearnerResult result) {
-        learnerSetupDAO.initializeLazyRelations(result.getSetup());
+        learnerSetupDAO.loadLazyRelations(result.getSetup());
         Hibernate.initialize(result.getSteps());
+        result.getSteps().forEach(learnerResultStepDAO::loadLazyRelations);
     }
 
-    private void checkIfResultsCanBeDeleted(List<LearnerResult> results)
-            throws ValidationException {
-        if (results.stream().anyMatch(r -> r.getStatus().equals(LearnerResult.Status.IN_PROGRESS))) {
+    private void checkIfResultsCanBeDeleted(List<LearnerResult> results) {
+        final var learnerIsActive = results.stream()
+                .anyMatch(r -> r.getStatus().equals(LearnerResult.Status.IN_PROGRESS));
+
+        if (learnerIsActive) {
             throw new ValidationException("Can't delete all LearnResults because the learner is active");
         }
     }
 
-    public void checkAccess(User user, Project project, LearnerResult learnerResult)
-            throws NotFoundException, UnauthorizedException {
+    public void checkAccess(User user, Project project, LearnerResult learnerResult) {
         projectDAO.checkAccess(user, project);
 
         if (learnerResult == null) {
             throw new NotFoundException("The learner result could not be found.");
         }
 
-        if (!learnerResult.getProjectId().equals(project.getId())) {
+        if (!learnerResult.getProject().getId().equals(project.getId())) {
             throw new UnauthorizedException("You are not allowed to access the learner result.");
         }
     }

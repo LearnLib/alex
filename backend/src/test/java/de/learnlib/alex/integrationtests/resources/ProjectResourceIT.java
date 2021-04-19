@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
@@ -25,12 +29,6 @@ import de.learnlib.alex.integrationtests.SpringRestError;
 import de.learnlib.alex.integrationtests.resources.api.ProjectApi;
 import de.learnlib.alex.integrationtests.resources.api.SymbolGroupApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.http.HttpStatus;
-
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -40,10 +38,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.Response;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 
 public class ProjectResourceIT extends AbstractResourceIT {
 
@@ -58,7 +57,7 @@ public class ProjectResourceIT extends AbstractResourceIT {
     private ProjectApi projectApi;
     private SymbolGroupApi symbolGroupApi;
 
-    @Before
+    @BeforeEach
     public void pre() {
         userApi = new UserApi(client, port);
         projectApi = new ProjectApi(client, port);
@@ -138,14 +137,6 @@ public class ProjectResourceIT extends AbstractResourceIT {
 
         final Response res = projectApi.importProject(content, adminJwt);
         assertEquals(HttpStatus.CREATED.value(), res.getStatus());
-    }
-
-    @Test
-    public void shouldNotCreateProjectWithEmptyTitle() {
-        final String project = createProjectJson("", "http://localhost:8080");
-        final Response res = projectApi.create(project, adminJwt);
-
-        assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
     }
 
     @Test
@@ -433,7 +424,7 @@ public class ProjectResourceIT extends AbstractResourceIT {
         assertEquals(HttpStatus.OK.value(), res3.getStatus());
 
         final List<Long> projectIds = projectApi.getAll(adminJwt)
-                .readEntity(new GenericType<List<Project>>(){
+                .readEntity(new GenericType<List<Project>>() {
                 })
                 .stream()
                 .map(Project::getId)
@@ -473,16 +464,16 @@ public class ProjectResourceIT extends AbstractResourceIT {
     public void memberShouldNotDeleteProject() {
         Project project = createTestProject(adminJwt);
 
-           project = projectApi.addMembers(project.getId(), Collections.singletonList(user1.getId()), adminJwt)
-                   .readEntity(Project.class);
+        project = projectApi.addMembers(project.getId(), Collections.singletonList(user1.getId()), adminJwt)
+                .readEntity(Project.class);
 
-           final Response res = projectApi.delete(project.getId(), user1Jwt);
-           assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());
-           res.readEntity(SpringRestError.class);
+        final Response res = projectApi.delete(project.getId(), user1Jwt);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());
+        res.readEntity(SpringRestError.class);
 
-           final Response res2 = projectApi.get(project.getId(), adminJwt);
-           assertEquals(HttpStatus.OK.value(), res2.getStatus());
-           res2.readEntity(Project.class);
+        final Response res2 = projectApi.get(project.getId(), adminJwt);
+        assertEquals(HttpStatus.OK.value(), res2.getStatus());
+        res2.readEntity(Project.class);
     }
 
     @Test

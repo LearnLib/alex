@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,38 +16,35 @@
 
 package de.learnlib.alex.data.dao;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Counter;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.repositories.CounterRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
-import org.hamcrest.MatcherAssert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import javax.validation.ConstraintViolationException;
-import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
-
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CounterDAOTest {
 
     private static final long USER_ID = 21L;
     private static final long PROJECT_ID = 42L;
-    private static final String COUNTER_NAME  = "CounterNo1";
+    private static final String COUNTER_NAME = "CounterNo1";
     private static final Integer COUNTER_VALUE = 123;
     private static final int AMOUNT_OF_COUNTERS = 3;
 
@@ -60,9 +57,9 @@ public class CounterDAOTest {
     @Mock
     private ProjectRepository projectRepository;
 
-    private static CounterDAO counterDAO;
+    private CounterDAO counterDAO;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         counterDAO = new CounterDAO(projectDAO, counterRepository, projectRepository);
     }
@@ -70,38 +67,23 @@ public class CounterDAOTest {
     @Test
     public void shouldCreateACounter() {
         User user = new User();
+
         Project project = new Project();
+        project.setId(PROJECT_ID);
+
+        given(projectRepository.getOne(PROJECT_ID)).willReturn(project);
 
         Counter counter = new Counter();
-        counter.setProject(project);
         counter.setName(COUNTER_NAME);
         counter.setValue(COUNTER_VALUE);
 
-        try {
-            counterDAO.create(user, counter);
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-        }
+        counterDAO.create(user, PROJECT_ID, counter);
 
-        verify(counterRepository).save(counter);
-    }
-
-    @Test(expected = ValidationException.class)
-    public void shouldHandleConstraintViolationExceptionOnCounterCreationGracefully() {
-        User user = new User();
-        Counter counter = new Counter();
-
-        given(counterRepository.save(counter)).willThrow(ConstraintViolationException.class);
-
-        try {
-            counterDAO.create(user, counter); // should fail
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-        }
+        verify(counterRepository).save(any(Counter.class));
     }
 
     @Test
-    public void shouldGetAllCounterOfAProject() throws NotFoundException {
+    public void shouldGetAllCounterOfAProject() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -114,14 +96,14 @@ public class CounterDAOTest {
 
         List<Counter> allCounters = counterDAO.getAll(user, PROJECT_ID);
 
-        MatcherAssert.assertThat(allCounters.size(), is(equalTo(counters.size())));
+        assertEquals(counters.size(), allCounters.size());
         for (Counter c : allCounters) {
             assertTrue(counters.contains(c));
         }
     }
 
     @Test
-    public void shouldUpdateACounter() throws NotFoundException {
+    public void shouldUpdateACounter() {
         final Long counterId = 1L;
 
         User user = new User();
@@ -144,7 +126,7 @@ public class CounterDAOTest {
     }
 
     @Test
-    public void shouldDeleteACounter() throws NotFoundException {
+    public void shouldDeleteACounter() {
         final Long counterId = 1L;
 
         User user = new User();
@@ -166,16 +148,15 @@ public class CounterDAOTest {
         verify(counterRepository).deleteAll(counterAsList);
     }
 
-    @Test(expected = NotFoundException.class)
-    public void shouldFailToDeleteACounterThatDoesNotExist() throws NotFoundException {
+    @Test
+    public void shouldFailToDeleteACounterThatDoesNotExist() {
         User user = new User();
-        counterDAO.delete(user, PROJECT_ID, Collections.singletonList(-1L));
+        assertThrows(NotFoundException.class, () -> counterDAO.delete(user, PROJECT_ID, Collections.singletonList(-1L)));
     }
-
 
     private List<Counter> createCounterList() {
         List<Counter> counters = new ArrayList<>();
-        for (int i = 0; i  < AMOUNT_OF_COUNTERS; i++) {
+        for (int i = 0; i < AMOUNT_OF_COUNTERS; i++) {
             Counter c = new Counter();
             counters.add(c);
         }

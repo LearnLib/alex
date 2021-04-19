@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,13 @@
 
 package de.learnlib.alex.data.dao;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
@@ -24,25 +31,17 @@ import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
+import de.learnlib.alex.websocket.services.SymbolPresenceService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
-
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class SymbolGroupDAOTest {
 
     private static final long USER_ID = 21L;
@@ -69,15 +68,18 @@ public class SymbolGroupDAOTest {
     @Mock
     private ObjectMapper objectMapper;
 
+    @Mock
+    private SymbolPresenceService symbolPresenceService;
+
     private SymbolGroupDAO symbolGroupDAO;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        symbolGroupDAO = new SymbolGroupDAO(projectRepository, projectDAO, symbolGroupRepository, symbolRepository, symbolDAO, objectMapper);
+        symbolGroupDAO = new SymbolGroupDAO(projectRepository, projectDAO, symbolGroupRepository, symbolRepository, symbolDAO, objectMapper, symbolPresenceService);
     }
 
     @Test
-    public void shouldCreateAValidGroup() throws NotFoundException {
+    public void shouldCreateAValidGroup() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -91,13 +93,13 @@ public class SymbolGroupDAOTest {
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
         given(symbolGroupRepository.save(group)).willReturn(group);
 
-        symbolGroupDAO.create(user, group);
+        symbolGroupDAO.create(user, PROJECT_ID, group);
 
         verify(symbolGroupRepository).save(group);
     }
 
     @Test
-    public void shouldGetAllGroupsOfAProject() throws NotFoundException {
+    public void shouldGetAllGroupsOfAProject() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -112,25 +114,25 @@ public class SymbolGroupDAOTest {
 
         List<SymbolGroup> allGroups = symbolGroupDAO.getAll(user, PROJECT_ID);
 
-        assertThat(allGroups.size(), is(equalTo(groups.size())));
+        assertEquals(groups.size(), allGroups.size());
         for (SymbolGroup g : allGroups) {
             assertTrue(groups.contains(g));
         }
     }
 
-    @Test(expected = NotFoundException.class)
-    public void shouldThrowAnExceptionIfYouWantToGetAllGroupsOfANonExistingProject() throws NotFoundException {
+    @Test
+    public void shouldThrowAnExceptionIfYouWantToGetAllGroupsOfANonExistingProject() {
         User user = new User();
         user.setId(USER_ID);
 
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.empty());
         doThrow(NotFoundException.class).when(projectDAO).checkAccess(user, null);
 
-        symbolGroupDAO.getAll(user, PROJECT_ID);
+        assertThrows(NotFoundException.class, () -> symbolGroupDAO.getAll(user, PROJECT_ID));
     }
 
     @Test
-    public void shouldGetAGroupByItsID() throws NotFoundException {
+    public void shouldGetAGroupByItsID() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -146,19 +148,19 @@ public class SymbolGroupDAOTest {
 
         SymbolGroup g = symbolGroupDAO.get(user, PROJECT_ID, group.getId());
 
-        assertThat(g, is(equalTo(group)));
-    }
-
-    @Test(expected = NotFoundException.class)
-    public void shouldThrowAnExceptionIfTheGroupCanNotBeFound() throws NotFoundException {
-        User user = new User();
-        user.setId(USER_ID);
-
-        symbolGroupDAO.get(user, -1L, -1L); // should fail
+        assertEquals(group, g);
     }
 
     @Test
-    public void shouldUpdateAGroup() throws NotFoundException {
+    public void shouldThrowAnExceptionIfTheGroupCanNotBeFound() {
+        User user = new User();
+        user.setId(USER_ID);
+
+        assertThrows(NotFoundException.class, () -> symbolGroupDAO.get(user, -1L, -1L));
+    }
+
+    @Test
+    public void shouldUpdateAGroup() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -176,15 +178,15 @@ public class SymbolGroupDAOTest {
 
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
         given(symbolGroupRepository.findById(GROUP_ID)).willReturn(Optional.of(group));
-        given(symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(PROJECT_ID)).willReturn(defaultGroup);
+        given(symbolGroupRepository.save(group)).willReturn(group);
 
-        symbolGroupDAO.update(user, group);
+        symbolGroupDAO.update(user, PROJECT_ID, GROUP_ID, group);
 
         verify(symbolGroupRepository).save(group);
     }
 
     @Test
-    public void shouldDeleteAGroup() throws NotFoundException {
+    public void shouldDeleteAGroup() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -208,8 +210,8 @@ public class SymbolGroupDAOTest {
         verify(symbolGroupRepository).delete(group);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldNotDeleteTheDefaultGroupOfAProject() throws NotFoundException {
+    @Test
+    public void shouldNotDeleteTheDefaultGroupOfAProject() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -226,15 +228,15 @@ public class SymbolGroupDAOTest {
         given(symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(PROJECT_ID)).willReturn(group);
         given(symbolGroupRepository.findById(DEFAULT_GROUP_ID)).willReturn(Optional.of(group));
 
-        symbolGroupDAO.delete(user, PROJECT_ID, DEFAULT_GROUP_ID); // should fail
+        assertThrows(IllegalArgumentException.class, () -> symbolGroupDAO.delete(user, PROJECT_ID, DEFAULT_GROUP_ID));
     }
 
-    @Test(expected = NotFoundException.class)
-    public void shouldFailToDeleteAProjectThatDoesNotExist() throws NotFoundException {
+    @Test
+    public void shouldFailToDeleteAProjectThatDoesNotExist() {
         User user = new User();
         user.setId(USER_ID);
 
-        symbolGroupDAO.delete(user, PROJECT_ID, -1L);
+        assertThrows(NotFoundException.class, () -> symbolGroupDAO.delete(user, PROJECT_ID, -1L));
     }
 
 

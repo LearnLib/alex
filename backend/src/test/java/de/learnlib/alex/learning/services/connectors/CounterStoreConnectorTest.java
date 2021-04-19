@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,24 @@
 
 package de.learnlib.alex.learning.services.connectors;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.dao.CounterDAO;
 import de.learnlib.alex.data.entities.Counter;
 import de.learnlib.alex.data.entities.Project;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CounterStoreConnectorTest {
 
     private static final Long PROJECT_ID = 10L;
@@ -42,7 +42,7 @@ public class CounterStoreConnectorTest {
 
     private CounterStoreConnector connector;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         connector = new CounterStoreConnector(mock(CounterDAO.class), mock(User.class), mock(Project.class), new ArrayList<>());
     }
@@ -76,26 +76,17 @@ public class CounterStoreConnectorTest {
     public void shouldIncrementTheCounterValue() {
         connector.set(PROJECT_ID, COUNTER_NAME, COUNTER_VALUE);
         connector.incrementBy(PROJECT_ID, COUNTER_NAME, 5);
-        assertEquals(connector.get(COUNTER_NAME), new Integer(COUNTER_VALUE + 5));
+        assertEquals(connector.get(COUNTER_NAME), Integer.valueOf(COUNTER_VALUE + 5));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void shouldFailToIncrementTheCounterIfNotDefined() {
-        connector.incrementBy(PROJECT_ID, COUNTER_NAME, 5);
+        assertThrows(IllegalStateException.class, () -> connector.incrementBy(PROJECT_ID, COUNTER_NAME, 5));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void shouldFailToGetTheCounterIfNotDefined() {
-        connector.get(COUNTER_NAME);
+        assertThrows(IllegalStateException.class, () -> connector.get(COUNTER_NAME));
     }
 
-    @Test
-    public void shouldPersistNewlyCreatedCounters() {
-        // TODO
-    }
-
-    @Test
-    public void shouldUpdateExistingCounters() {
-        // TODO
-    }
 }

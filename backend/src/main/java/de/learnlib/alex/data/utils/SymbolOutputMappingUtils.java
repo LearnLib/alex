@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,9 @@ package de.learnlib.alex.data.utils;
 
 import de.learnlib.alex.data.entities.SymbolOutputMapping;
 import de.learnlib.alex.data.entities.SymbolParameter;
-
-import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.validation.ValidationException;
 
 public class SymbolOutputMappingUtils {
 
@@ -32,7 +31,7 @@ public class SymbolOutputMappingUtils {
         final List<String> stringNames = new ArrayList<>();
         final List<String> counterNames = new ArrayList<>();
 
-        for (SymbolOutputMapping om: outputMappings) {
+        for (SymbolOutputMapping om : outputMappings) {
             final String name = om.getName();
             if (om.getParameter().getParameterType().equals(SymbolParameter.ParameterType.STRING)) {
                 if (counterNames.contains(name)) {
@@ -43,7 +42,7 @@ public class SymbolOutputMappingUtils {
             } else {
                 if (stringNames.contains(name)) {
                     throw new ValidationException("Names in the data context are not unique: " + name);
-                } else  {
+                } else {
                     counterNames.add(name);
                 }
             }

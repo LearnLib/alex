@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,12 @@
 
 package de.learnlib.alex.data.dao;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+
 import de.learnlib.alex.auth.dao.UserDAO;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
@@ -28,34 +34,32 @@ import de.learnlib.alex.data.repositories.SymbolActionRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolStepRepository;
 import de.learnlib.alex.data.repositories.UploadableFileRepository;
+import de.learnlib.alex.learning.dao.LearnerSetupDAO;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
+import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;
 import de.learnlib.alex.learning.repositories.LearnerSetupRepository;
+import de.learnlib.alex.modelchecking.dao.LtsFormulaDAO;
+import de.learnlib.alex.modelchecking.dao.LtsFormulaSuiteDAO;
 import de.learnlib.alex.testing.dao.TestDAO;
+import de.learnlib.alex.testing.dao.TestExecutionConfigDAO;
+import de.learnlib.alex.testing.dao.TestReportDAO;
 import de.learnlib.alex.testing.repositories.TestExecutionConfigRepository;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
 import de.learnlib.alex.testing.repositories.TestRepository;
-import org.hamcrest.MatcherAssert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import javax.persistence.EntityManager;
-import javax.validation.ConstraintViolationException;
-import javax.validation.ValidationException;
+import de.learnlib.alex.websocket.services.ProjectPresenceService;
+import de.learnlib.alex.websocket.services.SymbolPresenceService;
+import de.learnlib.alex.websocket.services.TestPresenceService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javax.validation.ConstraintViolationException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
-
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ProjectDAOTest {
 
     private static final long USER_ID = 21L;
@@ -116,16 +120,45 @@ public class ProjectDAOTest {
     @Mock
     private LearnerSetupRepository learnerSetupRepository;
 
+    @Mock
+    private SymbolPresenceService symbolPresenceService;
+
+    @Mock
+    private TestPresenceService testPresenceService;
+
+    @Mock
+    private ProjectPresenceService projectPresenceService;
+
+    @Mock
+    private TestReportDAO testReportDAO;
+
+    @Mock
+    private LtsFormulaSuiteDAO ltsFormulaSuiteDAO;
+
+    @Mock
+    private LtsFormulaDAO ltsFormulaDAO;
+
+    @Mock
+    private LearnerResultStepRepository learnerResultStepRepository;
+
+    @Mock
+    private LearnerSetupDAO learnerSetupDAO;
+
+    @Mock
+    private TestExecutionConfigDAO testExecutionConfigDAO;
+
     private ProjectDAO projectDAO;
 
     private User user;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         projectDAO = new ProjectDAO(projectRepository, learnerResultRepository, testReportRepository, fileDAO,
                 parameterizedSymbolRepository, symbolStepRepository, symbolActionRepository, environmentDAO,
                 projectUrlRepository, testExecutionConfigRepository, testDAO, userDAO, environmentRepository, symbolGroupDAO,
-                testRepository, symbolParameterRepository, uploadableFileRepository, learnerSetupRepository);
+                testRepository, symbolParameterRepository, uploadableFileRepository, learnerSetupRepository,
+                learnerResultStepRepository, testPresenceService, symbolPresenceService, projectPresenceService,
+                testReportDAO, ltsFormulaSuiteDAO, ltsFormulaDAO, learnerSetupDAO, testExecutionConfigDAO);
         user = new User();
         user.setId(USER_ID);
     }
@@ -140,14 +173,14 @@ public class ProjectDAOTest {
 
         List<Project> allProjects = projectDAO.getAll(user);
 
-        MatcherAssert.assertThat(allProjects.size(), is(equalTo(projects.size())));
+        assertEquals(projects.size(), allProjects.size());
         for (Project p : allProjects) {
             assertTrue(projects.contains(p));
         }
     }
 
     @Test
-    public void shouldGetAProjectByItsID() throws NotFoundException {
+    public void shouldGetAProjectByItsID() {
         User user = new User(USER_ID);
         Project project = new Project();
         project.addOwner(user);
@@ -156,18 +189,17 @@ public class ProjectDAOTest {
 
         Project p = projectDAO.getByID(user, PROJECT_ID);
 
-        assertThat(p, is(equalTo(project)));
-    }
-
-    @Test(expected = NotFoundException.class)
-    public void shouldThrowAnExceptionIfTheProjectCanNotFoundByID() throws NotFoundException {
-        given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.empty());
-
-        projectDAO.getByID(user, PROJECT_ID); // should fail
+        assertEquals(project, p);
     }
 
     @Test
-    public void shouldUpdateAProject() throws NotFoundException {
+    public void shouldThrowAnExceptionIfTheProjectCanNotFoundByID() {
+        given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.empty());
+        assertThrows(NotFoundException.class, () -> projectDAO.getByID(user, PROJECT_ID));
+    }
+
+    @Test
+    public void shouldUpdateAProject() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -183,8 +215,8 @@ public class ProjectDAOTest {
         verify(projectRepository).save(project);
     }
 
-    @Test(expected = NotFoundException.class)
-    public void shouldThrowANotFoundExceptionWhenUpdatingAUnknownProject() throws NotFoundException {
+    @Test
+    public void shouldThrowANotFoundExceptionWhenUpdatingAUnknownProject() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -192,11 +224,11 @@ public class ProjectDAOTest {
         project.addOwner(user);
         project.setId(PROJECT_ID);
 
-        projectDAO.update(user, PROJECT_ID, project);
+        assertThrows(NotFoundException.class, () -> projectDAO.update(user, PROJECT_ID, project));
     }
 
-    @Test(expected = ValidationException.class)
-    public void shouldHandleConstraintViolationExceptionOnProjectUpdateGracefully() throws NotFoundException {
+    @Test
+    public void shouldHandleConstraintViolationExceptionOnProjectUpdateGracefully() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -207,11 +239,11 @@ public class ProjectDAOTest {
         given(projectRepository.save(project)).willThrow(ConstraintViolationException.class);
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
 
-        projectDAO.update(user, PROJECT_ID, project);
+        assertThrows(ConstraintViolationException.class, () -> projectDAO.update(user, PROJECT_ID, project));
     }
 
     @Test
-    public void shouldDeleteAProject() throws NotFoundException {
+    public void shouldDeleteAProject() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -225,11 +257,10 @@ public class ProjectDAOTest {
         verify(projectRepository).delete(project);
     }
 
-    @Test(expected = NotFoundException.class)
-    public void shouldFailToDeleteAProjectThatDoesNotExist() throws NotFoundException {
+    @Test
+    public void shouldFailToDeleteAProjectThatDoesNotExist() {
         User user = new User();
-
-        projectDAO.delete(user, -1L);
+        assertThrows(NotFoundException.class, () ->  projectDAO.delete(user, -1L));
     }
 
 

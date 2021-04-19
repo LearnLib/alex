@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,6 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -33,10 +30,6 @@ import javax.validation.constraints.NotNull;
 @DiscriminatorValue("web_browser")
 @JsonTypeName("web_browser")
 public class BrowserAction extends WebSymbolAction {
-
-    private static final long serialVersionUID = -8427901966480324077L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** What to to with the open browser window. */
     public enum Action {
@@ -64,18 +57,18 @@ public class BrowserAction extends WebSymbolAction {
             switch (action) {
                 case RESTART:
                     connector.restart();
-                    LOGGER.info(LoggerMarkers.LEARNER, "Restart browser.");
+                    logger.info(LoggerMarkers.LEARNER, "Restart browser.");
                     break;
                 case REFRESH:
                     connector.refresh();
-                    LOGGER.info(LoggerMarkers.LEARNER, "Refresh browser.");
+                    logger.info(LoggerMarkers.LEARNER, "Refresh browser.");
                     break;
                 default:
                     throw new Exception("Invalid browser action.");
             }
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Browser could not be refreshed or restarted.", e);
+            logger.info(LoggerMarkers.LEARNER, "Browser could not be refreshed or restarted.", e);
             return getFailedOutput();
         }
     }

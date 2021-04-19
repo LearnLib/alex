@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,11 @@
  */
 package de.learnlib.alex.learning.services.connectors;
 
-import de.learnlib.alex.data.entities.ProjectEnvironment;
-import org.junit.Test;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+
+import de.learnlib.alex.data.entities.ProjectEnvironment;
+import org.junit.jupiter.api.Test;
 
 
 public class ConnectorManagerTest {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,10 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.testing.dao.TestExecutionConfigDAO;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import de.learnlib.alex.testing.entities.TestQueueItem;
+import de.learnlib.alex.testing.services.TestService;
+import java.util.List;
+import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,23 +36,34 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.ws.rs.core.MediaType;
-import java.util.List;
-
 /** Endpoints for handling test configs. */
 @RestController
 @RequestMapping("/rest/projects/{projectId}/testConfigs")
 public class TestExecutionConfigResource {
 
-    private static final Logger LOGGER = LogManager.getLogger();
-
     private final AuthContext authContext;
     private final TestExecutionConfigDAO testExecutionConfigDAO;
+    private final TestService testService;
+
 
     @Autowired
-    public TestExecutionConfigResource(AuthContext authContext, TestExecutionConfigDAO testExecutionConfigDAO) {
+    public TestExecutionConfigResource(AuthContext authContext,
+                                       TestExecutionConfigDAO testExecutionConfigDAO,
+                                       TestService testService) {
         this.authContext = authContext;
         this.testExecutionConfigDAO = testExecutionConfigDAO;
+        this.testService = testService;
+    }
+
+    @GetMapping(
+            value = "/{configId}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity<TestExecutionConfig> get(@PathVariable("projectId") Long projectId,
+                                                   @PathVariable("configId") Long configId) {
+        final var user = authContext.getUser();
+        final var config = testExecutionConfigDAO.get(user, projectId, configId);
+        return ResponseEntity.ok(config);
     }
 
     /**
@@ -63,13 +76,9 @@ public class TestExecutionConfigResource {
     @GetMapping(
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity getAll(@PathVariable("projectId") Long projectId) {
-        final User user = authContext.getUser();
-        LOGGER.traceEntry("getAll({}) for user {}.", projectId, user);
-
-        final List<TestExecutionConfig> configs = testExecutionConfigDAO.getAll(user, projectId);
-
-        LOGGER.traceExit(configs);
+    public ResponseEntity<List<TestExecutionConfig>> getAll(@PathVariable("projectId") Long projectId) {
+        final var user = authContext.getUser();
+        final var configs = testExecutionConfigDAO.getAll(user, projectId);
         return ResponseEntity.ok(configs);
     }
 
@@ -86,32 +95,52 @@ public class TestExecutionConfigResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    
-    public ResponseEntity create(@PathVariable("projectId") Long projectId, @RequestBody TestExecutionConfig config) {
-        final User user = authContext.getUser();
-        LOGGER.traceEntry("create({}) for user {}.", projectId, user);
 
-        final TestExecutionConfig createdConfig = testExecutionConfigDAO.create(user, projectId, config);
-
-        LOGGER.traceExit(createdConfig);
+    public ResponseEntity<TestExecutionConfig> create(
+            @PathVariable("projectId") Long projectId,
+            @RequestBody TestExecutionConfig config
+    ) {
+        final var user = authContext.getUser();
+        final var createdConfig = testExecutionConfigDAO.create(user, projectId, config);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdConfig);
     }
 
+    /**
+     * Update a test configuration
+     *
+     * @param projectId
+     *         The ID of the project.
+     * @param configId
+     *         The ID of the config to update.
+     * @param config
+     *         The updated config object.
+     * @return The updated config object.
+     */
     @PutMapping(
             value = "/{configId}",
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity update(@PathVariable("projectId") Long projectId,
-                                 @PathVariable("configId") Long configId,
-                                 @RequestBody TestExecutionConfig config) {
-        final User user = authContext.getUser();
-        LOGGER.traceEntry("update({}) for user {}.", projectId, user);
-
-        final TestExecutionConfig updatedConfig = testExecutionConfigDAO.update(user, projectId, configId, config);
-
-        LOGGER.traceExit(updatedConfig);
+    public ResponseEntity<TestExecutionConfig> update(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("configId") Long configId,
+            @RequestBody TestExecutionConfig config
+    ) {
+        final var user = authContext.getUser();
+        final var updatedConfig = testExecutionConfigDAO.update(user, projectId, configId, config);
         return ResponseEntity.status(HttpStatus.OK).body(updatedConfig);
+    }
+
+    @PostMapping(
+            value = "/{configId}/copy",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity<TestExecutionConfig> copy(@PathVariable("projectId") Long projectId,
+                                                    @PathVariable("configId") Long configId) {
+        final User user = authContext.getUser();
+        final TestExecutionConfig copiedConfig = testExecutionConfigDAO.copy(user, projectId, configId);
+        return ResponseEntity.ok(copiedConfig);
     }
 
     /**
@@ -127,14 +156,22 @@ public class TestExecutionConfigResource {
             value = "/{configId}",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity delete(@PathVariable("projectId") Long projectId,
-                                 @PathVariable("configId") Long configId) {
-        final User user = authContext.getUser();
-        LOGGER.traceEntry("delete({}) for user {}.", projectId, user);
-
+    public ResponseEntity<?> delete(@PathVariable("projectId") Long projectId,
+                                    @PathVariable("configId") Long configId) {
+        final var user = authContext.getUser();
         testExecutionConfigDAO.delete(user, projectId, configId);
-
-        LOGGER.traceExit("Config with id " + configId + " deleted.");
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping(
+            value = "/{configId}/run",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity<TestQueueItem> run(@PathVariable("projectId") Long projectId,
+                                             @PathVariable("configId") Long configId) {
+        final var user = authContext.getUser();
+        final var config = this.testExecutionConfigDAO.get(user, projectId, configId);
+        final var testRun = testService.start(user, projectId, config);
+        return ResponseEntity.ok(testRun);
     }
 }

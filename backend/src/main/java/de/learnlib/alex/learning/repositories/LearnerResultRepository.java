@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,12 @@
 package de.learnlib.alex.learning.repositories;
 
 import de.learnlib.alex.learning.entities.LearnerResult;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * Repository to persist LearnerResults.
@@ -39,8 +37,6 @@ public interface LearnerResultRepository extends JpaRepository<LearnerResult, Lo
      *         The ID the Project the LearnerResults belong to.
      * @return The LearnerResults.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     List<LearnerResult> findByProject_IdOrderByTestNoAsc(Long projectId);
 
     /**
@@ -52,17 +48,13 @@ public interface LearnerResultRepository extends JpaRepository<LearnerResult, Lo
      *         The test no of the LearnResults to fetch.
      * @return The LearnResults.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     List<LearnerResult> findByProject_IdAndTestNoIn(Long projectId, List<Long> testNos);
 
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     List<LearnerResult> findByProject_Id(Long projectId);
 
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     Page<LearnerResult> findByProject_Id(Long projectId, Pageable pageable);
+
+    List<LearnerResult> findByIdIn(List<Long> ids);
 
     /**
      * Find a single learner result.
@@ -73,8 +65,6 @@ public interface LearnerResultRepository extends JpaRepository<LearnerResult, Lo
      *         The test number.
      * @return The learner result.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     LearnerResult findOneByProject_IdAndTestNo(Long projectId, Long testNo);
 
     /**
@@ -84,8 +74,6 @@ public interface LearnerResultRepository extends JpaRepository<LearnerResult, Lo
      *         The ID of the Project to check.
      * @return The highest test no within that project.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     @Query("SELECT MAX(l.testNo) FROM LearnerResult l WHERE l.project.id = ?1")
     Long findHighestTestNo(Long projectId);
 
@@ -96,8 +84,6 @@ public interface LearnerResultRepository extends JpaRepository<LearnerResult, Lo
      *         The id of the project.
      * @return The latest learner result.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     LearnerResult findFirstByProject_IdOrderByTestNoDesc(Long projectId);
 
     /**
@@ -109,8 +95,6 @@ public interface LearnerResultRepository extends JpaRepository<LearnerResult, Lo
      *         The test no of the LearnResults to delete.
      * @return The amount of deleted LearnResults.
      */
-    @Transactional
-    @SuppressWarnings("checkstyle:methodname")
     Long deleteByProject_IdAndTestNoIn(Long projectId, List<Long> testNos);
 
     /**
@@ -120,13 +104,9 @@ public interface LearnerResultRepository extends JpaRepository<LearnerResult, Lo
      *         The ID of the project.
      * @return The amount of deleted LearnResults.
      */
-    @Transactional
-    @SuppressWarnings("checkstyle:methodname")
     Long deleteAllByProject_Id(Long projectId);
 
-    @Transactional(readOnly = true)
     List<LearnerResult> findAllByStatusIn(List<LearnerResult.Status> statusList);
 
-    @Transactional
     Long countAllBySetup_Id(Long setupId);
 }

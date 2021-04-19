@@ -2,7 +2,6 @@ package de.learnlib.alex.learning.entities;
 
 import de.learnlib.alex.learning.entities.learnlibproxies.DefaultQueryProxy;
 import de.learnlib.alex.learning.services.LearnerService;
-
 import java.util.List;
 
 public class LearningProcessStatus {

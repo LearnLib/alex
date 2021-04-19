@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 
 package de.learnlib.alex.data.entities.actions.web;
 
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
+
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 
 public abstract class WebActionTest {
 
@@ -31,7 +31,6 @@ public abstract class WebActionTest {
     protected void setUp() {
         connectors = mock(ConnectorManager.class);
         webSiteConnector = mock(WebSiteConnector.class);
-
-        given(connectors.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);
+        lenient().when(connectors.getConnector(WebSiteConnector.class)).thenReturn(webSiteConnector);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,43 +19,41 @@ package de.learnlib.alex.testing.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Symbol;
-
+import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import java.io.Serializable;
 
-/** Wrapper for {@link de.learnlib.alex.data.entities.ExecuteResult} that allows persistence for tests. */
+/**
+ * Wrapper for {@link de.learnlib.alex.data.entities.ExecuteResult} that allows persistence for tests.
+ */
 @Entity
 public class TestExecutionResult extends ExecuteResult implements Serializable {
 
     private static final long serialVersionUID = -3528131025646284916L;
 
-    /** The referenced test result. */
+    /**
+     * The referenced test result.
+     */
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "testResultId")
     @JsonIgnore
     private TestCaseResult result;
 
-    /** The symbols that produced the result. */
+    /**
+     * The symbols that produced the result.
+     */
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "symbolId")
     private Symbol symbol;
 
-    /** Constructor. */
     public TestExecutionResult() {
         super();
     }
 
-    /**
-     * Constructor.
-     *
-     * @param result
-     *         The output of the SUL.
-     */
     public TestExecutionResult(ExecuteResult result) {
-        super(result.isSuccess(), result.getMessage(), result.getTrace(), result.getTime());
+        super(result.isSuccess(), result.getMessage(), result.getTrace(), result.getTime(), result.getTestScreenshot());
     }
 
     public TestCaseResult getResult() {

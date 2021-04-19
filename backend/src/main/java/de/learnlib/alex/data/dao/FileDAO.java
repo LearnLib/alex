@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,15 +22,6 @@ import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.UploadableFile;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.UploadableFileRepository;
-import org.apache.commons.io.FileUtils;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -39,6 +30,14 @@ import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import javax.annotation.PostConstruct;
+import org.apache.commons.io.FileUtils;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Simple implementation of a FileDAO.
@@ -50,13 +49,9 @@ public class FileDAO {
     /** The size of the output write buffer in bytes. */
     public static final int WRITE_BUFFER_SIZE = 1024;
 
-    /** The ProjectDAO to use. Will be injected. */
-    private ProjectDAO projectDAO;
-
-    /** The repository for files. */
-    private UploadableFileRepository fileRepository;
-
-    private ProjectRepository projectRepository;
+    private final ProjectDAO projectDAO;
+    private final UploadableFileRepository fileRepository;
+    private final ProjectRepository projectRepository;
 
     /**
      * The path of the upload directory as String. This will be injected by Spring and is configured in the
@@ -93,7 +88,7 @@ public class FileDAO {
     }
 
     public UploadableFile create(User user, Long projectId, MultipartFile file)
-            throws IllegalStateException, IOException, NotFoundException {
+            throws IllegalStateException, IOException {
         final Project project = projectDAO.getByID(user, projectId); // access check
 
         Path uploadedDirectoryLocation = Paths.get(getUploadsDir(user, projectId));
@@ -122,37 +117,37 @@ public class FileDAO {
         return fileRepository.save(uf);
     }
 
-    public List<UploadableFile> getAll(User user, Long projectId) throws NotFoundException {
+    public List<UploadableFile> getAll(User user, Long projectId) {
         projectDAO.getByID(user, projectId); // access check
 
         final List<UploadableFile> files = fileRepository.findAllByProject_Id(projectId);
         return files;
     }
 
-    public File getFile(User user, Long projectId, Long fileId) throws NotFoundException {
+    public File getFile(User user, Long projectId, Long fileId) {
         return getFileInternal(user, projectId, fileId);
     }
 
-    public File getFileByName(User user, Long projectId, String filename) throws NotFoundException {
+    public File getFileByName(User user, Long projectId, String filename) {
         final UploadableFile uf = fileRepository.findByProject_IdAndName(projectId, filename);
         return getFileInternal(user, projectId, uf.getId());
     }
 
-    public void delete(User user, Long projectId, Long fileId) throws NotFoundException {
+    public void delete(User user, Long projectId, Long fileId) {
         final File file = getFileInternal(user, projectId, fileId);
         file.delete();
         fileRepository.deleteById(fileId);
     }
 
-    public void delete(User user, Long projectId, List<Long> fileIds) throws NotFoundException {
+    public void delete(User user, Long projectId, List<Long> fileIds) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final List<UploadableFile> files = fileRepository.findAllByIdIn(fileIds);
 
-        for (UploadableFile f: files) {
+        for (UploadableFile f : files) {
             checkAccess(user, project, f);
         }
 
-        for (UploadableFile f: files) {
+        for (UploadableFile f : files) {
             final File fileToDelete = getFileInternal(user, project, f);
             fileToDelete.delete();
             fileRepository.deleteById(f.getId());
@@ -194,7 +189,7 @@ public class FileDAO {
         }
     }
 
-    private File getUploadDirectory(User user, Long projectId) throws NotFoundException {
+    private File getUploadDirectory(User user, Long projectId) {
         Path uploadedDirectoryLocation = Paths.get(getUploadsDir(user, projectId));
         File uploadDirectory = uploadedDirectoryLocation.toFile();
 

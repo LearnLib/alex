@@ -1,0 +1,42 @@
+<div class="container" id="view-home">
+  <div class="mx-auto" style="max-width: 320px">
+    <img id="logo" src="/assets/images/logo.png">
+    <div class="card">
+      <div class="card-body">
+
+        <nav ngbNav #nav="ngbNav" class="nav-tabs">
+          <ng-container ngbNavItem="login">
+            <a ngbNavLink>Login</a>
+            <ng-template ngbNavContent>
+              <br>
+              <user-login-form
+                (loggedIn)="handleLoggedIn()"
+                [credentials]="credentials"
+              >
+              </user-login-form>
+            </ng-template>
+          </ng-container>
+          <ng-container ngbNavItem="sign-up" *ngIf="settings != null && settings.allowUserRegistration">
+            <a ngbNavLink>Sign Up</a>
+            <ng-template ngbNavContent>
+              <br>
+              <user-registration-form
+                (signedUp)="handleSignedUp($event)"
+              >
+              </user-registration-form>
+            </ng-template>
+          </ng-container>
+        </nav>
+
+        <div [ngbNavOutlet]="nav"></div>
+
+      </div>
+    </div>
+    <hr>
+    <div class="text-center links">
+      <a (click)="showAboutModal(); $event.preventDefault()" href="#" class="mx-2 cursor-pointer">About</a>
+      <a href="https://learnlib.github.io/alex/book/1.8.0/" class="mx-2" target="_blank">Docs</a>
+      <a href="https://github.com/LearnLib/alex" class="mx-2" target="_blank">GitHub</a>
+    </div>
+  </div>
+</div>

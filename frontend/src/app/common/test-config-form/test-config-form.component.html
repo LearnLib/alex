@@ -1,0 +1,73 @@
+<div class="mb-3">
+  <input type="text" class="config-name" placeholder="Enter a name for the config" name="config_name" [(ngModel)]="config.name">
+</div>
+
+<div class="row">
+  <div class="col-md-4 col-lg-8 pl-4 mt-3">
+    <h5><strong>Tests</strong></h5>
+    <hr class="hr-sm">
+    <test-select-tree *ngIf="testRoot != null" [suite]="testRoot"></test-select-tree>
+  </div>
+
+  <div class="col-md-4 col-lg-4">
+
+    <div class="card">
+      <div class="card-header">
+        <strong>Configuration</strong>
+      </div>
+      <div class="card-body">
+
+        <nav ngbNav #nav="ngbNav" class="nav-tabs">
+          <ng-container ngbNavItem>
+            <a ngbNavLink>WebDriver</a>
+            <ng-template ngbNavContent>
+              <br>
+
+              <driver-config-form [(config)]="config.driverConfig"></driver-config-form>
+            </ng-template>
+          </ng-container>
+          <ng-container ngbNavItem>
+            <a ngbNavLink>Target</a>
+            <ng-template ngbNavContent>
+              <br>
+
+              <p class="text-muted">
+                Select an environment for testing.
+              </p>
+
+              <div class="list-group">
+                <div
+                  *ngFor="let env of this.appStore.project.environments"
+                  (click)="selectEnvironment(env)"
+                  [ngClass]="{'active': env.id === selectedEnvironment.id}"
+                  class="list-group-item cursor-pointer"
+                >
+                  {{env.name}}
+                </div>
+              </div>
+            </ng-template>
+          </ng-container>
+          <ng-container ngbNavItem>
+            <a ngbNavLink>Config</a>
+            <ng-template ngbNavContent>
+              <br>
+
+              <div class="form-group mb-0">
+                <label>Description</label>
+                <textarea
+                  class="form-control"
+                  placeholder="Enter a description for the config"
+                  [(ngModel)]="config.description"
+                >
+                  </textarea>
+              </div>
+            </ng-template>
+          </ng-container>
+        </nav>
+
+        <div [ngbNavOutlet]="nav"></div>
+      </div>
+    </div>
+
+  </div>
+</div>

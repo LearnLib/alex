@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,12 +23,11 @@ import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
 import de.learnlib.alex.data.repositories.SymbolOutputMappingRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterValueRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
+import java.util.stream.Collectors;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.stream.Collectors;
 
 /**
  * The implementation of the {@link ParameterizedSymbolDAO}.
@@ -37,10 +36,10 @@ import java.util.stream.Collectors;
 @Transactional(rollbackFor = Exception.class)
 public class ParameterizedSymbolDAO {
 
-    private SymbolRepository symbolRepository;
-    private SymbolParameterValueRepository symbolParameterValueRepository;
-    private ParameterizedSymbolRepository parameterizedSymbolRepository;
-    private SymbolOutputMappingRepository symbolOutputMappingRepository;
+    private final SymbolRepository symbolRepository;
+    private final SymbolParameterValueRepository symbolParameterValueRepository;
+    private final ParameterizedSymbolRepository parameterizedSymbolRepository;
+    private final SymbolOutputMappingRepository symbolOutputMappingRepository;
 
     @Autowired
     public ParameterizedSymbolDAO(

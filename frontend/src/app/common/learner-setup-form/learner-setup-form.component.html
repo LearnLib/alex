@@ -1,0 +1,302 @@
+<div class="mb-3">
+  <input type="text" class="setup-name" placeholder="Enter a name for the setup" name="setup_name" [(ngModel)]="setup.name">
+</div>
+
+<div *ngIf="groups.length > 0" class="row">
+  <div class="col-md-4 col-lg-3">
+    <div class="card mb-4">
+      <div class="card-header">
+        <strong>Symbols</strong>
+      </div>
+      <div class="card-body">
+        <div class="mb-2">
+          <symbol-search-form
+            (selected)="selectSymbol($event)"
+            [groups]="groups"
+          >
+          </symbol-search-form>
+        </div>
+
+        <simple-symbol-group-tree
+          (groupSelected)="selectSymbolGroup($event)"
+          (symbolSelected)="selectSymbol($event)"
+          [groups]="groups"
+        >
+        </simple-symbol-group-tree>
+      </div>
+    </div>
+
+    <symbols-data-context
+      [parametrizedSymbols]="allParametrizedSymbols"
+      class="d-block mb-4"
+    >
+    </symbols-data-context>
+  </div>
+  <div class="col-md-4 col-lg-6">
+
+    <h5><strong>Reset</strong></h5>
+    <hr class="hr-sm">
+    <div *ngIf="setup.preSymbol == null" class="alert alert-info d-flex flex-row">
+      <div class="w-100">
+        Select a reset symbol <em>(required)</em>
+      </div>
+      <div class="flex-shrink-0">
+        <button (click)="selectResetSymbol()" class="btn btn-sm btn-info float-right flex-shrink-0">
+          Select symbol
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="setup.preSymbol != null" class="list-group">
+      <div class="d-flex flex-row list-group-item">
+        <div class="w-100">
+          <div>
+            <a [routerLink]="['/app', 'projects', project.id, 'symbols', setup.preSymbol.symbol.id]">
+              <strong>{{setup.preSymbol.symbol.name}}</strong>
+            </a>
+          </div>
+          <symbol-input-values
+            [parameterizedSymbol]="setup.preSymbol"
+          >
+          </symbol-input-values>
+        </div>
+        <div class="flex-shrink-0">
+          <button (click)="selectResetSymbol()" class="btn btn-sm btn-default">
+            Select symbol
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <h5 style="margin-top: 3rem"><strong>Input alphabet</strong></h5>
+    <hr class="hr-sm">
+    <div *ngIf="setup.symbols.length > 0" class="list-group">
+      <div *ngFor="let pSymbol of setup.symbols; let i = index"
+           class="list-group-item d-flex flex-row">
+        <div class="w-100">
+          <div class="d-flex flex-row">
+            <a class="flex-shrink-0"
+               [routerLink]="['/app', 'projects', project.id, 'symbols', pSymbol.symbol.id]">
+              <strong>{{pSymbol.symbol.name}}</strong>
+            </a>
+            <span class="text-muted w-100 d-flex flex-row ml-1">
+                    <em>as</em> <input class="symbol-alias w-100 ml-1" [placeholder]="pSymbol.getAliasOrComputedName()"
+                                       type="text" [(ngModel)]="pSymbol.alias" [name]="'alias-' + i">
+                  </span>
+          </div>
+          <symbol-input-values [parameterizedSymbol]="pSymbol"></symbol-input-values>
+        </div>
+        <div style="flex-shrink: 0">
+          <i (click)="setup.symbols.splice(i, 1)" class="fas fa-fw fa-times text-muted cursor-pointer"></i>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="setup.symbols.length === 0" class="alert alert-info">
+      Select symbols to create an input alphabet.
+    </div>
+
+    <h5 style="margin-top: 3rem"><strong>Post</strong></h5>
+    <hr class="hr-sm">
+    <div *ngIf="setup.postSymbol == null" class="alert alert-info d-flex flex-row">
+      <div class="w-100">
+        Select a post symbol <em>(optional)</em>
+      </div>
+      <div class="flex-shrink-0">
+        <button (click)="selectPostSymbol()" class="btn btn-sm btn-info float-right flex-shrink-0">
+          Select symbol
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="setup.postSymbol != null" class="list-group">
+      <div class="d-flex flex-row list-group-item">
+        <div class="w-100">
+          <div>
+            <a [routerLink]="['/app', 'projects', project.id, 'symbols', setup.postSymbol.symbol.id]">
+              <strong>{{setup.postSymbol.symbol.name}}</strong>
+            </a>
+          </div>
+          <symbol-input-values
+            [parameterizedSymbol]="setup.postSymbol"
+          >
+          </symbol-input-values>
+        </div>
+        <div class="flex-shrink-0">
+          <div class="btn btn-group btn-group-sm">
+            <button (click)="selectPostSymbol()" class="btn btn-default">
+              Select symbol
+            </button>
+            <button (click)="setup.postSymbol = null" class="btn btn-default">
+              <i class="fas fa-fw fa-times"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 col-lg-3">
+
+    <div class="card">
+      <div class="card-header">
+        <strong>Configuration</strong>
+      </div>
+      <div class="card-body">
+
+        <nav ngbNav #nav="ngbNav" class="nav-tabs">
+          <ng-container ngbNavItem>
+            <a ngbNavLink>Learner</a>
+            <ng-template ngbNavContent>
+              <br>
+
+              <div class="mb-4">
+                <h6>Algorithm</h6>
+                <hr>
+                <div class="form-group">
+                  <select
+                    (change)="setLearningAlgorithm()"
+                    [(ngModel)]="selectedLearningAlgorithm"
+                    class="form-control" name="algorithm"
+                  >
+                    <option disabled [value]="null">select an algorithm</option>
+                    <option
+                      [value]="i.value"
+                      *ngFor="let i of learningAlgorithms | keyvalue"
+                    >
+                      {{i.key | formatLearningAlgorithm}}
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <h6>Equivalence Oracle</h6>
+                <hr>
+                <eq-oracle-form
+                  [oracle]="setup.equivalenceOracle"
+                  [form]="form"
+                  (selected)="setEqOracle($event)"
+                >
+                </eq-oracle-form>
+              </div>
+
+              <div>
+                <h6>Cache</h6>
+                <hr>
+                <div class="form-group form-check">
+                  <label class="form-check-label">
+                    <input [(ngModel)]="setup.enableCache" class="form-check-input" type="checkbox" name="cache">
+                    Enable
+                  </label>
+                </div>
+              </div>
+            </ng-template>
+          </ng-container>
+          <ng-container ngbNavItem>
+            <a ngbNavLink>WebDriver</a>
+            <ng-template ngbNavContent>
+              <br>
+
+              <driver-config-form [(config)]="setup.webDriver"></driver-config-form>
+            </ng-template>
+          </ng-container>
+          <ng-container ngbNavItem>
+            <a ngbNavLink>Environments</a>
+            <ng-template ngbNavContent>
+              <br>
+
+              <p class="text-muted">
+                Specify which URL should be used for learning. Select multiple URLs for learning in parallel.
+              </p>
+
+              <div class="list-group">
+                <div
+                  *ngFor="let env of project.environments"
+                  class="list-group-item d-flex flex-row align-items-center"
+                >
+                  <div>
+                    <selectable-checkbox
+                      [item]="env"
+                      [selectable]="selectedEnvironments"
+                      (change)="selectEnvironments()"
+                    >
+                    </selectable-checkbox>
+                  </div>
+                  <div class="w-100 ml-3">
+                    <strong>{{env.name}}</strong>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </ng-container>
+          <ng-container ngbNavItem>
+            <a ngbNavLink>Model Checking</a>
+            <ng-template ngbNavContent>
+              <br>
+
+              <p class="text-muted">
+                Specify which formula suites should be used for model checking learned models.
+              </p>
+
+              <div class="list-group">
+                <div
+                  *ngFor="let suite of formulaSuites"
+                  class="list-group-item d-flex flex-row align-items-center"
+                >
+                  <div>
+                    <selectable-checkbox
+                      [item]="suite"
+                      [selectable]="selectedFormulaSuites"
+                      (change)="selectFormulaSuites()"
+                    >
+                    </selectable-checkbox>
+                  </div>
+                  <div class="w-100 ml-3">
+                    <strong>{{suite.name}}</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card mt-3">
+                <div class="card-body">
+                  <div class="form-group">
+                    <label>Min. unfolds</label>
+                    <input
+                      [(ngModel)]="setup.modelCheckingConfig.minUnfolds"
+                      class="form-control"
+                      min="1"
+                      name="model_checking_config_min_unfolds"
+                      placeholder="1"
+                      required
+                      type="number"
+                    >
+                  </div>
+
+                  <div class="form-group">
+                    <label>Multiplier</label>
+                    <input
+                      [(ngModel)]="setup.modelCheckingConfig.multiplier"
+                      class="form-control"
+                      min="0.1"
+                      name="model_checking_config_multiplier"
+                      placeholder="0.1"
+                      required
+                      type="number"
+                    >
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </ng-container>
+        </nav>
+
+        <div [ngbNavOutlet]="nav"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div *ngIf="groups.length === 0" class="alert alert-info">
+  There aren't any symbols in this project yet.
+</div>

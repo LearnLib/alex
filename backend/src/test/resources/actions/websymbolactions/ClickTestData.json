@@ -1,8 +1,8 @@
 {
-    "type": "web_click",
-    "node": {
-        "selector": "#node",
-        "type": "CSS"
-    },
-    "doubleClick": false
+  "type": "web_click",
+  "node": {
+    "selector": "#node",
+    "type": "CSS"
+  },
+  "doubleClick": false
 }

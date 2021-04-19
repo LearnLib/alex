@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,17 @@
 
 package de.learnlib.alex.data.entities.actions.web;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -39,7 +41,7 @@ public class WaitForNodeAttributeActionTest {
 
     private WebElement el;
 
-    @Before
+    @BeforeEach
     public void before() {
         this.webSiteConnector = Mockito.mock(WebSiteConnector.class);
 
@@ -68,7 +70,7 @@ public class WaitForNodeAttributeActionTest {
         action.setWaitCriterion(WaitForNodeAttributeAction.WaitCriterion.IS);
         action.setValue("test");
         final ExecuteResult result = action.executeAction(connectors);
-        Assert.assertTrue(result.isSuccess());
+        assertTrue(result.isSuccess());
     }
 
     @Test
@@ -77,14 +79,14 @@ public class WaitForNodeAttributeActionTest {
         action.setWaitCriterion(WaitForNodeAttributeAction.WaitCriterion.CONTAINS);
         action.setValue("test");
         final ExecuteResult result = action.executeAction(connectors);
-        Assert.assertTrue(result.isSuccess());
+        assertTrue(result.isSuccess());
     }
 
     @Test
     public void shouldFailOnNegativeWaitTime() {
         action.setMaxWaitTime(-1L);
         final ExecuteResult result = action.executeAction(connectors);
-        Assert.assertFalse(result.isSuccess());
+        assertFalse(result.isSuccess());
     }
 
     @Test
@@ -93,11 +95,11 @@ public class WaitForNodeAttributeActionTest {
         action.setWaitCriterion(WaitForNodeAttributeAction.WaitCriterion.IS);
         action.setValue("test");
         final ExecuteResult result1 = action.executeAction(connectors);
-        Assert.assertFalse(result1.isSuccess());
+        assertFalse(result1.isSuccess());
 
         action.setWaitCriterion(WaitForNodeAttributeAction.WaitCriterion.CONTAINS);
         action.setValue("test");
         final ExecuteResult result2 = action.executeAction(connectors);
-        Assert.assertFalse(result2.isSuccess());
+        assertFalse(result2.isSuccess());
     }
 }

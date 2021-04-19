@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,25 +24,24 @@ import de.learnlib.alex.data.entities.Counter;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
-import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
-
+import de.learnlib.alex.learning.entities.WebDriverConfig;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PreparedContextHandler {
-    private CounterDAO counterDAO;
-    private FileDAO fileDAO;
-    private User user;
-    private Project project;
-    private AbstractWebDriverConfig driverConfig;
-    private ParameterizedSymbol resetSymbol;
-    private ParameterizedSymbol postSymbol;
+    private final CounterDAO counterDAO;
+    private final FileDAO fileDAO;
+    private final User user;
+    private final Project project;
+    private final WebDriverConfig driverConfig;
+    private final ParameterizedSymbol resetSymbol;
+    private final ParameterizedSymbol postSymbol;
 
     public PreparedContextHandler(CounterDAO counterDAO,
                                   FileDAO fileDAO,
                                   User user,
                                   Project project,
-                                  AbstractWebDriverConfig driverConfig,
+                                  WebDriverConfig driverConfig,
                                   ParameterizedSymbol resetSymbol,
                                   ParameterizedSymbol postSymbol) {
         this.counterDAO = counterDAO;

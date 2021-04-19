@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,6 @@ import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -81,10 +78,6 @@ public class AssertCounterAction extends SymbolAction {
 
     }
 
-    private static final long serialVersionUID = -8210218030257177422L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
-
     /**
      * The name of the counter to assert.
      */
@@ -131,7 +124,7 @@ public class AssertCounterAction extends SymbolAction {
                 break;
         }
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Asserting counter '{}' with value '{}' against '{}' using {} => {}.",
+        logger.info(LoggerMarkers.LEARNER, "Asserting counter '{}' with value '{}' against '{}' using {} => {}.",
                 name, counterValue, value, operator, result);
 
         if (result) {

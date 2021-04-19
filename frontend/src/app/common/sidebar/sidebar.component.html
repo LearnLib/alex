@@ -1,0 +1,107 @@
+<aside [class.collapse]="appStore.sidebarCollapsed" class="h-100" id="sidebar">
+  <div id="sidebar-body">
+
+    <div class="sidebar-group" *ngIf="user?.role === 'ADMIN'">
+      <strong class="sidebar-group-title">Admin</strong>
+      <a [routerLink]="['/app', 'admin', 'settings']" [routerLinkActive]="'active'">
+        <i class="fas fa-fw fa-cogs"></i> <span>App Settings</span>
+      </a>
+      <a [routerLink]="['/app', 'admin', 'users']" [routerLinkActive]="'active'">
+        <i class="fas fa-fw fa-users"></i> <span>User Management</span>
+      </a>
+    </div>
+
+    <ng-container *ngIf="project == null">
+
+      <div class="sidebar-group">
+        <strong class="sidebar-group-title">Projects</strong>
+        <a [routerLink]="['/app', 'projects']" [routerLinkActive]="'active'">
+          <i class="fas fa-fw fa-columns"></i> <span>Overview</span>
+        </a>
+      </div>
+
+    </ng-container>
+
+    <ng-container *ngIf="project != null">
+
+      <div class="sidebar-group" *ngIf="project != null">
+        <strong class="sidebar-group-title">{{project.name}}</strong>
+        <a [routerLink]="['/app', 'projects', project.id]" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{exact: true}">
+          <i class="fas fa-fw fa-columns"></i> <span>Dashboard</span>
+        </a>
+        <a *ngIf="project.owners.includes(user.id)" [routerLink]="['/app', 'projects', project.id, 'users']" [routerLinkActive]="'active'">
+          <i class="fas fa-fw fa-users"></i> <span>Users</span>
+        </a>
+        <a *ngIf="project.owners.includes(user.id)" [routerLink]="['/app', 'projects', project.id, 'environments']" [routerLinkActive]="'active'">
+          <i class="fas fa-fw fa-cloud"></i> <span>Environments</span>
+        </a>
+        <a [routerLink]="['/app', 'projects', project.id, 'files']" [routerLinkActive]="'active'">
+          <i class="fas fa-fw fa-file"></i> <span>Files</span>
+        </a>
+        <a [routerLink]="['/app', 'projects']">
+          <i class="fas fa-fw fa-sign-out-alt"></i> <span>Close</span>
+        </a>
+      </div>
+
+      <div class="sidebar-group">
+        <strong class="sidebar-group-title">Symbols</strong>
+        <a [routerLink]="['/app', 'projects', project.id, 'symbols']" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{exact: true}">
+          <i class="fas fa-fw fa-list-alt"></i> <span>Management</span>
+        </a>
+        <a [routerLink]="['/app', 'projects', project.id, 'symbols', 'archive']" [routerLinkActive]="'active'">
+          <i class="fas fa-fw fa-archive"></i> <span>Archive</span>
+        </a>
+      </div>
+
+      <div class="sidebar-group">
+        <strong class="sidebar-group-title">Tests</strong>
+        <a [routerLink]="['/app', 'projects', project.id, 'tests', 'configs']" [routerLinkActive]="'active'">
+          <i class="fas fa-fw fa-play"></i> <span>Configs</span>
+        </a>
+        <a [routerLink]="['/app', 'projects', project.id, 'tests']" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{exact: true}">
+          <i class="fas fa-fw fa-wrench"></i> <span>Management</span>
+        </a>
+        <a [routerLink]="['/app', 'projects', project.id, 'tests', 'reports']" [routerLinkActive]="'active'">
+          <i class="fas fa-fw fa-list"></i> <span>Reports</span>
+        </a>
+      </div>
+
+      <div class="sidebar-group">
+        <strong class="sidebar-group-title">Learning</strong>
+        <a [routerLink]="['/app', 'projects', project.id, 'learner', 'setups']" [routerLinkActive]="'active'">
+          <i class="fas fa-fw fa-play"></i> <span>Setups</span>
+        </a>
+        <a [routerLink]="['/app', 'projects', project.id, 'learner', 'results']" [routerLinkActive]="'active'">
+          <i class="fas fa-fw fa-sitemap"></i> <span>Results</span>
+        </a>
+        <a [routerLink]="['/app', 'projects', project.id, 'lts-formula-suites']" [routerLinkActive]="'active'">
+          <i class="fas fa-fw fa-subscript"></i> <span>Formulas</span>
+        </a>
+        <a [routerLink]="['/app', 'projects', project.id, 'counters']" [routerLinkActive]="'active'">
+          <i class="fas fa-fw fa-list-ol"></i> <span>Counters</span>
+        </a>
+      </div>
+
+    </ng-container>
+
+    <div class="sidebar-group">
+      <strong class="sidebar-group-title">Integrations</strong>
+      <a [routerLink]="['/app', 'integrations', 'webhooks']" [routerLinkActive]="'active'">
+        <i class="fas fa-fw fa-share-alt"></i> <span>WebHooks</span>
+      </a>
+    </div>
+
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="cursor-pointer" (click)="appStore.toggleSidebar(); $event.preventDefault()">
+      <i
+        class="fas fa-fw mr-1"
+        [class.fa-angle-double-left]="!appStore.sidebarCollapsed"
+        [class.fa-angle-double-right]="appStore.sidebarCollapsed"
+      >
+      </i>
+      <span>Collapse</span>
+    </div>
+  </div>
+</aside>

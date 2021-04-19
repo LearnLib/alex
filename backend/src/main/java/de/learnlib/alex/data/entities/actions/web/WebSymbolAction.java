@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
@@ -33,8 +32,6 @@ import javax.persistence.Entity;
 @DiscriminatorValue("web")
 @JsonTypeName("web")
 public abstract class WebSymbolAction extends SymbolAction {
-
-    private static final long serialVersionUID = -1990239222213631726L;
 
     @Override
     public ExecuteResult execute(ConnectorManager connector) {

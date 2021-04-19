@@ -1,0 +1,54 @@
+{
+  "options": {
+    "comment": "cli"
+  },
+  "setup": {
+    "symbols": [
+      {
+        "symbol": {
+          "name": "search"
+        },
+        "parameterValues": [
+          {
+            "parameter": {
+              "type": "input",
+              "name": "term",
+              "parameterType": "STRING"
+            },
+            "value": "test"
+          }
+        ],
+        "outputMappings": []
+      }
+    ],
+    "equivalenceOracle": {
+      "batchSize": 1,
+      "minLength": 5,
+      "maxLength": 5,
+      "maxNoOfTests": 5,
+      "seed": 42,
+      "type": "random_word"
+    },
+    "algorithm": {
+      "name": "TTT"
+    },
+    "preSymbol": {
+      "symbol": {
+        "name": "reset"
+      },
+      "parameterValues": [],
+      "outputMappings": []
+    },
+    "webDriver": {
+      "browser": "chrome",
+      "headless": true,
+      "height": 1661,
+      "implicitlyWait": 0,
+      "pageLoadTimeout": 10,
+      "scriptTimeout": 10,
+      "width": 2953
+    },
+    "enableCache": true,
+    "postSymbol": null
+  }
+}

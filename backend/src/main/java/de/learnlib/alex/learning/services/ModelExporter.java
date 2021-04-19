@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,9 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
+import java.io.IOException;
+import java.io.StringWriter;
+import javax.validation.ValidationException;
 import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.serialization.dot.GraphDOT;
 import net.automatalib.words.Alphabet;
@@ -28,15 +31,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.ValidationException;
-import java.io.IOException;
-import java.io.StringWriter;
-
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class, readOnly = true)
 public class ModelExporter {
 
-    private LearnerResultDAO learnerResultDAO;
+    private final LearnerResultDAO learnerResultDAO;
 
     @Autowired
     public ModelExporter(LearnerResultDAO learnerResultDAO) {
@@ -44,7 +43,7 @@ public class ModelExporter {
     }
 
     public String exportDot(User user, Long projectId, Long testNo, Long stepNo) {
-        final LearnerResult learnerResult = learnerResultDAO.get(user, projectId, testNo);
+        final LearnerResult learnerResult = learnerResultDAO.getByTestNo(user, projectId, testNo);
 
         final LearnerResultStep step = learnerResult.getSteps().stream()
                 .filter(s -> s.getStepNo().equals(stepNo))

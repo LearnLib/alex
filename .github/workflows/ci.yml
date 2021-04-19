@@ -1,0 +1,155 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - developer
+      - master
+  pull_request:
+    branches:
+      - developer
+      - master
+
+jobs:
+  build-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 15
+        uses: actions/setup-java@v1
+        with:
+          java-version: 15
+      - name: Build with Maven
+        run: mvn clean install -DskipTests package --file ./backend/pom.xml
+
+  lint-backend:
+    needs: build-backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 15
+      - name: Lint Java Code
+        run: mvn checkstyle:checkstyle -Pcode-analysis --file ./backend/pom.xml
+
+  analyse-backend:
+    needs: build-backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 15
+      - name: Analyse Java Code for bugs
+        run: mvn install -DskipTests --file ./backend/pom.xml && mvn spotbugs:check -Pcode-analysis --file ./backend/pom.xml
+
+  test-unit-backend:
+    needs: [lint-backend, analyse-backend]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 15
+        uses: actions/setup-java@v1
+        with:
+          java-version: 15
+      - name: Run unit tests with Maven
+        run: mvn clean test --file ./backend/pom.xml
+
+  test-integration-backend:
+    needs: test-unit-backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 15
+        uses: actions/setup-java@v1
+        with:
+          java-version: 15
+      - name: Run integration tests with Maven
+        run: mvn clean verify -Dsurefire.skip=true --file ./backend/pom.xml
+
+  package-backend:
+    needs: test-integration-backend
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Push backend to GitHub repositories
+        uses: ./.github/actions/build-and-deploy
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.CR_PAT }}
+          context: ./backend
+          tag: alex-backend
+
+  lint-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Lint TypeScript code
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - run: cd ./frontend && npm ci && npm run lint
+
+  test-unit-frontend:
+    needs: lint-frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run Angular unit tests
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - run: cd ./frontend && npm ci && npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
+
+  package-frontend:
+    needs: test-unit-frontend
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Push frontend to GitHub repositories
+        uses: ./.github/actions/build-and-deploy
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.CR_PAT }}
+          context: ./frontend
+          tag: alex-frontend
+
+  package-cli:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Push CLI to GitHub repositories
+        uses: ./.github/actions/build-and-deploy
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.CR_PAT }}
+          context: ./cli
+          tag: alex-cli
+
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build docs
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - run: cd ./docs && npm install -g npm && npm ci && npm run build
+
+  package-docs:
+    needs: build-docs
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Push docs to GitHub repositories
+        uses: ./.github/actions/build-and-deploy
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.CR_PAT }}
+          context: ./docs
+          tag: alex-docs

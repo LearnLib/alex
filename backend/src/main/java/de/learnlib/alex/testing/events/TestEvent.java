@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.webhooks.entities.Event;
 import de.learnlib.alex.webhooks.entities.EventType;
-
 import java.util.List;
 
 /** Events for tests. */
@@ -32,7 +31,8 @@ public class TestEvent {
         /**
          * Constructor.
          *
-         * @param test The created test.
+         * @param test
+         *         The created test.
          */
         public Created(Test test) {
             super(test, EventType.TEST_CREATED);
@@ -45,7 +45,8 @@ public class TestEvent {
         /**
          * Constructor.
          *
-         * @param test The updated test.
+         * @param test
+         *         The updated test.
          */
         public Updated(Test test) {
             super(test, EventType.TEST_UPDATED);
@@ -58,7 +59,8 @@ public class TestEvent {
         /**
          * Constructor.
          *
-         * @param id The id of the deleted test.
+         * @param id
+         *         The id of the deleted test.
          */
         public Deleted(Long id) {
             super(id, EventType.TEST_DELETED);
@@ -71,7 +73,8 @@ public class TestEvent {
         /**
          * Constructor.
          *
-         * @param report The report of the test execution.
+         * @param report
+         *         The report of the test execution.
          */
         public ExecutionFinished(TestReport report) {
             super(report, EventType.TEST_EXECUTION_FINISHED);
@@ -84,7 +87,8 @@ public class TestEvent {
         /**
          * Constructor.
          *
-         * @param data The data used to start the test execution.
+         * @param data
+         *         The data used to start the test execution.
          */
         public ExecutionStarted(TestExecutionStartedEventData data) {
             super(data, EventType.TEST_EXECUTION_STARTED);
@@ -97,7 +101,8 @@ public class TestEvent {
         /**
          * Constructor.
          *
-         * @param tests The created tests.
+         * @param tests
+         *         The created tests.
          */
         public CreatedMany(List<Test> tests) {
             super(tests, EventType.TESTS_CREATED);
@@ -110,7 +115,8 @@ public class TestEvent {
         /**
          * Constructor.
          *
-         * @param ids The ids of the deleted tests.
+         * @param ids
+         *         The ids of the deleted tests.
          */
         public DeletedMany(List<Long> ids) {
             super(ids, EventType.TESTS_DELETED);
@@ -123,7 +129,8 @@ public class TestEvent {
         /**
          * Constructor.
          *
-         * @param tests The moved tests.
+         * @param tests
+         *         The moved tests.
          */
         public MovedMany(List<Test> tests) {
             super(tests, EventType.TESTS_MOVED);

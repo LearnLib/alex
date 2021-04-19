@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,26 +37,32 @@ import de.learnlib.alex.testing.entities.TestSuite;
 import de.learnlib.alex.testing.entities.export.TestsExportConfig;
 import de.learnlib.alex.testing.entities.export.TestsExportableEntity;
 import de.learnlib.alex.testing.repositories.TestRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
+@Transactional(rollbackFor = Exception.class, readOnly = true)
 public class TestsExporter extends EntityExporter {
 
-    @Autowired
-    private TestDAO testDAO;
+    private final TestDAO testDAO;
+    private final TestRepository testRepository;
+    private final ProjectRepository projectRepository;
 
     @Autowired
-    private TestRepository testRepository;
+    public TestsExporter(
+            TestDAO testDAO,
+            TestRepository testRepository,
+            ProjectRepository projectRepository
+    ) {
+        super();
 
-    @Autowired
-    private ProjectRepository projectRepository;
+        this.testDAO = testDAO;
+        this.testRepository = testRepository;
+        this.projectRepository = projectRepository;
 
-    public TestsExporter() {
         om.addMixIn(Test.class, IgnoreFieldsForTestMixin.class);
         om.addMixIn(TestCaseStep.class, IgnoreIdFieldMixin.class);
         om.addMixIn(ParameterizedSymbol.class, IgnoreIdFieldMixin.class);
@@ -68,12 +74,11 @@ public class TestsExporter extends EntityExporter {
         om.registerModule(module);
     }
 
-    @Transactional
     public ExportableEntity export(User user, Long projectId, TestsExportConfig config) throws Exception {
         final Project project = projectRepository.findById(projectId).orElseThrow(() -> new NotFoundException("The project could not be found"));
 
         final List<Test> tests = testRepository.findAllByProject_IdAndIdIn(projectId, config.getTestIds());
-        for (Test test: tests) {
+        for (Test test : tests) {
             testDAO.checkAccess(user, project, test);
         }
 
@@ -82,7 +87,6 @@ public class TestsExporter extends EntityExporter {
         return exportableTests;
     }
 
-    @Transactional
     public ExportableEntity exportAll(User user, Long projectId) throws Exception {
         final Project project = projectRepository.findById(projectId).orElseThrow(() -> new NotFoundException("The project could not be found"));
         final TestSuite root = (TestSuite) testRepository.findFirstByProject_IdOrderByIdAsc(projectId);
@@ -102,7 +106,16 @@ public class TestsExporter extends EntityExporter {
     }
 
     private abstract static class IgnoreFieldsForTestMixin extends IgnoreIdFieldMixin {
-        @JsonIgnore abstract Long getProjectId();
-        @JsonIgnore abstract Long getParentId();
+        @JsonIgnore(value = false)
+        abstract Long getId();
+
+        @JsonIgnore
+        abstract Long getProjectId();
+
+        @JsonIgnore
+        abstract Long getParentId();
+
+        @JsonIgnore
+        abstract User getLastUpdatedBy();
     }
 }

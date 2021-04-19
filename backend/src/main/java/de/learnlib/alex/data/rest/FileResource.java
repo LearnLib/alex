@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,18 @@
 package de.learnlib.alex.data.rest;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.data.dao.FileDAO;
 import de.learnlib.alex.data.entities.UploadableFile;
 import de.learnlib.alex.security.AuthContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import javax.validation.ValidationException;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,12 +39,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
 /**
  * REST API to manage files.
  */
@@ -50,13 +46,8 @@ import java.util.List;
 @RequestMapping("/rest/projects/{projectId}/files")
 public class FileResource {
 
-    private static final Logger LOGGER = LogManager.getLogger();
-
-    /** The security context containing the user of the request. */
-    private AuthContext authContext;
-
-    /** The FileDAO to use. */
-    private FileDAO fileDAO;
+    private final AuthContext authContext;
+    private final FileDAO fileDAO;
 
     @Autowired
     public FileResource(AuthContext authContext, FileDAO fileDAO) {
@@ -78,21 +69,17 @@ public class FileResource {
             consumes = MediaType.MULTIPART_FORM_DATA,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity uploadFile(@PathVariable("projectId") Long projectId,
-                                     @RequestParam("file") MultipartFile fileToUpload) {
+    public ResponseEntity<UploadableFile> uploadFile(
+            @PathVariable("projectId") Long projectId,
+            @RequestParam("file") MultipartFile fileToUpload
+    ) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("uploadFile({}, {}) for user {}.", projectId, fileToUpload, user);
 
         try {
             final UploadableFile file = fileDAO.create(user, projectId, fileToUpload);
-            LOGGER.traceExit(file);
             return ResponseEntity.ok(file);
-        } catch (IOException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("FileResource.uploadFile", HttpStatus.INTERNAL_SERVER_ERROR, e);
-        } catch (IllegalStateException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("FileResource.uploadFile", HttpStatus.BAD_REQUEST, e);
+        } catch (IOException | IllegalStateException e) {
+            throw new ValidationException(e);
         }
     }
 
@@ -111,7 +98,6 @@ public class FileResource {
     public ResponseEntity<Resource> downloadFile(@PathVariable("projectId") Long projectId,
                                                  @PathVariable("fileId") Long fileId) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("downloadFile({}, {}) for user {}.", projectId, fileId, user);
         final File file = fileDAO.getFile(user, projectId, fileId);
 
         final Resource resource = new FileSystemResource(file);
@@ -132,11 +118,7 @@ public class FileResource {
     )
     public ResponseEntity getAllFiles(@PathVariable("projectId") Long projectId) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("getAllFiles({}) for user {}.", projectId, user);
-
         final List<UploadableFile> files = fileDAO.getAll(user, projectId);
-
-        LOGGER.traceExit(files);
         return ResponseEntity.ok(files);
     }
 
@@ -155,11 +137,7 @@ public class FileResource {
     )
     public ResponseEntity deleteFile(@PathVariable("projectId") Long projectId, @PathVariable("fileId") Long fileId) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("deleteFile({}, {}) for user {}.", projectId, fileId, user);
-
         fileDAO.delete(user, projectId, fileId);
-
-        LOGGER.traceExit("File deleted.");
         return ResponseEntity.noContent().build();
     }
 
@@ -169,11 +147,7 @@ public class FileResource {
     )
     public ResponseEntity deleteFiles(@PathVariable("projectId") Long projectId, @PathVariable("fileIds") List<Long> fileIds) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("deleteFiles({}, {}) for user {}.", projectId, fileIds, user);
-
         fileDAO.delete(user, projectId, fileIds);
-
-        LOGGER.traceExit("Files deleted.");
         return ResponseEntity.noContent().build();
     }
 }

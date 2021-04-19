@@ -1,0 +1,111 @@
+<div class="view">
+  <div *ngIf="status != null && !finished" class="d-flex flex-column h-100">
+
+    <div class="container-fluid">
+
+      <div class="alert alert-info d-flex flex-row align-items-center my-3" >
+        <div class="w-100">
+          <i class="fas fa-circle-notch fa-spin"></i>&nbsp; Application is
+          <strong *ngIf="status.currentProcess.phase === 'LEARNING'">learning</strong>
+          <strong *ngIf="status.currentProcess.phase=== 'EQUIVALENCE_TESTING'">testing for equivalence</strong>
+        </div>
+        <div class="flex-shrink-0">
+          <button *ngIf="canAbort()" (click)="abort()" class="btn btn-info btn-sm">
+            <i class="fas fa-times fa-fw"></i> Abort
+          </button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 col-sm-12 mb-3">
+          <div class="card">
+            <div class="card-header">
+              <strong>Statistics</strong>
+            </div>
+            <div class="card-body pb-0">
+              <table class="table table-striped">
+                <thead>
+                <tr>
+                  <th width="140">&nbsp;</th>
+                  <th>Total</th>
+                  <th>Learner</th>
+                  <th>EQ Oracle</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                  <td><strong>Time passed</strong></td>
+                  <td *ngIf="currentResult">{{currentResult.statistics.duration.total | formatMilliseconds}}</td>
+                  <td *ngIf="currentResult">{{currentResult.statistics.duration.learner | formatMilliseconds}}</td>
+                  <td *ngIf="currentResult">{{currentResult.statistics.duration.eqOracle | formatMilliseconds}}</td>
+                </tr>
+                <tr>
+                  <td><strong>MQs executed</strong></td>
+                  <td>{{currentResult.statistics.mqsUsed.total}}</td>
+                  <td>{{currentResult.statistics.mqsUsed.learner}}</td>
+                  <td>{{currentResult.statistics.mqsUsed.eqOracle}}</td>
+                </tr>
+                <tr>
+                  <td><strong>Symbols executed</strong></td>
+                  <td>{{currentResult.statistics.symbolsUsed.total}}</td>
+                  <td>{{currentResult.statistics.symbolsUsed.learner}}</td>
+                  <td>{{currentResult.statistics.symbolsUsed.eqOracle}}</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-sm-12">
+          <div class="card">
+            <div class="card-header">
+              <strong>Queries being processed: {{status.currentProcess.currentQueries.length}}</strong>
+            </div>
+            <div class="card-body" style="max-height: 120px; overflow: auto; padding-bottom: 6px">
+              <p *ngFor="let query of status.currentProcess.currentQueries">
+                {{query.suffix.join(', ')}}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="border-top" style="flex-basis: 0; flex-grow: 1">
+      <learner-result-panel
+        *ngIf="currentResult != null"
+        [result]="currentResult"
+        [pointer]="currentResult.steps.length - 1"
+      >
+      </learner-result-panel>
+    </div>
+  </div>
+
+  <div *ngIf="finished" class="learner-wrapper d-flex flex-row h-100">
+    <div style="flex-basis: 0; flex-grow: 1">
+      <learner-result-panel
+        *ngIf="currentResult != null"
+        [result]="currentResult"
+        [pointer]="currentResult.steps.length - 1"
+        (selectEdge)="store.edgeSelected$.next($event)"
+      >
+      </learner-result-panel>
+    </div>
+
+    <div
+      class="panel-sidebar border-left flex-shrink-0"
+      *ngIf="resumeConfig != null && currentResult != null"
+    >
+      <button (click)="resumeLearning()" class="btn btn-sm btn-block btn-success mb-3">Resume</button>
+
+      <learner-resume-settings-widget
+        [configuration]="resumeConfig"
+        [project]="project"
+        [result]="currentResult"
+        [symbols]="symbols"
+      >
+      </learner-resume-settings-widget>
+    </div>
+  </div>
+</div>

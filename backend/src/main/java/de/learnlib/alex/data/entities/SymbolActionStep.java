@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,12 @@ package de.learnlib.alex.data.entities;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import java.io.Serializable;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
-import java.io.Serializable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Executes an action on the SUL.
@@ -34,7 +33,7 @@ import java.io.Serializable;
 @JsonTypeName("action")
 public class SymbolActionStep extends SymbolStep implements Serializable {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(SymbolActionStep.class);
 
     private static final long serialVersionUID = 5116902783136721652L;
 
@@ -61,7 +60,7 @@ public class SymbolActionStep extends SymbolStep implements Serializable {
         try {
             return getExecuteResult(i, connectors, action.executeAction(connectors));
         } catch (Exception e) {
-            LOGGER.error(LoggerMarkers.LEARNER, "The action could not be executed.", e);
+            logger.error(LoggerMarkers.LEARNER, "The action could not be executed.", e);
             return new ExecuteResult(false, String.valueOf(i + 1));
         }
     }

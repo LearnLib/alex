@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,52 +16,62 @@
 
 package de.learnlib.alex.learning.entities;
 
-import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
+import de.learnlib.alex.data.entities.ParameterizedSymbol;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Helper object that is used to test words.
  */
 public class ReadOutputConfig {
 
-    /**
-     * The sequence of symbols that should be tested.
-     */
-    private SymbolSet symbols;
+    private ParameterizedSymbol preSymbol;
+    private List<ParameterizedSymbol> symbols = new ArrayList<>();
+    private ParameterizedSymbol postSymbol;
+    private WebDriverConfig driverConfig;
 
-    /**
-     * The web browser the word should be executed in.
-     */
-    private AbstractWebDriverConfig driverConfig;
-
-    /**
-     * Constructor.
-     */
     public ReadOutputConfig() {
     }
 
-    /**
-     * Constructor.
-     * @param symbols The symbols.
-     * @param driverConfig The driver config.
-     */
-    public ReadOutputConfig(SymbolSet symbols, AbstractWebDriverConfig driverConfig) {
+    public ReadOutputConfig(ParameterizedSymbol preSymbol,
+                            List<ParameterizedSymbol> symbols,
+                            ParameterizedSymbol postSymbol,
+                            WebDriverConfig driverConfig) {
+        this.preSymbol = preSymbol;
         this.symbols = symbols;
+        this.postSymbol = postSymbol;
         this.driverConfig = driverConfig;
     }
 
-    public SymbolSet getSymbols() {
-        return symbols;
-    }
-
-    public void setSymbols(SymbolSet symbols) {
-        this.symbols = symbols;
-    }
-
-    public AbstractWebDriverConfig getDriverConfig() {
+    public WebDriverConfig getDriverConfig() {
         return driverConfig;
     }
 
-    public void setDriverConfig(AbstractWebDriverConfig driverConfig) {
+    public void setDriverConfig(WebDriverConfig driverConfig) {
         this.driverConfig = driverConfig;
+    }
+
+    public ParameterizedSymbol getPreSymbol() {
+        return preSymbol;
+    }
+
+    public void setPreSymbol(ParameterizedSymbol preSymbol) {
+        this.preSymbol = preSymbol;
+    }
+
+    public List<ParameterizedSymbol> getSymbols() {
+        return symbols;
+    }
+
+    public void setSymbols(List<ParameterizedSymbol> symbols) {
+        this.symbols = symbols;
+    }
+
+    public ParameterizedSymbol getPostSymbol() {
+        return postSymbol;
+    }
+
+    public void setPostSymbol(ParameterizedSymbol postSymbol) {
+        this.postSymbol = postSymbol;
     }
 }

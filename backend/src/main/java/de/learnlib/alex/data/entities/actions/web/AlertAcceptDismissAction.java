@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,14 +20,11 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.Alert;
-import org.openqa.selenium.NoAlertPresentException;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
+import org.openqa.selenium.Alert;
+import org.openqa.selenium.NoAlertPresentException;
 
 /**
  * Accepts or dismisses the current window alert.
@@ -36,10 +33,6 @@ import javax.validation.constraints.NotNull;
 @DiscriminatorValue("web_alertAcceptDismiss")
 @JsonTypeName("web_alertAcceptDismiss")
 public class AlertAcceptDismissAction extends WebSymbolAction {
-
-    private static final long serialVersionUID = 194831141591117765L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The actions for an alert. */
     public enum Action {
@@ -67,15 +60,15 @@ public class AlertAcceptDismissAction extends WebSymbolAction {
 
             if (this.action == Action.ACCEPT) {
                 alert.accept();
-                LOGGER.info(LoggerMarkers.LEARNER, "Accept alert window.");
+                logger.info(LoggerMarkers.LEARNER, "Accept alert window.");
             } else {
                 alert.dismiss();
-                LOGGER.info(LoggerMarkers.LEARNER, "Dismiss alert window.");
+                logger.info(LoggerMarkers.LEARNER, "Dismiss alert window.");
             }
 
             return getSuccessOutput();
         } catch (NoAlertPresentException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Failed accept or dismiss alert window.");
+            logger.info(LoggerMarkers.LEARNER, "Failed accept or dismiss alert window.");
             return getFailedOutput();
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,17 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
@@ -27,6 +35,7 @@ import de.learnlib.alex.data.entities.actions.misc.SetVariableAction;
 import de.learnlib.alex.integrationtests.SpringRestError;
 import de.learnlib.alex.integrationtests.resources.api.LearnerResultApi;
 import de.learnlib.alex.integrationtests.resources.api.LearnerSetupApi;
+import de.learnlib.alex.integrationtests.resources.api.LtsFormulaSuiteApi;
 import de.learnlib.alex.integrationtests.resources.api.ProjectApi;
 import de.learnlib.alex.integrationtests.resources.api.SymbolApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
@@ -35,37 +44,33 @@ import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.entities.LearnerSetup;
 import de.learnlib.alex.learning.entities.Statistics;
+import de.learnlib.alex.learning.entities.WebDriverConfig;
 import de.learnlib.alex.learning.entities.algorithms.TTT;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
-import de.learnlib.alex.learning.entities.webdrivers.HtmlUnitDriverConfig;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.http.HttpStatus;
-
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.Response;
+import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.Response;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 
 public class LearnerSetupResourceIT extends AbstractResourceIT {
 
     private LearnerSetupApi learnerSetupApi;
     private LearnerResultApi learnerResultApi;
+    private LtsFormulaSuiteApi ltsFormulaSuiteApi;
 
     private Project project;
     private List<Symbol> symbols;
     private String jwt;
 
-    @Before
+    @BeforeEach
     public void pre() throws Exception {
         final UserApi userApi = new UserApi(client, port);
         final ProjectApi projectApi = new ProjectApi(client, port);
@@ -73,6 +78,7 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
 
         learnerSetupApi = new LearnerSetupApi(client, port);
         learnerResultApi = new LearnerResultApi(client, port);
+        ltsFormulaSuiteApi = new LtsFormulaSuiteApi(client, port);
 
         jwt = userApi.login("admin@alex.example", "admin");
         project = projectApi.create("{\"name\":\"test\",\"url\":\"http://" + InetAddress.getLocalHost().getHostName() + " :" + port + "\"}", jwt)
@@ -110,19 +116,19 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void startLearningProcessFromSetupWithoutOptions() throws InterruptedException, IOException {
+    public void startLearningProcessFromSetupWithoutOptions() throws IOException {
         startLearningFromSetup(null, "testSetup");
     }
 
     @Test
-    public void startLearningProcessFromSetupWithOptions() throws InterruptedException, IOException {
+    public void startLearningProcessFromSetupWithOptions() throws IOException {
         final String comment = "testComment";
         final LearnerOptions options = new LearnerOptions();
         options.setComment(comment);
         startLearningFromSetup(options, comment);
     }
 
-    private void startLearningFromSetup(LearnerOptions options, String expectedComment) throws InterruptedException, IOException {
+    private void startLearningFromSetup(LearnerOptions options, String expectedComment) throws IOException {
         objectMapper.addMixIn(LearnerResult.class, IgnoreLearnerResultFieldsMixin.class);
         objectMapper.addMixIn(LearnerResultStep.class, IgnoreLearnerResultStepFieldsMixin.class);
 
@@ -141,12 +147,14 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
         assertTrue(result.getStatus().equals(LearnerResult.Status.IN_PROGRESS)
                 || result.getStatus().equals(LearnerResult.Status.PENDING));
 
-        while (result.getStatus() != LearnerResult.Status.FINISHED
-                && result.getStatus() != LearnerResult.Status.ABORTED) {
-            final Response res2 = learnerResultApi.get(project.getId(), result.getTestNo(), jwt);
-            result = objectMapper.readValue(res2.readEntity(String.class), LearnerResult.class);
-            Thread.sleep(3000);
-        }
+        LearnerResult finalResult = result;
+        await().atMost(10, TimeUnit.SECONDS).until(() -> {
+            final var r = getLearnerResult(project.getId(), finalResult.getTestNo(), jwt);
+            return r.getStatus().equals(LearnerResult.Status.FINISHED)
+                    || r.getStatus().equals(LearnerResult.Status.ABORTED);
+        });
+
+        result = getLearnerResult(project.getId(), result.getTestNo(), jwt);
 
         assertEquals(LearnerResult.Status.FINISHED, result.getStatus());
         assertEquals(expectedComment, result.getComment());
@@ -156,8 +164,13 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
         assertFalse(result.isError());
     }
 
+    private LearnerResult getLearnerResult(Long projectId, Long testNo, String jwt) throws JsonProcessingException {
+        final Response res = learnerResultApi.get(projectId, testNo, jwt);
+        return objectMapper.readValue(res.readEntity(String.class), LearnerResult.class);
+    }
+
     @Test
-    public void cannotCreateLearnerSetupWithoutPreSymbol() {
+    public void shouldNotCreateLearnerSetupWithoutPreSymbol() {
         LearnerSetup ls = createDefaultLearnerSetup();
         ls.setPreSymbol(null);
 
@@ -168,7 +181,7 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void cannotCreateLearnerSetupWithoutAlphabet() {
+    public void shouldNotCreateLearnerSetupWithoutAlphabet() {
         LearnerSetup ls = createDefaultLearnerSetup();
         ls.setSymbols(new ArrayList<>());
 
@@ -179,18 +192,94 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void createLearnerSetup() {
+    public void shouldCreateLearnerSetup() {
         final LearnerSetup ls = createDefaultLearnerSetup();
         final Response res = learnerSetupApi.create(project.getId(), ls, jwt);
         final LearnerSetup createdSetup = res.readEntity(LearnerSetup.class);
 
         assertEquals(HttpStatus.CREATED.value(), res.getStatus());
         assertEquals(1, getAllSetups().size());
+        assertNotNull(createdSetup.getModelCheckingConfig());
         compareTo(ls, createdSetup);
     }
 
     @Test
-    public void deleteSetup() {
+    public void shouldCreateLearnerSetupWithModelCheckingConfig() {
+        final var fs1 = createFormulaSuite(project.getId(), "suite1", jwt);
+        final var fs2 = createFormulaSuite(project.getId(), "suite2", jwt);
+
+        final var ls = createDefaultLearnerSetup();
+        ls.getModelCheckingConfig().getFormulaSuites().add(fs1);
+        ls.getModelCheckingConfig().getFormulaSuites().add(fs2);
+
+        final var res = learnerSetupApi.create(project.getId(), ls, jwt);
+        assertEquals(HttpStatus.CREATED.value(), res.getStatus());
+
+        final var createdSetup = res.readEntity(LearnerSetup.class);
+        final var config = createdSetup.getModelCheckingConfig();
+        assertNotNull(config);
+        assertEquals(2, config.getFormulaSuites().size());
+        assertTrue(config.getFormulaSuites().stream().anyMatch(fs -> fs.getName().equals("suite1")));
+        assertTrue(config.getFormulaSuites().stream().anyMatch(fs -> fs.getName().equals("suite2")));
+    }
+
+    @Test
+    public void shouldUpdateModelCheckingConfigOfLearnerSetup() {
+        final var fs1 = createFormulaSuite(project.getId(), "suite1", jwt);
+        final var fs2 = createFormulaSuite(project.getId(), "suite2", jwt);
+
+        final var ls = createDefaultLearnerSetup();
+        ls.getModelCheckingConfig().getFormulaSuites().add(fs1);
+        ls.getModelCheckingConfig().getFormulaSuites().add(fs2);
+
+        final var res = learnerSetupApi.create(project.getId(), ls, jwt);
+        final var createdSetup = res.readEntity(LearnerSetup.class);
+        final var config = createdSetup.getModelCheckingConfig();
+
+        // change properties and remove a suite
+        config.setMinUnfolds(5);
+        config.setMultiplier(0.5);
+        config.getFormulaSuites().removeIf(fs -> fs.getName().equals("suite1"));
+
+        // update
+        final var res2 = learnerSetupApi.update(project.getId(), createdSetup.getId(), createdSetup, jwt);
+        assertEquals(HttpStatus.OK.value(), res2.getStatus());
+
+        final var updatedSetup = res2.readEntity(LearnerSetup.class);
+        final var updatedConfig = updatedSetup.getModelCheckingConfig();
+
+        // verify updated properties
+        assertNotNull(updatedConfig);
+        assertEquals(5, (long) updatedConfig.getMinUnfolds());
+        assertEquals(0.5, updatedConfig.getMultiplier(), 0.0);
+        assertEquals(1, updatedConfig.getFormulaSuites().size());
+        assertTrue(updatedConfig.getFormulaSuites().stream().noneMatch(fs -> fs.getName().equals("suite1")));
+    }
+
+    private LtsFormulaSuite createFormulaSuite(Long projectId, String name, String jwt) {
+        final var fs = new LtsFormulaSuite();
+        fs.setName(name);
+
+        final var res = ltsFormulaSuiteApi.create(projectId, fs, jwt);
+        assertEquals(HttpStatus.CREATED.value(), res.getStatus());
+
+        return res.readEntity(LtsFormulaSuite.class);
+    }
+
+    @Test
+    public void shouldFailToCreateLearnerSetupWithoutModelCheckingConfig() {
+        final LearnerSetup ls = createDefaultLearnerSetup();
+        ls.setModelCheckingConfig(null);
+
+        final Response res = learnerSetupApi.create(project.getId(), ls, jwt);
+        assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
+        res.readEntity(SpringRestError.class);
+
+        assertEquals(0, getAllSetups().size());
+    }
+
+    @Test
+    public void shouldDeleteLearnerSetup() {
         final LearnerSetup ls = learnerSetupApi.create(project.getId(), createDefaultLearnerSetup(), jwt)
                 .readEntity(LearnerSetup.class);
 
@@ -201,7 +290,7 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void copySetup() {
+    public void shouldCopyLearnerSetup() {
         final LearnerSetup ls = learnerSetupApi.create(project.getId(), createDefaultLearnerSetup(), jwt)
                 .readEntity(LearnerSetup.class);
 
@@ -230,7 +319,7 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
 
     private List<LearnerSetup> getAllSetups() {
         return learnerSetupApi.getAll(project.getId(), jwt)
-                .readEntity(new GenericType<List<LearnerSetup>>(){
+                .readEntity(new GenericType<>() {
                 });
     }
 
@@ -244,7 +333,7 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
         assertEquals(ls1.getName(), ls2.getName());
         assertEquals(ls1.isEnableCache(), ls2.isEnableCache());
         assertEquals(ls1.getPreSymbol().getSymbol().getId(), ls2.getPreSymbol().getSymbol().getId());
-        for (ParameterizedSymbol ps: ls1.getSymbols()) {
+        for (ParameterizedSymbol ps : ls1.getSymbols()) {
             assertEquals(1, ls2.getSymbols().stream()
                     .filter(s -> s.getSymbol().getId().equals(ps.getSymbol().getId()))
                     .count());
@@ -258,7 +347,9 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
         ls.setEnableCache(true);
         ls.setName("testSetup");
         ls.setAlgorithm(new TTT());
-        ls.setWebDriver(new HtmlUnitDriverConfig());
+        final var webDriverConfig = new WebDriverConfig();
+        webDriverConfig.setBrowser("chrome");
+        ls.setWebDriver(webDriverConfig);
         ls.setEquivalenceOracle(new MealyRandomWordsEQOracleProxy());
         ls.setPreSymbol(new ParameterizedSymbol(symbols.get(0)));
         ls.setSymbols(symbols.stream()
@@ -269,14 +360,22 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static abstract class IgnoreLearnerResultFieldsMixin {
-        @JsonIgnore abstract void setStatistics(Statistics statistics);
-        @JsonIgnore @JsonProperty("error") abstract void setError(Boolean error);
+        @JsonIgnore
+        abstract void setStatistics(Statistics statistics);
+
+        @JsonIgnore
+        @JsonProperty("error")
+        abstract void setError(Boolean error);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static abstract class IgnoreLearnerResultStepFieldsMixin {
-        @JsonIgnore abstract void setStatistics(Statistics statistics);
-        @JsonIgnore @JsonProperty("error") abstract void setError(boolean error);
+        @JsonIgnore
+        abstract void setStatistics(Statistics statistics);
+
+        @JsonIgnore
+        @JsonProperty("error")
+        abstract void setError(boolean error);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

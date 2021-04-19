@@ -1,0 +1,34 @@
+<div
+  [ngClass]="{
+    'collapse': store.isSuiteCollapsed(suite),
+    'has-parent': suite.parent != null
+  }"
+  class="test-select-tree-header d-flex flex-row"
+>
+  <i
+    [ngClass]="{
+      'fa-minus-square': !store.isSuiteCollapsed(suite),
+      'fa-plus-square': store.isSuiteCollapsed(suite)
+    }"
+    (click)="store.toggleCollapseSuite(suite)"
+    class="far fa-fw cursor-pointer"
+    style="margin-top: 2px"
+  >
+  </i>
+  <selectable-checkbox-multiple
+    [items]="store.extractDescendantTests(suite)"
+    [selectable]="store.testsSelectable"
+    style="margin-left: .8rem"
+  >
+  </selectable-checkbox-multiple>
+  <div class="pl-3 w-100">
+    <div class="test-select-tree-name cursor-pointer" (click)="store.toggleCollapseSuite(suite)">
+      {{suite.name}}
+    </div>
+  </div>
+  <div *ngIf="suite.tests.length === 0 && suite.tests.length === 0" class="mr-3">
+    <span class="badge badge-secondary">Empty</span>
+  </div>
+</div>
+
+

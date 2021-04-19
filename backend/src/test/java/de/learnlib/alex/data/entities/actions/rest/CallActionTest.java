@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,29 +16,28 @@
 
 package de.learnlib.alex.data.entities.actions.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.learnlib.alex.data.entities.ExecuteResult;
-import de.learnlib.alex.data.entities.Symbol;
-import de.learnlib.alex.data.entities.SymbolAction;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.HashMap;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.learnlib.alex.data.entities.ExecuteResult;
+import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.data.entities.SymbolAction;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+@ExtendWith(MockitoExtension.class)
 public class CallActionTest extends RestActionTest {
 
     private static final String BASE_URL = "Base";
@@ -50,7 +49,7 @@ public class CallActionTest extends RestActionTest {
 
     private CallAction c;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         super.setUp();
 

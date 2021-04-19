@@ -1,0 +1,25 @@
+<div class="form-group">
+  <label>Min length</label>
+  <input
+    [(ngModel)]="oracle.minDepth"
+    class="form-control"
+    min="1"
+    name="eq_oracle_complete_min_depth"
+    placeholder="1"
+    required
+    type="number"
+  >
+</div>
+
+<div class="form-group">
+  <label>Max length</label>
+  <input
+    [(ngModel)]="oracle.maxDepth"
+    class="form-control"
+    min="1"
+    name="eq_oracle_complete_max_depth"
+    placeholder="1"
+    required
+    type="number"
+  >
+</div>

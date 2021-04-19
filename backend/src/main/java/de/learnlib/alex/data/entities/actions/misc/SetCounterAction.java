@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,6 @@ import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -39,10 +36,6 @@ import javax.validation.constraints.NotNull;
 @DiscriminatorValue("setCounter")
 @JsonTypeName("setCounter")
 public class SetCounterAction extends SymbolAction {
-
-    private static final long serialVersionUID = -6023597222318880440L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * How {@link SetCounterAction#value} should be interpreted.
@@ -98,14 +91,14 @@ public class SetCounterAction extends SymbolAction {
                     break;
             }
         } catch (NumberFormatException | IllegalStateException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not set the counter '{}' to the value '{}' ", name, value, e);
+            logger.info(LoggerMarkers.LEARNER, "Could not set the counter '{}' to the value '{}' ", name, value, e);
 
             return getFailedOutput();
         }
 
         counterStoreConnector.set(symbol.getProjectId(), name, val);
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Set the counter '{}' to the value '{}'.", name, value);
+        logger.info(LoggerMarkers.LEARNER, "Set the counter '{}' to the value '{}'.", name, value);
         return getSuccessOutput();
     }
 

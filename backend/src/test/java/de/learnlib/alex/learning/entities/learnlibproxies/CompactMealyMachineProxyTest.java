@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,15 @@
 
 package de.learnlib.alex.learning.entities.learnlibproxies;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.automatalib.automata.transducers.impl.compact.CompactMealy;
 import net.automatalib.util.automata.Automata;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.Alphabets;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 public class CompactMealyMachineProxyTest {
@@ -52,7 +54,7 @@ public class CompactMealyMachineProxyTest {
         final CompactMealy<String, String> mealy = createMealy();
         final CompactMealyMachineProxy mealyProxy = CompactMealyMachineProxy.createFrom(mealy, alphabet);
         final Alphabet<String> alph = mealyProxy.createAlphabet();
-        Assert.assertEquals(alphabet, alph);
+        assertEquals(alphabet, alph);
     }
 
     @Test
@@ -63,7 +65,7 @@ public class CompactMealyMachineProxyTest {
         final Alphabet<String> alph = mealyProxy.createAlphabet();
         final CompactMealy<String, String> mealy1 = mealyProxy.createMealyMachine(alph);
 
-        Assert.assertNull(Automata.findSeparatingWord(mealy1, mealy, alph));
+        assertNull(Automata.findSeparatingWord(mealy1, mealy, alph));
     }
 
     private CompactMealy<String, String> createMealy() {

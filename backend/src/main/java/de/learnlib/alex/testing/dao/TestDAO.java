@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 package de.learnlib.alex.testing.dao;
 
 import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.common.exceptions.EntityLockedException;
+import de.learnlib.alex.common.exceptions.ForbiddenOperationException;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.ParameterizedSymbolDAO;
 import de.learnlib.alex.data.dao.ProjectDAO;
@@ -32,80 +34,61 @@ import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestCase;
 import de.learnlib.alex.testing.entities.TestCaseResult;
 import de.learnlib.alex.testing.entities.TestCaseStep;
+import de.learnlib.alex.testing.entities.TestExecutionConfig;
+import de.learnlib.alex.testing.entities.TestQueueItem;
+import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.entities.TestResult;
+import de.learnlib.alex.testing.entities.TestStatus;
 import de.learnlib.alex.testing.entities.TestSuite;
 import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
+import de.learnlib.alex.testing.repositories.TestExecutionConfigRepository;
 import de.learnlib.alex.testing.repositories.TestRepository;
 import de.learnlib.alex.testing.repositories.TestResultRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import de.learnlib.alex.testing.services.TestService;
+import de.learnlib.alex.websocket.services.TestPresenceService;
+import java.time.ZonedDateTime;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import javax.validation.ValidationException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.validation.ValidationException;
-import java.time.ZonedDateTime;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /** The implementation of the test dao. */
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class TestDAO {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private final ProjectDAO projectDAO;
+    private final SymbolDAO symbolDAO;
+    private final TestRepository testRepository;
+    private final ProjectRepository projectRepository;
+    private final TestCaseStepRepository testCaseStepRepository;
+    private final ParameterizedSymbolDAO parameterizedSymbolDAO;
+    private final TestResultRepository testResultRepository;
+    private final TestPresenceService testPresenceService;
+    private final TestService testService;
+    private final TestExecutionConfigRepository testExecutionConfigRepository;
 
-    /** The ProjectDAO to use. Will be injected. */
-    private ProjectDAO projectDAO;
-
-    /** The SymbolDAO to use. Will be injected. */
-    private SymbolDAO symbolDAO;
-
-    /** The TestCaseRepository to use. Will be injected. */
-    private TestRepository testRepository;
-
-    /** The repository for projects. */
-    private ProjectRepository projectRepository;
-
-    /** The repository for test case steps. */
-    private TestCaseStepRepository testCaseStepRepository;
-
-    /** The injected DAP for parameterized symbols. */
-    private ParameterizedSymbolDAO parameterizedSymbolDAO;
-
-    /** The {@link TestResultRepository} to use. */
-    private TestResultRepository testResultRepository;
-
-    /**
-     * Constructor.
-     *
-     * @param projectDAO
-     *         The injected project DAO.
-     * @param testRepository
-     *         The injected repository for tests.
-     * @param symbolDAO
-     *         The injected symbol DAO.
-     * @param testCaseStepRepository
-     *         The injected repository for test case steps.
-     * @param projectRepository
-     *         The injected repository for projects.
-     * @param parameterizedSymbolDAO
-     *         The injected DAO for parameterized symbols.
-     * @param testResultRepository
-     *         The injected repository for test results.
-     */
     @Autowired
     public TestDAO(ProjectDAO projectDAO, TestRepository testRepository, SymbolDAO symbolDAO,
                    TestCaseStepRepository testCaseStepRepository, ProjectRepository projectRepository,
-                   ParameterizedSymbolDAO parameterizedSymbolDAO, TestResultRepository testResultRepository) {
+                   ParameterizedSymbolDAO parameterizedSymbolDAO, TestResultRepository testResultRepository,
+                   @Lazy TestPresenceService testPresenceService, @Lazy TestService testService, @Lazy TestExecutionConfigRepository testExecutionConfigRepository) {
         this.projectDAO = projectDAO;
         this.testRepository = testRepository;
         this.symbolDAO = symbolDAO;
@@ -113,6 +96,9 @@ public class TestDAO {
         this.projectRepository = projectRepository;
         this.parameterizedSymbolDAO = parameterizedSymbolDAO;
         this.testResultRepository = testResultRepository;
+        this.testPresenceService = testPresenceService;
+        this.testService = testService;
+        this.testExecutionConfigRepository = testExecutionConfigRepository;
     }
 
     public Test createByGenerate(User user, Project project, Test test) {
@@ -158,8 +144,6 @@ public class TestDAO {
     }
 
     public Test create(User user, Long projectId, Test test) throws NotFoundException, ValidationException {
-        LOGGER.traceEntry("create({})", test);
-
         test.setId(null);
 
         final Test root = testRepository.findFirstByProject_IdOrderByIdAsc(projectId);
@@ -170,6 +154,7 @@ public class TestDAO {
         // make sure the name of the test case is unique
         String name = test.getName();
         int i = 1;
+
         while (testRepository.findOneByParent_IdAndName(test.getParentId(), name) != null) {
             name = test.getName() + " - " + i;
             i++;
@@ -180,26 +165,28 @@ public class TestDAO {
         test.setProject(project);
         test.setParent(getParent(user, projectId, test.getParentId()));
 
-        final Test createdTest = createByGenerate(user, project, test);
-        LOGGER.traceExit(test);
-        return createdTest;
+        return createByGenerate(user, project, test);
     }
 
-    public List<Test> create(User user, Long projectId, List<Test> tests) throws NotFoundException, ValidationException {
-        return create(user, projectId, new ArrayList<>(tests), null);
+    public List<Test> create(User user, Long projectId, List<Test> tests) {
+        return create(user, projectId, tests, null);
     }
 
-    public List<Test> importTests(User user, Long projectId, List<Test> tests) throws ValidationException, NotFoundException {
+    public List<Test> create(User user, Long projectId, List<Test> tests, Map<Long, Long> configRefMap) {
+        return create(user, projectId, new ArrayList<>(tests), null, configRefMap);
+    }
+
+    public List<Test> importTests(User user, Long projectId, List<Test> tests, Map<Long, Long> configRefMap) {
         projectDAO.getByID(user, projectId);
         final Map<String, Symbol> symbolMap = symbolDAO.getAll(user, projectId).stream()
                 .collect(Collectors.toMap(Symbol::getName, Function.identity()));
         mapSymbolsInTests(tests, symbolMap);
 
-        return create(user, projectId, tests);
+        return create(user, projectId, tests, configRefMap);
     }
 
     private void mapSymbolsInTests(List<Test> tests, Map<String, Symbol> symbolMap) {
-        for (Test test: tests) {
+        for (Test test : tests) {
             if (test instanceof TestCase) {
                 final TestCase tc = (TestCase) test;
                 mapSymbolsInTestCaseSteps(tc.getPreSteps(), symbolMap);
@@ -212,12 +199,12 @@ public class TestDAO {
     }
 
     private void mapSymbolsInTestCaseSteps(List<TestCaseStep> steps, Map<String, Symbol> symbolMap) {
-        for (TestCaseStep step: steps) {
+        for (TestCaseStep step : steps) {
             step.getPSymbol().setSymbol(symbolMap.get(step.getPSymbol().getSymbol().getName()));
         }
     }
 
-    private List<Test> create(User user, Long projectId, List<Test> tests, TestSuite parent) throws NotFoundException, ValidationException {
+    private List<Test> create(User user, Long projectId, List<Test> tests, TestSuite parent, Map<Long, Long> configRefMap) {
         final List<Test> createdTests = new ArrayList<>();
 
         for (final Test test : tests) {
@@ -226,34 +213,46 @@ public class TestDAO {
             }
 
             if (test instanceof TestCase) {
-                createdTests.add(create(user, projectId, test));
+                var refTestId = test.getId();
+                Test createdTest = create(user, projectId, test);
+                if (configRefMap != null) {
+                    configRefMap.put(refTestId, createdTest.getId());
+                }
+                createdTests.add(createdTest);
             } else {
                 final TestSuite testSuite = (TestSuite) test;
                 final List<Test> testsInSuite = testSuite.getTests();
 
                 testSuite.setTests(new ArrayList<>());
-                createdTests.add(create(user, projectId, testSuite));
-                create(user, projectId, testsInSuite, testSuite);
+                var refSuiteId = test.getId();
+                Test createdTest = create(user, projectId, testSuite);
+                if (configRefMap != null) {
+                    configRefMap.put(refSuiteId, createdTest.getId());
+                }
+                createdTests.add(createdTest);
+                create(user, projectId, testsInSuite, testSuite, configRefMap);
             }
         }
 
         return createdTests;
     }
 
-    public Test get(User user, Long projectId, Long testId) throws NotFoundException, UnauthorizedException {
+    public Test get(User user, Long projectId, Long testId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         return get(user, project, testId);
     }
 
-    public List<Test> get(User user, Long projectId, List<Long> ids) throws NotFoundException, UnauthorizedException {
+    public List<Test> get(User user, Long projectId, List<Long> ids) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
         final List<Test> tests = testRepository.findAllByProject_IdAndIdIn(projectId, ids);
-        for (Test t: tests) loadLazyRelations(t);
+        for (Test t : tests) {
+            loadLazyRelations(t);
+        }
         return tests;
     }
 
-    public Test getRoot(User user, Long projectId) throws NotFoundException {
+    public Test getRoot(User user, Long projectId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
@@ -263,9 +262,13 @@ public class TestDAO {
         return root;
     }
 
-    public void update(User user, Long projectId, Test test) throws NotFoundException {
+    public void update(User user, Long projectId, Test test) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         checkAccess(user, project, test);
+        checkRunningTestProcess(user, project, test);
+
+        // check lock status
+        testPresenceService.checkLockStatus(projectId, test.getId(), user.getId());
 
         // make sure the name of the Test Case is unique
         Test testInDB = testRepository.findOneByParent_IdAndName(test.getParentId(), test.getName());
@@ -298,7 +301,7 @@ public class TestDAO {
                 .collect(Collectors.toList());
     }
 
-    private void updateTestCase(User user, TestCase testCase, Project project) throws NotFoundException {
+    private void updateTestCase(User user, TestCase testCase, Project project) {
         checkIfOutputMappingNamesAreUnique(testCase);
 
         beforeSaving(user, project, testCase);
@@ -333,16 +336,25 @@ public class TestDAO {
         SymbolOutputMappingUtils.checkIfMappedNamesAreUnique(oms);
     }
 
-    private void updateTestSuite(User user, TestSuite testSuite, Project project) throws NotFoundException {
+    private void updateTestSuite(User user, TestSuite testSuite, Project project) {
         testSuite.getTests().forEach(t -> t.setParent(null));
         beforeSaving(user, project, testSuite);
         testRepository.save(testSuite);
     }
 
-    public void delete(User user, Long projectId, Long testId) throws NotFoundException, ValidationException {
+    public void delete(User user, Long projectId, Long testId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final Test test = testRepository.findById(testId).orElse(null);
         checkAccess(user, project, test);
+        checkRunningTestProcess(user, project, test);
+
+        // check lock status
+        testPresenceService.checkLockStatusStrict(projectId, testId, user.getId());
+
+        // check test configs
+        if (!testExecutionConfigRepository.findAllByProject_IdAndTest_Id(projectId, testId).isEmpty()) {
+            throw new ForbiddenOperationException("The test " +  test.getName() + " is associated with one or more test configs.");
+        }
 
         final Test root = testRepository.findFirstByProject_IdOrderByIdAsc(projectId);
         if (root.getId().equals(testId)) {
@@ -358,14 +370,13 @@ public class TestDAO {
         testRepository.delete(test);
     }
 
-    public void delete(User user, Long projectId, List<Long> ids) throws NotFoundException, ValidationException {
+    public void delete(User user, Long projectId, List<Long> ids) {
         for (Long id : ids) {
             delete(user, projectId, id);
         }
     }
 
-    public List<Test> move(User user, Long projectId, List<Long> testIds, Long targetId)
-            throws NotFoundException, ValidationException {
+    public List<Test> move(User user, Long projectId, List<Long> testIds, Long targetId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final List<Test> tests = testRepository.findAllById(testIds);
         final Test targetTest = testRepository.findById(targetId).orElse(null);
@@ -378,9 +389,13 @@ public class TestDAO {
         }
 
         final TestSuite target = (TestSuite) targetTest;
+        checkRunningTestProcess(user, project, target);
 
         for (Test test : tests) {
             checkAccess(user, project, test);
+
+            //check lock status
+            testPresenceService.checkLockStatusStrict(projectId, test.getId(), user.getId());
 
             if (test.getId().equals(rootTestSuite.getId())) {
                 throw new ValidationException("Cannot move the root test suite.");
@@ -412,8 +427,7 @@ public class TestDAO {
         return movedTests;
     }
 
-    public List<TestCase> getTestCases(User user, Long projectId, Long testSuiteId, boolean includeChildTestSuites)
-            throws NotFoundException, ValidationException {
+    public List<TestCase> getTestCases(User user, Long projectId, Long testSuiteId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final Test test = testRepository.findById(testSuiteId).orElse(null);
         checkAccess(user, project, test);
@@ -443,7 +457,7 @@ public class TestDAO {
         return testCases;
     }
 
-    public Page<TestResult> getResults(User user, Long projectId, Long testId, Pageable pageable) throws NotFoundException {
+    public Page<TestResult> getResults(User user, Long projectId, Long testId, Pageable pageable) {
         get(user, projectId, testId);
 
         final Page<TestResult> results = testResultRepository.findAllByTest_IdOrderByTestReport_StartDateDesc(testId, pageable);
@@ -452,7 +466,7 @@ public class TestDAO {
         return results;
     }
 
-    public void checkAccess(User user, Project project, Test test) throws NotFoundException, UnauthorizedException {
+    public void checkAccess(User user, Project project, Test test) {
         projectDAO.checkAccess(user, project);
 
         if (test == null) {
@@ -462,6 +476,63 @@ public class TestDAO {
         if (!test.getProject().equals(project)) {
             throw new UnauthorizedException("You are not allowed to access the test.");
         }
+    }
+
+    public void checkRunningTestProcess(User user, Project project, Test test) {
+        if (this.getActiveTests(user, project).stream().anyMatch(t -> t.getId().equals(test.getId()))) {
+            throw new EntityLockedException("The test is currently used in the active test process.");
+        }
+    }
+
+    public Set<Test> getActiveTests(User user, Project project) {
+        Set<Test> result = new HashSet<>();
+
+        TestStatus testStatus = this.testService.getStatus(user, project.getId());
+        if (testStatus.isActive()) {
+            Stream.of(List.of(testStatus.getCurrentTestRun()), testStatus.getTestRunQueue())
+                    .flatMap(List::stream)
+                    .filter(testQueueItem ->
+                            testQueueItem.getReport().getStatus().equals(TestReport.Status.IN_PROGRESS)
+                                    || testQueueItem.getReport().getStatus().equals(TestReport.Status.PENDING))
+                    .map(TestQueueItem::getConfig)
+                    .map(TestExecutionConfig::getTestIds)
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toSet()).stream()
+                    .map(testIds -> get(user, project.getId(), testIds))
+                    .forEach(test -> {
+                        result.add(test);
+                        result.addAll(extractDescendantTests(test));
+                        result.addAll(extractAncestorTests(test));
+                    });
+        }
+
+        return result;
+    }
+
+    private Set<Test> extractDescendantTests(Test test) {
+        Set<Test> result = new HashSet<>();
+
+        if (test instanceof TestSuite) {
+            result.addAll(((TestSuite) test).getTestCases());
+            ((TestSuite) test).getTestSuites().forEach(descendant -> {
+                result.add(descendant);
+                result.addAll(extractDescendantTests(descendant));
+            });
+        }
+
+        return result;
+    }
+
+    private Set<Test> extractAncestorTests(Test test) {
+        Set<Test> result = new HashSet<>();
+
+        Optional.ofNullable(test.getParent())
+                .ifPresent(ancestor -> {
+                    result.add(ancestor);
+                    result.addAll(extractAncestorTests(ancestor));
+                });
+
+        return result;
     }
 
     private void saveTestCaseSteps(List<TestCaseStep> steps) {
@@ -531,7 +602,7 @@ public class TestDAO {
         }
     }
 
-    private void beforeSaving(User user, Project project, Test test) throws NotFoundException {
+    private void beforeSaving(User user, Project project, Test test) {
         if (test instanceof TestSuite) {
             TestSuite testSuite = (TestSuite) test;
             for (Long testId : testSuite.getTestsAsIds()) {

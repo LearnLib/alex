@@ -1,0 +1,114 @@
+<div class="modal-header">
+  <h4 class="modal-title">Edit the user</h4>
+  <a (click)="modal.dismiss()" class="btn btn-icon float-right">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<div class="modal-body">
+
+  <div *ngIf="error != null" class="alert alert-danger">
+    <strong class="d-block">Could not update the user!</strong>
+    <span>{{error}}</span>
+  </div>
+
+  <h5><strong>Username</strong></h5>
+  <form (ngSubmit)="changeUsername()" [formGroup]="usernameForm">
+    <div class="form-group">
+      <input
+        [class.is-invalid]="isInvalidFormControl(usernameForm.controls.username)"
+        [formControl]="usernameForm.controls.username"
+        class="form-control"
+        name="username"
+        placeholder="Enter a username"
+        required
+        type="text"
+      />
+      <div class="invalid-feedback">
+        Please enter a username.
+      </div>
+    </div>
+    <button [disabled]="usernameForm.invalid" class="btn btn-primary btn-sm">Change username</button>
+  </form>
+
+  <hr>
+  <h5><strong>Email</strong></h5>
+  <form (ngSubmit)="changeEmail()" [formGroup]="emailForm">
+    <div class="form-group">
+      <input
+        [class.is-invalid]="isInvalidFormControl(emailForm.controls.email)"
+        [formControl]="emailForm.controls.email"
+        class="form-control"
+        name="mail"
+        placeholder="Enter an email address"
+        required
+        type="email"
+      />
+      <div class="invalid-feedback">
+        Please enter an email address.
+      </div>
+    </div>
+    <button [disabled]="emailForm.invalid" class="btn btn-primary btn-sm">Change email</button>
+  </form>
+
+  <hr>
+  <h5>
+    <strong>Max Allowed Processes</strong>
+  </h5>
+  <form (ngSubmit)="changeMaxAllowedProcesses()" [formGroup]="processesForm">
+    <div class="form-group">
+      <div class="d-flex flex-row align-items-center">
+        <input
+          [formControl]="processesForm.controls.processes"
+          [value]="processesForm.controls.processes.value"
+          type="number"
+          class="form-control"
+          min="1"
+          required
+          style="max-width: 4.5rem"
+        >
+        <input
+          [formControl]="processesForm.controls.processes"
+          [max]="getMaxProcessesRange()"
+          [value]="processesForm.controls.processes.value"
+          class="custom-range"
+          min="1"
+          step="1"
+          required
+          type="range"
+          style="padding: 1rem"
+        >
+      </div>
+    </div>
+    <button [disabled]="processesForm.invalid" class="btn btn-primary btn-sm">Change allowed processes</button>
+  </form>
+
+  <hr>
+  <h5><strong>Role</strong></h5>
+  <div *ngIf="user.role === userRole.ADMIN">
+    <p class="text-muted">
+      <em>Note: if you take your own admin rights, you will be logged out automatically.</em>
+    </p>
+    <p>
+      <button (click)="demoteUser()" class="btn btn-primary btn-sm">
+        Remove admin rights
+      </button>
+    </p>
+  </div>
+  <div (click)="promoteUser()" *ngIf="user.role === userRole.REGISTERED">
+    <button class="btn btn-primary btn-sm">
+      Give admin rights
+    </button>
+  </div>
+
+  <hr>
+  <h5><strong>Account</strong></h5>
+  <button (click)="deleteUser()" class="btn btn-danger btn-sm">
+    Delete profile
+  </button>
+
+</div>
+
+<div class="modal-footer">
+  <button (click)="modal.dismiss()" class="btn btn-default btn-sm">Cancel</button>
+</div>

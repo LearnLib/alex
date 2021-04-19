@@ -1,0 +1,115 @@
+<div class="modal-header">
+  <h4 class="modal-title">Learner result details</h4>
+  <a (click)="modal.dismiss()" class="btn btn-icon float-right">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<div class="modal-body">
+
+  <nav ngbNav #nav="ngbNav" class="nav-tabs">
+    <ng-container ngbNavItem>
+      <a ngbNavLink>Test run</a>
+      <ng-template ngbNavContent>
+        <br>
+
+        <table class="table">
+          <tr>
+            <td>Description</td>
+            <td>{{result.comment}}</td>
+          </tr>
+          <tr>
+            <td>nth Test</td>
+            <td>{{result.testNo}}</td>
+          </tr>
+          <tr>
+            <td>Status</td>
+            <td>{{result.status}}</td>
+          </tr>
+          <tr>
+            <td>Steps</td>
+            <td>{{result.steps.length}}</td>
+          </tr>
+          <tr>
+            <td>Error</td>
+            <td>{{result.error}}</td>
+          </tr>
+        </table>
+      </ng-template>
+    </ng-container>
+    <ng-container ngbNavItem>
+      <a ngbNavLink>Setup</a>
+      <ng-template ngbNavContent>
+        <br>
+
+        <learner-setup-table [setup]="result.setup"></learner-setup-table>
+      </ng-template>
+    </ng-container>
+    <ng-container ngbNavItem [disabled]="result.steps.length === 0">
+      <a ngbNavLink>{{'Statistics' + (result.steps.length == 0 ? ' (n/a)' : '')}}</a>
+      <ng-template ngbNavContent>
+        <br>
+
+        <nav ngbNav #navInner="ngbNav" class="nav-tabs">
+          <ng-container ngbNavItem *ngFor="let tab of tabs">
+            <a ngbNavLink>{{tab.heading}}</a>
+            <ng-template ngbNavContent>
+              <br>
+
+              <table class="table">
+
+                <tr *ngIf="tab.result.stepNo != null">
+                  <td>nth Step</td>
+                  <td>{{tab.result.stepNo}}</td>
+                </tr>
+
+                <tr>
+                  <td>Started</td>
+                  <td>{{tab.result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}</td>
+                </tr>
+
+                <tr class="active">
+                  <td colspan="2"><strong>Numbers</strong></td>
+                </tr>
+                <tr>
+                  <td>Duration</td>
+                  <td>{{tab.result.statistics.duration.total | formatMilliseconds}} (Learner:
+                    {{tab.result.statistics.duration.learner | formatMilliseconds}}, EQ Oracle:
+                    {{tab.result.statistics.duration.eqOracle | formatMilliseconds}})
+                  </td>
+                </tr>
+                <tr>
+                  <td>#Membership Queries</td>
+                  <td>{{tab.result.statistics.mqsUsed.total}} (Learner: {{tab.result.statistics.mqsUsed.learner}}, EQ Oracle:
+                    {{tab.result.statistics.mqsUsed.eqOracle}})
+                  </td>
+                </tr>
+                <tr>
+                  <td>#Equivalence Queries</td>
+                  <td>{{tab.result.statistics.eqsUsed}}</td>
+                </tr>
+                <tr>
+                  <td>#Symbol Calls</td>
+                  <td>{{tab.result.statistics.symbolsUsed.total}} (Learner: {{tab.result.statistics.symbolsUsed.learner}}, EQ
+                    Oracle: {{tab.result.statistics.symbolsUsed.eqOracle}})
+                  </td>
+                </tr>
+
+              </table>
+            </ng-template>
+          </ng-container>
+        </nav>
+
+        <div [ngbNavOutlet]="navInner"></div>
+
+      </ng-template>
+    </ng-container>
+  </nav>
+
+  <div [ngbNavOutlet]="nav"></div>
+
+</div>
+
+<div class="modal-footer">
+  <button (click)="modal.dismiss()" class="btn btn-sm btn-default">Close</button>
+</div>

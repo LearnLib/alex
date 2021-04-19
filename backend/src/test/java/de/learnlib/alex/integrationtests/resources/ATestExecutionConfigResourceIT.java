@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,16 @@ package de.learnlib.alex.integrationtests.resources;
 
 import com.jayway.jsonpath.JsonPath;
 import de.learnlib.alex.integrationtests.resources.api.ProjectApi;
+import de.learnlib.alex.integrationtests.resources.api.TestApi;
 import de.learnlib.alex.integrationtests.resources.api.TestExecutionConfigApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.Response;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ATestExecutionConfigResourceIT extends AbstractResourceIT {
 
@@ -42,7 +45,7 @@ public class ATestExecutionConfigResourceIT extends AbstractResourceIT {
 
     private int envId2;
 
-    @Before
+    @BeforeEach
     public void before() {
         this.api = new TestExecutionConfigApi(client, port);
 
@@ -68,45 +71,59 @@ public class ATestExecutionConfigResourceIT extends AbstractResourceIT {
     @Test
     public void shouldCreateAConfig() throws Exception {
         final Response res = api.create(projectId1, createConfig(projectId1, envId1), jwtUser1);
-        Assert.assertEquals(Response.Status.CREATED.getStatusCode(), res.getStatus());
-        Assert.assertEquals(1, getNumberOfConfigs(projectId1, jwtUser1));
+        assertEquals(Response.Status.CREATED.getStatusCode(), res.getStatus());
+        assertEquals(1, getNumberOfConfigs(projectId1, jwtUser1));
+    }
+
+    @Test
+    public void shouldCreateAConfigWithTests() throws Exception {
+        final TestApi testApi = new TestApi(client, port);
+
+        final String tc = "{\"name\": \"tc\", \"type\": \"case\"}";
+        final Response res1 = testApi.create(projectId1, tc, jwtUser1);
+        assertEquals(Response.Status.CREATED.getStatusCode(), res1.getStatus());
+
+        final int tcId = JsonPath.read(res1.readEntity(String.class), "$.id");
+        final Response res2 = api.create(projectId1, createConfigWithTests(projectId1, envId1, List.of((long) tcId)), jwtUser1);
+        assertEquals(Response.Status.CREATED.getStatusCode(), res2.getStatus());
+        assertEquals(1, getNumberOfConfigs(projectId1, jwtUser1));
     }
 
     @Test
     public void shouldGetEmptyListIfNoConfigExists() throws Exception {
         final Response res = api.getAll(projectId1, jwtUser1);
-        Assert.assertEquals(Response.Status.OK.getStatusCode(), res.getStatus());
-        Assert.assertEquals("[]", res.readEntity(String.class));
-        Assert.assertEquals(0, getNumberOfConfigs(projectId1, jwtUser1));
+        assertEquals(Response.Status.OK.getStatusCode(), res.getStatus());
+        assertEquals("[]", res.readEntity(String.class));
+        assertEquals(0, getNumberOfConfigs(projectId1, jwtUser1));
     }
 
     @Test
     public void shouldGetAllConfigs() throws Exception {
         api.create(projectId1, createConfig(projectId1, envId1), jwtUser1);
         api.create(projectId1, createConfig(projectId1, envId1), jwtUser1);
-        Assert.assertEquals(2, getNumberOfConfigs(projectId1, jwtUser1));
+        assertEquals(2, getNumberOfConfigs(projectId1, jwtUser1));
     }
 
     @Test
     public void shouldNotGetConfigsOfAnotherUsersProject() {
         final Response res = api.getAll(projectId2, jwtUser1);
-        Assert.assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), res.getStatus());
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), res.getStatus());
         JsonPath.read(res.readEntity(String.class), "$.message");
     }
 
     @Test
     public void shouldFailToCreateConfigIfUrlDoesNotExist() throws Exception {
         final Response res = api.create(projectId1, createConfig(projectId1, -1), jwtUser1);
-        Assert.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), res.getStatus());
-        Assert.assertEquals(0, getNumberOfConfigs(projectId1, jwtUser1));
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), res.getStatus());
+        assertEquals(0, getNumberOfConfigs(projectId1, jwtUser1));
     }
 
     @Test
     public void shouldNotCreateConfigInAnotherUsersProject() throws Exception {
         final Response res = api.create(projectId1, createConfig(projectId1, envId1), jwtUser2);
-        Assert.assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), res.getStatus());
-        Assert.assertEquals(0, getNumberOfConfigs(projectId1, jwtUser1));
-        Assert.assertEquals(0, getNumberOfConfigs(projectId2, jwtUser2));
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), res.getStatus());
+        assertEquals(0, getNumberOfConfigs(projectId1, jwtUser1));
+        assertEquals(0, getNumberOfConfigs(projectId2, jwtUser2));
     }
 
     @Test
@@ -115,15 +132,15 @@ public class ATestExecutionConfigResourceIT extends AbstractResourceIT {
         final int id = JsonPath.read(res.readEntity(String.class), "$.id");
 
         final Response res2 = api.delete(projectId1, id, jwtUser1);
-        Assert.assertEquals(Response.Status.NO_CONTENT.getStatusCode(), res2.getStatus());
-        Assert.assertEquals(0, getNumberOfConfigs(projectId1, jwtUser1));
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), res2.getStatus());
+        assertEquals(0, getNumberOfConfigs(projectId1, jwtUser1));
     }
 
     @Test
     public void shouldFailToDeleteIfConfigDoesNotExist() throws Exception {
         final Response res = api.delete(projectId1, -1, jwtUser1);
-        Assert.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), res.getStatus());
-        Assert.assertEquals(0, getNumberOfConfigs(projectId1, jwtUser1));
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), res.getStatus());
+        assertEquals(0, getNumberOfConfigs(projectId1, jwtUser1));
     }
 
     @Test
@@ -132,8 +149,8 @@ public class ATestExecutionConfigResourceIT extends AbstractResourceIT {
         final int id = JsonPath.read(res.readEntity(String.class), "$.id");
 
         final Response res2 = api.delete(projectId1, id, jwtUser2);
-        Assert.assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), res2.getStatus());
-        Assert.assertEquals(1, getNumberOfConfigs(projectId1, jwtUser1));
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), res2.getStatus());
+        assertEquals(1, getNumberOfConfigs(projectId1, jwtUser1));
     }
 
     private int getNumberOfConfigs(int projectId1, String jwt) throws Exception {
@@ -144,8 +161,17 @@ public class ATestExecutionConfigResourceIT extends AbstractResourceIT {
     private String createConfig(int projectId, int envId) {
         return "{"
                 + "\"tests\":[]"
-                + ",\"driverConfig\":{\"name\":\"htmlUnit\"}"
-                + ",\"environment\":" + envId
+                + ",\"driverConfig\":{\"browser\":\"chrome\"}"
+                + ",\"environmentId\":" + envId
+                + ",\"project\":" + projectId
+                + "}";
+    }
+
+    private String createConfigWithTests(int projectId, int envId, List<Long> testIds) {
+        return "{"
+                + "\"tests\":" + testIds.toString()
+                + ",\"driverConfig\":{\"browser\":\"chrome\"}"
+                + ",\"environmentId\":" + envId
                 + ",\"project\":" + projectId
                 + "}";
     }

@@ -1,0 +1,43 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: "validate"
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+  datasource:
+    initialization-mode: "always"
+    platform: "postgres"
+    url: "jdbc:postgresql://alex-database:5432/alex"
+    username: "sa"
+  servlet:
+    multipart:
+      max-file-size: "20MB"
+      max-request-size: "20MB"
+  flyway:
+    locations: "classpath:db/migration/postgresql"
+    schemas: "public"
+
+server:
+  port: 8000
+  compression:
+    enabled: "true"
+    mime-types: "text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json"
+    min-response-size: 5120
+
+alex:
+  filesRootDir: "./target/postgresql/files"
+  version: "2.1.0"
+  admin:
+    email: "admin@alex.example"
+    password: "admin"
+    username: "admin"
+
+ltsmin:
+  path: ""
+
+webdriver:
+  remote:
+    url: ""

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,13 @@ package de.learnlib.alex;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * The entry point to ALEX.
  */
-@SpringBootApplication()
+@SpringBootApplication
+@EnableTransactionManagement
 public class AlexApp extends SpringBootServletInitializer {
 
     /**

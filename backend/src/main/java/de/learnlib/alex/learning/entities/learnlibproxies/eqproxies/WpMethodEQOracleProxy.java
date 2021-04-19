@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,9 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.api.oracle.EquivalenceOracle;
 import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.oracle.equivalence.WpMethodEQOracle;
+import java.io.Serializable;
 import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.words.Word;
-
-import java.io.Serializable;
 
 /**
  * Proxy around a {@link de.learnlib.oracle.equivalence.WMethodEQOracle}.

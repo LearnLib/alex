@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,30 +28,31 @@ import de.learnlib.alex.learning.repositories.LearnerSetupRepository;
 import de.learnlib.alex.testing.entities.TestCase;
 import de.learnlib.alex.testing.entities.TestCaseStep;
 import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional(rollbackFor = Exception.class, readOnly = true)
 public class SymbolUsageService {
 
-    private SymbolDAO symbolDAO;
-    private SymbolPSymbolStepRepository symbolPSymbolStepRepository;
-    private TestCaseStepRepository testCaseStepRepository;
-    private LearnerSetupRepository learnerSetupRepository;
+    private final SymbolDAO symbolDAO;
+    private final SymbolPSymbolStepRepository symbolPSymbolStepRepository;
+    private final TestCaseStepRepository testCaseStepRepository;
+    private final LearnerSetupRepository learnerSetupRepository;
 
-    @Inject
-    public SymbolUsageService(SymbolDAO symbolDAO,
-                              SymbolPSymbolStepRepository symbolPSymbolStepRepository,
-                              TestCaseStepRepository testCaseStepRepository,
-                              LearnerSetupRepository learnerSetupRepository) {
+    @Autowired
+    public SymbolUsageService(
+            SymbolDAO symbolDAO,
+            SymbolPSymbolStepRepository symbolPSymbolStepRepository,
+            TestCaseStepRepository testCaseStepRepository,
+            LearnerSetupRepository learnerSetupRepository
+    ) {
         this.symbolDAO = symbolDAO;
         this.symbolPSymbolStepRepository = symbolPSymbolStepRepository;
         this.testCaseStepRepository = testCaseStepRepository;
@@ -63,27 +64,28 @@ public class SymbolUsageService {
 
         final SymbolUsageResult usageResult = new SymbolUsageResult();
 
-        final Set<Symbol> foundInSymbols = symbolPSymbolStepRepository.findAllByPSymbol_Symbol_Id(symbol.getId()).stream()
+        final Set<Symbol> foundInSymbols = symbolPSymbolStepRepository.findAllBypSymbol_Symbol_Id(symbol.getId()).stream()
                 .map(SymbolPSymbolStep::getSymbol)
                 .collect(Collectors.toSet());
         foundInSymbols.forEach(s -> s.setSteps(new ArrayList<>()));
         usageResult.setSymbols(foundInSymbols);
 
-        final Set<TestCase> foundInTestCases = testCaseStepRepository.findAllByPSymbol_Symbol_Id(symbol.getId()).stream()
+        final Set<TestCase> foundInTestCases = testCaseStepRepository.findAllBypSymbol_Symbol_Id(symbol.getId()).stream()
                 .map(TestCaseStep::getTestCase)
                 .collect(Collectors.toSet());
+
         foundInTestCases.forEach(tc -> tc.setSteps(new ArrayList<>()));
         usageResult.setTestCases(foundInTestCases);
 
         final Set<LearnerSetup> foundInLearnerSetup = new HashSet<>();
         final List<LearnerSetup> setups = learnerSetupRepository.findAllByProject_Id(symbol.getProjectId());
-        for (LearnerSetup s: setups) {
+        for (LearnerSetup s : setups) {
             if (s.getPreSymbol().getSymbol().getId().equals(symbolId)
                     || (s.getPostSymbol() != null && s.getPostSymbol().getSymbol().getId().equals(symbolId))) {
                 foundInLearnerSetup.add(s);
                 continue;
             }
-            for (ParameterizedSymbol ps: s.getSymbols()) {
+            for (ParameterizedSymbol ps : s.getSymbols()) {
                 if (ps.getSymbol().getId().equals(symbolId)) {
                     foundInLearnerSetup.add(s);
                     break;

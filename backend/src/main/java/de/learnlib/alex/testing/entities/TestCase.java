@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.Constants;
-
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
@@ -33,9 +34,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.OrderColumn;
 import javax.persistence.Transient;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 /** Test case. */
 @Entity
@@ -215,10 +213,14 @@ public class TestCase extends Test {
     }
 
     private boolean areSameSteps(List<TestCaseStep> stepsA, List<TestCaseStep> stepsB) {
-        if (stepsA.size() != stepsB.size()) return false;
+        if (stepsA.size() != stepsB.size()) {
+            return false;
+        }
 
         for (int i = 0; i < stepsA.size(); i++) {
-            if (!stepsA.get(i).behavesLike(stepsB.get(i))) return false;
+            if (!stepsA.get(i).behavesLike(stepsB.get(i))) {
+                return false;
+            }
         }
 
         return true;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,17 +22,14 @@ import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebElement;
-
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebElement;
 
 /**
  * Action to check the value of a nodes attribute.
@@ -41,10 +38,6 @@ import javax.validation.constraints.NotNull;
 @DiscriminatorValue("web_checkNodeAttributeValue")
 @JsonTypeName("web_checkNodeAttributeValue")
 public class CheckNodeAttributeValueAction extends WebSymbolAction {
-
-    private static final long serialVersionUID = -1195203568320940744L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * Enumeration to specify the check method.
@@ -129,7 +122,7 @@ public class CheckNodeAttributeValueAction extends WebSymbolAction {
             final String attributeValue = element.getAttribute(attribute);
 
             if (attributeValue == null) {
-                LOGGER.info(LoggerMarkers.LEARNER, "Attribute '{}' not found on element '{}'",
+                logger.info(LoggerMarkers.LEARNER, "Attribute '{}' not found on element '{}'",
                         attribute, nodeWithVariables);
                 return getFailedOutput();
             }
@@ -154,18 +147,18 @@ public class CheckNodeAttributeValueAction extends WebSymbolAction {
             }
 
             if (isValid) {
-                LOGGER.info(LoggerMarkers.LEARNER, "The value of the attribute '{}' of the node '{}'"
+                logger.info(LoggerMarkers.LEARNER, "The value of the attribute '{}' of the node '{}'"
                                 + " '{}' the searched value '{}'.",
                         attribute, nodeWithVariables, checkMethod, valueWithVariables);
                 return getSuccessOutput();
             } else {
-                LOGGER.info(LoggerMarkers.LEARNER, "The value of the attribute '{}' of the node '{}'"
+                logger.info(LoggerMarkers.LEARNER, "The value of the attribute '{}' of the node '{}'"
                                 + " does not '{}' the searched value '{}'.",
                         attribute, nodeWithVariables, checkMethod, valueWithVariables);
                 return getFailedOutput();
             }
         } catch (NoSuchElementException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not find the node '{}'.", nodeWithVariables, e);
+            logger.info(LoggerMarkers.LEARNER, "Could not find the node '{}'.", nodeWithVariables, e);
             return getFailedOutput();
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,12 +21,14 @@ import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.dao.ProjectEnvironmentDAO;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
+import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolStep;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.PreparedConnectorContextHandlerFactory;
+import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestCase;
 import de.learnlib.alex.testing.entities.TestCaseResult;
@@ -34,37 +36,55 @@ import de.learnlib.alex.testing.entities.TestCaseStep;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
 import de.learnlib.alex.testing.entities.TestExecutionResult;
 import de.learnlib.alex.testing.entities.TestResult;
+import de.learnlib.alex.testing.entities.TestScreenshot;
 import de.learnlib.alex.testing.entities.TestSuite;
 import de.learnlib.alex.testing.entities.TestSuiteResult;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 
+@Service
+@Scope("prototype")
 public class TestExecutor {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(TestExecutor.class);
 
-    private final PreparedConnectorContextHandlerFactory contextHandlerFactory;
+    @Value("${alex.filesRootDir}")
+    private String filesRootDir;
     private final ProjectEnvironmentDAO projectEnvironmentDAO;
+    private final PreparedConnectorContextHandlerFactory contextHandlerFactory;
 
     private Test currentTest;
     private boolean aborted;
 
-    public TestExecutor(PreparedConnectorContextHandlerFactory contextHandlerFactory,
-                        ProjectEnvironmentDAO projectEnvironmentDAO) {
+    @Autowired
+    public TestExecutor(
+            PreparedConnectorContextHandlerFactory contextHandlerFactory,
+            ProjectEnvironmentDAO projectEnvironmentDAO
+    ) {
         this.contextHandlerFactory = contextHandlerFactory;
         this.projectEnvironmentDAO = projectEnvironmentDAO;
+
         this.aborted = false;
     }
 
     public void executeTests(User user, List<Test> tests, TestExecutionConfig testConfig, Map<Long, TestResult> results) {
         for (Test test : tests) {
             currentTest = test;
-            if (aborted) break;
+            if (aborted) {
+                break;
+            }
 
             if (test instanceof TestCase) {
                 executeTestCase(user, (TestCase) test, testConfig, results);
@@ -96,7 +116,9 @@ public class TestExecutor {
                 .collect(Collectors.toList());
 
         for (Test test : testCases) {
-            if (aborted) return tsResult;
+            if (aborted) {
+                return tsResult;
+            }
             final TestCaseResult result = executeTestCase(user, (TestCase) test, testConfig, results);
             tsResult.add(result);
         }
@@ -106,7 +128,9 @@ public class TestExecutor {
                 .collect(Collectors.toList());
 
         for (Test test : testSuites) {
-            if (aborted) return tsResult;
+            if (aborted) {
+                return tsResult;
+            }
             final TestSuiteResult result = executeTestSuite(user, (TestSuite) test, testConfig, results);
             tsResult.add(result);
         }
@@ -130,7 +154,7 @@ public class TestExecutor {
      */
     public TestCaseResult executeTestCase(User user, TestCase testCase, TestExecutionConfig testConfig,
                                           Map<Long, TestResult> results) {
-        LOGGER.info(LoggerMarkers.LEARNER, "Execute test[id={}] '{}'", testCase.getId(), testCase.getName());
+        logger.info(LoggerMarkers.LEARNER, "Execute test[id={}] '{}'", testCase.getId(), testCase.getName());
 
         final Symbol dummySymbol = new Symbol();
         dummySymbol.setName("dummy");
@@ -142,8 +166,7 @@ public class TestExecutor {
         });
         final ParameterizedSymbol dummyPSymbol = new ParameterizedSymbol(dummySymbol);
 
-        final ProjectEnvironment env = projectEnvironmentDAO.getById(user, testConfig.getEnvironmentId());
-        ProjectEnvironmentDAO.loadLazyRelations(env);
+        final ProjectEnvironment env = projectEnvironmentDAO.getByID(user, testConfig.getEnvironmentId());
 
         final ConnectorContextHandler ctxHandler = contextHandlerFactory
                 .createPreparedContextHandler(user, testCase.getProject(), testConfig.getDriverConfig(), dummyPSymbol, null)
@@ -159,18 +182,32 @@ public class TestExecutor {
         // execute the steps as long as they do not fail
         long failedStep = -1L;
 
+        TestScreenshot beforeScreenshot = null;
+
         if (preSuccess) {
+
+            beforeScreenshot = takeAndStoreScreenshot(testCase.getProject(), connectors.getConnector(WebSiteConnector.class), "pre");
+
             for (int i = 0; i < testCase.getSteps().size(); i++) {
-                if (aborted) break;
+                if (aborted) {
+                    break;
+                }
 
                 final TestCaseStep step = testCase.getSteps().get(i);
                 if (step.isDisabled()) {
-                    outputs.add(new ExecuteResult(true,"Skipped"));
+                    outputs.add(new ExecuteResult(true, "Skipped"));
                     continue;
                 }
 
                 final ExecuteResult result = executeStep(connectors, step);
                 outputs.add(result);
+
+                final TestScreenshot stepScreenshot = takeAndStoreScreenshot(
+                        testCase.getProject(),
+                        connectors.getConnector(WebSiteConnector.class),
+                        step.getId().toString()
+                );
+                result.setTestScreenshot(stepScreenshot);
 
                 if (step.getExpectedOutputMessage().equals("")) {
                     if (result.isSuccess() != step.isExpectedOutputSuccess()) {
@@ -189,10 +226,8 @@ public class TestExecutor {
         }
 
         // the remaining steps after the failing step are not executed
-        if (outputs.size() < testCase.getSteps().size()) {
-            while (outputs.size() < testCase.getSteps().size()) {
-                outputs.add(new ExecuteResult(false, "Not executed"));
-            }
+        while (outputs.size() < testCase.getSteps().size()) {
+            outputs.add(new ExecuteResult(false, "Not executed"));
         }
 
         executePostSteps(connectors, testCase.getPostSteps());
@@ -208,13 +243,43 @@ public class TestExecutor {
         for (int i = 0; i < outputs.size(); i++) {
             final TestCaseStep step = testCase.getSteps().get(i);
             sulOutputs.get(i).setSymbol(step.getPSymbol().getSymbol());
+            sulOutputs.get(i).setTestScreenshot(outputs.get(i).getTestScreenshot());
         }
 
         final TestCaseResult result = new TestCaseResult(testCase, sulOutputs, failedStep, time);
+        result.setBeforeScreenshot(beforeScreenshot);
         results.put(testCase.getId(), result);
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Finished executing test[id={}], passed=" + result.isPassed(), testCase.getId());
+        logger.info(LoggerMarkers.LEARNER, "Finished executing test[id={}], passed=" + result.isPassed(), testCase.getId());
         return result;
+    }
+
+    private TestScreenshot takeAndStoreScreenshot(Project project, WebSiteConnector webSiteConnector, String fileNameSuffix) {
+
+        String directoryPath = filesRootDir + "/test_screenshots/" + project.getId().toString();
+
+        // check files structure
+        File testScreenshotBaseDirectory = Paths.get(directoryPath).toFile();
+        if (!testScreenshotBaseDirectory.exists()) {
+            testScreenshotBaseDirectory.mkdirs();
+        }
+
+        final File screenshot = webSiteConnector.takeScreenshot();
+        TestScreenshot testScreenshot = null;
+        if (screenshot != null) {
+            String filename = System.currentTimeMillis() + "_" + fileNameSuffix;
+            try {
+                FileCopyUtils.copy(screenshot, new File(directoryPath + "/" + filename + ".png"));
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+
+            testScreenshot = new TestScreenshot();
+            testScreenshot.setFilename(filename);
+        }
+
+        return testScreenshot;
     }
 
     private boolean executePreSteps(ConnectorManager connectors, List<TestCaseStep> preSteps) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,20 @@
 
 package de.learnlib.alex.learning.services.connectors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Connector to hold and manage variables.
  */
-public class VariableStoreConnector implements Connector {
+public class VariableStoreConnector implements Connector, Cloneable {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(VariableStoreConnector.class);
 
     /** The variable store. */
-    private Map<String, String> store;
+    private final Map<String, String> store;
 
     /**
      * Default constructor.
@@ -41,7 +40,7 @@ public class VariableStoreConnector implements Connector {
 
     @Override
     public void reset() {
-        store = new HashMap<>();
+        store.clear();
     }
 
     @Override
@@ -62,7 +61,7 @@ public class VariableStoreConnector implements Connector {
      */
     public void set(String name, String value) {
         store.put(name, value);
-        LOGGER.debug("Set the variable '{}' to the value '{}'.", name, value);
+        logger.debug("Set the variable '{}' to the value '{}'.", name, value);
     }
 
     /**
@@ -80,7 +79,7 @@ public class VariableStoreConnector implements Connector {
             throw new IllegalStateException("Undefined variable: " + name);
         }
 
-        LOGGER.debug("Got the variable '{}' with the value '{}'.", name, variable);
+        logger.debug("Got the variable '{}' with the value '{}'.", name, variable);
         return variable;
     }
 
@@ -97,6 +96,7 @@ public class VariableStoreConnector implements Connector {
 
     /**
      * Get the store as read only map.
+     *
      * @return The store.
      */
     public Map<String, String> getStore() {
@@ -108,6 +108,7 @@ public class VariableStoreConnector implements Connector {
      *
      * @return The cloned store.
      */
+    @Override
     public VariableStoreConnector clone() {
         final VariableStoreConnector clone = new VariableStoreConnector();
         store.forEach(clone::set);

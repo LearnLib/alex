@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,16 +21,13 @@ import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.WebElement;
-
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import org.openqa.selenium.WebElement;
 
 /**
  * Action to enter a text into a specific element.
@@ -39,10 +36,6 @@ import javax.validation.constraints.NotNull;
 @DiscriminatorValue("web_fill")
 @JsonTypeName("web_fill")
 public class FillAction extends WebSymbolAction {
-
-    private static final long serialVersionUID = 8595076806577663223L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * The node to look for.
@@ -68,10 +61,10 @@ public class FillAction extends WebSymbolAction {
             WebElement element = connector.getElement(nodeWithVariables);
             element.sendKeys(valueWithVariables);
 
-            LOGGER.info("Filled the element '{}' with '{}'.", nodeWithVariables, value);
+            logger.info("Filled the element '{}' with '{}'.", nodeWithVariables, value);
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not find the element '{}' to fill it with '{}'",
+            logger.info(LoggerMarkers.LEARNER, "Could not find the element '{}' to fill it with '{}'",
                     nodeWithVariables, valueWithVariables, e);
             return getFailedOutput();
         }

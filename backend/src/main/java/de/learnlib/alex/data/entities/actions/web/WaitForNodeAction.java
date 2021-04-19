@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,18 +22,15 @@ import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * Action to wait for the state of an element to change.
@@ -42,10 +39,6 @@ import javax.validation.constraints.NotNull;
 @DiscriminatorValue("web_waitForNode")
 @JsonTypeName("web_waitForNode")
 public class WaitForNodeAction extends WebSymbolAction {
-
-    private static final long serialVersionUID = 4029222122474954117L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * Enumeration to specify the wait criterion.
@@ -127,7 +120,7 @@ public class WaitForNodeAction extends WebSymbolAction {
         final WebElementLocator nodeWithVariables = new WebElementLocator(insertVariableValues(node.getSelector()), node.getType());
 
         try {
-            LOGGER.info(LoggerMarkers.LEARNER, "Wait for element '{}' (criterion: '{}').",
+            logger.info(LoggerMarkers.LEARNER, "Wait for element '{}' (criterion: '{}').",
                     nodeWithVariables, waitCriterion);
             switch (waitCriterion) {
                 case VISIBLE:
@@ -167,11 +160,11 @@ public class WaitForNodeAction extends WebSymbolAction {
             }
             return getSuccessOutput();
         } catch (TimeoutException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Waiting on the node '{}' (criterion: '{}') timed out.",
+            logger.info(LoggerMarkers.LEARNER, "Waiting on the node '{}' (criterion: '{}') timed out.",
                     nodeWithVariables, waitCriterion);
             return getFailedOutput();
         } catch (NoSuchElementException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "The node with the selector {} (criterion: '{}') could not be found.",
+            logger.info(LoggerMarkers.LEARNER, "The node with the selector {} (criterion: '{}') could not be found.",
                     nodeWithVariables, waitCriterion);
             return getFailedOutput();
         }

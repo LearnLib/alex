@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,11 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
@@ -25,20 +30,14 @@ import de.learnlib.alex.integrationtests.SpringRestError;
 import de.learnlib.alex.integrationtests.resources.api.ProjectApi;
 import de.learnlib.alex.integrationtests.resources.api.ProjectEnvironmentApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.http.HttpStatus;
-
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.Response;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 
 public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
 
@@ -52,7 +51,7 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
 
     private Project project;
 
-    @Before
+    @BeforeEach
     public void pre() {
         final UserApi userApi = new UserApi(client, port);
         projectApi = new ProjectApi(client, port);
@@ -362,8 +361,8 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
 
         res.readEntity(SpringRestError.class);
         assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
-        assertEquals(1,  project.getDefaultEnvironment().getVariables().stream().filter(v -> v.getName().equals("var1")).count());
-        assertEquals(1,  project.getDefaultEnvironment().getVariables().stream().filter(v -> v.getName().equals("var2")).count());
+        assertEquals(1, project.getDefaultEnvironment().getVariables().stream().filter(v -> v.getName().equals("var1")).count());
+        assertEquals(1, project.getDefaultEnvironment().getVariables().stream().filter(v -> v.getName().equals("var2")).count());
     }
 
     @Test
@@ -376,7 +375,7 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void memberShouldNotUpdateEnvironment() {
+    public void shouldNotUpdateEnvironmentAsMember() {
         final ProjectEnvironment env = new ProjectEnvironment();
         env.setName("test");
 
@@ -390,7 +389,7 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void memberShouldNotDeleteEnvironment() {
+    public void shouldNotDeleteEnvironmentAsMember() {
         final ProjectEnvironment env = new ProjectEnvironment();
         env.setName("test");
 
@@ -402,7 +401,7 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void memberShouldNotCreateUrl() {
+    public void shouldNotCreateUrlAsMember() {
         final ProjectEnvironment env = new ProjectEnvironment();
         env.setName("test");
 
@@ -418,7 +417,7 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void memberShouldNotUpdateUrl() {
+    public void shouldNotUpdateUrlAsMember() {
         final ProjectEnvironment env = new ProjectEnvironment();
         env.setName("test");
 
@@ -433,7 +432,7 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void memberShouldNotDeleteUrl() {
+    public void shouldNotDeleteUrlAsMember() {
         final ProjectEnvironment env = new ProjectEnvironment();
         env.setName("test");
 
@@ -442,12 +441,12 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
 
         final ProjectUrl urlToDelete = createdEnvironment.getUrls().get(0);
 
-        final Response res2 = envApi.deleteUrl(project.getId(), createdEnvironment.getId(),urlToDelete.getId(), memberJwt);
+        final Response res2 = envApi.deleteUrl(project.getId(), createdEnvironment.getId(), urlToDelete.getId(), memberJwt);
         assertEquals(HttpStatus.UNAUTHORIZED.value(), res2.getStatus());
     }
 
     @Test
-    public void memberShouldNotCreateVariable() {
+    public void shouldNotCreateVariableAsMember() {
         final ProjectEnvironment env = new ProjectEnvironment();
         env.setName("test");
 
@@ -463,7 +462,7 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void memberShouldNotUpdateVariable() {
+    public void shouldNotUpdateVariableAsMember() {
         final ProjectEnvironment env = new ProjectEnvironment();
         env.setName("test");
 
@@ -485,7 +484,7 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void memberShouldNotDeleteVariable() {
+    public void shouldNotDeleteVariableAsMember() {
         final ProjectEnvironment env = new ProjectEnvironment();
         env.setName("test");
 
@@ -525,7 +524,7 @@ public class ProjectEnvironmentResourceIT extends AbstractResourceIT {
 
     private List<ProjectEnvironment> getAllEnvironments() {
         return envApi.getAll(project.getId(), adminJwt)
-                .readEntity(new GenericType<List<ProjectEnvironment>>() {
+                .readEntity(new GenericType<>() {
                 });
     }
 

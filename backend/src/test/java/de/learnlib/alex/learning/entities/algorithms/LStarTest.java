@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,30 +16,31 @@
 
 package de.learnlib.alex.learning.entities.algorithms;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+
 import de.learnlib.algorithms.lstar.mealy.ExtensibleLStarMealy;
 import de.learnlib.api.algorithm.LearningAlgorithm;
 import de.learnlib.datastructure.observationtable.ObservationTable;
 import de.learnlib.oracle.membership.SULOracle;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.GrowingMapAlphabet;
-import org.junit.Before;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class LStarTest {
 
     private static final String TEST_TABLE = "+==+" + System.lineSeparator()
-                                           + "|  |" + System.lineSeparator()
-                                           + "+==+" + System.lineSeparator()
-                                           + "+==+" + System.lineSeparator()
-                                           + "+==+" + System.lineSeparator();
+            + "|  |" + System.lineSeparator()
+            + "+==+" + System.lineSeparator()
+            + "+==+" + System.lineSeparator()
+            + "+==+" + System.lineSeparator();
 
     private LStar algorithm;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         algorithm = new LStar();
     }
@@ -69,10 +70,10 @@ public class LStarTest {
         return learner;
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldFailToCreateInternalDataFromWrongAlgorithmType() {
         LearningAlgorithm.MealyLearner learner = mock(LearningAlgorithm.MealyLearner.class);
-        algorithm.getInternalData(learner);
+        assertThrows(IllegalArgumentException.class, () -> algorithm.getInternalData(learner));
     }
 
 }

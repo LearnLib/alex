@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,43 +19,69 @@ package de.learnlib.alex.integrationtests.repositories;
 import de.learnlib.alex.auth.dao.UserDAO;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.repositories.UserRepository;
+import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.repositories.ProjectRepository;
-import org.junit.After;
-import org.junit.runner.RunWith;
+import de.learnlib.alex.integrationtests.TestPostgresqlContainer;
+import de.learnlib.alex.settings.dao.SettingsDAO;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-import javax.inject.Inject;
-import java.util.stream.Collectors;
-
-@RunWith(SpringRunner.class)
+@Testcontainers
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 public abstract class AbstractRepositoryIT {
 
-    @Inject
+    @Container
+    public static PostgreSQLContainer postgreSQLContainer = TestPostgresqlContainer.getInstance();
+
+    @Autowired
     protected UserDAO userDAO;
 
-    @Inject
+    @Autowired
+    protected ProjectDAO projectDAO;
+
+    @Autowired
     protected UserRepository userRepository;
 
-    @Inject
+    @Autowired
     protected ProjectRepository projectRepository;
 
-    @After
-    public void tearDown() throws Exception {
-        userDAO.delete(userDAO.getById(Long.valueOf("1")),
-                userRepository.findAll().stream()
-                        .map(User::getId)
-                        .filter(id -> id > 1)// delete all but the admin
-                        .collect(Collectors.toList())
-        );
-        projectRepository.deleteAll(); // also delete remaining projects of the admin
+    @Autowired
+    private SettingsDAO settingsDAO;
+
+    @AfterEach
+    @Transactional
+    public void tearDown() {
+        final var admin = userDAO.getByID(1L);
+
+        // delete all users except the admin
+        for (var user : userRepository.findAll()) {
+            if (!user.equals(admin)) {
+                userDAO.delete(admin, user.getId());
+            }
+        }
+
+        // delete projects of admin
+        for (var project : projectDAO.getAll(admin)) {
+            projectDAO.delete(admin, project.getId());
+        }
+
+        final var settings = settingsDAO.get();
+        settings.setAllowUserRegistration(true);
+        settingsDAO.update(settings);
     }
 
     User createUser(String email) {

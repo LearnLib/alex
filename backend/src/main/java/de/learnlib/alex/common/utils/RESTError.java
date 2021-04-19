@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,20 +27,20 @@ public class RESTError {
     /**
      * Status of the error.
      */
-    private HttpStatus status;
+    private final HttpStatus status;
 
     /**
      * The cause of the error.
      */
-    private Exception exception;
+    private final Exception exception;
 
     /**
      * Constructor.
      *
      * @param status
-     *            The status of the error.
+     *         The status of the error.
      * @param exception
-     *            The exception that caused the error, could be null.
+     *         The exception that caused the error, could be null.
      */
     public RESTError(HttpStatus status, Exception exception) {
         this.status = status;

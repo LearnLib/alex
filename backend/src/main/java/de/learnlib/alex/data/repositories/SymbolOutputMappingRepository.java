@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,6 @@ import de.learnlib.alex.data.entities.SymbolOutputMapping;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
-
 @Repository
 public interface SymbolOutputMappingRepository extends JpaRepository<SymbolOutputMapping, Long> {
 
@@ -31,7 +29,5 @@ public interface SymbolOutputMappingRepository extends JpaRepository<SymbolOutpu
      * @param parameterId
      *         The id of the parameter.
      */
-    @Transactional
-    @SuppressWarnings("checkstyle:methodname")
     void removeAllByParameter_Id(Long parameterId);
 }

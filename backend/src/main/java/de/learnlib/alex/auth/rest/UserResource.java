@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,25 +17,33 @@
 package de.learnlib.alex.auth.rest;
 
 import de.learnlib.alex.auth.dao.UserDAO;
+import de.learnlib.alex.auth.entities.JsonWebToken;
+import de.learnlib.alex.auth.entities.UpdateEmailInput;
+import de.learnlib.alex.auth.entities.UpdateMaxAllowedProcessesInput;
+import de.learnlib.alex.auth.entities.UpdatePasswordInput;
+import de.learnlib.alex.auth.entities.UpdateRoleInput;
+import de.learnlib.alex.auth.entities.UpdateUsernameInput;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.entities.UserRole;
 import de.learnlib.alex.auth.events.UserEvent;
+import de.learnlib.alex.common.exceptions.ForbiddenOperationException;
 import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.security.JwtHelper;
 import de.learnlib.alex.settings.dao.SettingsDAO;
 import de.learnlib.alex.settings.entities.Settings;
 import de.learnlib.alex.webhooks.services.WebhookService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.util.ArrayList;
+import java.util.List;
+import javax.validation.ValidationException;
+import javax.ws.rs.core.MediaType;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
-import org.jose4j.json.internal.json_simple.JSONObject;
 import org.jose4j.lang.JoseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,11 +54,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.ValidationException;
-import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * REST resource to handle users.
  */
@@ -58,27 +61,20 @@ import java.util.List;
 @RequestMapping("/rest/users")
 public class UserResource {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    public static final int MAX_USERNAME_LENGTH = 32;
 
-    private static final int MAX_USERNAME_LENGTH = 32;
-
-    /** The security context containing the user of the request. */
-    private AuthContext authContext;
-
-    /** The UserDAO to user. */
-    private UserDAO userDAO;
-
-    /** The webhook service to use. */
-    private WebhookService webhookService;
-
-    /** The injected settings DAO. */
-    private SettingsDAO settingsDAO;
+    private final AuthContext authContext;
+    private final UserDAO userDAO;
+    private final WebhookService webhookService;
+    private final SettingsDAO settingsDAO;
 
     @Autowired
-    public UserResource(AuthContext authContext,
-                        UserDAO userDAO,
-                        WebhookService webhookService,
-                        SettingsDAO settingsDAO) {
+    public UserResource(
+            AuthContext authContext,
+            UserDAO userDAO,
+            WebhookService webhookService,
+            SettingsDAO settingsDAO
+    ) {
         this.authContext = authContext;
         this.userDAO = userDAO;
         this.webhookService = webhookService;
@@ -96,9 +92,8 @@ public class UserResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity create(@RequestBody User newUser) {
+    public ResponseEntity<User> create(@RequestBody User newUser) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("create({}).", newUser);
 
         if (!new EmailValidator().isValid(newUser.getEmail(), null)) {
             throw new ValidationException("The email is not valid");
@@ -116,8 +111,7 @@ public class UserResource {
 
         if (user.getId() == null) { // anonymous registration
             if (!settings.isAllowUserRegistration()) {
-                return ResourceErrorHandler.createRESTErrorMessage("UserResource.create", HttpStatus.FORBIDDEN,
-                        new Exception("Public user registration is not allowed."));
+                throw new ForbiddenOperationException("Public user registration is not allowed.");
             }
 
             newUser.setRole(UserRole.REGISTERED);
@@ -125,18 +119,15 @@ public class UserResource {
 
             // create user
             userDAO.create(newUser);
-            LOGGER.traceExit(newUser);
             return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
         } else {
             if (user.getRole().equals(UserRole.REGISTERED)) {
-                return ResourceErrorHandler.createRESTErrorMessage("UserResource.create", HttpStatus.UNAUTHORIZED,
-                        new Exception("You are not allowed to create new accounts."));
+                throw new UnauthorizedException("You are not allowed to create new accounts.");
             } else {
                 newUser.setEncryptedPassword(newUser.getPassword());
 
                 // create user
                 userDAO.create(newUser);
-                LOGGER.traceExit(newUser);
                 return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
             }
         }
@@ -153,40 +144,35 @@ public class UserResource {
             value = "/{id}",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity get(@PathVariable("id") Long userId) {
+    public ResponseEntity<User> get(@PathVariable("id") Long userId) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("get({}) for user {}.", userId, user);
-
         if (!user.getRole().equals(UserRole.ADMIN) && !user.getId().equals(userId)) {
-            LOGGER.traceExit("only the user itself or an admin should be allowed to get the account information.");
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.get", HttpStatus.FORBIDDEN, new UnauthorizedException("You are not allowed to get this information."));
+            throw new ForbiddenOperationException("You are not allowed to get this information.");
         }
 
-        final User userById = userDAO.getById(userId);
-        LOGGER.traceExit(userById);
+        final User userById = userDAO.getByID(userId);
         return ResponseEntity.ok(userById);
     }
 
     /**
      * Get the account information about multiple users.
      *
-     * @param userIds The ids of the users.
+     * @param userIds
+     *         The ids of the users.
      * @return Detailed information about the users.
      */
     @GetMapping(
             value = "/batch/{ids}",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity getManyUsers(@PathVariable("ids") List<Long> userIds) {
+    public ResponseEntity<List<User>> getManyUsers(@PathVariable("ids") List<Long> userIds) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("get({}) for user {}.", userIds, user);
 
         final List<User> users = new ArrayList<>();
-        for (Long id: userIds) {
-            users.add(userDAO.getById(id));
+        for (Long id : userIds) {
+            users.add(userDAO.getByID(id));
         }
 
-        LOGGER.traceExit(users);
         return ResponseEntity.ok(users);
     }
 
@@ -198,10 +184,8 @@ public class UserResource {
     @GetMapping(
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity getAll() {
-        LOGGER.traceEntry("getAll()");
+    public ResponseEntity<List<User>> getAll() {
         final List<User> users = userDAO.getAll();
-        LOGGER.traceExit(users);
         return ResponseEntity.ok(users);
     }
 
@@ -209,26 +193,40 @@ public class UserResource {
             value = "/search",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity getByUsernameOrEmail(@RequestParam String searchterm) {
-        LOGGER.traceEntry("getByUsernameOrEmail");
+    public ResponseEntity<List<User>> getByUsernameOrEmail(@RequestParam("searchterm") String term) {
         final List<User> users = new ArrayList<>();
         try {
-            if (searchterm.contains("@")) {
-                users.add(userDAO.getByEmail(searchterm));
+            if (term.contains("@")) {
+                users.add(userDAO.getByEmail(term));
             } else {
-                users.add(userDAO.getByUsername(searchterm));
+                users.add(userDAO.getByUsername(term));
             }
-        } catch (NotFoundException ignored) {};
-        LOGGER.traceExit(users);
+        } catch (NotFoundException ignored) {
+        }
         return ResponseEntity.ok(users);
     }
+
+    @PutMapping(
+            value = "/{id}/processes",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity<User> changeMaxAllowedProcesses(
+            @PathVariable("id") Long userId,
+            @Validated @RequestBody UpdateMaxAllowedProcessesInput input
+    ) {
+        final var user = authContext.getUser();
+        final var updatedUser = userDAO.updateMaxAllowedProcesses(user, input);
+        return ResponseEntity.ok(updatedUser);
+    }
+
 
     /**
      * Changes the password of the user.
      *
      * @param userId
      *         The id of the user
-     * @param json
+     * @param input
      *         The pair of oldPassword and newPassword as json
      * @return The updated user.
      */
@@ -237,32 +235,26 @@ public class UserResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity changePassword(@PathVariable("id") Long userId, @RequestBody JSONObject json) {
-        final User user = authContext.getUser();
-        LOGGER.traceEntry("changePassword({}, {}) for user {}.", userId, json, user);
-
+    public ResponseEntity<User> changePassword(
+            @PathVariable("id") Long userId,
+            @Validated @RequestBody UpdatePasswordInput input
+    ) {
+        final var user = authContext.getUser();
         if (!user.getId().equals(userId)) {
-            LOGGER.traceExit("Only the user is allowed to change his own password.");
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.changePassword", HttpStatus.FORBIDDEN, new UnauthorizedException("You are not allowed to do this."));
+            throw new ForbiddenOperationException("You are not allowed to do this.");
         }
 
-        String oldPassword = (String) json.get("oldPassword");
-        String newPassword = (String) json.get("newPassword");
-
-        User realUser = userDAO.getById(userId);
-
-        // make sure that the password is valid
-        if (!realUser.isValidPassword(oldPassword)) {
-            throw new IllegalArgumentException("Please provide your old password!");
+        final var realUser = userDAO.getByID(userId);
+        if (!realUser.isValidPassword(input.getOldPassword())) {
+            throw new ValidationException("Please provide your old password!");
         }
 
-        realUser.setEncryptedPassword(newPassword);
-        userDAO.update(realUser);
+        realUser.setEncryptedPassword(input.getNewPassword());
 
-        LOGGER.traceExit(realUser);
+        final var updatedUser = userDAO.update(realUser);
 
         webhookService.fireEvent(user, new UserEvent.CredentialsUpdated(userId));
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(updatedUser);
     }
 
     /**
@@ -271,8 +263,8 @@ public class UserResource {
      *
      * @param userId
      *         The id of the user
-     * @param json
-     *         the json with a property 'email'
+     * @param input
+     *         The input with the new email.
      * @return The updated user.
      */
     @PutMapping(
@@ -280,54 +272,37 @@ public class UserResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity changeEmail(@PathVariable("id") Long userId, @RequestBody JSONObject json) {
+    public ResponseEntity<User> changeEmail(
+            @PathVariable("id") Long userId,
+            @Validated @RequestBody UpdateEmailInput input
+    ) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("changeEmail({}, {}) for user {}.", userId, json, user);
 
         if (!user.getId().equals(userId) && !user.getRole().equals(UserRole.ADMIN)) {
-            LOGGER.traceExit("Only the user or an admin is allowed to change the email.");
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.changePassword", HttpStatus.FORBIDDEN,
-                    new UnauthorizedException("You are not allowed to do this."));
+            throw new UnauthorizedException("You are not allowed to do this.");
         }
 
-        String email = (String) json.get("email");
-        User realUser = userDAO.getById(userId);
-
-        if (!new EmailValidator().isValid(email, null)) {
-            throw new ValidationException("The email is not valid!");
-        }
-        if (email.equals(user.getEmail())) {
-            throw new ValidationException("The email is the same as the current one!");
-        }
-
-        if (emailIsAlreadyTaken(email)) {
+        if (emailIsAlreadyTaken(input.getEmail())) {
             throw new ValidationException("The email is already taken!");
         }
 
-        realUser.setEmail(email);
-        userDAO.update(realUser);
+        final var realUser = userDAO.getByID(userId);
+        realUser.setEmail(input.getEmail());
 
-        LOGGER.traceExit(realUser);
+        final var updatedUser = userDAO.update(realUser);
 
         webhookService.fireEvent(user, new UserEvent.CredentialsUpdated(userId));
-        return ResponseEntity.ok(realUser);
-    }
-
-    private boolean emailIsAlreadyTaken(String email) {
-        try {
-            userDAO.getByEmail(email);
-            return true;
-        } catch (NotFoundException e) {
-            return false;
-        }
+        return ResponseEntity.ok(updatedUser);
     }
 
     /**
      * Changes the username of the user. This can only be invoked if you are an administrator.
-     * Please also note: Your new username must not be your current one and no other user should already have this username.
+     * Your new username must not be your current one and no other user should already have this username.
      *
-     * @param userId The id of the user.
-     * @param json The json with a property 'username'.
+     * @param userId
+     *         The id of the user.
+     * @param input
+     *         The input with a new username.
      * @return The updated user.
      */
     @PutMapping(
@@ -335,63 +310,51 @@ public class UserResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity changeUsername(@PathVariable("id") Long userId, @RequestBody JSONObject json) {
-        final User user = authContext.getUser();
-        LOGGER.traceEntry("changeUsername({}, {}) for user {}.", userId, json, user);
+    public ResponseEntity<User> changeUsername(
+            @PathVariable("id") Long userId,
+            @Validated @RequestBody UpdateUsernameInput input
+    ) {
+        final var user = authContext.getUser();
 
         if (!user.getRole().equals(UserRole.ADMIN)) {
-            LOGGER.traceExit("Only the admin is allowed to change the username.");
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.changeUsername", HttpStatus.FORBIDDEN,
-                    new UnauthorizedException("You are not allowed to do this."));
-        }
-
-        String username = (String) json.get("username");
-        User realUser = userDAO.getById(userId);
-
-        if (username.length() > MAX_USERNAME_LENGTH || !username.matches("^[a-zA-Z][a-zA-Z0-9]*$")) {
-            throw new ValidationException("The username is invalid!");
-        }
-
-        if (username.equals(user.getUsername())) {
-            throw new ValidationException("The username is the same as the current one!");
-        }
-
-        if (usernameIsAlreadyTaken(username)) {
+            throw new ForbiddenOperationException("You are not allowed to do this.");
+        } else if (usernameIsAlreadyTaken(input.getUsername())) {
             throw new ValidationException("The username is already taken!");
         }
 
-        realUser.setUsername(username);
-        userDAO.update(realUser);
+        final var userInDB = userDAO.getByID(userId);
+        userInDB.setUsername(input.getUsername());
 
-        LOGGER.traceExit(realUser);
+        final var updatedUser = userDAO.update(userInDB);
 
         webhookService.fireEvent(user, new UserEvent.CredentialsUpdated(userId));
-        return ResponseEntity.ok(realUser);
+        return ResponseEntity.ok(updatedUser);
     }
 
-    private boolean usernameIsAlreadyTaken(String username) {
-        try {
-            userDAO.getByUsername(username);
-            return true;
-        } catch (NotFoundException e) {
-            return false;
-        }
-    }
-
+    /**
+     * Update the role of a user.
+     *
+     * @param userId
+     *         The ID of the user to update.
+     * @param input
+     *         The input with the new role.
+     * @return The updated user.
+     */
     @PutMapping(
             value = "/{id}/role",
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity changeRole(@PathVariable("id") Long userId, @RequestBody JSONObject json) {
+    public ResponseEntity<User> changeRole(
+            @PathVariable("id") Long userId,
+            @Validated @RequestBody UpdateRoleInput input
+    ) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("update role for user {}.", userId);
+        final User userToUpdate = userDAO.getByID(userId);
 
-        final User userToUpdate = userDAO.getById(userId);
-        final UserRole newRole = UserRole.valueOf((String) json.get("role"));
-        switch (newRole) {
+        switch (input.getRole()) {
             case ADMIN:
-                userToUpdate.setRole(newRole);
+                userToUpdate.setRole(input.getRole());
                 break;
             case REGISTERED:
                 // if the admin wants to revoke his own rights
@@ -408,11 +371,9 @@ public class UserResource {
                 throw new ValidationException("Cannot update role.");
         }
 
-        userDAO.update(userToUpdate);
-        LOGGER.info("Role of user {} updated.", user);
-        LOGGER.traceExit(userToUpdate);
-        webhookService.fireEvent(user, new UserEvent.RoleUpdated(userToUpdate));
-        return ResponseEntity.ok(userToUpdate);
+        final var updatedUser = userDAO.update(userToUpdate);
+        webhookService.fireEvent(user, new UserEvent.RoleUpdated(updatedUser));
+        return ResponseEntity.ok(updatedUser);
     }
 
     /**
@@ -426,14 +387,11 @@ public class UserResource {
             value = "/{id}",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity delete(@PathVariable("id") Long userId) {
+    public ResponseEntity<String> delete(@PathVariable("id") Long userId) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("delete({}) for user {}.", userId, user);
 
         if (!user.getId().equals(userId) && !user.getRole().equals(UserRole.ADMIN)) {
-            UnauthorizedException e = new UnauthorizedException("You are not allowed to delete this user");
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", HttpStatus.FORBIDDEN, e);
+            throw new ForbiddenOperationException("You are not allowed to delete this user.");
         }
 
         // the event is not fired if we do it after the user is deleted in the next line
@@ -441,7 +399,6 @@ public class UserResource {
         webhookService.fireEvent(new User(userId), new UserEvent.Deleted(userId));
         userDAO.delete(user, userId);
 
-        LOGGER.traceExit("User {} deleted.", userId);
         return ResponseEntity.noContent().build();
     }
 
@@ -456,18 +413,14 @@ public class UserResource {
             value = "/batch/{ids}",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity delete(@PathVariable("ids") List<Long> ids) {
+    public ResponseEntity<String> delete(@PathVariable("ids") List<Long> ids) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("delete({}) for user {}.", ids, user);
 
         if (ids.contains(user.getId())) {
-            Exception e = new Exception("You cannot delete your own account this way.");
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", HttpStatus.BAD_REQUEST, e);
+            throw new IllegalArgumentException("You cannot delete your own account this way.");
         }
 
         userDAO.delete(user, ids);
-        LOGGER.traceExit("User(s) {} deleted.", ids);
 
         ids.forEach(id -> webhookService.fireEvent(new User(id), new UserEvent.Deleted(id)));
         return ResponseEntity.noContent().build();
@@ -485,24 +438,19 @@ public class UserResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity login(@RequestBody User user) {
-        LOGGER.traceEntry("login({}).", user);
-
+    public ResponseEntity<JsonWebToken> login(@RequestBody User user) {
         try {
-            User realUser = userDAO.getByEmail(user.getEmail());
+            final var realUser = userDAO.getByEmail(user.getEmail());
 
-            // make sure that the password is valid
             if (!realUser.isValidPassword(user.getPassword())) {
                 throw new IllegalArgumentException("Please provide your correct password!");
             }
 
-            String json = "{\"token\": \"" + JwtHelper.generateJWT(realUser) + "\"}";
+            final var jwt = new JsonWebToken(JwtHelper.generateJWT(realUser));
 
-            LOGGER.traceExit(json);
-            return ResponseEntity.ok(json);
+            return ResponseEntity.ok(jwt);
         } catch (JoseException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", HttpStatus.UNAUTHORIZED, e);
+            throw new UnauthorizedException();
         }
     }
 
@@ -515,10 +463,28 @@ public class UserResource {
             value = "/myself",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity myself() {
+    public ResponseEntity<User> myself() {
         final User user = authContext.getUser();
 
-        final User myself = userDAO.getById(user.getId());
+        final User myself = userDAO.getByID(user.getId());
         return ResponseEntity.ok(myself);
+    }
+
+    private boolean usernameIsAlreadyTaken(String username) {
+        try {
+            userDAO.getByUsername(username);
+            return true;
+        } catch (NotFoundException e) {
+            return false;
+        }
+    }
+
+    private boolean emailIsAlreadyTaken(String email) {
+        try {
+            userDAO.getByEmail(email);
+            return true;
+        } catch (NotFoundException e) {
+            return false;
+        }
     }
 }

@@ -1,5 +1,5 @@
 {
-  "version": "2.0.0",
+  "version": "2.1.0",
   "type": "project",
   "project": {
     "name": "ALEX",
@@ -981,5 +981,8 @@
       "status": "DONE",
       "type": "case"
     }
-  ]
+  ],
+  "formulaSuites": [],
+  "learnerSetups": [],
+  "testExecutionConfigs": []
 }

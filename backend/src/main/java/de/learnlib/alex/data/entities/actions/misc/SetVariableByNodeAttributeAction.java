@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,15 +24,12 @@ import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.NoSuchElementException;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import org.openqa.selenium.NoSuchElementException;
 
 /**
  * Action to set a variable to the value of an attribute of an HTML node.
@@ -41,10 +38,6 @@ import javax.validation.constraints.NotNull;
 @DiscriminatorValue("setVariableByNodeAttribute")
 @JsonTypeName("setVariableByNodeAttribute")
 public class SetVariableByNodeAttributeAction extends SymbolAction {
-
-    private static final long serialVersionUID = 8998187003156355834L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The name of the variable. */
     @NotBlank
@@ -71,12 +64,12 @@ public class SetVariableByNodeAttributeAction extends SymbolAction {
             String value = webSiteConnector.getElement(nodeWithVariables).getAttribute(attribute);
             storeConnector.set(name, value);
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Set variable '{}' to attribute '{}' of element '{}'.",
+            logger.info(LoggerMarkers.LEARNER, "Set variable '{}' to attribute '{}' of element '{}'.",
                     name, attribute, nodeWithVariables);
 
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not set variable '{}' to attribute '{}' of element '{}'.",
+            logger.info(LoggerMarkers.LEARNER, "Could not set variable '{}' to attribute '{}' of element '{}'.",
                     name, attribute, nodeWithVariables);
 
             return getFailedOutput();

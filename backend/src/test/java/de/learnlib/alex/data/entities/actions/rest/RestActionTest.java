@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 
 package de.learnlib.alex.data.entities.actions.rest;
 
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
+
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
-
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 
 public class RestActionTest {
 
@@ -31,7 +31,6 @@ public class RestActionTest {
     protected void setUp() {
         connectors = mock(ConnectorManager.class);
         webServiceConnector = mock(WebServiceConnector.class);
-
-        given(connectors.getConnector(WebServiceConnector.class)).willReturn(webServiceConnector);
+        lenient().when(connectors.getConnector(WebServiceConnector.class)).thenReturn(webServiceConnector);
     }
 }

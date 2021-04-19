@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,10 @@ import de.learnlib.alex.learning.services.ModelExporter;
 import de.learnlib.alex.learning.services.TestGenerator;
 import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.testing.entities.TestSuite;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.io.IOException;
+import java.util.List;
+import javax.validation.Valid;
+import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -42,10 +44,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.ws.rs.core.MediaType;
-import java.io.IOException;
-import java.util.List;
-
 /**
  * REST API to fetch the test results.
  */
@@ -53,12 +51,10 @@ import java.util.List;
 @RequestMapping("/rest/projects/{projectId}/results")
 public class LearnerResultResource {
 
-    private static final Logger LOGGER = LogManager.getLogger();
-
-    private AuthContext authContext;
-    private LearnerResultDAO learnerResultDAO;
-    private TestGenerator testGenerator;
-    private ModelExporter modelExporter;
+    private final AuthContext authContext;
+    private final LearnerResultDAO learnerResultDAO;
+    private final TestGenerator testGenerator;
+    private final ModelExporter modelExporter;
 
     @Autowired
     public LearnerResultResource(AuthContext authContext,
@@ -85,7 +81,6 @@ public class LearnerResultResource {
                                  @RequestParam(name = "page", required = false) String page,
                                  @RequestParam(name = "size", required = false) String size) {
         final User user = authContext.getUser();
-        LOGGER.trace("LearnerResultResource.getAllFinalResults(" + projectId + ") for user " + user + ".");
 
         if ((page == null && size != null) || (size == null && page != null)) {
             throw new IllegalArgumentException("'page' and 'size' params have to be used in combination.");
@@ -93,7 +88,6 @@ public class LearnerResultResource {
 
         if (page == null) {
             final List<LearnerResult> results = learnerResultDAO.getAll(user, projectId);
-            LOGGER.traceExit();
             return ResponseEntity.ok(results);
         } else {
             final PageRequest pr = PageRequest.of(
@@ -102,7 +96,6 @@ public class LearnerResultResource {
                     Sort.by(Sort.Direction.DESC, "testNo")
             );
             final Page<LearnerResult> resultPage = learnerResultDAO.getAll(user, projectId, pr);
-            LOGGER.traceExit();
             return ResponseEntity.ok(resultPage);
         }
     }
@@ -120,8 +113,6 @@ public class LearnerResultResource {
     )
     public ResponseEntity<LearnerResult> getLatest(@PathVariable("projectId") Long projectId) {
         final User user = authContext.getUser();
-        LOGGER.trace("LearnerResultResource.getLatest(" + projectId + ") for user " + user + ".");
-
         final LearnerResult result = learnerResultDAO.getLatest(user, projectId);
         return result == null ? ResponseEntity.noContent().build() : ResponseEntity.ok(result);
     }
@@ -142,15 +133,11 @@ public class LearnerResultResource {
     public ResponseEntity getAll(@PathVariable("projectId") Long projectId,
                                  @PathVariable("testNos") List<Long> testNos) {
         final User user = authContext.getUser();
-        LOGGER.trace("LearnerResultResource.getAllSteps(" + projectId + ", " + testNos + ") for user " + user + ".");
-
         if (testNos.size() == 1) {
-            final LearnerResult result = learnerResultDAO.get(user, projectId, testNos.get(0));
-            LOGGER.traceExit();
+            final LearnerResult result = learnerResultDAO.getByTestNo(user, projectId, testNos.get(0));
             return ResponseEntity.ok(result);
         } else {
             final List<LearnerResult> results = learnerResultDAO.getAll(user, projectId, testNos);
-            LOGGER.traceExit();
             return ResponseEntity.ok(results);
         }
     }
@@ -170,10 +157,7 @@ public class LearnerResultResource {
     )
     public ResponseEntity<LearnerResult> copy(@PathVariable("projectId") Long projectId, @PathVariable("testNo") Long testNo) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("LearnerResultResource.clone(" + projectId + ", " + testNo + ") for user " + user + ".");
-
         final LearnerResult clonedResult = learnerResultDAO.copy(user, projectId, testNo);
-        LOGGER.traceExit();
         return ResponseEntity.status(HttpStatus.CREATED).body(clonedResult);
     }
 
@@ -181,17 +165,17 @@ public class LearnerResultResource {
             value = "/{testNo}/steps/{stepNo}/export",
             produces = MediaType.TEXT_PLAIN
     )
-    public ResponseEntity export(@PathVariable("projectId") Long projectId,
-                                 @PathVariable("testNo") Long testNo,
-                                 @PathVariable("stepNo") Long stepNo,
-                                 @RequestParam(name = "format", defaultValue = "DOT") ModelExportFormat format) {
+    public ResponseEntity<String> export(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("testNo") Long testNo,
+            @PathVariable("stepNo") Long stepNo,
+            @RequestParam(name = "format", defaultValue = "DOT") ModelExportFormat format
+    ) {
         final User user = authContext.getUser();
-
-        switch (format) {
-            case DOT:
-                return ResponseEntity.ok(modelExporter.exportDot(user, projectId, testNo, stepNo));
-            default:
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        if (format == ModelExportFormat.DOT) {
+            return ResponseEntity.ok(modelExporter.exportDot(user, projectId, testNo, stepNo));
+        } else {
+            throw new IllegalArgumentException("Invalid export format.");
         }
     }
 
@@ -210,20 +194,16 @@ public class LearnerResultResource {
             value = "/{testNo}/generateTestSuite",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity generateTestSuite(@PathVariable("projectId") Long projectId,
-                                            @PathVariable("testNo") Long testNo,
-                                            @RequestBody TestSuiteGenerationConfig config) {
-        User user = authContext.getUser();
-        LOGGER.traceEntry("generateTestSuite(projectId: {}, testNo: {}, config: {}) for user {}", projectId, testNo, config, user);
+    public ResponseEntity<TestSuite> generateTestSuite(@PathVariable("projectId") Long projectId,
+                                                       @PathVariable("testNo") Long testNo,
+                                                       @RequestBody @Valid TestSuiteGenerationConfig config) {
+        final var user = authContext.getUser();
 
-        config.validate();
         try {
             final TestSuite testSuite = testGenerator.generate(user, projectId, testNo, config);
-            LOGGER.traceExit("generateTestSuite() with status {}", HttpStatus.CREATED);
             return ResponseEntity.status(HttpStatus.CREATED).body(testSuite);
         } catch (IOException | ClassNotFoundException e) {
-            LOGGER.traceExit("failed to generate test suite", e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            throw new IllegalStateException(e);
         }
     }
 
@@ -232,7 +212,7 @@ public class LearnerResultResource {
      *
      * @param projectId
      *         The project of the learn results.
-     * @param testNumbers
+     * @param testNos
      *         The test numbers of the results to delete as a comma (',') separated list. E.g. 1,2,3
      * @return On success no content will be returned.
      */
@@ -240,13 +220,10 @@ public class LearnerResultResource {
             value = "/{testNos}",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity deleteResultSet(@PathVariable("projectId") Long projectId,
-                                          @PathVariable("testNos") List<Long> testNumbers) {
+    public ResponseEntity<?> deleteResults(@PathVariable("projectId") Long projectId,
+                                           @PathVariable("testNos") List<Long> testNos) {
         final User user = authContext.getUser();
-        LOGGER.trace("LearnerResultResource.deleteResultSet(" + projectId + ", " + testNumbers + ") "
-                + "for user " + user + ".");
-
-        learnerResultDAO.deleteAll(user, projectId, testNumbers);
+        learnerResultDAO.deleteByTestNos(user, projectId, testNos);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

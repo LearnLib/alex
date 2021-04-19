@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,9 @@ public class NotFoundException extends RuntimeException {
 
     /**
      * Constructor.
-     * @param message The message of the exception.
+     *
+     * @param message
+     *         The message of the exception.
      */
     public NotFoundException(String message) {
         super(message);
@@ -35,8 +37,11 @@ public class NotFoundException extends RuntimeException {
 
     /**
      * Constructor.
-     * @param message The message of the exception.
-     * @param cause The cause of the exception.
+     *
+     * @param message
+     *         The message of the exception.
+     * @param cause
+     *         The cause of the exception.
      */
     public NotFoundException(String message, Throwable cause) {
         super(message, cause);

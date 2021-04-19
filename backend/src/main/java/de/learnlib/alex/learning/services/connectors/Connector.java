@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,8 @@ public interface Connector {
      * Method called during the reset of the SUL.
      * Set the connector back to the initial state.
      *
-     * @throws Exception If an exception occurred while the reset.
+     * @throws Exception
+     *         If an exception occurred while the reset.
      */
     void reset() throws Exception;
 

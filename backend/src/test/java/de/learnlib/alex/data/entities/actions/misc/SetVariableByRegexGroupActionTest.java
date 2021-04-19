@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,19 @@
 
 package de.learnlib.alex.data.entities.actions.misc;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.openqa.selenium.WebDriver;
 
@@ -42,7 +46,7 @@ public class SetVariableByRegexGroupActionTest {
 
     private WebDriver wd;
 
-    @Before
+    @BeforeEach
     public void before() {
         this.webSiteConnector = Mockito.mock(WebSiteConnector.class);
         this.variableStore = new VariableStoreConnector();
@@ -74,16 +78,16 @@ public class SetVariableByRegexGroupActionTest {
         action.setMthGroup(1);
 
         final ExecuteResult result1 = action.executeAction(connectors);
-        Assert.assertTrue(result1.isSuccess());
-        Assert.assertEquals("1", variableStore.get(VARIABLE_NAME));
+        assertTrue(result1.isSuccess());
+        assertEquals("1", variableStore.get(VARIABLE_NAME));
 
         action.setRegex(".*?([0-9]+).*?");
         action.setNthMatch(2);
         action.setMthGroup(1);
 
         final ExecuteResult result2 = action.executeAction(connectors);
-        Assert.assertTrue(result2.isSuccess());
-        Assert.assertEquals("2", variableStore.get(VARIABLE_NAME));
+        assertTrue(result2.isSuccess());
+        assertEquals("2", variableStore.get(VARIABLE_NAME));
     }
 
     @Test
@@ -92,8 +96,8 @@ public class SetVariableByRegexGroupActionTest {
         action.setMthGroup(1);
 
         final ExecuteResult result = action.executeAction(connectors);
-        Assert.assertFalse(result.isSuccess());
-        Assert.assertNull(variableStore.getStore().get(VARIABLE_NAME));
+        assertFalse(result.isSuccess());
+        assertNull(variableStore.getStore().get(VARIABLE_NAME));
     }
 
     @Test
@@ -102,8 +106,8 @@ public class SetVariableByRegexGroupActionTest {
         action.setMthGroup(4);
 
         final ExecuteResult result = action.executeAction(connectors);
-        Assert.assertFalse(result.isSuccess());
-        Assert.assertNull(variableStore.getStore().get(VARIABLE_NAME));
+        assertFalse(result.isSuccess());
+        assertNull(variableStore.getStore().get(VARIABLE_NAME));
     }
 
     @Test
@@ -114,7 +118,7 @@ public class SetVariableByRegexGroupActionTest {
         action.setMthGroup(1);
 
         final ExecuteResult result = action.executeAction(connectors);
-        Assert.assertFalse(result.isSuccess());
-        Assert.assertNull(variableStore.getStore().get(VARIABLE_NAME));
+        assertFalse(result.isSuccess());
+        assertNull(variableStore.getStore().get(VARIABLE_NAME));
     }
 }

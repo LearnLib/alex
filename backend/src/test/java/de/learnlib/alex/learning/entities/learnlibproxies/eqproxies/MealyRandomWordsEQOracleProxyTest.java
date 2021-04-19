@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,10 @@
 
 package de.learnlib.alex.learning.entities.learnlibproxies.eqproxies;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class MealyRandomWordsEQOracleProxyTest {
 
@@ -27,7 +29,7 @@ public class MealyRandomWordsEQOracleProxyTest {
 
     private MealyRandomWordsEQOracleProxy eqOracle;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         eqOracle = new MealyRandomWordsEQOracleProxy();
         eqOracle.setMinLength(1);
@@ -41,33 +43,29 @@ public class MealyRandomWordsEQOracleProxyTest {
         eqOracle.checkParameters(); // nothing should happen
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void ensureThatAnExceptionIsThrownIfMinLengthIsGreaterThanMaxLength() {
         eqOracle.setMinLength(MAX_LENGTH);
         eqOracle.setMaxLength(1);
-
-        eqOracle.checkParameters(); // should fail
+        assertThrows(IllegalArgumentException.class, () -> eqOracle.checkParameters());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void ensureThatAnExceptionIsThrownIfMinLengthIsNegative() {
         eqOracle.setMinLength(-1);
-
-        eqOracle.checkParameters(); // should fail
+        assertThrows(IllegalArgumentException.class, () -> eqOracle.checkParameters());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void ensureThatAnExceptionIsThrownIfMaxLengthIsNegative() {
         eqOracle.setMaxLength(-1);
-
-        eqOracle.checkParameters(); // should fail
+        assertThrows(IllegalArgumentException.class, () -> eqOracle.checkParameters());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void ensureThatAnExceptionIsThrownIfNoAmountOfTestIsGiven() {
         eqOracle.setMaxNoOfTests(0);
-
-        eqOracle.checkParameters(); // should fail
+        assertThrows(IllegalArgumentException.class, () -> eqOracle.checkParameters());
     }
 
 }

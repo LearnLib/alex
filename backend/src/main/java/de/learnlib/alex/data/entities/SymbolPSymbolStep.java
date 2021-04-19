@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import java.io.Serializable;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
-import java.io.Serializable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Execute another symbol on the SUL.
@@ -35,7 +34,7 @@ import java.io.Serializable;
 @JsonTypeName("symbol")
 public class SymbolPSymbolStep extends SymbolStep implements Serializable {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(SymbolPSymbolStep.class);
 
     /** The symbol to execute. */
     @OneToOne(cascade = CascadeType.REMOVE)
@@ -46,7 +45,7 @@ public class SymbolPSymbolStep extends SymbolStep implements Serializable {
         try {
             return getExecuteResult(i, connectors, pSymbol.execute(connectors));
         } catch (Exception e) {
-            LOGGER.error(LoggerMarkers.LEARNER, "The symbol could not be executed.", e);
+            logger.error(LoggerMarkers.LEARNER, "The symbol could not be executed.", e);
             return new ExecuteResult(false, String.valueOf(i + 1));
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,8 @@ public class SettingsEvent {
         /**
          * Constructor.
          *
-         * @param settings The updated settings.
+         * @param settings
+         *         The updated settings.
          */
         public Updated(Settings settings) {
             super(settings, EventType.SETTINGS_UPDATED);

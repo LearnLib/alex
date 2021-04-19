@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,9 @@ package de.learnlib.alex.data.repositories;
 
 import de.learnlib.alex.data.entities.Counter;
 import de.learnlib.alex.data.entities.Project;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * Repository to persist Counters.
@@ -37,19 +35,15 @@ public interface CounterRepository extends JpaRepository<Counter, Long> {
      *         The ID the Project the Counter belongs to.
      * @return The Counters in the Project.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     List<Counter> findAllByProject(Project project);
 
     /**
      * Get counters by their IDs.
      *
      * @param ids
-     *          The IDs of the counters.
+     *         The IDs of the counters.
      * @return The counters.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     List<Counter> findAllByIdIn(List<Long> ids);
 
     /**
@@ -61,8 +55,7 @@ public interface CounterRepository extends JpaRepository<Counter, Long> {
      *         The names of the Counter.
      * @return The Counter or null.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     Counter findByProjectAndName(Project project, String name);
 
+    Counter findByProject_IdAndName(Long projectId, String name);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package de.learnlib.alex.learning.services.connectors;
 
 import de.learnlib.alex.data.entities.ProjectEnvironment;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -30,10 +29,10 @@ public class ConnectorManager implements Iterable<Connector> {
     /**
      * Map of all the connectors by their type.
      */
-    private Map<Class<? extends Connector>, Connector> connectors;
+    private final Map<Class<? extends Connector>, Connector> connectors;
 
     /** The environment the connectors are used in. */
-    private ProjectEnvironment environment;
+    private final ProjectEnvironment environment;
 
     /**
      * Default constructor.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,6 @@ import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.Min;
@@ -37,10 +34,6 @@ import javax.validation.constraints.NotNull;
 @JsonTypeName("wait")
 public class WaitAction extends SymbolAction {
 
-    private static final long serialVersionUID = 7122950041811279742L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
-
     /**
      * The duration to wait in ms.
      */
@@ -51,11 +44,11 @@ public class WaitAction extends SymbolAction {
     @Override
     public ExecuteResult execute(ConnectorManager connector) {
         try {
-            LOGGER.info(LoggerMarkers.LEARNER, "Waiting for {} ms.", duration);
+            logger.info(LoggerMarkers.LEARNER, "Waiting for {} ms.", duration);
             Thread.sleep(duration);
             return getSuccessOutput();
         } catch (InterruptedException e) {
-            LOGGER.error(LoggerMarkers.LEARNER, "Failed to wait.", e);
+            logger.error(LoggerMarkers.LEARNER, "Failed to wait.", e);
             return getFailedOutput();
         }
     }

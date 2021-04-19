@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,10 @@ public class TestExecutionStartedEventData extends TestExecutionConfig {
     /**
      * Constructor.
      *
-     * @param projectId {@link #projectId}.
-     * @param config    The configuration to use.
+     * @param projectId
+     *         {@link #projectId}.
+     * @param config
+     *         The configuration to use.
      */
     public TestExecutionStartedEventData(Long projectId, TestExecutionConfig config) {
         this.projectId = projectId;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,22 +21,23 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Transient;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
+import javax.persistence.Transient;
 
 /** The test report. */
 @Entity
@@ -49,7 +50,7 @@ public class TestReport implements Serializable {
             DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
 
 
-    public enum  Status {
+    public enum Status {
         PENDING,
         IN_PROGRESS,
         FINISHED,
@@ -58,7 +59,7 @@ public class TestReport implements Serializable {
 
     /** The id in the database. */
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /** The project the report belongs to. */
@@ -75,6 +76,7 @@ public class TestReport implements Serializable {
             mappedBy = "testReport",
             cascade = {CascadeType.ALL}
     )
+    @OrderBy
     private List<TestResult> testResults;
 
     /** The environment that the test was executed in. */
@@ -127,7 +129,7 @@ public class TestReport implements Serializable {
 
     @JsonProperty("project")
     public Long getProjectId() {
-        return this.project == null ? 0L : this.project.getId();
+        return this.project == null ? 0 : this.project.getId();
     }
 
     @JsonProperty("project")
@@ -199,7 +201,7 @@ public class TestReport implements Serializable {
         return this.testResults.stream()
                 .filter(r -> r instanceof TestCaseResult)
                 .map(TestResult::getTime)
-                .reduce(0L, (a, b) -> a + b);
+                .reduce(0L, Long::sum);
     }
 
     /**

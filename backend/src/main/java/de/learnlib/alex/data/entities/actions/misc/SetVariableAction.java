@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,6 @@ import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -38,10 +35,6 @@ import javax.validation.constraints.NotNull;
 @DiscriminatorValue("setVariable")
 @JsonTypeName("setVariable")
 public class SetVariableAction extends SymbolAction {
-
-    private static final long serialVersionUID = 1935478771410953466L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The name of the variable to set a new value to. */
     @NotBlank
@@ -57,7 +50,7 @@ public class SetVariableAction extends SymbolAction {
         VariableStoreConnector storeConnector = connector.getConnector(VariableStoreConnector.class);
         storeConnector.set(name, insertVariableValues(value));
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Set the variable '{}' to the value '{}'.", name, value);
+        logger.info(LoggerMarkers.LEARNER, "Set the variable '{}' to the value '{}'.", name, value);
         return getSuccessOutput();
     }
 

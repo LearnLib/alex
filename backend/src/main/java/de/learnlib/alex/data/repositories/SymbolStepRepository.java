@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,9 @@
 package de.learnlib.alex.data.repositories;
 
 import de.learnlib.alex.data.entities.SymbolStep;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * The repository for {@link SymbolStep}.
@@ -35,8 +33,6 @@ public interface SymbolStepRepository extends JpaRepository<SymbolStep, Long> {
      * @param projectId
      *         The ID of the project.
      */
-    @Transactional
-    @SuppressWarnings("checkstyle:methodname")
     void deleteAllBySymbol_Project_Id(Long projectId);
 
     /**
@@ -47,8 +43,6 @@ public interface SymbolStepRepository extends JpaRepository<SymbolStep, Long> {
      * @param stepIds
      *         The IDs to delete.
      */
-    @Transactional
-    @SuppressWarnings("checkstyle:methodname")
     void deleteAllBySymbol_IdAndIdNotIn(Long symbolId, List<Long> stepIds);
 
     /**
@@ -57,7 +51,5 @@ public interface SymbolStepRepository extends JpaRepository<SymbolStep, Long> {
      * @param symbolId
      *         The ID of the symbol.
      */
-    @Transactional
-    @SuppressWarnings("checkstyle:methodname")
     void deleteAllBySymbol_Id(Long symbolId);
 }

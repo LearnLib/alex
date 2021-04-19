@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,13 @@
 package de.learnlib.alex.data.entities.export;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import java.util.HashMap;
 import java.util.Map;
 
 public class SymbolsImportableEntity extends SymbolsExportableEntity {
 
     /**
-     * Map symbol name -> resolutionStrategy
+     * Map symbol name -> resolutionStrategy.
      */
     private Map<String, SymbolImportConflictResolutionStrategy> conflictResolutions;
 
@@ -37,7 +36,11 @@ public class SymbolsImportableEntity extends SymbolsExportableEntity {
         this.conflictResolutions = new HashMap<>();
     }
 
-    public SymbolsImportableEntity(String version, JsonNode symbols, Map<String, SymbolImportConflictResolutionStrategy> conflictResolutions) {
+    public SymbolsImportableEntity(
+            String version,
+            JsonNode symbols,
+            Map<String, SymbolImportConflictResolutionStrategy> conflictResolutions
+    ) {
         super(version, symbols);
         this.conflictResolutions = conflictResolutions;
     }

@@ -1,7 +1,7 @@
 {
-    "type": "web_checkForNode",
-    "node": {
-        "selector": "#node",
-        "type": "CSS"
-    }
+  "type": "web_checkForNode",
+  "node": {
+    "selector": "#node",
+    "type": "CSS"
+  }
 }

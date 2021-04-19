@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,62 +16,97 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.JsonPath;
+import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.data.entities.ParameterizedSymbol;
+import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.integrationtests.SpringRestError;
 import de.learnlib.alex.integrationtests.resources.api.ProjectApi;
 import de.learnlib.alex.integrationtests.resources.api.SymbolApi;
 import de.learnlib.alex.integrationtests.resources.api.TestApi;
+import de.learnlib.alex.integrationtests.resources.api.TestReportApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
+import de.learnlib.alex.integrationtests.resources.utils.SymbolUtils;
+import de.learnlib.alex.integrationtests.websocket.util.TestPresenceServiceWSMessages;
+import de.learnlib.alex.integrationtests.websocket.util.WebSocketUser;
+import de.learnlib.alex.learning.entities.WebDriverConfig;
 import de.learnlib.alex.testing.entities.TestCase;
+import de.learnlib.alex.testing.entities.TestCaseResult;
+import de.learnlib.alex.testing.entities.TestCaseStep;
+import de.learnlib.alex.testing.entities.TestExecutionConfig;
+import de.learnlib.alex.testing.entities.TestExecutionResult;
+import de.learnlib.alex.testing.entities.TestQueueItem;
+import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.entities.TestSuite;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.http.HttpStatus;
-
-import javax.ws.rs.core.Response;
+import de.learnlib.alex.testing.entities.TestSuiteResult;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import javax.ws.rs.core.Response;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 
 public class ATestResourceIT extends AbstractResourceIT {
 
+    private final Duration defaultWaitTime = Duration.ofSeconds(5);
+
     private TestApi testApi;
+    private SymbolApi symbolApi;
+    private TestReportApi testReportApi;
+    private SymbolUtils symbolUtils;
 
     private String jwtUser1;
-
     private String jwtUser2;
 
     private int userId1;
-
     private int userId2;
 
+    private Project project;
     private int projectId;
 
     private int rootTestSuiteId;
 
     private ProjectApi projectApi;
 
-    @Before
+    private TestPresenceServiceWSMessages testPresenceServiceWSMessages;
+
+    @BeforeEach
     public void pre() {
         this.testApi = new TestApi(client, port);
+        this.testPresenceServiceWSMessages = new TestPresenceServiceWSMessages();
 
         final UserApi userApi = new UserApi(client, port);
         final Response res1 = userApi.create("{\"email\":\"test1@test.de\", \"username\":\"test1\", \"password\":\"test\"}");
         final Response res2 = userApi.create("{\"email\":\"test2@test.de\", \"username\":\"test2\", \"password\":\"test\"}");
 
-        userId1 = JsonPath.read(res1.readEntity(String.class), "id");
-        userId2 = JsonPath.read(res2.readEntity(String.class), "id");
+        userId1 = res1.readEntity(User.class).getId().intValue();
+        userId2 = res2.readEntity(User.class).getId().intValue();
 
         jwtUser1 = userApi.login("test1@test.de", "test");
         jwtUser2 = userApi.login("test2@test.de", "test");
 
         projectApi = new ProjectApi(client, port);
         final Response res3 = projectApi.create("{\"name\":\"test\",\"url\":\"http://localhost:8080\"}", jwtUser1);
-        projectId = JsonPath.read(res3.readEntity(String.class), "$.id");
+        project = res3.readEntity(Project.class);
+        projectId = project.getId().intValue();
+
+        symbolApi = new SymbolApi(client, port);
+        symbolUtils = new SymbolUtils(symbolApi);
+
+        testReportApi = new TestReportApi(client, port);
 
         final SymbolApi symbolApi = new SymbolApi(client, port);
         symbolApi.create(projectId, "{\"name\":\"s1\"}", jwtUser1);
@@ -236,8 +271,61 @@ public class ATestResourceIT extends AbstractResourceIT {
     }
 
     @Test
+    public void shouldUpdateTestLockedByUser() throws Exception {
+        WebSocketUser webSocketUser = new WebSocketUser("webSocketUser", client, port);
+        projectApi.addMembers(Integer.toUnsignedLong(projectId), Collections.singletonList(webSocketUser.getUserId()), jwtUser1);
+
+        final String tc = "{\"name\": \"tc\", \"type\": \"case\"}";
+        final Response res1 = testApi.create(projectId, tc, jwtUser1);
+
+        final TestCase testCase = res1.readEntity(TestCase.class);
+
+        // lock testcase
+        webSocketUser.send("default", testPresenceServiceWSMessages.userEnteredTest(projectId, testCase.getId()));
+        Awaitility.await().atMost(defaultWaitTime).until(() -> webSocketUser.assertNumberOfMessages(List.of("default"), List.of(1)));
+
+        testCase.setName("abc");
+
+        final Response res2 = testApi.update(testCase.getProjectId(), testCase.getId(), objectMapper.writeValueAsString(testCase), webSocketUser.getJwt());
+        assertEquals(Response.Status.OK.getStatusCode(), res2.getStatus());
+
+        webSocketUser.forceDisconnectAll();
+    }
+
+    @Test
+    public void shouldFailToUpdateTestLockedByOtherUser() throws Exception {
+        WebSocketUser webSocketUser = new WebSocketUser("webSocketUser", client, port);
+        projectApi.addMembers(Integer.toUnsignedLong(projectId), Collections.singletonList(webSocketUser.getUserId()), jwtUser1);
+
+        final String tc = "{\"name\": \"tc\", \"type\": \"case\"}";
+        final Response res1 = testApi.create(projectId, tc, jwtUser1);
+
+        final TestCase testCase = res1.readEntity(TestCase.class);
+
+        // lock testcase
+        webSocketUser.send("default", testPresenceServiceWSMessages.userEnteredTest(projectId, testCase.getId()));
+        Awaitility.await().atMost(defaultWaitTime).until(() -> webSocketUser.assertNumberOfMessages(List.of("default"), List.of(1)));
+
+        testCase.setName("abc");
+
+        final Response res2 = testApi.update(testCase.getProjectId(), testCase.getId(), objectMapper.writeValueAsString(testCase), webSocketUser.getJwt());
+        assertEquals(Response.Status.OK.getStatusCode(), res2.getStatus());
+
+        // get updated test case
+        final TestCase updatedTestCase = res2.readEntity(TestCase.class);
+        assertEquals(testCase.getName(), updatedTestCase.getName());
+
+        // updated test case is in db
+        final TestCase testCaseIdDb = testApi.get(projectId, testCase.getId().intValue(), jwtUser1)
+                .readEntity(TestCase.class);
+        assertEquals(testCase.getName(), testCaseIdDb.getName());
+
+        webSocketUser.forceDisconnectAll();
+    }
+
+    @Test
     public void shouldUpdateLastUpdatedByOnUpdate() throws JsonProcessingException {
-        projectApi.addOwners((long)projectId, Collections.singletonList((long)userId2), jwtUser1);
+        projectApi.addOwners((long) projectId, Collections.singletonList((long) userId2), jwtUser1);
 
         final String tc = "{\"name\": \"tc\", \"type\": \"case\"}";
         final Response res1 = testApi.create(projectId, tc, jwtUser1);
@@ -263,10 +351,10 @@ public class ATestResourceIT extends AbstractResourceIT {
         testApi.create(projectId, objectMapper.writeValueAsString(tc1), jwtUser1);
         tc1.setParent(ts2);
         testApi.create(projectId, objectMapper.writeValueAsString(tc1), jwtUser1);
-        
+
         ts1 = testApi.get(projectId, ts1.getId().intValue(), jwtUser1).readEntity(TestSuite.class);
         ts2 = testApi.get(projectId, ts2.getId().intValue(), jwtUser1).readEntity(TestSuite.class);
-        
+
         assertEquals(1, ts1.getTestCases().size());
         assertEquals(1, ts2.getTestCases().size());
         assertEquals("tc", ts1.getTestCases().get(0).getName());
@@ -379,6 +467,44 @@ public class ATestResourceIT extends AbstractResourceIT {
     }
 
     @Test
+    public void shouldNotMoveLockedTestCase() throws Exception {
+        WebSocketUser webSocketUser = new WebSocketUser("webSocketUser", client, port);
+        projectApi.addMembers(Integer.toUnsignedLong(projectId), Collections.singletonList(webSocketUser.getUserId()), jwtUser1);
+
+        TestSuite ts1 = createTestSuite((long) projectId, "ts1", null, jwtUser1);
+        TestSuite ts2 = createTestSuite((long) projectId, "ts2", null, jwtUser1);
+        TestCase tc1 = createTestCase((long) projectId, "tc1", ts1.getId(), jwtUser1);
+
+        // lock testcase
+        webSocketUser.send("default", testPresenceServiceWSMessages.userEnteredTest(projectId, tc1.getId()));
+        Awaitility.await().atMost(defaultWaitTime).until(() -> webSocketUser.assertNumberOfMessages(List.of("default"), List.of(1)));
+
+        final Response res = testApi.move(projectId, tc1.getId().intValue(), ts2.getId().intValue(), webSocketUser.getJwt());
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());
+
+        webSocketUser.forceDisconnectAll();
+    }
+
+    @Test
+    public void shouldNotMoveLockedTestSuite() throws Exception {
+        WebSocketUser webSocketUser = new WebSocketUser("webSocketUser", client, port);
+        projectApi.addMembers(Integer.toUnsignedLong(projectId), Collections.singletonList(webSocketUser.getUserId()), jwtUser1);
+
+        TestSuite ts1 = createTestSuite((long) projectId, "ts1", null, jwtUser1);
+        TestSuite ts2 = createTestSuite((long) projectId, "ts2", null, jwtUser1);
+        TestCase tc1 = createTestCase((long) projectId, "tc1", ts1.getId(), jwtUser1);
+
+        // lock testcase
+        webSocketUser.send("default", testPresenceServiceWSMessages.userEnteredTest(projectId, tc1.getId()));
+        Awaitility.await().atMost(defaultWaitTime).until(() -> webSocketUser.assertNumberOfMessages(List.of("default"), List.of(1)));
+
+        final Response res = testApi.move(projectId, ts1.getId().intValue(), ts2.getId().intValue(), webSocketUser.getJwt());
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());
+
+        webSocketUser.forceDisconnectAll();
+    }
+
+    @Test
     public void shouldDeleteTestCase() throws Exception {
         final String tc1 = "{\"name\": \"tc1\", \"type\": \"case\"}";
         final Response res1 = testApi.create(projectId, tc1, jwtUser1);
@@ -424,6 +550,123 @@ public class ATestResourceIT extends AbstractResourceIT {
         assertEquals(1, getNumberOfTestsInRoot());
     }
 
+    @Test
+    public void shouldNotDeleteLockedTestCase() throws Exception {
+        WebSocketUser webSocketUser = new WebSocketUser("webSocketUser", client, port);
+        projectApi.addMembers(Integer.toUnsignedLong(projectId), Collections.singletonList(webSocketUser.getUserId()), jwtUser1);
+
+        TestCase tc1 = createTestCase((long) projectId, "tc1", null, jwtUser1);
+
+        // lock testcase
+        webSocketUser.send("default", testPresenceServiceWSMessages.userEnteredTest(projectId, tc1.getId()));
+        Awaitility.await().atMost(defaultWaitTime).until(() -> webSocketUser.assertNumberOfMessages(List.of("default"), List.of(1)));
+
+        final Response res = testApi.delete(projectId, tc1.getId().intValue(), webSocketUser.getJwt());
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());
+
+        webSocketUser.forceDisconnectAll();
+    }
+
+    @Test
+    public void shouldNotDeleteLockedTestSuite() throws Exception {
+        WebSocketUser webSocketUser = new WebSocketUser("webSocketUser", client, port);
+        projectApi.addMembers(Integer.toUnsignedLong(projectId), Collections.singletonList(webSocketUser.getUserId()), jwtUser1);
+
+        TestSuite ts1 = createTestSuite((long) projectId, "ts1", null, jwtUser1);
+        TestCase tc1 = createTestCase((long) projectId, "tc1", ts1.getId(), jwtUser1);
+
+        // lock testcase
+        webSocketUser.send("default", testPresenceServiceWSMessages.userEnteredTest(projectId, tc1.getId()));
+        Awaitility.await().atMost(defaultWaitTime).until(() -> webSocketUser.assertNumberOfMessages(List.of("default"), List.of(1)));
+
+        final Response res = testApi.delete(projectId, ts1.getId().intValue(), webSocketUser.getJwt());
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());
+
+        webSocketUser.forceDisconnectAll();
+    }
+
+    @Test
+    public void shouldCreateTestWithSteps() throws Exception {
+        createTestCaseWithSteps(project.getId(), "test", null, jwtUser1);
+    }
+
+    @Test
+    public void shouldExecuteTest() throws Exception {
+        objectMapper.addMixIn(TestReport.class, IgnoreTestReportFieldsMixin.class);
+        objectMapper.addMixIn(TestExecutionResult.class, IgnoreTestExecutionResultFieldsMixin.class);
+        objectMapper.addMixIn(TestCaseResult.class, IgnoreTestCaseResultFieldsMixin.class);
+
+        final var testCase = createTestCaseWithSteps(project.getId(), "test", null, jwtUser1);
+
+        final var driverConfig = new WebDriverConfig();
+        driverConfig.setBrowser("chrome");
+
+        final var config = new TestExecutionConfig();
+        config.setDriverConfig(driverConfig);
+        config.setProject(project);
+        config.setEnvironment(project.getDefaultEnvironment());
+        config.setTests(List.of(testCase));
+
+        final var res1 = testApi.execute(project.getId(), config, jwtUser1);
+        assertEquals(HttpStatus.OK.value(), res1.getStatus());
+
+        final var item = objectMapper.readValue(res1.readEntity(String.class), TestQueueItem.class);
+        assertNotNull(item);
+        assertNotNull(item.getConfig());
+        assertNotNull(item.getReport());
+        assertNotNull(item.getResults());
+
+        var report = pollForTestReport(item.getReport().getId(), jwtUser1);
+        assertEquals(TestReport.Status.FINISHED, report.getStatus());
+        assertTrue(report.getTestResults().size() > 0);
+    }
+
+    @Test
+    public void shouldExecuteTestSuite() throws Exception {
+        objectMapper.addMixIn(TestReport.class, IgnoreTestReportFieldsMixin.class);
+        objectMapper.addMixIn(TestExecutionResult.class, IgnoreTestExecutionResultFieldsMixin.class);
+        objectMapper.addMixIn(TestCaseResult.class, IgnoreTestCaseResultFieldsMixin.class);
+        objectMapper.addMixIn(TestSuiteResult.class, IgnoreTestSuiteResultFieldsMixin.class);
+
+        final var testSuite = createTestSuite(project.getId(), "testSuite", null, jwtUser1);
+        createTestCaseWithSteps(project.getId(), "test", testSuite.getId(), jwtUser1);
+
+        final var driverConfig = new WebDriverConfig();
+        driverConfig.setBrowser("chrome");
+
+        final var config = new TestExecutionConfig();
+        config.setDriverConfig(driverConfig);
+        config.setProject(project);
+        config.setEnvironment(project.getDefaultEnvironment());
+        config.setTests(List.of(testSuite));
+
+        final var res1 = testApi.execute(project.getId(), config, jwtUser1);
+        assertEquals(HttpStatus.OK.value(), res1.getStatus());
+
+        final var item = objectMapper.readValue(res1.readEntity(String.class), TestQueueItem.class);
+        assertNotNull(item);
+        assertNotNull(item.getConfig());
+        assertNotNull(item.getReport());
+        assertNotNull(item.getResults());
+
+        var report = pollForTestReport(item.getReport().getId(), jwtUser1);
+        assertEquals(TestReport.Status.FINISHED, report.getStatus());
+        assertTrue(report.getTestResults().size() > 0);
+    }
+
+    private TestReport pollForTestReport(Long reportId, String jwt) throws JsonProcessingException {
+        await().atMost(10, TimeUnit.SECONDS).until(() -> {
+            final var res2 = testReportApi.get(project.getId(), reportId, jwt);
+            assertEquals(HttpStatus.OK.value(), res2.getStatus());
+
+            final var report = objectMapper.readValue(res2.readEntity(String.class), TestReport.class);
+            return List.of(TestReport.Status.ABORTED, TestReport.Status.FINISHED).contains(report.getStatus());
+        });
+
+        final var res = testReportApi.get(project.getId(), reportId, jwt);
+        return objectMapper.readValue(res.readEntity(String.class), TestReport.class);
+    }
+
     private int getNumberOfTestsInRoot() throws Exception {
         final Response res = testApi.getRoot(projectId, jwtUser1);
         final JsonNode rootNode = objectMapper.readTree(res.readEntity(String.class));
@@ -450,5 +693,77 @@ public class ATestResourceIT extends AbstractResourceIT {
         final Response res = testApi.create(projectId.intValue(), objectMapper.writeValueAsString(tc), jwt);
         assertEquals(HttpStatus.CREATED.value(), res.getStatus());
         return res.readEntity(TestCase.class);
+    }
+
+    private TestCase createTestCaseWithSteps(Long projectId, String name, Long parentId, String jwt) throws Exception {
+        final TestCase tc = new TestCase();
+        tc.setName(name);
+        tc.setProjectId(projectId);
+        tc.setParentId(parentId);
+
+        final ParameterizedSymbol resetSymbol = symbolUtils.createResetSymbol(project, jwt);
+        final ParameterizedSymbol authSymbol = symbolUtils.createAuthSymbol(project, ADMIN_EMAIL, ADMIN_PASSWORD, jwt);
+        final ParameterizedSymbol getProfileSymbol = symbolUtils.createGetProfileSymbol(project, jwt);
+
+        final var preStep = new TestCaseStep();
+        preStep.setPSymbol(resetSymbol);
+        tc.getPreSteps().add(preStep);
+
+        final var step1 = new TestCaseStep();
+        step1.setPSymbol(authSymbol);
+        tc.getSteps().add(step1);
+
+        final var step2 = new TestCaseStep();
+        step2.setPSymbol(getProfileSymbol);
+        tc.getSteps().add(step2);
+
+        final Response res = testApi.create(projectId.intValue(), objectMapper.writeValueAsString(tc), jwt);
+        assertEquals(HttpStatus.CREATED.value(), res.getStatus());
+        return res.readEntity(TestCase.class);
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static abstract class IgnoreTestReportFieldsMixin {
+        @JsonIgnore
+        abstract void setTime(Long time);
+
+        @JsonIgnore
+        abstract void setNumTests(Long num);
+
+        @JsonIgnore
+        abstract void setNumTestsFailed(Long num);
+
+        @JsonIgnore
+        abstract void setNumTestsPassed(Long num);
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static abstract class IgnoreTestExecutionResultFieldsMixin {
+        @JsonIgnore
+        abstract void setOutput(String output);
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static abstract class IgnoreTestCaseResultFieldsMixin {
+        @JsonIgnore
+        abstract void setPassed(boolean passed);
+
+        @JsonIgnore
+        abstract void setFailureMessage(String failureMessage);
+
+        @JsonIgnore
+        abstract de.learnlib.alex.testing.entities.Test.TestRepresentation getTestRepresentation();
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static abstract class IgnoreTestSuiteResultFieldsMixin {
+        @JsonIgnore
+        abstract void setPassed(boolean passed);
+
+        @JsonIgnore
+        abstract void setFailureMessage(String failureMessage);
+
+        @JsonIgnore
+        abstract de.learnlib.alex.testing.entities.Test.TestRepresentation getTestRepresentation();
     }
 }

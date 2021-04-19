@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,24 +19,24 @@ package de.learnlib.alex.testing.entities;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
-import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
-import de.learnlib.alex.learning.entities.webdrivers.HtmlUnitDriverConfig;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
+import de.learnlib.alex.learning.entities.WebDriverConfig;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 /**
  * The configuration class for running multiple tests in a batch.
@@ -48,17 +48,21 @@ public class TestExecutionConfig implements Serializable {
 
     /** The id of the config in the database. */
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    /** The name of the config. */
+    private String name;
 
     /** The ids of the tests to execute. */
     @ManyToMany
+    @OrderBy
     private List<Test> tests;
 
     /** The configuration for the web driver. */
     @NotNull
     @OneToOne(cascade = CascadeType.ALL)
-    private AbstractWebDriverConfig driverConfig;
+    private WebDriverConfig driverConfig;
 
     /** The id of the URL to use for testing. */
     @NotNull
@@ -77,7 +81,7 @@ public class TestExecutionConfig implements Serializable {
 
     /** Constructor. */
     public TestExecutionConfig() {
-        this(new ArrayList<>(), new HtmlUnitDriverConfig());
+        this(new ArrayList<>(), new WebDriverConfig());
     }
 
     /**
@@ -88,7 +92,7 @@ public class TestExecutionConfig implements Serializable {
      * @param driverConfig
      *         The configuration for the web driver.
      */
-    public TestExecutionConfig(List<Long> testIds, AbstractWebDriverConfig driverConfig) {
+    public TestExecutionConfig(List<Long> testIds, WebDriverConfig driverConfig) {
         this.setTestIds(testIds);
         this.driverConfig = driverConfig;
         this.isDefault = false;
@@ -101,6 +105,14 @@ public class TestExecutionConfig implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name == null || name.trim().equals("") ? "" : name;
     }
 
     public List<Test> getTests() {
@@ -133,22 +145,22 @@ public class TestExecutionConfig implements Serializable {
     }
 
     @Transient
-    @JsonProperty("environment")
+    @JsonProperty("environmentId")
     public Long getEnvironmentId() {
         return environment.getId();
     }
 
-    @JsonProperty("environment")
+    @JsonProperty("environmentId")
     public void setEnvironmentId(Long environmentId) {
         this.environment = new ProjectEnvironment();
         this.environment.setId(environmentId);
     }
 
-    public AbstractWebDriverConfig getDriverConfig() {
+    public WebDriverConfig getDriverConfig() {
         return driverConfig;
     }
 
-    public void setDriverConfig(AbstractWebDriverConfig driverConfig) {
+    public void setDriverConfig(WebDriverConfig driverConfig) {
         this.driverConfig = driverConfig;
     }
 
@@ -188,10 +200,13 @@ public class TestExecutionConfig implements Serializable {
     }
 
     @Override
-    @SuppressWarnings("checkstyle:needbraces")
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof TestExecutionConfig)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof TestExecutionConfig)) {
+            return false;
+        }
         TestExecutionConfig that = (TestExecutionConfig) o;
         return Objects.equals(getId(), that.getId());
     }

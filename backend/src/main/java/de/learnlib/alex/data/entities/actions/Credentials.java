@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package de.learnlib.alex.data.entities.actions;
 
-import org.apache.commons.codec.binary.Base64;
-
-import javax.persistence.Embeddable;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import javax.persistence.Embeddable;
 
 /**
  * Helper class to store and transfer authentication credentials, i.e. user name / email and password.
@@ -56,13 +56,14 @@ public class Credentials implements Serializable {
     }
 
     /**
-     * Return the name and password encoded in Base64 to be used in the HTTP Basic Authentication.
+     * Return the name and password encoded in Base64 to be used in for HTTP Basic Authentication.
      *
      * @return "name:password" encoded in Base64.
      */
     public String toBase64() {
-        String credentialsAsString = name + ":" + password;
-        return Base64.encodeBase64String(credentialsAsString.getBytes());
+        var credentialsAsString = name + ":" + password;
+        var credentialsAsByteArray = credentialsAsString.getBytes(StandardCharsets.UTF_8);
+        return Base64.getEncoder().encodeToString(credentialsAsByteArray);
     }
 
     /**

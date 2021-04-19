@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,14 +24,13 @@ import de.learnlib.api.algorithm.LearningAlgorithm;
 import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.datastructure.observationtable.ObservationTable;
 import de.learnlib.datastructure.observationtable.writer.ObservationTableASCIIWriter;
-import net.automatalib.automata.transducers.impl.compact.CompactMealy;
-import net.automatalib.words.Alphabet;
-import net.automatalib.words.Word;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import net.automatalib.automata.transducers.impl.compact.CompactMealy;
+import net.automatalib.words.Alphabet;
+import net.automatalib.words.Word;
 
 /**
  * Class that provides the LearnLib implementation of the extended L* algorithm for ALEX.
@@ -43,7 +42,7 @@ public class LStar extends AbstractLearningAlgorithm<String, String> implements 
 
     @Override
     public LearningAlgorithm.MealyLearner<String, String> createLearner(Alphabet<String> sigma,
-            MembershipOracle<String, Word<String>> oracle) {
+                                                                        MembershipOracle<String, Word<String>> oracle) {
         return new ExtensibleLStarMealyBuilder<String, String>()
                 .withAlphabet(sigma)
                 .withOracle(oracle)

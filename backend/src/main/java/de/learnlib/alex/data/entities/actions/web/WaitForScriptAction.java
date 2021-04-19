@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,33 +24,26 @@ import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.data.utils.ExecuteScriptUtils;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 @Entity
 @DiscriminatorValue("web_waitForScript")
 @JsonTypeName("web_waitForScript")
 public class WaitForScriptAction extends SymbolAction {
 
-    private static final long serialVersionUID = 5692261035639937573L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
-
     private static final int DEFAULT_SCRIPT_TIMEOUT = 10;
 
     @NotBlank
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(columnDefinition = "TEXT")
     private String script;
 
     /** When the script should be timed out in s. */
@@ -76,7 +69,7 @@ public class WaitForScriptAction extends SymbolAction {
                 final Map<String, Map<String, ? extends Object>> store = ExecuteScriptUtils.createScriptStore(connector);
                 final Object returnValue = ((JavascriptExecutor) webSiteConnector.getDriver()).executeScript(script, store);
                 if (!(returnValue instanceof Boolean)) {
-                    LOGGER.info(LoggerMarkers.LEARNER, "Script does not return boolean result.");
+                    logger.info(LoggerMarkers.LEARNER, "Script does not return boolean result.");
                     return getFailedOutput();
                 }
 
@@ -85,14 +78,14 @@ public class WaitForScriptAction extends SymbolAction {
                     return (boolean) val;
                 });
 
-                LOGGER.info(LoggerMarkers.LEARNER, "Waiting for JavaScript success");
+                logger.info(LoggerMarkers.LEARNER, "Waiting for JavaScript success");
                 return getSuccessOutput();
             } catch (Exception e) {
-                LOGGER.info(LoggerMarkers.LEARNER, "Could not execute JavaScript", e);
+                logger.info(LoggerMarkers.LEARNER, "Could not execute JavaScript", e);
                 return getFailedOutput();
             }
         } else {
-            LOGGER.info(LoggerMarkers.LEARNER, "This driver does not support JavaScript!");
+            logger.info(LoggerMarkers.LEARNER, "This driver does not support JavaScript!");
             return getFailedOutput();
         }
     }

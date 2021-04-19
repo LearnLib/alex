@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,32 +36,43 @@ import de.learnlib.alex.data.repositories.SymbolActionRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolStepRepository;
 import de.learnlib.alex.data.repositories.UploadableFileRepository;
+import de.learnlib.alex.learning.dao.LearnerSetupDAO;
+import de.learnlib.alex.learning.entities.LearnerSetup;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
+import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;
 import de.learnlib.alex.learning.repositories.LearnerSetupRepository;
+import de.learnlib.alex.modelchecking.dao.LtsFormulaDAO;
+import de.learnlib.alex.modelchecking.dao.LtsFormulaSuiteDAO;
+import de.learnlib.alex.modelchecking.entities.LtsFormula;
+import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import de.learnlib.alex.testing.dao.TestDAO;
+import de.learnlib.alex.testing.dao.TestExecutionConfigDAO;
+import de.learnlib.alex.testing.dao.TestReportDAO;
 import de.learnlib.alex.testing.entities.Test;
+import de.learnlib.alex.testing.entities.TestExecutionConfig;
 import de.learnlib.alex.testing.entities.TestSuite;
 import de.learnlib.alex.testing.repositories.TestExecutionConfigRepository;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
 import de.learnlib.alex.testing.repositories.TestRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import de.learnlib.alex.websocket.services.ProjectPresenceService;
+import de.learnlib.alex.websocket.services.SymbolPresenceService;
+import de.learnlib.alex.websocket.services.TestPresenceService;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import javax.validation.ValidationException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.validation.ValidationException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Implementation of a ProjectDAO using Spring Data.
@@ -70,26 +81,35 @@ import java.util.stream.Collectors;
 @Transactional(rollbackFor = Exception.class)
 public class ProjectDAO {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(ProjectDAO.class);
 
-    private ProjectRepository projectRepository;
-    private LearnerResultRepository learnerResultRepository;
-    private TestReportRepository testReportRepository;
-    private ParameterizedSymbolRepository parameterizedSymbolRepository;
-    private SymbolStepRepository symbolStepRepository;
-    private SymbolActionRepository symbolActionRepository;
-    private FileDAO fileDAO;
-    private ProjectEnvironmentDAO projectEnvironmentDAO;
-    private ProjectUrlRepository projectUrlRepository;
-    private TestExecutionConfigRepository testExecutionConfigRepository;
-    private ProjectEnvironmentRepository environmentRepository;
-    private SymbolGroupDAO symbolGroupDAO;
-    private TestDAO testDAO;
-    private UserDAO userDAO;
-    private TestRepository testRepository;
-    private SymbolParameterRepository symbolParameterRepository;
-    private UploadableFileRepository uploadableFileRepository;
-    private LearnerSetupRepository learnerSetupRepository;
+    private final ProjectRepository projectRepository;
+    private final LearnerResultRepository learnerResultRepository;
+    private final TestReportRepository testReportRepository;
+    private final ParameterizedSymbolRepository parameterizedSymbolRepository;
+    private final SymbolStepRepository symbolStepRepository;
+    private final SymbolActionRepository symbolActionRepository;
+    private final FileDAO fileDAO;
+    private final ProjectEnvironmentDAO projectEnvironmentDAO;
+    private final ProjectUrlRepository projectUrlRepository;
+    private final TestExecutionConfigRepository testExecutionConfigRepository;
+    private final ProjectEnvironmentRepository environmentRepository;
+    private final SymbolGroupDAO symbolGroupDAO;
+    private final TestDAO testDAO;
+    private final UserDAO userDAO;
+    private final TestRepository testRepository;
+    private final SymbolParameterRepository symbolParameterRepository;
+    private final UploadableFileRepository uploadableFileRepository;
+    private final LearnerSetupRepository learnerSetupRepository;
+    private final TestPresenceService testPresenceService;
+    private final SymbolPresenceService symbolPresenceService;
+    private final ProjectPresenceService projectPresenceService;
+    private final TestReportDAO testReportDAO;
+    private final LtsFormulaSuiteDAO ltsFormulaSuiteDAO;
+    private final LtsFormulaDAO ltsFormulaDAO;
+    private final LearnerResultStepRepository learnerResultStepRepository;
+    private final LearnerSetupDAO learnerSetupDAO;
+    private final TestExecutionConfigDAO testExecutionConfigDAO;
 
     @Autowired
     public ProjectDAO(ProjectRepository projectRepository,
@@ -109,7 +129,16 @@ public class ProjectDAO {
                       TestRepository testRepository,
                       SymbolParameterRepository symbolParameterRepository,
                       UploadableFileRepository uploadableFileRepository,
-                      LearnerSetupRepository learnerSetupRepository) {
+                      LearnerSetupRepository learnerSetupRepository,
+                      LearnerResultStepRepository learnerResultStepRepository,
+                      @Lazy TestPresenceService testPresenceService,
+                      @Lazy SymbolPresenceService symbolPresenceService,
+                      @Lazy ProjectPresenceService projectPresenceService,
+                      @Lazy TestReportDAO testReportDAO,
+                      @Lazy LtsFormulaSuiteDAO ltsFormulaSuiteDAO,
+                      @Lazy LtsFormulaDAO ltsFormulaDAO,
+                      @Lazy LearnerSetupDAO learnerSetupDAO,
+                      @Lazy TestExecutionConfigDAO testExecutionConfigDAO) {
         this.projectRepository = projectRepository;
         this.learnerResultRepository = learnerResultRepository;
         this.fileDAO = fileDAO;
@@ -128,11 +157,18 @@ public class ProjectDAO {
         this.uploadableFileRepository = uploadableFileRepository;
         this.userDAO = userDAO;
         this.learnerSetupRepository = learnerSetupRepository;
+        this.testPresenceService = testPresenceService;
+        this.symbolPresenceService = symbolPresenceService;
+        this.projectPresenceService = projectPresenceService;
+        this.testReportDAO = testReportDAO;
+        this.ltsFormulaSuiteDAO = ltsFormulaSuiteDAO;
+        this.ltsFormulaDAO = ltsFormulaDAO;
+        this.learnerResultStepRepository = learnerResultStepRepository;
+        this.learnerSetupDAO = learnerSetupDAO;
+        this.testExecutionConfigDAO = testExecutionConfigDAO;
     }
 
-    public Project create(final User user, final CreateProjectForm projectForm) throws ValidationException {
-        LOGGER.traceEntry("create({})", projectForm);
-
+    public Project create(final User user, final CreateProjectForm projectForm) {
         final Project project = new Project();
         project.addOwner(user);
         project.setName(projectForm.getName());
@@ -153,7 +189,7 @@ public class ProjectDAO {
         final ProjectEnvironment defaultEnv = new ProjectEnvironment();
         defaultEnv.setName("Production");
         defaultEnv.setDefault(true);
-        final ProjectEnvironment createdDefaultEnvironment = projectEnvironmentDAO.create(user, createdProject.getId(), defaultEnv);
+        final var createdDefaultEnvironment = projectEnvironmentDAO.create(user, createdProject.getId(), defaultEnv);
 
         final ProjectUrl projectUrl = new ProjectUrl();
         projectUrl.setUrl(projectForm.getUrl());
@@ -162,9 +198,13 @@ public class ProjectDAO {
         projectUrl.setDefault(true);
         final ProjectUrl createdProjectUrl = projectUrlRepository.save(projectUrl);
         createdDefaultEnvironment.getUrls().add(createdProjectUrl);
-        projectEnvironmentDAO.update(user, createdProject.getId(), createdDefaultEnvironment.getId(), createdDefaultEnvironment);
+        projectEnvironmentDAO.update(
+                user,
+                createdProject.getId(),
+                createdDefaultEnvironment.getId(),
+                createdDefaultEnvironment
+        );
 
-        LOGGER.traceExit(createdProject);
         return loadLazyRelations(createdProject);
     }
 
@@ -174,16 +214,14 @@ public class ProjectDAO {
         return projects;
     }
 
-    public Project getByID(User user, Long projectId) throws NotFoundException {
+    public Project getByID(User user, Long projectId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         checkAccess(user, project);
         loadLazyRelations(project);
         return project;
     }
 
-    public Project update(User user, Long projectId, Project project) throws NotFoundException, ValidationException {
-        LOGGER.traceEntry("update({})", project);
-
+    public Project update(User user, Long projectId, Project project) {
         final Project projectInDb = projectRepository.findById(projectId).orElse(null);
         checkAccess(user, projectInDb);
 
@@ -197,11 +235,10 @@ public class ProjectDAO {
         final Project updatedProject = projectRepository.save(projectInDb);
         loadLazyRelations(updatedProject);
 
-        LOGGER.traceExit(project);
         return updatedProject;
     }
 
-    public void delete(User user, Long projectId) throws NotFoundException {
+    public void delete(User user, Long projectId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         checkAccess(user, project);
 
@@ -211,45 +248,62 @@ public class ProjectDAO {
 
         symbolActionRepository.deleteAllBySymbol_Project_Id(projectId);
         symbolStepRepository.deleteAllBySymbol_Project_Id(projectId);
+        testExecutionConfigRepository.deleteAllByProject_Id(projectId);
         testReportRepository.deleteAllByProject_Id(projectId);
         testRepository.deleteAllByProject_Id(projectId);
+        learnerResultStepRepository.deleteAllByResult_Project_Id(projectId);
         learnerResultRepository.deleteAllByProject_Id(projectId);
         learnerSetupRepository.deleteAllByProject_Id(projectId);
         parameterizedSymbolRepository.deleteAllBySymbol_Project_Id(projectId);
-        testExecutionConfigRepository.deleteAllByProject_Id(projectId);
         symbolParameterRepository.deleteAllBySymbol_Project_Id(projectId);
         uploadableFileRepository.deleteAllByProject_Id(projectId);
 
-        //clear relationships to members and owners first
+        // clear relationships to members and owners first
         project.getOwners().clear();
         project.getMembers().clear();
         projectRepository.save(project);
+
+        // release all project locks
+        this.symbolPresenceService.releaseSymbolLocksByProject(projectId);
+        this.testPresenceService.releaseTestLocksByProject(projectId);
+        this.projectPresenceService.removeProjectFromPresenceMap(projectId);
+
+        // delete the screenshot directory
+        testReportDAO.deleteScreenshotDirectory(user, projectId);
 
         // delete the project directory
         try {
             fileDAO.deleteProjectDirectory(user, projectId);
             projectRepository.delete(project);
         } catch (IOException e) {
-            LOGGER.info("The project has been deleted, the directory, however, not.");
+            logger.info("The project has been deleted, the directory, however, not.");
         }
+
     }
 
-    public void delete(User user, List<Long> projectIds) throws NotFoundException {
-        for (Long id: projectIds) {
+    public void delete(User user, List<Long> projectIds) {
+        for (Long id : projectIds) {
             delete(user, id);
         }
     }
 
-    public Project importProject(User user, ProjectExportableEntity projectExportableEntity) throws NotFoundException {
+    public Project importProject(User user, ProjectExportableEntity projectExportableEntity) {
         final ObjectMapper om = new ObjectMapper();
 
         final Project project;
         final List<SymbolGroup> groups;
         final List<Test> tests;
+        final List<LtsFormulaSuite> formulaSuites;
+        final List<LearnerSetup> learnerSetups;
+        final List<TestExecutionConfig> testExecutionConfigs;
+
         try {
             project = om.readValue(projectExportableEntity.getProject().toString(), Project.class);
-            groups = new ArrayList<>(Arrays.asList(om.readValue(projectExportableEntity.getGroups().toString(), SymbolGroup[].class)));
-            tests = new ArrayList<>(Arrays.asList(om.readValue(projectExportableEntity.getTests().toString(), Test[].class)));
+            groups = Arrays.asList(om.readValue(projectExportableEntity.getGroups().toString(), SymbolGroup[].class));
+            tests = Arrays.asList(om.readValue(projectExportableEntity.getTests().toString(), Test[].class));
+            formulaSuites = Arrays.asList(om.readValue(projectExportableEntity.getFormulaSuites().toString(), LtsFormulaSuite[].class));
+            learnerSetups = Arrays.asList(om.readValue(projectExportableEntity.getLearnerSetups().toString(), LearnerSetup[].class));
+            testExecutionConfigs = Arrays.asList(om.readValue(projectExportableEntity.getTestExecutionConfigs().toString(), TestExecutionConfig[].class));
         } catch (IOException e) {
             e.printStackTrace();
             throw new ValidationException("The input is not formatted correctly");
@@ -259,82 +313,66 @@ public class ProjectDAO {
             throw new ValidationException("There has to be a default group");
         }
 
-        check(user, project);
+        check(project);
 
-        final Project newProject = new Project();
+        final var newProject = new Project();
         newProject.setName(project.getName());
         newProject.setDescription(project.getDescription());
         newProject.addOwner(user);
 
-        final Project createdProject = projectRepository.save(newProject);
-        createdProject.getEnvironments().addAll(project.getEnvironments());
-        createdProject.getEnvironments().forEach(e -> {
-            e.setProject(createdProject);
-            e.getVariables().forEach(v -> v.setEnvironment(e));
-            e.getUrls().forEach(u -> u.setEnvironment(e));
-            environmentRepository.save(e);
-        });
+        final TestSuite rootTestSuite = new TestSuite();
+        rootTestSuite.setName("Root");
+        rootTestSuite.setProject(newProject);
+        newProject.getTests().add(rootTestSuite);
 
-        final TestSuite testSuite = new TestSuite();
-        testSuite.setName("Root");
-        testSuite.setProject(createdProject);
-        testDAO.create(user, createdProject.getId(), testSuite);
+        final var createdProject = projectRepository.save(newProject);
+        createdProject.getEnvironments().addAll(project.getEnvironments().stream()
+                .map(e -> {
+                    e.setProject(createdProject);
+                    e.getVariables().forEach(v -> v.setEnvironment(e));
+                    e.getUrls().forEach(u -> u.setEnvironment(e));
+                    return environmentRepository.save(e);
+                })
+                .collect(Collectors.toList())
+        );
 
         symbolGroupDAO.importGroups(user, createdProject, groups, new HashMap<>());
+
+        /*  oldTestId -> newTestId
+         *  maps the exported testids to the corresponding newly created ones,
+         *  enabling correct referencing when importing testExecutionConfigs
+         */
+        Map<Long, Long> configRefMap = new HashMap<>();
+
         if (!tests.isEmpty()) {
-            testDAO.importTests(user, createdProject.getId(), tests);
+            testDAO.importTests(user, createdProject.getId(), tests, configRefMap);
         }
 
-        return createdProject;
-    }
-
-    private void check(User user, Project project) {
-        // there is a default environment
-        if (project.getEnvironments().stream().filter(ProjectEnvironment::isDefault).count() != 1) {
-            throw new ValidationException("There has to be exactly one environment");
-        }
-
-        // each environment has default url
-        for (ProjectEnvironment env: project.getEnvironments()) {
-            if (env.getUrls().stream().filter(ProjectUrl::isDefault).count() != 1) {
-                throw new ValidationException("An environment needs a default URL");
+        for (LtsFormulaSuite suite : formulaSuites) {
+            final LtsFormulaSuite createdSuite = ltsFormulaSuiteDAO.create(user, createdProject.getId(), suite);
+            for (LtsFormula formula : suite.getFormulas()) {
+                ltsFormulaDAO.create(user, createdProject.getId(), createdSuite.getId(), formula);
             }
         }
 
-        // unique environments name
-        if (project.getEnvironments().stream().map(ProjectEnvironment::getName).collect(Collectors.toSet()).size() != project.getEnvironments().size()) {
-            throw new ValidationException("The names of the environments need to be unique");
+        if (!learnerSetups.isEmpty()) {
+            learnerSetupDAO.importLearnerSetups(user, createdProject, learnerSetups);
         }
 
-        // all environments have same url names
-        if (project.getEnvironments().stream().map(e -> e.getUrls().size()).collect(Collectors.toSet()).size() > 1) {
-            throw new ValidationException("Each environment has to have the same amount of URLs");
-        }
-        final Set<String> urlNamesSet = new HashSet<>(project.getEnvironments().stream()
-                .map(ProjectEnvironment::getUrls)
-                .map(urls -> urls.stream().map(ProjectUrl::getName).collect(Collectors.toList()))
-                .reduce(new ArrayList<>(), (acc, val) -> {
-                    acc.addAll(val);
-                    return acc;
-                }));
-        if (urlNamesSet.size() != project.getEnvironments().get(0).getUrls().size()) {
-            throw new ValidationException("The names of the urls are not equal in the environments");
+        if (!testExecutionConfigs.isEmpty()) {
+            testExecutionConfigDAO.importTestExecutionConfigs(user, createdProject, testExecutionConfigs, configRefMap);
         }
 
-        // all environments have same variable names
-        if (project.getEnvironments().stream().map(e -> e.getVariables().size()).collect(Collectors.toSet()).size() > 1) {
-            throw new ValidationException("Each environment has to have the same amount of variables");
-        }
-        final Set<String> variableNamesSet = new HashSet<>(project.getEnvironments().stream()
-                .map(ProjectEnvironment::getVariables)
-                .map(urls -> urls.stream().map(ProjectEnvironmentVariable::getName).collect(Collectors.toList()))
-                .reduce(new ArrayList<>(), (acc, val) -> {
-                    acc.addAll(val);
-                    return acc;
-                }));
-        if (variableNamesSet.size() != project.getEnvironments().get(0).getVariables().size()) {
-            throw new ValidationException("The names of the variables are not equal in the environments");
-        }
+        loadLazyRelations(createdProject);
+        return createdProject;
+    }
+
+    private void check(Project project) {
+        checkProjectHasDefaultEnvironment(project);
+        checkEnvironmentsHaveDefaultUrl(project);
+        checkEnvironmentNamesAreUnique(project);
+        checkEnvironmentsHaveSameUrlNames(project);
+        checkEnvironmentsHaveSameVariableNames(project);
     }
 
     /**
@@ -354,7 +392,7 @@ public class ProjectDAO {
         return project;
     }
 
-    public void checkAccess(User user, Project project) throws NotFoundException, UnauthorizedException {
+    public void checkAccess(User user, Project project) {
         if (project == null) {
             throw new NotFoundException("The project does not exist.");
         }
@@ -375,8 +413,8 @@ public class ProjectDAO {
         }
 
         ownerIds.forEach(ownerId -> {
-            projectInDb.removeMember(userDAO.getById(ownerId));
-            projectInDb.addOwner(userDAO.getById(ownerId));
+            projectInDb.removeMember(userDAO.getByID(ownerId));
+            projectInDb.addOwner(userDAO.getByID(ownerId));
         });
 
         checkProjectIntegrity(projectInDb);
@@ -396,8 +434,8 @@ public class ProjectDAO {
         }
 
         memberIds.forEach(memberId -> {
-            projectInDb.removeOwner(userDAO.getById(memberId));
-            projectInDb.addMember(userDAO.getById(memberId));
+            projectInDb.removeOwner(userDAO.getByID(memberId));
+            projectInDb.addMember(userDAO.getByID(memberId));
         });
 
         checkProjectIntegrity(projectInDb);
@@ -417,13 +455,20 @@ public class ProjectDAO {
         }
 
         ownerIds.forEach(ownerId -> {
-            projectInDb.removeOwner(userDAO.getById(ownerId));
+            projectInDb.removeOwner(userDAO.getByID(ownerId));
         });
 
         checkProjectIntegrity(projectInDb);
 
         final Project updatedProject = projectRepository.save(projectInDb);
         loadLazyRelations(updatedProject);
+
+        // remove owner presences from project and release locks
+        ownerIds.forEach(ownerId -> {
+            this.projectPresenceService.removeUserFromProjectPresence(ownerId, projectId);
+            this.testPresenceService.releaseUserLocksFromProject(ownerId, projectId);
+            this.symbolPresenceService.releaseUserLocksFromProject(ownerId, projectId);
+        });
 
         return updatedProject;
     }
@@ -439,11 +484,18 @@ public class ProjectDAO {
         }
 
         memberIds.forEach(memberId -> {
-            projectInDb.removeMember(userDAO.getById(memberId));
+            projectInDb.removeMember(userDAO.getByID(memberId));
         });
 
         final Project updatedProject = projectRepository.save(projectInDb);
         loadLazyRelations(updatedProject);
+
+        // remove member presences from project and release locks
+        memberIds.forEach(memberId -> {
+            this.projectPresenceService.removeUserFromProjectPresence(memberId, projectId);
+            this.testPresenceService.releaseUserLocksFromProject(memberId, projectId);
+            this.symbolPresenceService.releaseUserLocksFromProject(memberId, projectId);
+        });
 
         return updatedProject;
     }
@@ -452,6 +504,72 @@ public class ProjectDAO {
         //at least one owner has to remain
         if (project.getOwners().isEmpty()) {
             throw new ValidationException("There need to be at least one owner in the project.");
+        }
+    }
+
+    private void checkEnvironmentNamesAreUnique(Project project) {
+        final var numberOfUniqueEnvironments = project.getEnvironments().stream()
+                .map(ProjectEnvironment::getName)
+                .collect(Collectors.toSet())
+                .size();
+
+        if (numberOfUniqueEnvironments != project.getEnvironments().size()) {
+            throw new ValidationException("The names of the environments need to be unique.");
+        }
+    }
+
+    private void checkEnvironmentsHaveDefaultUrl(Project project) {
+        for (ProjectEnvironment env : project.getEnvironments()) {
+            if (env.getUrls().stream().filter(ProjectUrl::isDefault).count() != 1) {
+                throw new ValidationException("An environment needs a default URL");
+            }
+        }
+    }
+
+    private void checkEnvironmentsHaveSameVariableNames(Project project) {
+        final var numberOfVariables = project.getEnvironments().stream()
+                .map(e -> e.getVariables().size())
+                .collect(Collectors.toSet())
+                .size();
+
+        if (numberOfVariables > 1) {
+            throw new ValidationException("Each environment has to have the same amount of variables");
+        }
+
+        final var variableNamesSet = project.getEnvironments().stream()
+                .map(ProjectEnvironment::getVariables)
+                .flatMap(Collection::stream)
+                .map(ProjectEnvironmentVariable::getName)
+                .collect(Collectors.toSet());
+
+        if (variableNamesSet.size() != project.getEnvironments().get(0).getVariables().size()) {
+            throw new ValidationException("The names of the variables are not equal in the environments");
+        }
+    }
+
+    private void checkEnvironmentsHaveSameUrlNames(Project project) {
+        final var numberOfUrls = project.getEnvironments().stream()
+                .map(e -> e.getUrls().size()).collect(Collectors.toSet())
+                .size();
+
+        if (numberOfUrls > 1) {
+            throw new ValidationException("Each environment has to have the same amount of URLs");
+        }
+
+        final var urlNamesSet = project.getEnvironments().stream()
+                .map(ProjectEnvironment::getUrls)
+                .flatMap(Collection::stream)
+                .map(ProjectUrl::getName)
+                .collect(Collectors.toSet());
+
+        if (urlNamesSet.size() != project.getEnvironments().get(0).getUrls().size()) {
+            throw new ValidationException("The names of the urls are not equal in the environments");
+        }
+    }
+
+    private void checkProjectHasDefaultEnvironment(Project project) {
+        if (project.getEnvironments().stream().filter(ProjectEnvironment::isDefault).count() != 1) {
+            throw new ValidationException("There has to be exactly one environment");
         }
     }
 }

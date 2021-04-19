@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: backend
+  name: backend
+spec:
+  ports:
+    - port: 8000
+      protocol: TCP
+      targetPort: 8000
+  selector:
+    app: backend
+  type: NodePort
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: backend
+data:
+  application.properties: |-
+    spring.jpa.hibernate.ddl-auto: update
+    spring.datasource.url: jdbc:postgresql://database:5432/{{.Values.database.name}}
+    spring.datasource.username: {{.Values.database.user}}
+    spring.datasource.password: {{.Values.database.password}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: '{{.Values.registry.base}}/alex-backend:{{ .Chart.AppVersion }}'
+          env:
+            - name: REMOTE_DRIVER
+              value: http://selenium-hub:4444/wd/hub
+          volumeMounts:
+            - name: config
+              mountPath: /var/lib/alex/config/
+              readOnly: true
+      restartPolicy: Always
+      volumes:
+        - name: config
+          configMap:
+            name: backend
+            items:
+              - key: "application.properties"
+                path: "application.properties"

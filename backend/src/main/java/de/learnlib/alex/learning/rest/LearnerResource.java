@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,37 +17,22 @@
 package de.learnlib.alex.learning.rest;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.data.dao.ProjectDAO;
-import de.learnlib.alex.data.dao.SymbolDAO;
-import de.learnlib.alex.data.entities.ExecuteResult;
-import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
-import de.learnlib.alex.data.entities.Symbol;
-import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
-import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStatus;
-import de.learnlib.alex.learning.entities.ReadOutputConfig;
 import de.learnlib.alex.learning.entities.SeparatingWord;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.events.LearnerEvent;
-import de.learnlib.alex.learning.exceptions.LearnerException;
-import de.learnlib.alex.learning.repositories.LearnerResultRepository;
-import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;
 import de.learnlib.alex.learning.services.LearnerService;
 import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.webhooks.services.WebhookService;
+import java.util.List;
+import javax.ws.rs.core.MediaType;
 import net.automatalib.automata.transducers.impl.compact.CompactMealy;
-import net.automatalib.words.Alphabet;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,47 +42,27 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  * REST API to manage the learning.
  */
 @RestController
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 @RequestMapping("/rest/projects/{projectId}/learner")
 public class LearnerResource {
 
-    private static final Logger LOGGER = LogManager.getLogger();
-
-    /** The security context containing the user of the request. */
-    private AuthContext authContext;
-    private ProjectDAO projectDAO;
-    private SymbolDAO symbolDAO;
-    private LearnerResultDAO learnerResultDAO;
-    private LearnerResultStepRepository learnerResultStepRepository;
-    private LearnerResultRepository learnerResultRepository;
-    private LearnerService learnerService;
-    private WebhookService webhookService;
+    private final AuthContext authContext;
+    private final ProjectDAO projectDAO;
+    private final LearnerService learnerService;
+    private final WebhookService webhookService;
 
     @Autowired
     public LearnerResource(AuthContext authContext,
                            ProjectDAO projectDAO,
-                           SymbolDAO symbolDAO,
-                           LearnerResultDAO learnerResultDAO,
-                           LearnerResultStepRepository learnerResultStepRepository,
-                           LearnerResultRepository learnerResultRepository,
                            LearnerService learnerService,
-                           WebhookService webhookService) {
+                           WebhookService webhookService
+    ) {
         this.authContext = authContext;
         this.projectDAO = projectDAO;
-        this.symbolDAO = symbolDAO;
-        this.learnerResultDAO = learnerResultDAO;
-        this.learnerResultStepRepository = learnerResultStepRepository;
-        this.learnerResultRepository = learnerResultRepository;
         this.learnerService = learnerService;
         this.webhookService = webhookService;
     }
@@ -119,7 +84,6 @@ public class LearnerResource {
     public ResponseEntity<LearnerResult> start(@PathVariable("projectId") Long projectId,
                                                @RequestBody LearnerStartConfiguration startConfiguration) {
         final User user = authContext.getUser();
-        LOGGER.traceEntry("start({}, {}) for user {}.", projectId, startConfiguration, user);
 
         if (startConfiguration.getSetup().getSymbols().contains(startConfiguration.getSetup().getPreSymbol())) {
             throw new IllegalArgumentException("The reset may not be a part of the input alphabet");
@@ -128,7 +92,6 @@ public class LearnerResource {
         final Project project = projectDAO.getByID(user, projectId);
         final LearnerResult learnerResult = learnerService.start(user, project, startConfiguration);
 
-        LOGGER.traceExit(learnerResult);
         webhookService.fireEvent(user, new LearnerEvent.Started(learnerResult));
         return ResponseEntity.ok(learnerResult);
     }
@@ -153,45 +116,8 @@ public class LearnerResource {
     public ResponseEntity<LearnerResult> resume(@PathVariable("projectId") Long projectId,
                                                 @PathVariable("testNo") Long testNo,
                                                 @RequestBody LearnerResumeConfiguration configuration) {
-        final User user = authContext.getUser();
-        LOGGER.traceEntry("resume({}, {}, {}) for user {}.", projectId, testNo, configuration, user);
-
-        configuration.checkConfiguration();
-        LearnerResult result = learnerResultDAO.get(user, projectId, testNo);
-
-        if (configuration.getStepNo() > result.getSteps().size()) {
-            throw new IllegalArgumentException("The step number is not valid.");
-        }
-
-        // remove all steps after the one where the learning process should be continued from
-        if (result.getSteps().size() > 0) {
-            result.getSteps().stream()
-                    .filter(s -> s.getStepNo() > configuration.getStepNo())
-                    .forEach(learnerResultStepRepository::delete);
-            learnerResultStepRepository.flush();
-
-            result = learnerResultDAO.get(user, projectId, testNo);
-            result.getStatistics().setEqsUsed(result.getSteps().size());
-
-            // since we allow alphabets to grow, set the alphabet to the one of the latest hypothesis
-            LearnerResultStep latestStep = result.getSteps().get(result.getSteps().size() - 1);
-            Alphabet<String> alphabet = latestStep.getHypothesis().createAlphabet();
-
-            result.getSetup().getSymbols().removeIf(s -> !alphabet.contains(s.getAliasOrComputedName()));
-
-            // add the new alphabet symbols to the config.
-            if (configuration.getSymbolsToAdd().size() > 0) {
-                Map<Long, Symbol> symbolMap = new HashMap<>();
-                symbolDAO.getByIds(user, projectId, configuration.getSymbolIds())
-                        .forEach(s -> symbolMap.put(s.getId(), s));
-                configuration.getSymbolsToAdd().forEach(ps -> ps.setSymbol(symbolMap.get(ps.getSymbol().getId())));
-            }
-
-            result.setStatus(LearnerResult.Status.PENDING);
-            learnerResultRepository.saveAndFlush(result);
-        }
-
-        learnerService.resume(user, result.getProject(), result, configuration);
+        final var user = authContext.getUser();
+        final var result = learnerService.resume(user, projectId, testNo, configuration);
         webhookService.fireEvent(user, new LearnerEvent.Resumed(result));
         return ResponseEntity.ok(result);
     }
@@ -209,18 +135,8 @@ public class LearnerResource {
             value = "/{testNo}/stop"
     )
     public ResponseEntity<String> stop(@PathVariable("projectId") Long projectId, @PathVariable("testNo") Long testNo) {
-        User user = authContext.getUser();
-        LOGGER.traceEntry("stop() for user {}.", user);
-        Project project = projectDAO.getByID(user, projectId); // access check
-        LearnerResult result = learnerResultDAO.get(user, projectId, testNo);
-
-        if (projectDAO.getByID(user, projectId).getOwners().stream().map(User::getId).noneMatch(ownerId -> ownerId.equals(user.getId()))
-                && result.getExecutedBy() != null && !result.getExecutedBy().getId().equals(user.getId())
-        ) {
-            throw new UnauthorizedException("You are not allowed to abort this learning process.");
-        }
-
-        learnerService.stop(projectId, testNo);
+        final var user = authContext.getUser();
+        learnerService.abort(user, projectId, testNo);
         return ResponseEntity.ok().build();
     }
 
@@ -236,70 +152,9 @@ public class LearnerResource {
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity<LearnerStatus> getStatus(@PathVariable("projectId") Long projectId) {
-        final User user = authContext.getUser();
-        LOGGER.traceEntry("getStatus() for user {}.", user);
-        final LearnerStatus status = learnerService.getStatus(projectId);
-        LOGGER.traceExit(status);
+        final var user = authContext.getUser();
+        final var status = learnerService.getStatus(user, projectId);
         return ResponseEntity.ok(status);
-    }
-
-    /**
-     * Get the output of a (possible) counterexample. This output is generated by executing the symbols on the SUL.
-     *
-     * @param projectId
-     *         The project id the counter example takes place in.
-     * @param outputConfig
-     *         The output config.
-     * @return The observed output of the given input set.
-     */
-    @PostMapping(
-            value = "/outputs",
-            consumes = MediaType.APPLICATION_JSON,
-            produces = MediaType.APPLICATION_JSON
-    )
-    public ResponseEntity readOutput(@PathVariable("projectId") Long projectId,
-                                     @RequestBody ReadOutputConfig outputConfig) {
-        User user = authContext.getUser();
-        LOGGER.traceEntry("readOutput({}, {}) for user {}.", projectId, outputConfig, user);
-
-        try {
-            if (outputConfig.getSymbols().getSymbols().isEmpty()) {
-                final Exception e = new Exception("You have to specify at least one symbol.");
-                return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", HttpStatus.BAD_REQUEST, e);
-            }
-
-            Project project = projectDAO.getByID(user, projectId);
-
-            final ParameterizedSymbol pResetSymbol = outputConfig.getSymbols().getResetSymbol();
-            if (pResetSymbol == null) {
-                throw new NotFoundException("No reset symbol specified!");
-            }
-
-            final Symbol resetSymbol = symbolDAO.get(user, projectId, pResetSymbol.getSymbol().getId());
-            outputConfig.getSymbols().getResetSymbol().setSymbol(resetSymbol);
-
-            final List<Symbol> symbols = loadSymbols(user, projectId, outputConfig.getSymbols().getSymbolIds());
-            final Map<Long, Symbol> symbolMap = new HashMap<>();
-            symbols.forEach(s -> symbolMap.put(s.getId(), s));
-            outputConfig.getSymbols().getSymbols().forEach(ps -> ps.setSymbol(symbolMap.get(ps.getSymbol().getId())));
-
-            List<ExecuteResult> outputs = learnerService.readOutputs(user, project, outputConfig);
-
-            LOGGER.traceExit(outputs);
-            return ResponseEntity.ok(outputs);
-        } catch (LearnerException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", HttpStatus.BAD_REQUEST, e);
-        }
-    }
-
-    // load all from SymbolDAO always orders the Symbols by ID
-    private List<Symbol> loadSymbols(User user, Long projectId, List<Long> ids) throws NotFoundException {
-        final List<Symbol> symbols = new ArrayList<>();
-        for (Long id : ids) {
-            symbols.add(symbolDAO.get(user, projectId, id));
-        }
-        return symbols;
     }
 
     /**
@@ -315,18 +170,15 @@ public class LearnerResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity<SeparatingWord> separatingWord(@PathVariable("projectId") Long projectId,
-                                         @RequestBody List<CompactMealyMachineProxy> mealyMachineProxies) {
-        final User user = authContext.getUser();
-        LOGGER.traceEntry("calculate separating word for models ({}) and user {}.", mealyMachineProxies, user);
-
+    public ResponseEntity<SeparatingWord> separatingWord(
+            @PathVariable("projectId") Long projectId,
+            @RequestBody List<CompactMealyMachineProxy> mealyMachineProxies
+    ) {
         if (mealyMachineProxies.size() != 2) {
             throw new IllegalArgumentException("You need to specify exactly two hypotheses!");
         }
 
-        final SeparatingWord diff = learnerService.separatingWord(mealyMachineProxies.get(0), mealyMachineProxies.get(1));
-
-        LOGGER.traceExit(diff);
+        final var diff = learnerService.separatingWord(mealyMachineProxies.get(0), mealyMachineProxies.get(1));
         return ResponseEntity.ok(diff);
     }
 
@@ -342,19 +194,19 @@ public class LearnerResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity<CompactMealyMachineProxy> differenceTree(@PathVariable("projectId") Long projectId,
-                                         @RequestBody List<CompactMealyMachineProxy> mealyMachineProxies) {
-        final User user = authContext.getUser();
-        LOGGER.traceEntry("calculate the difference tree for models ({}) and user {}.", mealyMachineProxies, user);
-
+    public ResponseEntity<CompactMealyMachineProxy> differenceTree(
+            @PathVariable("projectId") Long projectId,
+            @RequestBody List<CompactMealyMachineProxy> mealyMachineProxies
+    ) {
         if (mealyMachineProxies.size() != 2) {
             throw new IllegalArgumentException("You need to specify exactly two hypotheses!");
         }
 
-        final CompactMealy<String, String> diffTree =
-                learnerService.differenceTree(mealyMachineProxies.get(0), mealyMachineProxies.get(1));
+        final CompactMealy<String, String> diffTree = learnerService.differenceTree(
+                mealyMachineProxies.get(0),
+                mealyMachineProxies.get(1)
+        );
 
-        LOGGER.traceExit(diffTree);
         return ResponseEntity.ok(CompactMealyMachineProxy.createFrom(diffTree, diffTree.getInputAlphabet()));
     }
 }

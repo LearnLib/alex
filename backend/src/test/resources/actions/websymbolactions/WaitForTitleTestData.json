@@ -1,6 +1,6 @@
 {
-    "type" : "web_waitForTitle",
-    "value" : "#node",
-    "waitCriterion" : "contains",
-    "maxWaitTime" : 60
+  "type": "web_waitForTitle",
+  "value": "#node",
+  "waitCriterion": "contains",
+  "maxWaitTime": 60
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,9 @@
 package de.learnlib.alex.testing.repositories;
 
 import de.learnlib.alex.testing.entities.TestCaseStep;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /** The repository for test case steps. */
 @Repository
@@ -36,8 +34,6 @@ public interface TestCaseStepRepository extends JpaRepository<TestCaseStep, Long
      * @param testCaseIds
      *         The ids of the test case steps in the db.
      */
-    @Transactional
-    @SuppressWarnings("checkstyle:methodname")
     void deleteAllByTestCase_IdAndIdNotIn(Long testId, List<Long> testCaseIds);
 
     /**
@@ -47,11 +43,7 @@ public interface TestCaseStepRepository extends JpaRepository<TestCaseStep, Long
      *         The ID of the symbol.
      * @return The count.
      */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
-    Long countAllByPSymbol_Symbol_Id(Long symbolId);
+    Long countAllBypSymbol_Symbol_Id(Long symbolId);
 
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
-    List<TestCaseStep> findAllByPSymbol_Symbol_Id(Long symbolId);
+    List<TestCaseStep> findAllBypSymbol_Symbol_Id(Long symbolId);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,12 @@
 
 package de.learnlib.alex.learning.entities.learnlibproxies;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.api.query.DefaultQuery;
 import net.automatalib.words.Word;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 public class DefaultQueryProxyTest {
@@ -42,7 +43,7 @@ public class DefaultQueryProxyTest {
         final DefaultQuery<String, Word<String>> query = createQuery();
         final DefaultQueryProxy queryProxy = DefaultQueryProxy.createFrom(query);
 
-        Assert.assertEquals(query, queryProxy.createDefaultQuery());
+        assertEquals(query, queryProxy.createDefaultQuery());
     }
 
     private DefaultQuery<String, Word<String>> createQuery() {

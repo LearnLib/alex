@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,54 +24,63 @@ import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.testing.entities.TestCaseResult;
+import de.learnlib.alex.testing.entities.TestExecutionResult;
 import de.learnlib.alex.testing.entities.TestReport;
+import de.learnlib.alex.testing.entities.TestSuiteResult;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
+import de.learnlib.alex.testing.repositories.TestResultRepository;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+import org.apache.commons.io.FileUtils;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 /** The implementation of the test report DAO . */
 @Service
-@Transactional(rollbackOn = Exception.class)
+@Transactional(rollbackFor = Exception.class)
 public class TestReportDAO {
 
-    /** The test report repository. */
-    private TestReportRepository testReportRepository;
+    private final TestReportRepository testReportRepository;
+    private final TestResultRepository testResultRepository;
+    private final ProjectRepository projectRepository;
+    private final ProjectEnvironmentDAO projectEnvironmentDAO;
+    private final ProjectDAO projectDAO;
+    private final TestResultDAO testResultDAO;
 
-    /** The project repository. */
-    private ProjectRepository projectRepository;
+    @Value("${alex.filesRootDir}")
+    private String filesRootDir;
 
-    private ProjectEnvironmentDAO projectEnvironmentDAO;
-
-    /** The project DAO. */
-    private ProjectDAO projectDAO;
-
-    /**
-     * Constructor.
-     *
-     * @param testReportRepository
-     *         {@link #testReportRepository}
-     * @param projectRepository
-     *         {@link #projectRepository}
-     * @param projectDAO
-     *         {@link #projectDAO}
-     */
     @Autowired
-    public TestReportDAO(TestReportRepository testReportRepository, ProjectRepository projectRepository,
-                         ProjectDAO projectDAO, ProjectEnvironmentDAO projectEnvironmentDAO) {
+    public TestReportDAO(
+            TestReportRepository testReportRepository,
+            ProjectRepository projectRepository,
+            ProjectDAO projectDAO,
+            ProjectEnvironmentDAO projectEnvironmentDAO,
+            TestResultRepository testResultRepository,
+            TestResultDAO testResultDAO
+    ) {
         this.testReportRepository = testReportRepository;
         this.projectRepository = projectRepository;
         this.projectDAO = projectDAO;
         this.projectEnvironmentDAO = projectEnvironmentDAO;
+        this.testResultRepository = testResultRepository;
+        this.testResultDAO = testResultDAO;
     }
 
-    public TestReport create(User user, Long projectId, TestReport testReport) throws NotFoundException {
+    public TestReport create(User user, Long projectId, TestReport testReport) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
@@ -83,7 +92,7 @@ public class TestReportDAO {
             testResult.setProject(project);
         });
 
-        final ProjectEnvironment env = projectEnvironmentDAO.getById(user, testReport.getEnvironment().getId());
+        final ProjectEnvironment env = projectEnvironmentDAO.getByID(user, testReport.getEnvironment().getId());
         testReport.setEnvironment(env);
 
         final TestReport createdTestReport = testReportRepository.save(testReport);
@@ -91,7 +100,15 @@ public class TestReportDAO {
         return createdTestReport;
     }
 
-    public Page<TestReport> getAll(User user, Long projectId, Pageable pageable) throws NotFoundException {
+    public List<TestReport> abortActiveTestReports() {
+        final List<TestReport> pendingReports = testReportRepository.findAllByStatusIn(
+                Arrays.asList(TestReport.Status.IN_PROGRESS, TestReport.Status.PENDING)
+        );
+        pendingReports.forEach(r -> r.setStatus(TestReport.Status.ABORTED));
+        return testReportRepository.saveAll(pendingReports);
+    }
+
+    public Page<TestReport> getAll(User user, Long projectId, Pageable pageable) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
@@ -100,7 +117,7 @@ public class TestReportDAO {
         return testReports;
     }
 
-    public TestReport get(User user, Long projectId, Long testReportId) throws NotFoundException {
+    public TestReport get(User user, Long projectId, Long testReportId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final TestReport testReport = testReportRepository.findById(testReportId).orElse(null);
         checkAccess(user, project, testReport);
@@ -109,7 +126,7 @@ public class TestReportDAO {
         return testReport;
     }
 
-    public TestReport getLatest(User user, Long projectId) throws NotFoundException {
+    public TestReport getLatest(User user, Long projectId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
@@ -122,7 +139,7 @@ public class TestReportDAO {
         }
     }
 
-    public TestReport update(User user, Long projectId, Long reportId, TestReport report) throws NotFoundException {
+    public TestReport update(User user, Long projectId, Long reportId, TestReport report) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final TestReport reportInDb = testReportRepository.findById(reportId).orElse(null);
         checkAccess(user, project, reportInDb);
@@ -137,31 +154,166 @@ public class TestReportDAO {
         return testReportRepository.save(reportInDb);
     }
 
-    public void delete(User user, Long projectId, Long testReportId) throws NotFoundException {
+    public void delete(User user, Long projectId, Long testReportId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final TestReport testReport = testReportRepository.findById(testReportId).orElse(null);
         checkAccess(user, project, testReport);
 
+        // delete screenshots
+        testReport.getTestResults().forEach(testResult -> {
+            if (testResult instanceof TestCaseResult) {
+                if (((TestCaseResult) testResult).getBeforeScreenshot() != null) {
+                    final var filename = ((TestCaseResult) testResult).getBeforeScreenshot().getFilename();
+                    this.deleteScreenshot(user, projectId, testReportId, filename);
+                }
+                ((TestCaseResult) testResult).getOutputs().forEach(testExecutionResult -> {
+                    if (testExecutionResult.getTestScreenshot() != null) {
+                        final var filename = testExecutionResult.getTestScreenshot().getFilename();
+                        this.deleteScreenshot(user, projectId, testReportId, filename);
+                    }
+                });
+            }
+        });
+
         testReportRepository.delete(testReport);
     }
 
-    public void delete(User user, Long projectId, List<Long> testReportIds) throws NotFoundException {
+    public void delete(User user, Long projectId, List<Long> testReportIds) {
         for (Long id : testReportIds) {
             delete(user, projectId, id);
         }
     }
 
-    public void checkAccess(User user, Project project, TestReport report)
-            throws NotFoundException, UnauthorizedException {
+    public File getScreenshot(User user, Long projectId, Long testReportId, String screenshotName) {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final TestReport testReport = testReportRepository.findById(testReportId).orElse(null);
+        checkAccess(user, project, testReport);
+
+        final var filePath = filesRootDir + "/test_screenshots/" + project.getId() + "/" + screenshotName + ".png";
+        final var screenshot = Paths.get(filePath).toFile();
+        if (!screenshot.exists()) {
+            throw new NotFoundException("The requested screenshot does not exists.");
+        }
+
+        return screenshot;
+    }
+
+    public byte[] getScreenshotsAsZip(User user, Long projectId, Long testReportId, Long resultId) throws IOException {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final TestReport testReport = testReportRepository.findById(testReportId).orElse(null);
+        checkAccess(user, project, testReport);
+
+        final var result = testResultRepository.findById(resultId);
+        if (result.isEmpty()) {
+            throw new NotFoundException("The requested test result does not exist.");
+        }
+
+        final var testResult = result.get();
+        if (testResult instanceof TestSuiteResult) {
+            throw new IllegalArgumentException("The requested test result is of type TestCaseResult.");
+        }
+
+        try (
+                final var bos = new ByteArrayOutputStream();
+                final var zos = new ZipOutputStream(bos)
+        ) {
+            final var testCaseResult = (TestCaseResult) testResult;
+
+            final var beforeScreenshot = testCaseResult.getBeforeScreenshot();
+            if (beforeScreenshot != null) {
+                var filename = beforeScreenshot.getFilename();
+                var beforeScreenshotFile = this.getScreenshot(user, projectId, testReportId, filename);
+                writeToZipFile(beforeScreenshotFile, "000__screenshot_after_pre_symbols.png", zos);
+            }
+
+            final var outputs = testCaseResult.getOutputs();
+            for (int i = 0; i < outputs.size(); i++) {
+                var output = outputs.get(i);
+                if (output.getTestScreenshot() != null) {
+                    var filename = output.getTestScreenshot().getFilename();
+                    var screenshotFile = this.getScreenshot(user, projectId, testReportId, filename);
+                    writeToZipFile(screenshotFile, getScreenshotFilename(i, outputs.get(i)), zos);
+                }
+            }
+
+            return bos.toByteArray();
+        }
+    }
+
+    public void deleteScreenshot(User user, Long projectId, Long testReportId, String screenshotName) {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final TestReport testReport = testReportRepository.findById(testReportId).orElse(null);
+        checkAccess(user, project, testReport);
+
+        final var filePath = filesRootDir + "/test_screenshots/" + project.getId() + "/" + screenshotName + ".png";
+        final var screenshot = Paths.get(filePath).toFile();
+        FileUtils.deleteQuietly(screenshot);
+    }
+
+    public void deleteScreenshotDirectory(User user, Long projectId) {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        this.projectDAO.checkAccess(user, project);
+
+        final var dirPath = filesRootDir + "/test_screenshots/" + project.getId();
+        final var directory = Paths.get(dirPath).toFile();
+        FileUtils.deleteQuietly(directory);
+    }
+
+    public TestReport updateStatus(Long reportId, TestReport.Status status) {
+        final var report = testReportRepository.findById(reportId)
+                .orElseThrow(() -> new NotFoundException("report not found."));
+
+        report.setStatus(status);
+
+        final var updatedReport = testReportRepository.save(report);
+        loadLazyRelations(updatedReport);
+
+        return updatedReport;
+    }
+
+    public TestReport getByID(Long reportId) {
+        final var report = testReportRepository.findById(reportId)
+                .orElseThrow(() -> new NotFoundException("report not found."));
+
+        loadLazyRelations(report);
+
+        return report;
+    }
+
+    public void checkAccess(User user, Project project, TestReport report) {
         projectDAO.checkAccess(user, project);
 
         if (report == null) {
             throw new NotFoundException("The test report could not be found.");
         }
 
-        if (!report.getProject().equals(project)) {
+        if (!report.getProject().getId().equals(project.getId())) {
             throw new UnauthorizedException("You are not allowed to access the test report.");
         }
+    }
+
+    private void writeToZipFile(File file, String targetPath, ZipOutputStream zos) throws IOException {
+        try (final var fis = new FileInputStream(file)) {
+            var zipEntry = new ZipEntry(targetPath);
+            zos.putNextEntry(zipEntry);
+
+            byte[] bytes = new byte[1024];
+            int length;
+            while ((length = fis.read(bytes)) >= 0) {
+                zos.write(bytes, 0, length);
+            }
+
+            zos.closeEntry();
+        }
+    }
+
+    private String getScreenshotFilename(int i, TestExecutionResult testExecutionResult) {
+        return String.format("%03d", i + 1)
+                + "__"
+                + testExecutionResult.getSymbol().getName().replaceAll("\\s", "_")
+                + "__"
+                + testExecutionResult.getOutput().replaceAll("\\s", "_")
+                + ".png";
     }
 
     private void loadLazyRelations(TestReport testReport) {
@@ -169,11 +321,6 @@ public class TestReportDAO {
         Hibernate.initialize(testReport.getTestResults());
         Hibernate.initialize(testReport.getEnvironment());
         ProjectEnvironmentDAO.loadLazyRelations(testReport.getEnvironment());
-
-        testReport.getTestResults().forEach((result) -> {
-            if (result instanceof TestCaseResult) {
-                Hibernate.initialize(((TestCaseResult) result).getOutputs());
-            }
-        });
+        testReport.getTestResults().forEach(testResultDAO::loadLazyRelations);
     }
 }

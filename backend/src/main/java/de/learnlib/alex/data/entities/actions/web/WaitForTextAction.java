@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,19 +21,16 @@ import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
+import java.util.regex.Pattern;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.regex.Pattern;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * Action to wait for a text to be present on the page.
@@ -43,15 +40,11 @@ import java.util.regex.Pattern;
 @JsonTypeName("web_waitForText")
 public class WaitForTextAction extends WebSymbolAction {
 
-    private static final long serialVersionUID = -7420326002014507646L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
-
     /**
      * The string or pattern to look for.
      */
     @NotBlank
-    @Column(name = "\"value\"", columnDefinition = "MEDIUMTEXT")
+    @Column(name = "\"value\"", columnDefinition = "TEXT")
     private String value;
 
     /**
@@ -95,21 +88,21 @@ public class WaitForTextAction extends WebSymbolAction {
 
         try {
             if (regexp) {
-                LOGGER.info(LoggerMarkers.LEARNER, "Waiting for pattern '{}' to be present in node '{}' for a maximum of "
+                logger.info(LoggerMarkers.LEARNER, "Waiting for pattern '{}' to be present in node '{}' for a maximum of "
                         + "{}ms.", valueWithVariables, nodeWithVariables, maxWaitTime);
                 wait.until(wd -> {
                     final String text = connector.getElement(nodeWithVariables).getText();
                     return Pattern.compile(value).matcher(text).find();
                 });
             } else {
-                LOGGER.info(LoggerMarkers.LEARNER, "Waiting for text '{}' to be present in node '{}' for a maximum of {}ms.",
+                logger.info(LoggerMarkers.LEARNER, "Waiting for text '{}' to be present in node '{}' for a maximum of {}ms.",
                         valueWithVariables, nodeWithVariables, maxWaitTime);
                 wait.until(wd -> connector.getElement(nodeWithVariables).getText().contains(valueWithVariables));
             }
 
             return getSuccessOutput();
         } catch (NoSuchElementException | TimeoutException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Waiting for text/patter '{}' to be present in node '{}' failed.",
+            logger.info(LoggerMarkers.LEARNER, "Waiting for text/patter '{}' to be present in node '{}' failed.",
                     valueWithVariables, nodeWithVariables);
             return getFailedOutput();
         }

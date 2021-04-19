@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@
 
 package de.learnlib.alex.data.entities;
 
-import de.learnlib.alex.data.entities.actions.web.ClickAction;
-import de.learnlib.alex.learning.services.connectors.ConnectorManager;
-import org.junit.Before;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+
+import de.learnlib.alex.data.entities.actions.web.ClickAction;
+import de.learnlib.alex.learning.services.connectors.ConnectorManager;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class SymbolActionStepTest {
 
@@ -33,7 +33,7 @@ public class SymbolActionStepTest {
 
     private SymbolActionStep step;
 
-    @Before
+    @BeforeEach
     public void setup() {
         this.connectors = mock(ConnectorManager.class);
         this.action = mock(ClickAction.class);

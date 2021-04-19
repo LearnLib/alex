@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,15 @@
 
 package de.learnlib.alex.data.entities.actions.rest;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.actions.Credentials;
 import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
@@ -34,10 +34,8 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.Cookie;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import org.hibernate.annotations.Type;
+import org.springframework.util.SerializationUtils;
 
 /**
  * RESTSymbolAction to make a request to the API.
@@ -45,12 +43,7 @@ import java.util.Set;
 @Entity
 @DiscriminatorValue("rest_call")
 @JsonTypeName("rest_call")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CallAction extends RESTSymbolAction {
-
-    private static final long serialVersionUID = 7971257988991996022L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * Enumeration to specify the HTTP method.
@@ -103,7 +96,9 @@ public class CallAction extends RESTSymbolAction {
      * conform (e.g. Accept: text/html,application/xml).
      */
     @Lob
-    private HashMap<String, String> headers;
+    @Column(columnDefinition = "BYTEA")
+    @Type(type = "org.hibernate.type.BinaryType")
+    private byte[] headers;
 
     /**
      * Optional credentials to authenticate via HTTP basic auth.
@@ -116,31 +111,31 @@ public class CallAction extends RESTSymbolAction {
      * things easier.
      */
     @Lob
-    private HashMap<String, String> cookies; // OM NOM NOM NOM!!!
+    @Column(columnDefinition = "BYTEA")
+    @Type(type = "org.hibernate.type.BinaryType")
+    private byte[] cookies; // OM NOM NOM NOM!!!
 
     /**
      * Optional data to sent with a POST or PUT request.
      */
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(columnDefinition = "TEXT")
     private String data;
 
     /**
      * Default constructor that just initializes the internal data structures.
      */
     public CallAction() {
-        this.headers = new HashMap<>();
-        this.cookies = new HashMap<>();
         this.timeout = 0;
     }
 
     @Override
     public ExecuteResult execute(WebServiceConnector target) {
         try {
-            LOGGER.info(LoggerMarkers.LEARNER, "Doing {} request to '{}'.", method, url);
+            logger.info(LoggerMarkers.LEARNER, "Doing {} request to '{}'.", method, url);
             doRequest(target);
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not call {}.", getUrlWithVariableValues(), e);
+            logger.info(LoggerMarkers.LEARNER, "Could not call {}.", getUrlWithVariableValues(), e);
             return getFailedOutput();
         }
     }
@@ -171,7 +166,10 @@ public class CallAction extends RESTSymbolAction {
     }
 
     public HashMap<String, String> getHeaders() {
-        return headers;
+        if (headers == null) {
+            return new HashMap<>();
+        }
+        return (HashMap<String, String>) SerializationUtils.deserialize(headers);
     }
 
     /**
@@ -181,12 +179,12 @@ public class CallAction extends RESTSymbolAction {
      */
     private Map<String, String> getHeadersWithVariableValues() {
         Map<String, String> result = new HashMap<>();
-        headers.forEach((k, v) -> result.put(k, insertVariableValues(v)));
+        getHeaders().forEach((k, v) -> result.put(k, insertVariableValues(v)));
         return result;
     }
 
     public void setHeaders(HashMap<String, String> headers) {
-        this.headers = headers;
+        this.headers = SerializationUtils.serialize(headers);
     }
 
     public Credentials getCredentials() {
@@ -214,7 +212,10 @@ public class CallAction extends RESTSymbolAction {
     }
 
     public HashMap<String, String> getCookies() {
-        return cookies;
+        if (cookies == null) {
+            return new HashMap<>();
+        }
+        return (HashMap<String, String>) SerializationUtils.deserialize(cookies);
     }
 
     /**
@@ -225,12 +226,12 @@ public class CallAction extends RESTSymbolAction {
      */
     private Set<Cookie> getCookiesWithVariableValues() {
         Set<Cookie> result = new HashSet<>();
-        cookies.forEach((n, v) -> result.add(new Cookie(n, insertVariableValues(v))));
+        getCookies().forEach((n, v) -> result.add(new Cookie(n, insertVariableValues(v))));
         return result;
     }
 
     public void setCookies(HashMap<String, String> cookies) {
-        this.cookies = cookies;
+        this.cookies = SerializationUtils.serialize(cookies);
     }
 
     public String getData() {
@@ -270,7 +271,7 @@ public class CallAction extends RESTSymbolAction {
     private void doRequest(WebServiceConnector target) throws Exception {
         final Map<String, String> requestHeaders = getHeadersWithVariableValues();
         if (credentials != null && credentials.areValid()) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Using credentials '{}'.", credentials);
+            logger.info(LoggerMarkers.LEARNER, "Using credentials '{}'.", credentials);
             requestHeaders.put("Authorization", "Basic " + getCredentialsWithVariableValues().toBase64());
         }
 
@@ -290,7 +291,7 @@ public class CallAction extends RESTSymbolAction {
                 target.delete(baseUrl, getUrlWithVariableValues(), requestHeaders, getCookiesWithVariableValues(), timeout);
                 break;
             default:
-                LOGGER.error(LoggerMarkers.LEARNER, "Tried to make a call to a REST API with an unknown method '{}'.",
+                logger.error(LoggerMarkers.LEARNER, "Tried to make a call to a REST API with an unknown method '{}'.",
                         method.name());
         }
     }

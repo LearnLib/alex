@@ -1,0 +1,49 @@
+<div class="form-group">
+  <label>Min length</label>
+  <input
+    [(ngModel)]="oracle.minLength"
+    class="form-control"
+    min="1"
+    name="eq_oracle_random_min_length"
+    placeholder="1"
+    required
+    type="number"
+  >
+</div>
+
+<div class="form-group">
+  <label>Max length</label>
+  <input
+    [(ngModel)]="oracle.maxLength"
+    class="form-control"
+    min="1"
+    name="eq_oracle_random_max_length"
+    placeholder="1"
+    required
+    type="number"
+  >
+</div>
+
+<div class="form-group">
+  <label>Random words</label>
+  <input
+    [(ngModel)]="oracle.maxNoOfTests"
+    class="form-control"
+    min="1"
+    name="eq_oracle_random_no_words"
+    placeholder="1"
+    required
+    type="number"
+  >
+</div>
+
+<div class="form-group">
+  <label>Seed</label>
+  <input
+    [(ngModel)]="oracle.seed"
+    class="form-control"
+    name="eq_oracle_random_seed"
+    required
+    type="number"
+  >
+</div>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,10 @@ package de.learnlib.alex.learning.services.connectors;
 
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.learning.services.BaseUrlManager;
-import org.glassfish.jersey.client.ClientProperties;
-
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Map;
+import java.util.Set;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -29,10 +31,7 @@ import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Map;
-import java.util.Set;
+import org.glassfish.jersey.client.ClientProperties;
 
 /**
  * A Wrapper around a @{link WebTarget}.
@@ -55,9 +54,9 @@ public class WebServiceConnector implements Connector {
     private Map<String, NewCookie> cookies;
 
     /** Client for following redirects. */
-    private Client client;
+    private final Client client;
 
-    private BaseUrlManager baseUrlManager;
+    private final BaseUrlManager baseUrlManager;
 
     /**
      * Constructor which sets the WebTarget to use.
@@ -147,18 +146,11 @@ public class WebServiceConnector implements Connector {
      * @param timeout
      *         The amount of time in ms before the request is canceled.
      */
-    public void get(String baseUrl, String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies, int timeout) throws Exception {
+    public void get(String baseUrl, String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies, int timeout)
+            throws Exception {
         final Response response = getRequestObject(baseUrl, path, requestHeaders, requestCookies, timeout).get();
         rememberResponseComponents(response);
         followRedirects(response);
-    }
-
-    private Entity getBody(Map<String, String> requestHeaders, String data) {
-        if (requestHeaders.containsKey("Content-Type")) {
-            return Entity.entity(data, requestHeaders.get("Content-Type"));
-        } else {
-            return Entity.json(data);
-        }
     }
 
     /**
@@ -175,8 +167,8 @@ public class WebServiceConnector implements Connector {
      * @param timeout
      *         The amount of time in ms before the request is canceled.
      */
-    public void post(String baseUrl, String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies, String data,
-            int timeout) throws Exception {
+    public void post(String baseUrl, String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies, String data, int timeout)
+            throws Exception {
         final Entity body = getBody(requestHeaders, data);
         final Response response = getRequestObject(baseUrl, path, requestHeaders, requestCookies, timeout).post(body);
         rememberResponseComponents(response);
@@ -198,7 +190,7 @@ public class WebServiceConnector implements Connector {
      *         The amount of time in ms before the request is canceled.
      */
     public void put(String baseUrl, String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies,
-            String data, int timeout) throws Exception {
+                    String data, int timeout) throws Exception {
         final Entity body = getBody(requestHeaders, data);
         final Response response = getRequestObject(baseUrl, path, requestHeaders, requestCookies, timeout).put(body);
         rememberResponseComponents(response);
@@ -279,7 +271,7 @@ public class WebServiceConnector implements Connector {
      * @return The request object.
      */
     private Invocation.Builder getRequestObject(String baseUrl, String path, Map<String, String> requestHeaders,
-            Set<Cookie> requestCookies, int timeout) throws Exception {
+                                                Set<Cookie> requestCookies, int timeout) throws Exception {
         final String[] splitPath = path.split("\\?");
 
         final String url = baseUrlManager.getAbsoluteUrl(baseUrl, splitPath[0]);
@@ -308,5 +300,13 @@ public class WebServiceConnector implements Connector {
         builder.property(ClientProperties.READ_TIMEOUT, timeout);
 
         return builder;
+    }
+
+    private Entity getBody(Map<String, String> requestHeaders, String data) {
+        if (requestHeaders.containsKey("Content-Type")) {
+            return Entity.entity(data, requestHeaders.get("Content-Type"));
+        } else {
+            return Entity.json(data);
+        }
     }
 }

@@ -1,0 +1,83 @@
+<div class="view">
+  <div class="view-body">
+    <div class="container-fluid">
+
+      <ng-container *ngIf="learnerResult !== null">
+
+        <div class="card shadow-sm">
+          <div class="card-body px-2 py-3">
+            <learner-result-list-item [result]="learnerResult"></learner-result-list-item>
+          </div>
+        </div>
+
+        <hr>
+
+        <div class="card mb-3" *ngFor="let step of sortedSteps; let i = index">
+          <div class="card-header d-flex flex-row align-items-center">
+            <strong class="flex-grow-1">Step {{step.stepNo}}</strong>
+            <i
+              class="fas fa-fw cursor-pointer"
+              [class.fa-chevron-right]="isCollapsed(step)"
+              [class.fa-chevron-down]="!isCollapsed(step)"
+              (click)="toggle(step)"
+            >
+            </i>
+          </div>
+          <div class="card-body p-0" *ngIf="!isCollapsed(step)">
+
+            <action-bar>
+              <button class="btn btn-default btn-sm" (click)="downloadModelCheckingResults(step)">
+                <i class="fas fa-fw fa-download"></i> Download
+              </button>
+            </action-bar>
+
+
+            <div class="list-group list-group-flush">
+              <div class="list-group-item" *ngFor="let mcResult of step.modelCheckingResults">
+                <div class="d-flex flex-row">
+                  <div class="flex-grow-1">
+                    <table class="table table-sm mb-0">
+                      <tbody>
+                        <tr>
+                          <td style="width: 100px">Name</td>
+                          <td>{{mcResult.formula.name}}</td>
+                        </tr>
+                        <tr>
+                          <td style="width: 100px">Formula</td>
+                          <td><code>{{mcResult.formula.formula}}</code></td>
+                        </tr>
+                        <ng-container *ngIf="!mcResult.passed">
+                          <tr class="table-danger">
+                            <td style="width: 100px">Prefix</td>
+                            <td>
+                              <code *ngIf="mcResult.prefix.length === 0">ε</code>
+                              <code *ngIf="mcResult.prefix.length > 0">{{mcResult.prefix}}</code>
+                            </td>
+                          </tr>
+                          <tr class="table-danger">
+                            <td style="width: 100px">Loop</td>
+                            <td><code>{{mcResult.loop}}</code></td>
+                          </tr>
+                        </ng-container>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="pl-4">
+                    <span class="badge badge-success p-2" *ngIf="mcResult.passed">
+                      <i class="fas fa-fw fa-check-circle mr-1"></i> Passed
+                    </span>
+                    <span class="badge badge-danger p-2" *ngIf="!mcResult.passed">
+                      <i class="fas fa-fw fa-times-circle mr-1"></i> Failed
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </ng-container>
+
+    </div>
+  </div>
+</div>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package de.learnlib.alex.data.services.export;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
@@ -27,58 +26,86 @@ import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.export.ExportableEntity;
 import de.learnlib.alex.data.entities.export.ProjectExportableEntity;
 import de.learnlib.alex.data.entities.export.SymbolGroupsExportableEntity;
-import de.learnlib.alex.data.repositories.ProjectRepository;
+import de.learnlib.alex.learning.entities.export.LearnerSetupExportableEntity;
+import de.learnlib.alex.learning.services.export.LearnerSetupsExporter;
+import de.learnlib.alex.learning.services.export.TestExecutionConfigsExporter;
+import de.learnlib.alex.modelchecking.entities.export.LtsFormulaSuitesExportableEntity;
+import de.learnlib.alex.modelchecking.services.export.LtsFormulaSuitesExporter;
+import de.learnlib.alex.testing.entities.export.TestExecutionConfigExportableEntity;
 import de.learnlib.alex.testing.entities.export.TestsExportableEntity;
 import de.learnlib.alex.testing.services.export.TestsExporter;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(rollbackFor = Exception.class, readOnly = true)
 public class ProjectExporter extends EntityExporter {
 
-    @Autowired
-    private ProjectRepository projectRepository;
+    private final ProjectDAO projectDAO;
+    private final SymbolsExporter symbolsExporter;
+    private final TestsExporter testsExporter;
+    private final LtsFormulaSuitesExporter formulaSuitesExporter;
+    private final LearnerSetupsExporter learnerSetupsExporter;
+    private final TestExecutionConfigsExporter testExecutionConfigsExporter;
 
     @Autowired
-    private ProjectDAO projectDAO;
+    public ProjectExporter(
+            ProjectDAO projectDAO,
+            SymbolsExporter symbolsExporter,
+            TestsExporter testsExporter,
+            LtsFormulaSuitesExporter formulaSuitesExporter,
+            LearnerSetupsExporter learnerSetupsExporter,
+            TestExecutionConfigsExporter testExecutionConfigsExporter
+    ) {
+        this.projectDAO = projectDAO;
+        this.symbolsExporter = symbolsExporter;
+        this.testsExporter = testsExporter;
+        this.formulaSuitesExporter = formulaSuitesExporter;
+        this.learnerSetupsExporter = learnerSetupsExporter;
+        this.testExecutionConfigsExporter = testExecutionConfigsExporter;
+    }
 
-    @Autowired
-    private SymbolsExporter symbolsExporter;
-
-    @Autowired
-    private TestsExporter testsExporter;
-
-    @Transactional
     public ExportableEntity export(User user, Long projectId) throws Exception {
         om.addMixIn(Project.class, IgnoreFieldsForProjectMixin.class);
         om.addMixIn(ProjectEnvironment.class, IgnoreFieldsForProjectEnvironmentMixin.class);
         om.addMixIn(ProjectUrl.class, IgnoreFieldsForProjectUrlMixin.class);
         om.addMixIn(ProjectEnvironmentVariable.class, IgnoreFieldsForProjectVariableMixin.class);
 
-        final Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new NotFoundException("The project could not be found"));
-        projectDAO.checkAccess(user, project);
+        final var project = projectDAO.getByID(user, projectId);
 
-        final ProjectExportableEntity exportableEntity = new ProjectExportableEntity(version, om.readTree(om.writeValueAsString(project)));
+        final var exportableEntity = new ProjectExportableEntity(version, om.readTree(om.writeValueAsString(project)));
         exportableEntity.setGroups(((SymbolGroupsExportableEntity) symbolsExporter.exportAll(user, projectId)).getSymbolGroups());
         exportableEntity.setTests(((TestsExportableEntity) testsExporter.exportAll(user, projectId)).getTests());
+        exportableEntity.setFormulaSuites(((LtsFormulaSuitesExportableEntity) formulaSuitesExporter.export(user, projectId)).getFormulaSuites());
+        exportableEntity.setLearnerSetups(((LearnerSetupExportableEntity) learnerSetupsExporter.export(user, projectId)).getLearnerSetups());
+        exportableEntity.setTestExecutionConfigs(((TestExecutionConfigExportableEntity) testExecutionConfigsExporter.export(user, projectId)).getTestConfigs());
 
         return exportableEntity;
     }
 
-    private static abstract class IgnoreFieldsForProjectMixin extends IgnoreIdFieldMixin {
-        @JsonIgnore abstract Long getUserId();
+    private abstract static class IgnoreFieldsForProjectMixin extends IgnoreIdFieldMixin {
+        @JsonIgnore
+        abstract Long getUserId();
+
+        @JsonIgnore
+        abstract List<Long> getMemberIds();
+
+        @JsonIgnore
+        abstract List<Long> getOwnerIds();
     }
 
-    private static abstract class IgnoreFieldsForProjectEnvironmentMixin extends IgnoreIdFieldMixin {
-        @JsonIgnore abstract Long getProjectId();
+    private abstract static class IgnoreFieldsForProjectEnvironmentMixin extends IgnoreIdFieldMixin {
+        @JsonIgnore
+        abstract Long getProjectId();
     }
 
-    private static abstract class IgnoreFieldsForProjectUrlMixin extends IgnoreIdFieldMixin {
-        @JsonIgnore abstract Long getEnvironmentId();
+    private abstract static class IgnoreFieldsForProjectUrlMixin extends IgnoreIdFieldMixin {
+        @JsonIgnore
+        abstract Long getEnvironmentId();
     }
 
-    private static abstract class IgnoreFieldsForProjectVariableMixin extends IgnoreFieldsForProjectUrlMixin {
+    private abstract static class IgnoreFieldsForProjectVariableMixin extends IgnoreFieldsForProjectUrlMixin {
     }
 }

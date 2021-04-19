@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,51 +16,82 @@
 
 package de.learnlib.alex.learning.services;
 
-import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.auth.dao.UserDAO;
 import de.learnlib.alex.common.utils.LoggerMarkers;
+import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
+import de.learnlib.alex.learning.dao.LearnerResultStepDAO;
+import de.learnlib.alex.learning.dao.LearnerSetupDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
-import de.learnlib.alex.learning.entities.LearnerSetup;
 import de.learnlib.alex.learning.events.LearnerEvent;
-import de.learnlib.alex.learning.services.connectors.PreparedContextHandler;
+import de.learnlib.alex.learning.services.connectors.PreparedConnectorContextHandlerFactory;
+import de.learnlib.alex.modelchecking.services.ModelCheckerService;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import org.apache.logging.log4j.ThreadContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /** The learner thread that is used for starting a new experiment. */
-public class StartingLearnerProcess extends AbstractLearnerProcess {
+@Service
+@Scope("prototype")
+public class StartingLearnerProcess extends AbstractLearnerProcess<StartingLearnerProcessQueueItem> {
 
-    public StartingLearnerProcess(User user,
-                                  LearnerResultDAO learnerResultDAO,
-                                  WebhookService webhookService,
-                                  TestDAO testDAO,
-                                  PreparedContextHandler contextHandler,
-                                  LearnerResult result,
-                                  LearnerSetup setup) {
-        super(user, learnerResultDAO, webhookService, testDAO, contextHandler, result, setup, setup.getEquivalenceOracle());
+    @Autowired
+    public StartingLearnerProcess(
+            UserDAO userDAO,
+            ProjectDAO projectDAO,
+            LearnerResultDAO learnerResultDAO,
+            LearnerSetupDAO learnerSetupDAO,
+            LearnerResultStepDAO learnerResultStepDAO,
+            TestDAO testDAO,
+            WebhookService webhookService,
+            PreparedConnectorContextHandlerFactory contextHandlerFactory,
+            TransactionTemplate transactionTemplate,
+            ModelCheckerService modelCheckerService
+    ) {
+        super(
+                userDAO,
+                projectDAO,
+                learnerResultDAO,
+                learnerSetupDAO,
+                learnerResultStepDAO,
+                testDAO,
+                webhookService,
+                contextHandlerFactory,
+                transactionTemplate,
+                modelCheckerService
+        );
+    }
+
+    @Override
+    void init(StartingLearnerProcessQueueItem context) {
+        initInternal(context);
+        setEquivalenceOracle(result.getSetup().getEquivalenceOracle());
     }
 
     @Override
     public void run() {
         ThreadContext.put("userId", String.valueOf(user.getId()));
-        logger.traceEntry();
         logger.info(LoggerMarkers.LEARNER, "Started a new learner thread.");
 
         try {
             learn();
+            shutdown();
         } catch (Exception e) {
             logger.error(LoggerMarkers.LEARNER, "Something in the LearnerThread went wrong:", e);
             e.printStackTrace();
+            shutdownWithErrors();
         } finally {
-            shutdown();
             logger.info(LoggerMarkers.LEARNER, "The learner thread has finished.");
-            logger.traceExit();
             ThreadContext.remove("userId");
         }
     }
 
-    private void learn() throws Exception {
-        logger.traceEntry();
+    private void learn() {
+        result = learnerResultDAO.updateStatus(result.getId(), LearnerResult.Status.IN_PROGRESS);
 
         learnerPhase = LearnerService.LearnerPhase.LEARNING;
         final long learnerStartTime = System.currentTimeMillis();
@@ -71,6 +102,5 @@ public class StartingLearnerProcess extends AbstractLearnerProcess {
         startLearningLoop();
 
         webhookService.fireEvent(user, new LearnerEvent.Finished(result));
-        logger.traceExit();
     }
 }

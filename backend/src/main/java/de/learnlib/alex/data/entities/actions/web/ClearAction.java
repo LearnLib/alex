@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,6 @@ import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -36,10 +33,6 @@ import javax.validation.constraints.NotNull;
 @DiscriminatorValue("web_clear")
 @JsonTypeName("web_clear")
 public class ClearAction extends WebSymbolAction {
-
-    private static final long serialVersionUID = -255670058811890900L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The node to look for. */
     @NotNull
@@ -54,10 +47,10 @@ public class ClearAction extends WebSymbolAction {
         try {
             connector.getElement(nodeWithVariables).clear();
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Cleared element '{}'.", nodeWithVariables);
+            logger.info(LoggerMarkers.LEARNER, "Cleared element '{}'.", nodeWithVariables);
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not clear element '{}'.", nodeWithVariables, e);
+            logger.info(LoggerMarkers.LEARNER, "Could not clear element '{}'.", nodeWithVariables, e);
             return getFailedOutput();
         }
     }

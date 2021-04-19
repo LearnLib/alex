@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,35 +16,35 @@
 
 package de.learnlib.alex.integrationtests.repositories;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
-import org.junit.Before;
-import org.junit.Test;
+import java.util.List;
+import javax.validation.ValidationException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.transaction.TransactionSystemException;
-
-import javax.inject.Inject;
-import java.util.List;
-
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
 
-    @Inject
+    @Autowired
     private SymbolGroupRepository symbolGroupRepository;
 
     private User user;
 
     private Project project;
 
-    @Before
+    @BeforeEach
     public void before() {
         User user = createUser("alex@test.example");
         this.user = userRepository.save(user);
@@ -61,7 +61,7 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
         assertTrue(group.getId() > 0L);
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
+    @Test
     public void shouldFailToSaveAGroupWithoutAProject() {
         SymbolGroup group = new SymbolGroup();
         group.setId(1L);
@@ -69,44 +69,36 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
 
         project.getGroups().add(group);
 
-        symbolGroupRepository.save(group); // should fail
+        assertThrows(DataIntegrityViolationException.class, () -> symbolGroupRepository.save(group));
     }
 
-    @Test(expected = TransactionSystemException.class)
+    @Test
     public void shouldFailToSaveAGroupWithoutAName() {
         SymbolGroup group = new SymbolGroup();
         group.setProject(project);
         project.getGroups().add(group);
         group.setId(1L);
 
-        symbolGroupRepository.save(group); // should fail
+        assertThrows(ValidationException.class, () -> symbolGroupRepository.save(group));
     }
 
-    @Test
-    public void shouldSaveGroupsWithADuplicateIDsInDifferentProjects() {
+    @ParameterizedTest(name = "create groups with names: \"{0}, {1}\"")
+    @CsvSource({
+            "Test Group 1, Test Group 2",
+            "Test Group, Test Group"
+    })
+    public void shouldSaveGroupsWithADuplicateIDsInDifferentProjects(String groupName1, String groupName2) {
         Project project2 = createProject(user, "Test Project 2");
         project2 = projectRepository.save(project2);
 
-        SymbolGroup group1 = createGroup(project, 1L, "Test Group 1");
+        SymbolGroup group1 = createGroup(project, 1L, groupName1);
         symbolGroupRepository.save(group1);
-        SymbolGroup group2 = createGroup(project2, 1L, "Test Group 2");
-        group2 = symbolGroupRepository.save(group2);
+        SymbolGroup group2 = createGroup(project2, 1L, groupName2);
 
-        assertTrue(group2.getId() > 0L);
-    }
+        final var createdGroup = symbolGroupRepository.save(group2);
 
-    @Test
-    public void shouldSaveGroupsWithADuplicateNamesInDifferentProjects() {
-        Project project2 = createProject(user, "Test Project 2");
-        project2 = projectRepository.save(project2);
-
-        SymbolGroup group1 = createGroup(project, 1L, "Test Group");
-        symbolGroupRepository.save(group1);
-        SymbolGroup group2 = createGroup(project2, 1L, "Test Group");
-
-        group2 = symbolGroupRepository.save(group2);
-
-        assertTrue(group2.getId() > 0L);
+        assertNotNull(createdGroup);
+        assertTrue(createdGroup.getId() > 0L);
     }
 
     @Test
@@ -118,9 +110,9 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
 
         List<SymbolGroup> groups = symbolGroupRepository.findAllByProject_Id(project.getId());
 
-        assertThat(groups.size(), is(equalTo(3))); // our 2 + 1 default group
-        assertThat(groups, hasItem(equalTo(group1)));
-        assertThat(groups, hasItem(equalTo(group2)));
+        assertEquals(3, groups.size());
+        assertTrue(groups.contains(group1));
+        assertTrue(groups.contains(group2));
     }
 
     @Test
@@ -130,8 +122,9 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
 
         SymbolGroup groupFromDB = symbolGroupRepository.findById(group.getId()).orElse(null);
 
-        assertThat(groupFromDB.getProject(), is(equalTo(project)));
-        assertThat(groupFromDB.getId(), is(equalTo(group.getId())));
+        assertNotNull(groupFromDB.getProject());
+        assertEquals(project, groupFromDB.getProject());
+        assertEquals(group.getId(), groupFromDB.getId());
     }
 
     @Test
@@ -141,12 +134,12 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
 
         symbolGroupRepository.delete(group);
 
-        assertThat(symbolGroupRepository.count(), is(equalTo(1L))); // only default group left
+        assertEquals(1L, symbolGroupRepository.count()); // only default group left
     }
 
-    @Test(expected = EmptyResultDataAccessException.class)
+    @Test
     public void shouldThrowAnExceptionWhenDeletingAnNonExistingGroup() {
-        symbolGroupRepository.deleteById(55L); // random uuid
+        assertThrows(EmptyResultDataAccessException.class, () -> symbolGroupRepository.deleteById(-1L));
     }
 
     static SymbolGroup createGroup(Project project, Long id, String name) {

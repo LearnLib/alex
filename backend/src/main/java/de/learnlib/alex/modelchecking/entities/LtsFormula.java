@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,15 @@ package de.learnlib.alex.modelchecking.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
 
 /**
  * Entity for a LtsMin LTL formula.
@@ -38,7 +38,7 @@ public class LtsFormula implements Serializable {
 
     /** The ID of the formula in the database. */
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /** The project. */
@@ -50,12 +50,12 @@ public class LtsFormula implements Serializable {
     private LtsFormulaSuite suite;
 
     /** The formula. */
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(columnDefinition = "TEXT")
     private String name;
 
     /** The formula. */
     @NotBlank
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(columnDefinition = "TEXT")
     private String formula;
 
     public Long getId() {

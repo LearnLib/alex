@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@
 
 package de.learnlib.alex.data.rest;
 
-import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.dao.CounterDAO;
 import de.learnlib.alex.data.entities.Counter;
 import de.learnlib.alex.security.AuthContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.util.Collections;
+import java.util.List;
+import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,19 +34,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.ValidationException;
-import javax.ws.rs.core.MediaType;
-import java.util.Collections;
-import java.util.List;
-
 /**
  * Resource to read and delete Counters.
  */
 @RestController()
 @RequestMapping("/rest/projects/{projectId}/counters")
 public class CounterResource {
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     private final AuthContext authContext;
     private final CounterDAO counterDAO;
@@ -67,13 +60,9 @@ public class CounterResource {
     @GetMapping(
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity getAllCounters(@PathVariable("projectId") Long projectId) {
-        final User user = authContext.getUser();
-        LOGGER.traceEntry("getAllCounters({}) for user {}.", projectId, user);
-
-        final List<Counter> counters = counterDAO.getAll(user, projectId);
-
-        LOGGER.traceExit(counters);
+    public ResponseEntity<List<Counter>> getAllCounters(@PathVariable("projectId") Long projectId) {
+        final var user = authContext.getUser();
+        final var counters = counterDAO.getAll(user, projectId);
         return ResponseEntity.ok(counters);
     }
 
@@ -90,16 +79,13 @@ public class CounterResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity createCounter(@PathVariable("projectId") Long projectId, @RequestBody Counter counter) {
-        final User user = authContext.getUser();
-        LOGGER.traceEntry("createCounter({}, {}) for user {}.", projectId, counter.getName(), user);
-
-        if (!counter.getProjectId().equals(projectId)) {
-            throw new ValidationException("The ID of the project does not match with the URL.");
-        }
-
-        counterDAO.create(user, counter);
-        return ResponseEntity.status(HttpStatus.CREATED).body(counter);
+    public ResponseEntity<Counter> createCounter(
+            @PathVariable("projectId") Long projectId,
+            @RequestBody Counter counter
+    ) {
+        final var user = authContext.getUser();
+        final var createdCounter = counterDAO.create(user, projectId, counter);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdCounter);
     }
 
     /**
@@ -118,17 +104,13 @@ public class CounterResource {
             produces = MediaType.APPLICATION_JSON,
             consumes = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity updateCounter(@PathVariable("projectId") Long projectId,
-                                        @PathVariable("counterId") Long counterId,
-                                        @RequestBody Counter counter) {
-        final User user = authContext.getUser();
-        LOGGER.traceEntry("updateCounter({}, {}) for user {}.", projectId, counterId, user);
-
-        if (!counter.getProjectId().equals(projectId)) {
-            throw new ValidationException("The ID of the project does not match with the URL.");
-        }
-
-        final Counter updatedCounter = counterDAO.update(user, counter);
+    public ResponseEntity<Counter> updateCounter(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("counterId") Long counterId,
+            @RequestBody Counter counter
+    ) {
+        final var user = authContext.getUser();
+        final var updatedCounter = counterDAO.update(user, projectId, counterId, counter);
         return ResponseEntity.ok(updatedCounter);
     }
 
@@ -145,14 +127,12 @@ public class CounterResource {
             value = "/{counterId}",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity deleteCounter(@PathVariable("projectId") Long projectId,
-                                        @PathVariable("counterId") Long counterId) {
-        final User user = authContext.getUser();
-        LOGGER.traceEntry("deleteCounter({}, {}) for user {}.", projectId, counterId, user);
-
+    public ResponseEntity<?> deleteCounter(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("counterId") Long counterId
+    ) {
+        final var user = authContext.getUser();
         counterDAO.delete(user, projectId, Collections.singletonList(counterId));
-
-        LOGGER.traceExit("Counter {} deleted.", counterId);
         return ResponseEntity.noContent().build();
     }
 
@@ -169,14 +149,12 @@ public class CounterResource {
             value = "/batch/{counterIds}",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity deleteCounter(@PathVariable("projectId") Long projectId,
-                                        @PathVariable("counterIds") List<Long> counterIds) {
-        final User user = authContext.getUser();
-        LOGGER.traceEntry("deleteCounter({}, {}) for user {}.", projectId, counterIds, user);
-
+    public ResponseEntity<?> deleteCounter(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("counterIds") List<Long> counterIds
+    ) {
+        final var user = authContext.getUser();
         counterDAO.delete(user, projectId, counterIds);
-
-        LOGGER.traceExit("Counter(s) {} deleted.", counterIds);
         return ResponseEntity.noContent().build();
     }
 

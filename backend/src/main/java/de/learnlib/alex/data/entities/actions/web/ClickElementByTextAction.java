@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,18 +21,15 @@ import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebElement;
-
+import java.util.List;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.List;
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebElement;
 
 /**
  * Action to click a specific element by its visible text.
@@ -41,8 +38,6 @@ import java.util.List;
 @DiscriminatorValue("web_clickElementByText")
 @JsonTypeName("web_clickElementByText")
 public class ClickElementByTextAction extends WebSymbolAction {
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** Search link in a specific element. */
     @NotNull
@@ -86,13 +81,13 @@ public class ClickElementByTextAction extends WebSymbolAction {
                 if (candidate.isDisplayed() && candidate.isEnabled() && hasText) {
                     candidate.click();
 
-                    LOGGER.info(LoggerMarkers.LEARNER, "Click on element '{}' with text '{}' ", tagName, text);
+                    logger.info(LoggerMarkers.LEARNER, "Click on element '{}' with text '{}' ", tagName, text);
                     return getSuccessOutput();
                 }
             }
             throw new NoSuchElementException("No clickable element found.");
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not click on element '{}' with text '{}' ", tagName, text, e);
+            logger.info(LoggerMarkers.LEARNER, "Could not click on element '{}' with text '{}' ", tagName, text, e);
             return getFailedOutput();
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,15 +24,12 @@ import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.NoSuchElementException;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import org.openqa.selenium.NoSuchElementException;
 
 /**
  * Action to set a variable to a value received from an element of the DOM tree.
@@ -41,10 +38,6 @@ import javax.validation.constraints.NotNull;
 @DiscriminatorValue("setVariableByHTML")
 @JsonTypeName("setVariableByHTML")
 public class SetVariableByHTMLElementAction extends SymbolAction {
-
-    private static final long serialVersionUID = -7654754471208209824L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The name of the variable. */
     @NotBlank
@@ -67,11 +60,11 @@ public class SetVariableByHTMLElementAction extends SymbolAction {
             String text = webSiteConnector.getElement(nodeWithVariables).getText().trim();
             storeConnector.set(name, text);
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Set the variable '{}' to the value '{}' of the HTML node '{}':",
+            logger.info(LoggerMarkers.LEARNER, "Set the variable '{}' to the value '{}' of the HTML node '{}':",
                     name, text, nodeWithVariables);
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not set the variable '{}' to the value of the HTML node '{}'.",
+            logger.info(LoggerMarkers.LEARNER, "Could not set the variable '{}' to the value of the HTML node '{}'.",
                     name, nodeWithVariables);
             return getFailedOutput();
         }

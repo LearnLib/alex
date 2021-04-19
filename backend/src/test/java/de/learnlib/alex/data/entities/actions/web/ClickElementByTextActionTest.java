@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,44 +16,41 @@
 
 package de.learnlib.alex.data.entities.actions.web;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ClickElementByTextActionTest extends WebActionTest {
 
     private static final String TAG_NAME = "button";
 
     private static final String TEXT = "test";
 
-    private final WebDriver driver = mock(WebDriver.class);
-
     private final WebElement container = mock(WebElement.class);
 
     private ClickElementByTextAction action;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         super.setUp();
 
@@ -66,13 +63,13 @@ public class ClickElementByTextActionTest extends WebActionTest {
         action.setText(TEXT);
         action.setSymbol(symbol);
 
-        given(connectors.getConnector(VariableStoreConnector.class)).willReturn(mock(VariableStoreConnector.class));
-        given(connectors.getConnector(CounterStoreConnector.class)).willReturn(mock(CounterStoreConnector.class));
-        given(webSiteConnector.getElement(action.getNode())).willReturn(container);
+        lenient().when(connectors.getConnector(VariableStoreConnector.class)).thenReturn(mock(VariableStoreConnector.class));
+        lenient().when(connectors.getConnector(CounterStoreConnector.class)).thenReturn(mock(CounterStoreConnector.class));
+        lenient().when(webSiteConnector.getElement(action.getNode())).thenReturn(container);
     }
 
     @Test
-    public void itShouldFailIfNoElementWithTagNameIsFound() {
+    public void shouldFailIfNoElementWithTagNameIsFound() {
         given(container.findElements(By.tagName(TAG_NAME))).willReturn(new ArrayList<>());
 
         final ExecuteResult result = action.executeAction(connectors);
@@ -80,7 +77,7 @@ public class ClickElementByTextActionTest extends WebActionTest {
     }
 
     @Test
-    public void itShouldFailIfElementIsNotEnabled() {
+    public void shouldFailIfElementIsNotEnabled() {
         final WebElement button = mock(WebElement.class);
         given(button.getText()).willReturn(TEXT);
 
@@ -94,7 +91,7 @@ public class ClickElementByTextActionTest extends WebActionTest {
     }
 
     @Test
-    public void itShouldFailIfElementIsNotVisible() {
+    public void shouldFailIfElementIsNotVisible() {
         final WebElement button = mock(WebElement.class);
         given(button.getText()).willReturn(TEXT);
 
@@ -109,7 +106,7 @@ public class ClickElementByTextActionTest extends WebActionTest {
     }
 
     @Test
-    public void itShouldClickOnTheFirstClickableElement() {
+    public void shouldClickOnTheFirstClickableElement() {
         final WebElement button1 = mock(WebElement.class);
         given(button1.getText()).willReturn(TEXT);
 

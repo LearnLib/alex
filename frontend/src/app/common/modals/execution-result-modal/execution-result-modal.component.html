@@ -1,0 +1,63 @@
+<div class="modal-header">
+  <h4 class="modal-title">Details</h4>
+  <a (click)="modal.dismiss()" class="btn btn-icon float-right">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<div class="modal-body">
+  <table class="table mb-0">
+    <tbody>
+    <tr>
+      <td style="width: 1px">
+        <strong>Symbol</strong>
+      </td>
+      <td>
+        <a
+          (click)="modal.dismiss()"
+          [routerLink]="['/app', 'projects', result.symbol.project, 'symbols', result.symbol.id]"
+        >
+          {{result.symbol.name}}
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Status</strong>
+      </td>
+      <td>
+        <span *ngIf="result.success" class="badge badge-success">{{result.output}}</span>
+        <span *ngIf="!result.success" class="badge badge-danger">{{result.output}}</span>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Time</strong>
+      </td>
+      <td>
+        {{result.time | formatMilliseconds}}
+      </td>
+    </tr>
+    <tr *ngIf="!result.success && result.trace !== ''">
+      <td>
+        <strong>Trace</strong>
+      </td>
+      <td>
+        <output-error-trace [output]="result" [showFirst]="true"></output-error-trace>
+      </td>
+    </tr>
+    <tr *ngIf="result.testScreenshot != null">
+      <td>
+        <strong>Screenshot after execution</strong>
+      </td>
+      <td>
+        <img [src]="'/projects/' + result.testScreenshot.project + '/tests/reports/' + result.testScreenshot.report + '/screenshots/' + result.testScreenshot.filename | fetchImgSecure | async" [alt]=''>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="modal-footer">
+  <button (click)="modal.dismiss()" class="btn btn-default btn-sm">Close</button>
+</div>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
 
 package de.learnlib.alex.data.entities;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.Mockito.mock;
+
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.dao.CounterDAO;
 import de.learnlib.alex.data.entities.actions.misc.IncrementCounterAction;
@@ -24,18 +28,13 @@ import de.learnlib.alex.data.entities.actions.misc.SetVariableAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
-
 import java.util.ArrayList;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.mockito.Mockito.mock;
-
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class SymbolParameterTest {
 
     private static final Long PROJECT_ID = 1L;
@@ -53,7 +52,7 @@ public class SymbolParameterTest {
 
     private ConnectorManager connectors;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         symbol = new ParameterizedSymbol();
         final Symbol s = new Symbol();

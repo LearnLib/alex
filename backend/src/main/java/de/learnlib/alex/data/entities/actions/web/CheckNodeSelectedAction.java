@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,11 @@ import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebElement;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebElement;
 
 /**
  * Action to assert that an input[type="radio"] or input[type="checkbox"] is selected.
@@ -37,10 +34,6 @@ import javax.validation.constraints.NotNull;
 @DiscriminatorValue("web_checkNodeSelected")
 @JsonTypeName("web_checkNodeSelected")
 public class CheckNodeSelectedAction extends WebSymbolAction {
-
-    private static final long serialVersionUID = -536234264110313110L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The input element. */
     @NotNull
@@ -54,14 +47,14 @@ public class CheckNodeSelectedAction extends WebSymbolAction {
         try {
             final WebElement element = connector.getElement(nodeWithVariables);
             if (element.isSelected()) {
-                LOGGER.info(LoggerMarkers.LEARNER, "Element '{}' is selected.", nodeWithVariables);
+                logger.info(LoggerMarkers.LEARNER, "Element '{}' is selected.", nodeWithVariables);
                 return getSuccessOutput();
             } else {
-                LOGGER.info(LoggerMarkers.LEARNER, "Element '{}' is not selected.", nodeWithVariables);
+                logger.info(LoggerMarkers.LEARNER, "Element '{}' is not selected.", nodeWithVariables);
                 return getFailedOutput();
             }
         } catch (NoSuchElementException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not assert if element '{}' is selected ", nodeWithVariables);
+            logger.info(LoggerMarkers.LEARNER, "Could not assert if element '{}' is selected ", nodeWithVariables);
             return getFailedOutput();
         }
     }

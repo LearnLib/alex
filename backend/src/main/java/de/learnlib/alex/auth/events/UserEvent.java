@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,8 @@ public class UserEvent {
         /**
          * Constructor.
          *
-         * @param id The id of the user that has been deleted.
+         * @param id
+         *         The id of the user that has been deleted.
          */
         public Deleted(Long id) {
             super(id, EventType.USER_DELETED);
@@ -42,7 +43,8 @@ public class UserEvent {
         /**
          * Constructor.
          *
-         * @param id The id of the user whose credentials have changed.
+         * @param id
+         *         The id of the user whose credentials have changed.
          */
         public CredentialsUpdated(Long id) {
             super(id, EventType.USER_CREDENTIALS_UPDATED);
@@ -55,7 +57,8 @@ public class UserEvent {
         /**
          * Constructor.
          *
-         * @param user The user whose role has changed.
+         * @param user
+         *         The user whose role has changed.
          */
         public RoleUpdated(User user) {
             super(user, EventType.USER_ROLE_UPDATED);

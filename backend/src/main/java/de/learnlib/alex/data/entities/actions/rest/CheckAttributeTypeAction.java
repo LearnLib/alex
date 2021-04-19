@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,6 @@ import de.learnlib.alex.common.utils.JSONHelpers;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
@@ -39,10 +36,6 @@ import javax.validation.constraints.NotNull;
 @DiscriminatorValue("rest_checkAttributeType")
 @JsonTypeName("rest_checkAttributeType")
 public class CheckAttributeTypeAction extends RESTSymbolAction {
-
-    private static final long serialVersionUID = 6962742356381266855L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * Enumeration to refer to a type of a JSON field.
@@ -71,7 +64,7 @@ public class CheckAttributeTypeAction extends RESTSymbolAction {
         UNKNOWN(JsonNodeType.MISSING);
 
         /** Connection between our minimal type set and the bigger one from Jackson. */
-        private JsonNodeType relatedType;
+        private final JsonNodeType relatedType;
 
         /**
          * Internal constructor to set the related types.
@@ -108,7 +101,7 @@ public class CheckAttributeTypeAction extends RESTSymbolAction {
 
         boolean result = typeInBody != null && typeInBody.equals(jsonType);
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Check if the attribute '{}' has the type '{}' in '{}' => {}.",
+        logger.info(LoggerMarkers.LEARNER, "Check if the attribute '{}' has the type '{}' in '{}' => {}.",
                 attribute, jsonType, body, result);
         if (result) {
             return getSuccessOutput();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2020 TU Dortmund
+ * Copyright 2015 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,14 +25,11 @@ import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import java.io.IOException;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
-import java.io.IOException;
 
 /**
  * Validates a JSON object against a JSON schema v4. See https://tools.ietf.org/html/draft-zyp-json-schema-04.
@@ -42,15 +39,11 @@ import java.io.IOException;
 @JsonTypeName("rest_validateJson")
 public class ValidateJsonAction extends RESTSymbolAction {
 
-    private static final long serialVersionUID = -3417929867422889753L;
-
-    private static final Logger LOGGER = LogManager.getLogger();
-
     /**
      * The JSON schema to validate the response of the latest request against.
      */
     @NotBlank
-    @Column(name = "\"schema\"", columnDefinition = "MEDIUMTEXT")
+    @Column(name = "\"schema\"", columnDefinition = "TEXT")
     private String schema;
 
     @Override
@@ -67,10 +60,10 @@ public class ValidateJsonAction extends RESTSymbolAction {
                     .validate(obj);
 
             final ExecuteResult result = report.isSuccess() ? getSuccessOutput() : getFailedOutput();
-            LOGGER.info(LoggerMarkers.LEARNER, "Validated JSON document with {}", result);
+            logger.info(LoggerMarkers.LEARNER, "Validated JSON document with {}", result);
             return result;
         } catch (IOException | ProcessingException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Failed to validate JSON document.");
+            logger.info(LoggerMarkers.LEARNER, "Failed to validate JSON document.");
             return getFailedOutput();
         }
     }
