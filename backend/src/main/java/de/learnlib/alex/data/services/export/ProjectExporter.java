@@ -28,8 +28,10 @@ import de.learnlib.alex.data.entities.export.ProjectExportableEntity;
 import de.learnlib.alex.data.entities.export.SymbolGroupsExportableEntity;
 import de.learnlib.alex.learning.entities.export.LearnerSetupExportableEntity;
 import de.learnlib.alex.learning.services.export.LearnerSetupsExporter;
+import de.learnlib.alex.learning.services.export.TestExecutionConfigsExporter;
 import de.learnlib.alex.modelchecking.entities.export.LtsFormulaSuitesExportableEntity;
 import de.learnlib.alex.modelchecking.services.export.LtsFormulaSuitesExporter;
+import de.learnlib.alex.testing.entities.export.TestExecutionConfigExportableEntity;
 import de.learnlib.alex.testing.entities.export.TestsExportableEntity;
 import de.learnlib.alex.testing.services.export.TestsExporter;
 import java.util.List;
@@ -46,6 +48,7 @@ public class ProjectExporter extends EntityExporter {
     private final TestsExporter testsExporter;
     private final LtsFormulaSuitesExporter formulaSuitesExporter;
     private final LearnerSetupsExporter learnerSetupsExporter;
+    private final TestExecutionConfigsExporter testExecutionConfigsExporter;
 
     @Autowired
     public ProjectExporter(
@@ -53,13 +56,15 @@ public class ProjectExporter extends EntityExporter {
             SymbolsExporter symbolsExporter,
             TestsExporter testsExporter,
             LtsFormulaSuitesExporter formulaSuitesExporter,
-            LearnerSetupsExporter learnerSetupsExporter
+            LearnerSetupsExporter learnerSetupsExporter,
+            TestExecutionConfigsExporter testExecutionConfigsExporter
     ) {
         this.projectDAO = projectDAO;
         this.symbolsExporter = symbolsExporter;
         this.testsExporter = testsExporter;
         this.formulaSuitesExporter = formulaSuitesExporter;
         this.learnerSetupsExporter = learnerSetupsExporter;
+        this.testExecutionConfigsExporter = testExecutionConfigsExporter;
     }
 
     public ExportableEntity export(User user, Long projectId) throws Exception {
@@ -75,6 +80,7 @@ public class ProjectExporter extends EntityExporter {
         exportableEntity.setTests(((TestsExportableEntity) testsExporter.exportAll(user, projectId)).getTests());
         exportableEntity.setFormulaSuites(((LtsFormulaSuitesExportableEntity) formulaSuitesExporter.export(user, projectId)).getFormulaSuites());
         exportableEntity.setLearnerSetups(((LearnerSetupExportableEntity) learnerSetupsExporter.export(user, projectId)).getLearnerSetups());
+        exportableEntity.setTestExecutionConfigs(((TestExecutionConfigExportableEntity) testExecutionConfigsExporter.export(user, projectId)).getTestConfigs());
 
         return exportableEntity;
     }

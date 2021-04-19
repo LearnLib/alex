@@ -23,14 +23,13 @@ import { ToastService } from '../../services/toast.service';
 import { LearnerApiService } from '../../services/api/learner-api.service';
 import { Router } from '@angular/router';
 import { PromptService } from '../../services/prompt.service';
+import { LearnerSetupsCreateEditView } from './learner-setups-create-edit-view';
 
 @Component({
   selector: 'learner-setups-create-view',
   templateUrl: './learner-setups-create-view.component.html'
 })
-export class LearnerSetupsCreateViewComponent implements OnInit {
-
-  setup: LearnerSetup;
+export class LearnerSetupsCreateViewComponent extends LearnerSetupsCreateEditView implements OnInit {
 
   constructor(private appStore: AppStoreService,
               private learnerSetupApi: LearnerSetupApiService,
@@ -38,6 +37,7 @@ export class LearnerSetupsCreateViewComponent implements OnInit {
               private learnerApi: LearnerApiService,
               private promptService: PromptService,
               private router: Router) {
+    super();
   }
 
   ngOnInit() {
@@ -57,11 +57,6 @@ export class LearnerSetupsCreateViewComponent implements OnInit {
   }
 
   startLearning(): void {
-    if (!this.canStartOrSaveLearningSetup) {
-      this.toastService.danger('You <strong>must</strong> select a reset symbol in order to start learning!');
-      return;
-    }
-
     this.promptService.prompt('Enter a comment for the learning process', {
       required: false,
       okBtnText: 'Run',
@@ -86,12 +81,6 @@ export class LearnerSetupsCreateViewComponent implements OnInit {
           res => this.toastService.danger(`The process could not be started. ${res.error.message}`)
         );
       });
-  }
-
-  get canStartOrSaveLearningSetup(): boolean {
-    return !(this.setup.preSymbol == null
-      || this.setup.symbols.length === 0
-      || this.setup.environments.length === 0);
   }
 
   get project(): Project {

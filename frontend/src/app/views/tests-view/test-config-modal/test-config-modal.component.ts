@@ -18,6 +18,12 @@ import { Project } from '../../../entities/project';
 import { ProjectEnvironment } from '../../../entities/project-environment';
 import { Component, Input, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { TestConfigApiService } from '../../../services/api/test-config-api.service';
+import { ToastService } from '../../../services/toast.service';
+
+export enum TestConfigModalAction {
+  CREATE, EDIT
+}
 
 /**
  * A modal dialog for the web driver configuration.
@@ -40,20 +46,51 @@ export class TestConfigModalComponent implements OnInit {
   @Input()
   selectedEnvironment: ProjectEnvironment;
 
+  /** The action for which this modal has been opened. */
+  @Input()
+  action: TestConfigModalAction;
+
   /** Constructor. */
-  constructor(public modal: NgbActiveModal) {
+  constructor(public modal: NgbActiveModal,
+              public testConfigApi: TestConfigApiService,
+              public toastService: ToastService) {
   }
 
   ngOnInit(): void {
     this.selectedEnvironment = this.project.getDefaultEnvironment();
   }
 
+  create(): void {
+    this.configuration.id = null;
+    this.configuration.driverConfig.id = null;
+    this.configuration.tests = [];
+    this.configuration.project = this.project.id;
+    this.configuration.environmentId = this.selectedEnvironment.id;
+
+    this.testConfigApi.create(this.project.id, this.configuration).subscribe(config => {
+      this.toastService.success('The config has been created.');
+      this.modal.close(config);
+    }, res => {
+      this.toastService.danger(`The config couldn't be created. ${res.error.message}`);
+      this.modal.dismiss();
+    });
+  }
+
   /**
    * Close the modal window and pass the configuration.
    */
   update(): void {
-    this.configuration.environment = this.selectedEnvironment;
-    this.modal.close(this.configuration);
+    this.configuration.environmentId = this.selectedEnvironment.id;
+    this.testConfigApi.update(this.project.id, this.configuration).subscribe(config => {
+      this.toastService.success('The config has been updated.');
+      this.modal.close(config);
+    }, res => {
+      this.toastService.danger(`The config couldn't be updated. ${res.error.message}`);
+      this.modal.dismiss();
+    });
+  }
+
+  get TestConfigModalAction() {
+    return TestConfigModalAction;
   }
 }
-

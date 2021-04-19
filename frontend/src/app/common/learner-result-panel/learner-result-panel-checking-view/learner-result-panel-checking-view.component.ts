@@ -18,7 +18,7 @@ import { Selectable } from '../../../utils/selectable';
 import { LearnerResult } from '../../../entities/learner-result';
 import { ToastService } from '../../../services/toast.service';
 import { Project } from '../../../entities/project';
-import { uniqueId, flatMap } from 'lodash';
+import { flatMap, uniqueId } from 'lodash';
 import { AppStoreService } from '../../../services/app-store.service';
 import { Component, Input, OnInit } from '@angular/core';
 import { LtsFormulaSuiteApiService } from '../../../services/api/lts-formula-suite-api.service';

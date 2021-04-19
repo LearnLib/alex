@@ -24,7 +24,8 @@ import { LearnerResult } from '../../../entities/learner-result';
 
 @Component({
   selector: 'learner-status-widget',
-  templateUrl: './learner-status-widget.component.html'
+  templateUrl: './learner-status-widget.component.html',
+  styleUrls: ['./learner-status-widget.component.scss']
 })
 export class LearnerStatusWidgetComponent implements OnInit, OnDestroy {
 

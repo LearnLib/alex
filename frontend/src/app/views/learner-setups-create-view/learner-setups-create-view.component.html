@@ -5,7 +5,7 @@
       <button
         class="btn btn-sm btn-primary"
         (click)="startLearning()"
-        [disabled]="!canStartOrSaveLearningSetup"
+        [disabled]="!isValidLearnerSetup()"
       >
         <i class="fas fa-fw fa-play"></i> Run
       </button>
@@ -19,7 +19,7 @@
         <button
           class="btn btn-sm btn-success ml-2"
           (click)="saveLearnerSetup()"
-          [disabled]="!canStartOrSaveLearningSetup"
+          [disabled]="!isValidLearnerSetup()"
         >
           <i class="fas fa-fw fa-save"></i> Save
         </button>

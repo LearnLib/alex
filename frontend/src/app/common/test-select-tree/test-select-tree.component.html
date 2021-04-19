@@ -1,0 +1,21 @@
+<div class="test-select-tree">
+  <test-select-tree-header
+    [suite]="suite"
+  ></test-select-tree-header>
+  <div *ngIf="!store.isSuiteCollapsed(suite)">
+    <div *ngIf="childSuites.length > 0" class="children">
+      <test-select-tree
+        *ngFor="let childSuite of childSuites"
+        [suite]="childSuite"
+      >
+      </test-select-tree>
+    </div>
+    <div *ngIf="testCases.length > 0" class="test-select-list">
+      <test-select-tree-item
+        *ngFor="let testCase of testCases"
+        [testCase]="testCase"
+      >
+      </test-select-tree-item>
+    </div>
+  </div>
+</div>

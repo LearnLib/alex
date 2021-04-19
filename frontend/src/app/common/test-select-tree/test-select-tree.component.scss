@@ -1,0 +1,18 @@
+.test-select-tree {
+
+  .children {
+    margin-left: 2rem;
+
+    .test-select-tree-header {
+      border-radius: 0 0 0 4px;
+
+      &.collapse {
+        border-radius: 0;
+      }
+    }
+  }
+
+  .test-select-list {
+    margin-left: 2rem;
+  }
+}

@@ -49,7 +49,7 @@ export class TestConfigListComponent implements OnInit {
   }
 
   selectConfig(config: any): void {
-    if (this.selectedConfig != null && this.selectedConfig.id === config.id) {
+    if (this.selectedConfig != null && config != null && this.selectedConfig.id === config.id) {
       this.selectedConfig = null;
     } else {
       this.selectedConfig = config;
@@ -62,6 +62,9 @@ export class TestConfigListComponent implements OnInit {
       () => {
         remove(this.configs, {id: config.id});
         this.toastService.success('The test config has been deleted.');
+        if (this.selectedConfig != null && this.selectedConfig.id === config.id) {
+          this.selectConfig(null);
+        }
       }
     );
   }

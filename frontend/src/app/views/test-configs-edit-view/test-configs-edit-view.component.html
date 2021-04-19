@@ -1,0 +1,30 @@
+<div class="view">
+
+  <action-bar>
+    <div class="d-flex">
+      <div class="ml-auto">
+        <a
+          [routerLink]="['..']"
+          class="btn btn-sm btn-default ml-2"
+        >
+          <i class="fas fa-fw fa-times"></i> Cancel
+        </a>
+        <button
+          (click)="updateConfig()"
+          [disabled]="!isValidConfig()"
+          class="btn btn-sm btn-success ml-2"
+        >
+          <i class="fas fa-fw fa-save"></i> Save
+        </button>
+      </div>
+    </div>
+  </action-bar>
+
+  <div class="view-body">
+    <div class="container-fluid">
+
+      <test-config-form *ngIf="config != null" [config]="config"></test-config-form>
+
+    </div>
+  </div>
+</div>

@@ -30,6 +30,8 @@ public class ProjectExportableEntity extends ExportableEntity {
 
     private JsonNode learnerSetups;
 
+    private JsonNode testExecutionConfigs;
+
     public ProjectExportableEntity() {
         super("-1", "project");
     }
@@ -77,5 +79,13 @@ public class ProjectExportableEntity extends ExportableEntity {
 
     public void setLearnerSetups(JsonNode learnerSetups) {
         this.learnerSetups = learnerSetups;
+    }
+
+    public JsonNode getTestExecutionConfigs() {
+        return testExecutionConfigs;
+    }
+
+    public void setTestExecutionConfigs(JsonNode testExecutionConfigs) {
+        this.testExecutionConfigs = testExecutionConfigs;
     }
 }

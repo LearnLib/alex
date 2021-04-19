@@ -1,0 +1,49 @@
+<div>
+  <h5 class="config-name" *ngIf="config.name != null && config.name.trim().length > 0">{{config.name}}</h5>
+  <table class="table table-sm mb-0">
+    <tbody>
+    <tr>
+      <td class="border-0" style="width: 120px">Description</td>
+      <td class="border-0">
+        <ng-container
+          *ngIf="config.description != null && config.description.length > 0;
+          then hasDescription; else hasNoDescription">
+        </ng-container>
+        <ng-template #hasDescription>
+          {{config.description}}
+        </ng-template>
+        <ng-template #hasNoDescription>
+          <span class="text-muted" style="font-style: italic">
+            No description provided
+          </span>
+        </ng-template>
+      </td>
+    </tr>
+    <tr>
+      <td>WebDriver</td>
+      <td>
+        {{config.driverConfig.browser | formatWebBrowser}}
+        <span class="text-muted">({{config.driverConfig.width}}px <i class="fas fa-times"></i> {{config.driverConfig.height}}px)</span>
+      </td>
+    </tr>
+    <tr>
+      <td>Environment</td>
+      <td>
+        <span class="badge badge-secondary mr-2">{{config.environment.name}}</span>
+      </td>
+    </tr>
+    <tr>
+      <td>Tests</td>
+      <td>
+        <ng-container *ngIf="tests.length > 0; then hasTests; else hasNoTests"></ng-container>
+        <ng-template #hasTests>
+          <span class="badge badge-primary mr-2" *ngFor="let test of tests">{{test.name}}</span>
+        </ng-template>
+        <ng-template #hasNoTests>
+          <div class="text-muted" style="font-style: italic">No tests defined</div>
+        </ng-template>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

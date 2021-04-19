@@ -16,10 +16,11 @@
 
 package de.learnlib.alex.learning.repositories;
 
-import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.learning.entities.LearnerSetup;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -29,5 +30,8 @@ public interface LearnerSetupRepository extends JpaRepository<LearnerSetup, Long
 
     void deleteAllByProject_Id(Long projectId);
 
-    List<LearnerSetup> findAllByEnvironmentsContains(ProjectEnvironment environment);
+    @Query(value = "select ls "
+            +      "from LearnerSetup ls join ls.environments e "
+            +      "where ls.project.id = :projectId and e.id = :environmentId")
+    List<LearnerSetup> findAllByProject_IdAndEnvironment_Id(@Param("projectId") Long projectId, @Param("environmentId") Long environmentId);
 }

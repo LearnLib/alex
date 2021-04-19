@@ -156,6 +156,17 @@ public class TestResource {
         return ResponseEntity.ok(root);
     }
 
+    @GetMapping(
+            value = "/batch/{testIds}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity<List<Test>> getMany(@PathVariable("projectId") Long projectId,
+                                              @PathVariable("testIds") List<Long> testIds) {
+        final var user = authContext.getUser();
+        final var tests = testDAO.get(user, projectId, testIds);
+        return ResponseEntity.ok(tests);
+    }
+
     /**
      * Executes a test run that can contains multiple tests.
      *
@@ -215,7 +226,7 @@ public class TestResource {
     public ResponseEntity<List<Test>> importTests(@PathVariable("projectId") Long projectId,
                                                   @RequestBody List<Test> tests) {
         final var user = authContext.getUser();
-        final var importedTests = testDAO.importTests(user, projectId, tests);
+        final var importedTests = testDAO.importTests(user, projectId, tests, null);
         return ResponseEntity.ok(importedTests);
     }
 

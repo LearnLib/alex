@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { TestApiService } from '../../services/api/test-api.service';
 import { AppStoreService } from '../../services/app-store.service';
 import { TestQueueItem, TestReport, TestReportStatus, TestStatus } from '../../entities/test-status';
@@ -22,11 +22,11 @@ import { Project } from '../../entities/project';
 import { ToastService } from '../../services/toast.service';
 
 @Component({
-  selector: 'test-status',
-  templateUrl: './test-status.component.html',
-  styleUrls: ['./test-status.component.scss']
+  selector: 'test-status-widget',
+  templateUrl: './test-status-widget.component.html',
+  styleUrls: ['./test-status-widget.component.scss']
 })
-export class TestStatusComponent implements OnInit, OnDestroy {
+export class TestStatusWidgetComponent implements OnInit, OnDestroy {
 
   @Input()
   flush = true;

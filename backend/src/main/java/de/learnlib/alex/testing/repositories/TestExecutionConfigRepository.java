@@ -20,6 +20,7 @@ import de.learnlib.alex.testing.entities.TestExecutionConfig;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /** Repository for test execution configs. */
@@ -39,4 +40,11 @@ public interface TestExecutionConfigRepository extends JpaRepository<TestExecuti
 
     @Query(nativeQuery = true, value = "select * from PUBLIC.test_execution_config where project_id = ? and is_default = true limit 1")
     TestExecutionConfig findByProject_IdAndIs_Default(Long projectId);
+
+    @Query(value = "select tc "
+            +      "from TestExecutionConfig tc join tc.tests t "
+            +      "where tc.project.id = :projectId and t.id = :testId")
+    List<TestExecutionConfig> findAllByProject_IdAndTest_Id(@Param("projectId") Long projectId, @Param("testId") Long testId);
+
+    List<TestExecutionConfig> findAllByProject_IdAndEnvironment_Id(Long projectId, Long environmentId);
 }

@@ -32,9 +32,9 @@ import de.learnlib.alex.testing.events.TestExecutionStartedEventData;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import java.util.ArrayList;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,7 +93,7 @@ public class TestThread extends Thread {
     private TestProcessQueueItem currentTestProcessQueueItem;
 
     /** Test results of the current test process. */
-    final Map<Long, TestResult> results = new HashMap<>();
+    final Map<Long, TestResult> results = new ConcurrentHashMap<>();
 
     @Autowired
     public TestThread(
@@ -111,7 +111,6 @@ public class TestThread extends Thread {
         this.projectDAO = projectDAO;
         this.userDAO = userDAO;
         this.transactionTemplate = transactionTemplate;
-
         this.testExecutor = applicationContext.getBean(TestExecutor.class);
     }
 

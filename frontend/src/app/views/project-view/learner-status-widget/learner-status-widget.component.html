@@ -11,7 +11,7 @@
       </div>
     </div>
 
-    <div class="list-group list-group-flush" *ngIf="status.active">
+    <div class="list-container list-group list-group-flush" *ngIf="status.active">
       <div class="list-group-item d-flex flex-row align-items-center">
         <a class="w-100" [routerLink]="['/app', 'projects', project.id, 'learner']"
            [queryParams]="{testNo: status.currentProcess.result.testNo}">

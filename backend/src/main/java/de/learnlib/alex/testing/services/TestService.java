@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -41,10 +42,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /** The service that executes tests. */
 @Service
-@Transactional(rollbackFor = Exception.class)
 public class TestService {
 
     private final ApplicationContext applicationContext;
@@ -52,6 +53,8 @@ public class TestService {
     private final ProjectDAO projectDAO;
     private final LearnerService learnerService;
     private final UserDAO userDAO;
+    private final TransactionTemplate transactionTemplate;
+
 
     /** The running testing threads (projectId -> TestThread). */
     private final Map<Long, TestThread> testThreads;
@@ -62,13 +65,14 @@ public class TestService {
             TestReportDAO testReportDAO,
             ProjectDAO projectDAO,
             @Lazy LearnerService learnerService,
-            @Lazy UserDAO userDAO
-    ) {
+            @Lazy UserDAO userDAO,
+            TransactionTemplate transactionTemplate) {
         this.applicationContext = applicationContext;
         this.testReportDAO = testReportDAO;
         this.projectDAO = projectDAO;
         this.learnerService = learnerService;
         this.userDAO = userDAO;
+        this.transactionTemplate = transactionTemplate;
 
         this.testThreads = new HashMap<>();
     }
@@ -85,18 +89,23 @@ public class TestService {
      * @return A test status.
      */
     public TestQueueItem start(User user, Long projectId, TestExecutionConfig config) {
-        User userInDb = this.userDAO.getByID(user.getId());
-        checkRunningProcesses(userInDb, projectId);
-
         final var project = projectDAO.getByID(user, projectId);
+        User userInDb = this.userDAO.getByID(user.getId());
 
-        final var r = new TestReport();
-        r.setEnvironment(config.getEnvironment());
-        r.setExecutedBy(user);
-        r.setProject(project);
-        r.setDescription(config.getDescription());
+        final var createdReport = transactionTemplate.execute(t -> {
+            checkRunningProcesses(userInDb, projectId);
 
-        final var createdReport = testReportDAO.create(user, projectId, r);
+            final var r = new TestReport();
+            r.setEnvironment(config.getEnvironment());
+            r.setExecutedBy(user);
+            r.setProject(project);
+            r.setDescription(config.getDescription());
+
+            final var cr = testReportDAO.create(user, projectId, r);
+            t.flush();
+
+            return cr;
+        });
 
         final var item = new TestProcessQueueItem(
                 user.getId(),
@@ -129,6 +138,7 @@ public class TestService {
         return this.testThreads.containsKey(projectId);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public boolean hasRunningOrPendingTasks(User user, Long projectId) {
         if (!isActive(projectId)) {
             return false;
@@ -142,10 +152,12 @@ public class TestService {
         return Stream.of(currentTestRunSingletonList, testStatus.getTestRunQueue())
                 .flatMap(List::stream)
                 .map(TestQueueItem::getReport)
+                .filter(Objects::nonNull) // check for not yet created reports
                 .map(TestReport::getStatus)
                 .anyMatch(status -> status.equals(TestReport.Status.IN_PROGRESS) || status.equals(TestReport.Status.PENDING));
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public long getNumberOfUserOwnedTestProcesses(User user) {
         return user.getProjectsOwner().stream()
                 .map(Project::getId)
@@ -162,6 +174,7 @@ public class TestService {
      *         The ID of the project.
      * @return The status.
      */
+    @Transactional(rollbackFor = Exception.class)
     public TestStatus getStatus(User user, Long projectId) {
         final var project = projectDAO.getByID(user, projectId);
         final var status = new TestStatus();
@@ -194,6 +207,7 @@ public class TestService {
      * @param reportId
      *         The ID of the report to abort.
      */
+    @Transactional(rollbackFor = Exception.class)
     public void abort(User user, Long projectId, Long reportId) {
         final var project = projectDAO.getByID(user, projectId);
         final var report = testReportDAO.get(user, projectId, reportId);

@@ -64,12 +64,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * Basic class to control and monitor a learn process. This class is a high level abstraction of the LearnLib.
  */
 @Service
-@Transactional(rollbackFor = Exception.class)
 public class LearnerService {
 
     private static final Logger logger = LoggerFactory.getLogger(LearnerService.class);
@@ -91,6 +91,7 @@ public class LearnerService {
     private final ApplicationContext applicationContext;
     private final TestService testService;
     private final UserDAO userDAO;
+    private final TransactionTemplate transactionTemplate;
 
     /** The learner threads for users (userId -> thread). */
     private final Map<Long, LearnerThread> learnerThreads;
@@ -102,7 +103,8 @@ public class LearnerService {
                           PreparedConnectorContextHandlerFactory contextHandlerFactory,
                           ProjectDAO projectDAO,
                           @Lazy TestService testService,
-                          UserDAO userDAO) {
+                          UserDAO userDAO,
+                          TransactionTemplate transactionTemplate) {
         this.learnerSetupDAO = learnerSetupDAO;
         this.learnerResultDAO = learnerResultDAO;
         this.contextHandlerFactory = contextHandlerFactory;
@@ -110,6 +112,7 @@ public class LearnerService {
         this.applicationContext = applicationContext;
         this.testService = testService;
         this.userDAO = userDAO;
+        this.transactionTemplate = transactionTemplate;
 
         this.learnerThreads = new HashMap<>();
     }
@@ -131,22 +134,27 @@ public class LearnerService {
      *         If the symbols specified in the configuration could not be found.
      */
     public LearnerResult start(User user, Project project, LearnerStartConfiguration startConfiguration) {
-        User userInDb = this.userDAO.getByID(user.getId());
+        final var userInDb = this.userDAO.getByID(user.getId());
         checkRunningProcesses(userInDb, project.getId());
 
-        final var setup = startConfiguration.getSetup();
-        final var createdSetup = setup.getId() != null ? setup : learnerSetupDAO.create(user, project.getId(), setup);
+        final var createdResult = transactionTemplate.execute(t -> {
+            final var setup = startConfiguration.getSetup();
+            final var createdSetup = setup.getId() != null ? setup : learnerSetupDAO.create(user, project.getId(), setup);
 
-        final var options = startConfiguration.getOptions();
-        if (options.getComment() == null || options.getComment().trim().equals("")) {
-            options.setComment(createdSetup.getName());
-        }
+            final var options = startConfiguration.getOptions();
+            if (options.getComment() == null || options.getComment().trim().equals("")) {
+                options.setComment(createdSetup.getName());
+            }
 
-        final var result = new LearnerResult();
-        result.setSetup(createdSetup);
-        result.setComment(startConfiguration.getOptions().getComment());
+            final var result = new LearnerResult();
+            result.setSetup(createdSetup);
+            result.setComment(startConfiguration.getOptions().getComment());
 
-        final var createdResult = learnerResultDAO.create(user, project.getId(), result);
+            final var r = learnerResultDAO.create(user, project.getId(), result);
+            t.flush();
+
+            return r;
+        });
 
         enqueueLearningProcess(
                 project.getId(),
@@ -168,8 +176,9 @@ public class LearnerService {
      * @param configuration
      *         The configuration to use for the next learning steps.
      */
+    @Transactional(rollbackFor = Exception.class)
     public LearnerResult resume(User user, Long projectId, Long testNo, LearnerResumeConfiguration configuration) {
-        User userInDb = this.userDAO.getByID(user.getId());
+        final var userInDb = this.userDAO.getByID(user.getId());
         checkRunningProcesses(userInDb, projectId);
 
         configuration.checkConfiguration();
@@ -266,6 +275,7 @@ public class LearnerService {
      * @param projectId
      *         The id of the project that is learned.
      */
+    @Transactional(rollbackFor = Exception.class)
     public void abort(User user, Long projectId, Long testNo) {
         final var project = projectDAO.getByID(user, projectId); // access check
         final var result = learnerResultDAO.getByTestNo(user, projectId, testNo);
@@ -294,10 +304,12 @@ public class LearnerService {
         return learnerThreads.containsKey(projectId);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public boolean hasRunningOrPendingTasks(User user, Long projectId) {
         if (!isActive(projectId)) {
             return false;
         }
+
         LearnerStatus learnerStatus = this.getStatus(user, projectId);
 
         List<LearnerResult> currentProcessSingletonList = Optional.ofNullable(learnerStatus.getCurrentProcess())
@@ -326,10 +338,14 @@ public class LearnerService {
      *         The id of the project.
      * @return A snapshot of the Learner status.
      */
+    @Transactional(rollbackFor = Exception.class)
     public LearnerStatus getStatus(User user, Long projectId) {
         if (isActive(projectId)) {
             final var thread = learnerThreads.get(projectId);
             final var process = thread.getCurrentProcess();
+
+            // Make sure that a result has been persisted
+            if (process.getResult() == null) return new LearnerStatus();
 
             final var processStatus = new LearningProcessStatus();
             processStatus.setCurrentQueries(process.getCurrentQueries());
@@ -370,6 +386,7 @@ public class LearnerService {
      * @throws LearnerException
      *         If something went wrong while testing the symbols.
      */
+    @Transactional(rollbackFor = Exception.class)
     public List<ExecuteResult> readOutputs(User user, Project project, ProjectEnvironment environment, ParameterizedSymbol resetSymbol,
                                            List<ParameterizedSymbol> symbols, ParameterizedSymbol postSymbol, WebDriverConfig driverConfig)
             throws LearnerException {
@@ -396,6 +413,7 @@ public class LearnerService {
      *         The config to use.
      * @return The outputs of the SUL.
      */
+    @Transactional(rollbackFor = Exception.class)
     public List<ExecuteResult> readOutputs(
             User user,
             Project project,
