@@ -168,6 +168,10 @@ public class TestDAO {
         return createByGenerate(user, project, test);
     }
 
+    public List<Test> create(User user, Long projectId, List<Test> tests) {
+        return create(user, projectId, tests, null);
+    }
+
     public List<Test> create(User user, Long projectId, List<Test> tests, Map<Long, Long> configRefMap) {
         return create(user, projectId, new ArrayList<>(tests), null, configRefMap);
     }

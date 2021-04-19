@@ -338,7 +338,10 @@ public class ProjectDAO {
 
         symbolGroupDAO.importGroups(user, createdProject, groups, new HashMap<>());
 
-        //todo:
+        /*  oldTestId -> newTestId
+         *  maps the exported testids to the corresponding newly created ones,
+         *  enabling correct referencing when importing testExecutionConfigs
+         */
         Map<Long, Long> configRefMap = new HashMap<>();
 
         if (!tests.isEmpty()) {

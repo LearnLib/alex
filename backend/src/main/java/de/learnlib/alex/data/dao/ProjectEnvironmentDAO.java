@@ -17,6 +17,7 @@
 package de.learnlib.alex.data.dao;
 
 import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.common.exceptions.ForbiddenOperationException;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
@@ -30,18 +31,19 @@ import de.learnlib.alex.data.repositories.ProjectEnvironmentVariableRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.ProjectUrlRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
-import de.learnlib.alex.learning.entities.LearnerSetup;
 import de.learnlib.alex.learning.repositories.LearnerSetupRepository;
+import de.learnlib.alex.testing.repositories.TestExecutionConfigRepository;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.validation.ValidationException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.validation.ValidationException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -55,6 +57,7 @@ public class ProjectEnvironmentDAO {
     private final SymbolActionRepository symbolActionRepository;
     private final TestReportRepository testReportRepository;
     private final LearnerSetupRepository learnerSetupRepository;
+    private final TestExecutionConfigRepository testExecutionConfigRepository;
 
     @Autowired
     public ProjectEnvironmentDAO(ProjectDAO projectDAO,
@@ -64,7 +67,8 @@ public class ProjectEnvironmentDAO {
                                  ProjectUrlRepository urlRepository,
                                  SymbolActionRepository symbolActionRepository,
                                  TestReportRepository testReportRepository,
-                                 LearnerSetupRepository learnerSetupRepository) {
+                                 LearnerSetupRepository learnerSetupRepository,
+                                 TestExecutionConfigRepository testExecutionConfigRepository) {
         this.projectDAO = projectDAO;
         this.projectRepository = projectRepository;
         this.environmentRepository = environmentRepository;
@@ -73,6 +77,7 @@ public class ProjectEnvironmentDAO {
         this.symbolActionRepository = symbolActionRepository;
         this.testReportRepository = testReportRepository;
         this.learnerSetupRepository = learnerSetupRepository;
+        this.testExecutionConfigRepository = testExecutionConfigRepository;
     }
 
     public ProjectEnvironment create(User user, Long projectId, ProjectEnvironment environment) {
@@ -138,6 +143,14 @@ public class ProjectEnvironmentDAO {
             throw new ValidationException("There has to be at least one environment.");
         }
 
+        if (!testExecutionConfigRepository.findAllByProject_IdAndEnvironment_Id(projectId, environmentId).isEmpty()) {
+            throw new ForbiddenOperationException("The environment " +  environment.getName() + " is associated with one or more test configs.");
+        }
+
+        if (!learnerSetupRepository.findAllByProject_IdAndEnvironment_Id(projectId, environmentId).isEmpty()) {
+            throw new ForbiddenOperationException("The environment " +  environment.getName() + " is associated with one or more learner setups.");
+        }
+
         // select next best default environment
         if (environment.isDefault()) {
             final List<ProjectEnvironment> envs = environmentRepository.findAllByProject_Id(projectId);
@@ -148,18 +161,6 @@ public class ProjectEnvironmentDAO {
 
         // delete test reports that have been executed in the environment
         testReportRepository.deleteAllByEnvironment_Id(environment.getId());
-
-        // remove environment from learner setups
-        final List<LearnerSetup> learnerSetups = learnerSetupRepository.findAllByEnvironmentsContains(environment);
-        for (LearnerSetup learnerSetup : learnerSetups) {
-            learnerSetup.getEnvironments().remove(environment);
-            // switch to default environment if the deleted one is the only one
-            if (learnerSetup.getEnvironments().isEmpty()) {
-                final var defaultEnvironment = environmentRepository.findByProject_IdAndIs_Default(projectId, true);
-                learnerSetup.getEnvironments().add(defaultEnvironment);
-            }
-            learnerSetupRepository.save(learnerSetup);
-        }
 
         project.getEnvironments().remove(environment);
         projectRepository.save(project);
