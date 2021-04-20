@@ -1,24 +1,23 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - "v*"
   workflow_dispatch:
 
 jobs:
   release-cli-to-npm:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-      - uses: actions/setup-node@v1
+      - name: Setup NodeJS
+        uses: actions/setup-node@v1
         with:
           node-version: 14
           registry-url: https://registry.npmjs.org/
-      - run: cd cli
-      - run: npm ci
-      - run: npm publish
+
+      - name: Publish CLI
+        run: cd cli && npm ci && npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
 
@@ -36,9 +35,7 @@ jobs:
           for img in $IMAGES
           do
             echo "ghcr.io/learnlib/alex/$img:$VERSION"
-            docker pull "ghcr.io/learnlib/alex/$img:unstable"
-            docker tag "ghcr.io/learnlib/alex/$img:unstable" "ghcr.io/learnlib/alex/$img:$VERSION"
-            docker tag "ghcr.io/learnlib/alex/$img:unstable" "ghcr.io/learnlib/alex/$img:latest"
+            docker pull "ghcr.io/learnlib/alex/$img:latest"
+            docker tag "ghcr.io/learnlib/alex/$img:latest" "ghcr.io/learnlib/alex/$img:$VERSION"
             docker push "ghcr.io/learnlib/alex/$img:$VERSION"
-            docker push "ghcr.io/learnlib/alex/$img:latest"
           done
