@@ -18,8 +18,12 @@ import { Project } from '../../../entities/project';
 import { ProjectEnvironment } from '../../../entities/project-environment';
 import { Component, Input, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { TestConfigApiService } from "../../../services/api/test-config-api.service";
-import { ToastService } from "../../../services/toast.service";
+import { TestConfigApiService } from '../../../services/api/test-config-api.service';
+import { ToastService } from '../../../services/toast.service';
+
+export enum TestConfigModalAction {
+  CREATE, EDIT
+}
 
 /**
  * A modal dialog for the web driver configuration.

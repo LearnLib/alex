@@ -16,40 +16,35 @@
 
 import { Component, OnInit } from '@angular/core';
 import { AppStoreService } from '../../services/app-store.service';
-import { Project } from '../../entities/project';
-import { LearnerSetupApiService } from '../../services/api/learner-setup-api.service';
-import { LearnerSetup } from '../../entities/learner-setup';
 import { ToastService } from '../../services/toast.service';
-import { LearnerApiService } from '../../services/api/learner-api.service';
 import { Router } from '@angular/router';
-import { PromptService } from '../../services/prompt.service';
-import { TestConfigApiService } from "../../services/api/test-config-api.service";
-import { TestSelectTreeStore } from "../../common/test-select-tree/test-select-tree.store";
+import { TestConfigApiService } from '../../services/api/test-config-api.service';
+import { TestSelectTreeStore } from '../../common/test-select-tree/test-select-tree.store';
+import { TestConfigsCreateEditView } from './test-configs-create-edit-view';
 
 @Component({
   selector: 'test-configs-create-view',
   templateUrl: './test-configs-create-view.component.html'
 })
-export class TestConfigsCreateViewComponent implements OnInit {
-
-  config: any;
+export class TestConfigsCreateViewComponent extends TestConfigsCreateEditView implements OnInit {
 
   constructor(private appStore: AppStoreService,
               private testConfigApi: TestConfigApiService,
               private toastService: ToastService,
               private router: Router,
-              private store: TestSelectTreeStore) {
+              protected store: TestSelectTreeStore) {
+    super(store);
   }
 
   ngOnInit() {
     this.store.load([]);
-    this.config = {};
-    this.config.driverConfig = {};
-    this.config.tests = {};
   }
 
   createTestConfig(): void {
-    this.config.tests = this.store.testsSelectable.getSelected().filter(test => test.type === 'case').map(test => test.id);
+    this.config.tests = this.store.testsSelectable.getSelected()
+      .filter(test => test.type === 'case')
+      .map(test => test.id);
+
     this.testConfigApi.create(this.appStore.project.id, this.config).subscribe(
       () => {
         this.toastService.success('The test config has been saved.');
@@ -58,11 +53,4 @@ export class TestConfigsCreateViewComponent implements OnInit {
       res => this.toastService.danger(`The config could not be saved. ${res.error.message}`)
     );
   }
-
-  get canCreateTestConfig(): boolean {
-    return !(this.config == null
-      || this.config.driverConfig.browser == null
-      || this.config.driverConfig.platform == null);
-  }
-
 }

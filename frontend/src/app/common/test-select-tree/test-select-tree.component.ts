@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import { Component, Input, OnInit } from "@angular/core";
-import { AppStoreService } from "../../services/app-store.service";
-import { TestSelectTreeStore } from "./test-select-tree.store";
+import { Component, Input, OnInit } from '@angular/core';
+import { TestSelectTreeStore } from './test-select-tree.store';
 
 @Component({
   selector: 'test-select-tree',
@@ -28,8 +27,7 @@ export class TestSelectTreeComponent implements OnInit {
   @Input()
   suite: any;
 
-  constructor(private appStore: AppStoreService,
-              public store: TestSelectTreeStore) {
+  constructor(public store: TestSelectTreeStore) {
   }
 
   ngOnInit() {

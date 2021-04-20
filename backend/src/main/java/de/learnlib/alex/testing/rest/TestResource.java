@@ -32,7 +32,6 @@ import de.learnlib.alex.testing.services.TestService;
 import de.learnlib.alex.testing.services.export.TestsExporter;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import java.util.List;
-import javax.print.attribute.standard.Media;
 import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

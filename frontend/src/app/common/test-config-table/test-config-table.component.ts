@@ -15,8 +15,8 @@
  */
 
 import { Component, Input, OnInit } from '@angular/core';
-import { AppStoreService } from "../../services/app-store.service";
-import { TestApiService } from "../../services/api/test-api.service";
+import { AppStoreService } from '../../services/app-store.service';
+import { TestApiService } from '../../services/api/test-api.service';
 
 @Component({
   selector: 'test-config-table',

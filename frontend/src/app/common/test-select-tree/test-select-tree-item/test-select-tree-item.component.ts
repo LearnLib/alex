@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Component, Input } from "@angular/core";
-import { TestSelectTreeStore } from "../test-select-tree.store";
+import { Component, Input } from '@angular/core';
+import { TestSelectTreeStore } from '../test-select-tree.store';
 
 @Component({
   selector: 'test-select-tree-item',

@@ -28,14 +28,6 @@ import de.learnlib.alex.testing.entities.TestProcessQueueItem;
 import de.learnlib.alex.testing.entities.TestQueueItem;
 import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.entities.TestStatus;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +36,13 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /** The service that executes tests. */
 @Service
@@ -93,7 +92,7 @@ public class TestService {
         final var project = projectDAO.getByID(user, projectId);
         User userInDb = this.userDAO.getByID(user.getId());
 
-        final var createdReport = transactionTemplate.execute((t) -> {
+        final var createdReport = transactionTemplate.execute(t -> {
             checkRunningProcesses(userInDb, projectId);
 
             final var r = new TestReport();
@@ -102,7 +101,10 @@ public class TestService {
             r.setProject(project);
             r.setDescription(config.getDescription());
 
-            return testReportDAO.create(user, projectId, r);
+            final var cr = testReportDAO.create(user, projectId, r);
+            t.flush();
+
+            return cr;
         });
 
         final var item = new TestProcessQueueItem(

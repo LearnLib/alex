@@ -16,36 +16,34 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LearnerSetupApiService } from '../../services/api/learner-setup-api.service';
 import { AppStoreService } from '../../services/app-store.service';
-import { LearnerSetup } from '../../entities/learner-setup';
 import { ToastService } from '../../services/toast.service';
-import { TestConfigApiService } from "../../services/api/test-config-api.service";
-import { TestSelectTreeStore } from "../../common/test-select-tree/test-select-tree.store";
+import { TestConfigApiService } from '../../services/api/test-config-api.service';
+import { TestSelectTreeStore } from '../../common/test-select-tree/test-select-tree.store';
+import { TestConfigsCreateEditView } from '../test-configs-create-view/test-configs-create-edit-view';
 
 @Component({
   selector: 'test-configs-edit-view',
   templateUrl: './test-configs-edit-view.component.html'
 })
-export class TestConfigsEditViewComponent implements OnInit {
-
-  config: any;
+export class TestConfigsEditViewComponent extends TestConfigsCreateEditView implements OnInit {
 
   constructor(private route: ActivatedRoute,
               private appStore: AppStoreService,
               private router: Router,
               private toastService: ToastService,
               private testConfigApi: TestConfigApiService,
-              private store: TestSelectTreeStore) {
+              protected store: TestSelectTreeStore) {
+    super(store);
   }
 
-ngOnInit() {
-  this.route.paramMap.subscribe(
+  ngOnInit() {
+    this.route.paramMap.subscribe(
       params => {
         const configId = Number(params.get('configId'));
         this.testConfigApi.get(this.appStore.project.id, configId).subscribe(
           config => {
-            this.store.load(config.tests.map(testId => ({ id: Number(testId) })));
+            this.store.load(config.tests.map(testId => ({id: Number(testId)})));
             this.config = config;
           }
         );
@@ -54,20 +52,17 @@ ngOnInit() {
     );
   }
 
-updateConfig() {
-    this.config.tests = this.store.testsSelectable.getSelected().filter(test => test.type === 'case').map(test => test.id);
+  updateConfig() {
+    this.config.tests = this.store.testsSelectable.getSelected()
+      .filter(test => test.type === 'case')
+      .map(test => test.id);
+
     this.testConfigApi.update(this.appStore.project.id, this.config).subscribe(
-      config => {
+      _ => {
         this.toastService.success('The test config has been updated.');
         this.router.navigate(['/app', 'projects', this.appStore.project.id, 'tests', 'configs']);
       },
       res => this.toastService.danger(`The config could not be updated. ${res.error.message}`)
     );
-  }
-
-  get canUpdateTestConfig(): boolean {
-    return !(this.config == null
-      || this.config.driverConfig.browser == null
-      || this.config.driverConfig.platform == null);
   }
 }

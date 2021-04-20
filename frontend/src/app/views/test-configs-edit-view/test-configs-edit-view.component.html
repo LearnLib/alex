@@ -4,15 +4,15 @@
     <div class="d-flex">
       <div class="ml-auto">
         <a
-          class="btn btn-sm btn-default ml-2"
           [routerLink]="['..']"
+          class="btn btn-sm btn-default ml-2"
         >
           <i class="fas fa-fw fa-times"></i> Cancel
         </a>
         <button
-          class="btn btn-sm btn-success ml-2"
           (click)="updateConfig()"
-          [disabled]="!canUpdateTestConfig"
+          [disabled]="!isValidConfig()"
+          class="btn btn-sm btn-success ml-2"
         >
           <i class="fas fa-fw fa-save"></i> Save
         </button>
@@ -23,7 +23,7 @@
   <div class="view-body">
     <div class="container-fluid">
 
-      <test-config-form [config]="config" *ngIf="config != null"></test-config-form>
+      <test-config-form *ngIf="config != null" [config]="config"></test-config-form>
 
     </div>
   </div>

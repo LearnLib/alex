@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { Component } from "@angular/core";
-import { AppStoreService } from "../../services/app-store.service";
-import { TestConfigApiService } from "../../services/api/test-config-api.service";
-import { ToastService } from "../../services/toast.service";
+import { Component } from '@angular/core';
+import { AppStoreService } from '../../services/app-store.service';
+import { TestConfigApiService } from '../../services/api/test-config-api.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'test-configs-view',
