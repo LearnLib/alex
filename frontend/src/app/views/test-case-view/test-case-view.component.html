@@ -2,7 +2,7 @@
   <action-bar>
     <div class="d-flex flex-row align-items-center">
       <div class="btn-group btn-group-sm ml-auto">
-        <button (click)="execute()" class="btn btn-primary">
+        <button (click)="execute()" [disabled]="this.testConfig == undefined" class="btn btn-primary">
           Execute
         </button>
         <button (click)="openTestConfigModal()" class="btn btn-primary">

@@ -38,14 +38,6 @@ export class TestConfigModalComponent implements OnInit {
   @Input()
   project: Project;
 
-  /** The model for the url ids. */
-  @Input()
-  selectedEnvironment: ProjectEnvironment;
-
-  /** The action for which this modal has been opened. */
-  @Input()
-  action: TestConfigModalAction;
-
   /** Constructor. */
   constructor(public modal: NgbActiveModal,
               public testConfigApi: TestConfigApiService,
@@ -53,45 +45,18 @@ export class TestConfigModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.selectedEnvironment = this.project.getDefaultEnvironment();
+    if (this.configuration == null) {
+      this.configuration = {}
+      this.configuration.driverConfig = {}
+      this.configuration.environmentId = this.project.getDefaultEnvironment().id;
+    }
   }
 
-  create(): void {
-    this.configuration.id = null;
-    this.configuration.driverConfig.id = null;
-    this.configuration.tests = [];
-    this.configuration.project = this.project.id;
-    this.configuration.environmentId = this.selectedEnvironment.id;
-
-    this.testConfigApi.create(this.project.id, this.configuration).subscribe(config => {
-      this.toastService.success('The config has been created.');
-      this.modal.close(config);
-    }, res => {
-      this.toastService.danger(`The config couldn't be created. ${res.error.message}`);
-      this.modal.dismiss();
-    })
-  }
-
-  /**
-   * Close the modal window and pass the configuration.
-   */
   update(): void {
-    this.configuration.environmentId = this.selectedEnvironment.id;
-    console.log(this.configuration)
-    this.testConfigApi.update(this.project.id, this.configuration).subscribe(config => {
-      this.toastService.success('The config has been updated.');
-      this.modal.close(config);
-    }, res => {
-      this.toastService.danger(`The config couldn't be updated. ${res.error.message}`);
-      this.modal.dismiss();
-    })
+    this.modal.close(this.configuration);
   }
 
-  get TestConfigModalAction() {
-    return TestConfigModalAction;
+  get validConfig(): boolean {
+    return this.configuration.driverConfig.browser != null && this.configuration.driverConfig.platform != null
   }
-}
-
-export enum TestConfigModalAction {
-  CREATE, EDIT
 }

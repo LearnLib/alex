@@ -72,12 +72,6 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     window.addEventListener('keydown', this.keyDownHandler);
 
-    this.testConfig = {
-      tests: [this.testCase],
-      environment: this.project.getDefaultEnvironment(),
-      driverConfig: new WebDriverConfig()
-    };
-
     this.symbolGroupApi.getAll(this.project.id).subscribe(
       groups => {
         SymbolGroupUtils.getSymbols(groups).forEach(s => this.symbolMap[s.id] = s);
@@ -90,7 +84,7 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
       const i = configs.findIndex(c => c.default);
       if (i > -1) {
         this.testConfig = configs[i];
-        this.testConfig.environment = this.project.getEnvironmentById(this.testConfig.environment);
+        this.testConfig.environment = this.project.getEnvironmentById(this.testConfig.environment.id);
       }
     });
   }
@@ -121,11 +115,9 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
 
     this.saveTest().subscribe(
       () => {
-        const config = JSON.parse(JSON.stringify(this.testConfig));
-        config.tests = [this.testCase.id];
-        config.environment = config.environment.id;
+        this.testConfig.tests = [this.testCase.id];
 
-        this.testApi.executeMany(this.project.id, config).subscribe(
+        this.testApi.executeMany(this.project.id, this.testConfig).subscribe(
           data => {
             this.currentTestRun = data;
             this.pollForResult();
@@ -141,11 +133,13 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
 
   openTestConfigModal(): void {
     const modalRef = this.modalService.open(TestConfigModalComponent);
-    modalRef.componentInstance.configuration = JSON.parse(JSON.stringify(this.testConfig));
+    if (this.testConfig != null) {
+      modalRef.componentInstance.configuration = JSON.parse(JSON.stringify(this.testConfig));
+    }
     modalRef.componentInstance.project = this.project;
-    modalRef.result.then(data => {
-      this.toastService.success('The settings have been updated.');
-      this.testConfig = data;
+    modalRef.result.then((config) => {
+      this.testConfig = config;
+      this.toastService.success(`The config has been saved for the moment.`)
     }).catch(() => {});
   }
 
