@@ -34,10 +34,7 @@ import { AppStoreService } from '../../services/app-store.service';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TestsImportModalComponent } from './tests-import-modal/tests-import-modal.component';
-import {
-  TestConfigModalAction,
-  TestConfigModalComponent
-} from '../tests-view/test-config-modal/test-config-modal.component';
+import { TestConfigModalComponent } from '../tests-view/test-config-modal/test-config-modal.component';
 import { TestsMoveModalComponent } from './tests-move-modal/tests-move-modal.component';
 import { TestReportStatus, TestStatus } from '../../entities/test-status';
 import { TestLockInfo, TestPresenceService } from '../../services/test-presence.service';
@@ -274,32 +271,16 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
       && this.testStatus.currentTest.id === test.id;
   }
 
-  openCreateTestConfigModal(): void {
+  openTestConfigModal(): void {
     const modalRef = this.modalService.open(TestConfigModalComponent);
-    modalRef.componentInstance.action = TestConfigModalAction.CREATE;
-    modalRef.componentInstance.configuration = {};
-    modalRef.componentInstance.configuration.driverConfig = {};
-    modalRef.componentInstance.project = this.project;
-    modalRef.result.then(_ => {
-      this.testConfigApi.getAll(this.project.id).subscribe(
-        testConfigs => {
-          this.testConfigs = testConfigs;
-        },
-        console.error
-      );
-    }).catch(() => {
-    });
-  }
-
-  openEditTestConfigModal(): void {
-    const modalRef = this.modalService.open(TestConfigModalComponent);
-    modalRef.componentInstance.action = TestConfigModalAction.EDIT;
-    modalRef.componentInstance.configuration = JSON.parse(JSON.stringify(this.testConfig));
+    if (this.testConfig != null) {
+      modalRef.componentInstance.configuration = JSON.parse(JSON.stringify(this.testConfig));
+    }
     modalRef.componentInstance.project = this.project;
     modalRef.result.then(config => {
-      const i = this.testConfigs.findIndex(value => value.id === config.id);
-      this.testConfigs[i] = config;
-    }).catch(() => {
+      this.testConfig = config;
+      this.toastService.success(`Config has been saved for the moment.`)
+      }).catch(() => {
     });
   }
 
@@ -415,7 +396,7 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
       return {};
     }
 
-    if (this.report.status === TestReportStatus.IN_PROGRESS && this.testStatus != null) {
+    if (this.report.status === TestReportStatus.IN_PROGRESS && this.testStatus?.currentTestRun?.results != null) {
       return this.testStatus.currentTestRun.results;
     }
 
