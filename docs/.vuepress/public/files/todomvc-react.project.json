@@ -499,6 +499,7 @@
   ],
   "tests": [
     {
+      "id": 1,
       "name": "asd",
       "preSteps": [],
       "steps": [
@@ -564,6 +565,7 @@
       "type": "case"
     }
   ],
+  "testExecutionConfigs": [],
   "formulaSuites": [],
   "learnerSetups": [
     {

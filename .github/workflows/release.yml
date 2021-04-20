@@ -1,22 +1,23 @@
 name: Release
 
 on:
-  release:
-    types: [created]
+  workflow_dispatch:
 
 jobs:
   release-cli-to-npm:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-      - uses: actions/setup-node@v1
+      - name: Setup NodeJS
+        uses: actions/setup-node@v1
         with:
           node-version: 14
           registry-url: https://registry.npmjs.org/
-      - run: cd cli
-      - run: npm ci
-      - run: npm publish
+
+      - name: Publish CLI
+        run: cd cli && npm ci && npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
 
@@ -24,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Login to GitHub Container Registry
-        run: echo "${{ inputs.password }}" | docker login https://ghcr.io -u ${{ inputs.username }} --password-stdin
+        run: echo "${{ secrets.CR_PAT }}" | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Tag latest images with release version
         run: |
@@ -34,9 +35,7 @@ jobs:
           for img in $IMAGES
           do
             echo "ghcr.io/learnlib/alex/$img:$VERSION"
-            docker pull "ghcr.io/learnlib/alex/$img:unstable"
-            docker tag "ghcr.io/learnlib/alex/$img:unstable" "ghcr.io/learnlib/alex/$img:$VERSION"
-            docker tag "ghcr.io/learnlib/alex/$img:unstable" "ghcr.io/learnlib/alex/$img:latest"
+            docker pull "ghcr.io/learnlib/alex/$img:latest"
+            docker tag "ghcr.io/learnlib/alex/$img:latest" "ghcr.io/learnlib/alex/$img:$VERSION"
             docker push "ghcr.io/learnlib/alex/$img:$VERSION"
-            docker push "ghcr.io/learnlib/alex/$img:latest"
           done
