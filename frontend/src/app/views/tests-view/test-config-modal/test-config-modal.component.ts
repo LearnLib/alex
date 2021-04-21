@@ -15,15 +15,11 @@
  */
 
 import { Project } from '../../../entities/project';
-import { ProjectEnvironment } from '../../../entities/project-environment';
 import { Component, Input, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TestConfigApiService } from '../../../services/api/test-config-api.service';
 import { ToastService } from '../../../services/toast.service';
-
-export enum TestConfigModalAction {
-  CREATE, EDIT
-}
+import { TestExecutionConfig } from '../../../entities/test-execution-config';
 
 /**
  * A modal dialog for the web driver configuration.
@@ -36,7 +32,7 @@ export class TestConfigModalComponent implements OnInit {
 
   /** The web driver configuration. */
   @Input()
-  configuration: any;
+  configuration: TestExecutionConfig;
 
   /** The current project. */
   @Input()
@@ -50,8 +46,7 @@ export class TestConfigModalComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.configuration == null) {
-      this.configuration = {}
-      this.configuration.driverConfig = {}
+      this.configuration = new TestExecutionConfig();
       this.configuration.environmentId = this.project.getDefaultEnvironment().id;
     }
   }
@@ -61,6 +56,6 @@ export class TestConfigModalComponent implements OnInit {
   }
 
   get validConfig(): boolean {
-    return this.configuration.driverConfig.browser != null && this.configuration.driverConfig.platform != null
+    return TestExecutionConfig.isValid(this.configuration);
   }
 }

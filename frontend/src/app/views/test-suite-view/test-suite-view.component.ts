@@ -38,6 +38,7 @@ import { TestConfigModalComponent } from '../tests-view/test-config-modal/test-c
 import { TestsMoveModalComponent } from './tests-move-modal/tests-move-modal.component';
 import { TestReportStatus, TestStatus } from '../../entities/test-status';
 import { TestLockInfo, TestPresenceService } from '../../services/test-presence.service';
+import { TestExecutionConfig } from '../../entities/test-execution-config';
 
 @Component({
   selector: 'test-suite-view',
@@ -97,7 +98,11 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
         this.testConfigs = testConfigs;
         const i = this.testConfigs.findIndex(c => c.default);
         if (i > -1) {
-          this.testConfig = this.testConfigs[i];
+          this.testConfig = testConfigs[i];
+          this.testConfig.environment = this.project.getEnvironmentById(this.testConfig.environment.id);
+        } else {
+          this.testConfig = new TestExecutionConfig();
+          this.testConfig.environment = this.project.getDefaultEnvironment();
         }
       },
       console.error
@@ -405,4 +410,7 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
     return map;
   }
 
+  get canExecute(): boolean {
+    return this.selectedTests.isAnySelected() && TestExecutionConfig.isValid(this.testConfig);
+  }
 }

@@ -15,6 +15,7 @@
  */
 
 import { TestSelectTreeStore } from '../../common/test-select-tree/test-select-tree.store';
+import { TestExecutionConfig } from '../../entities/test-execution-config';
 
 export abstract class TestConfigsCreateEditView {
 
@@ -31,11 +32,6 @@ export abstract class TestConfigsCreateEditView {
   }
 
   isValidConfig(): boolean {
-    return this.config != null
-      && this.config.driverConfig.browser != null
-      && this.config.driverConfig.platform != null
-      && this.config.driverConfig.width > 0
-      && this.config.driverConfig.height > 0
-      && this.store.testsSelectable.getSelected().length > 0;
+    return TestExecutionConfig.isValid(this.config) && this.store.testsSelectable.getSelected().length > 0;
   }
 }

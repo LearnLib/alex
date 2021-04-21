@@ -71,7 +71,7 @@
         </div>
 
         <div class="btn-group btn-group-sm float-right">
-          <button (click)="executeSelected()" class="btn btn-primary" [disabled]="!selectedTests.isAnySelected() || this.testConfig == undefined">
+          <button (click)="executeSelected()" class="btn btn-primary" [disabled]="!canExecute">
             Execute
           </button>
           <button (click)="openTestConfigModal()" class="btn btn-primary">
@@ -185,7 +185,7 @@
           </div>
 
           <div class="mt-4">
-            <test-status-widget [flush]="true"></test-status-widget>
+            <test-status-widget></test-status-widget>
           </div>
         </div>
       </div>

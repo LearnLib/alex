@@ -6,13 +6,13 @@
   <ng-container *ngIf="status != null">
 
     <div class="card-body" *ngIf="!status.active">
-      <div class="alert alert-info mb-0" [class.no-border-radius]="flush">
+      <div class="alert alert-info mb-0">
         There is no active test run.
       </div>
     </div>
 
     <div class="list-container" *ngIf="status.active">
-      <div class="list-group mb-0" [class.list-group-flush]="flush">
+      <div class="list-group list-group-flush mb-0">
         <div class="list-group-item d-flex flex-row align-items-center" *ngFor="let testRun of allTestRuns">
           <ng-container *ngIf="testRun != null">
             <a

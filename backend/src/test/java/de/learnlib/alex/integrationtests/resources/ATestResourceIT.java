@@ -17,6 +17,7 @@
 package de.learnlib.alex.integrationtests.resources;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -268,6 +269,42 @@ public class ATestResourceIT extends AbstractResourceIT {
         final TestCase testCaseIdDb = testApi.get(projectId, testCase.getId().intValue(), jwtUser1)
                 .readEntity(TestCase.class);
         assertEquals(testCase.getName(), testCaseIdDb.getName());
+    }
+
+    @Test
+    public void shouldUpdateTestMoveStepToPreSteps() throws Exception {
+        final var testCase = createTestCaseWithSteps(project.getId(), "test", null, jwtUser1);
+
+        final var step = testCase.getSteps().remove(0);
+        testCase.getPreSteps().add(step);
+
+        final var res = testApi.update(testCase.getProjectId(), testCase.getId(), objectMapper.writeValueAsString(testCase), jwtUser1);
+        assertEquals(HttpStatus.OK.value(), res.getStatus());
+
+        final var updatedTestCase = res.readEntity(TestCase.class);
+        assertAll(
+                () -> assertEquals(2, updatedTestCase.getPreSteps().size()),
+                () -> assertEquals(1, updatedTestCase.getSteps().size()),
+                () -> assertEquals(0, updatedTestCase.getPostSteps().size())
+        );
+    }
+
+    @Test
+    public void shouldUpdateTestMoveStepToPostSteps() throws Exception {
+        final var testCase = createTestCaseWithSteps(project.getId(), "test", null, jwtUser1);
+
+        final var step = testCase.getSteps().remove(0);
+        testCase.getPostSteps().add(step);
+
+        final var res = testApi.update(testCase.getProjectId(), testCase.getId(), objectMapper.writeValueAsString(testCase), jwtUser1);
+        assertEquals(HttpStatus.OK.value(), res.getStatus());
+
+        final var updatedTestCase = res.readEntity(TestCase.class);
+        assertAll(
+                () -> assertEquals(1, updatedTestCase.getPreSteps().size()),
+                () -> assertEquals(1, updatedTestCase.getSteps().size()),
+                () -> assertEquals(1, updatedTestCase.getPostSteps().size())
+        );
     }
 
     @Test

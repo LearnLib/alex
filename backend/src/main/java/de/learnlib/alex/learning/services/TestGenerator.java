@@ -169,7 +169,7 @@ public class TestGenerator {
         }
 
         for (TestCase tc : testSuite.getTestCases()) {
-            testDAO.update(user, project.getId(), tc);
+            testDAO.update(user, project.getId(), tc.getId(), tc);
         }
 
         return testSuite;
