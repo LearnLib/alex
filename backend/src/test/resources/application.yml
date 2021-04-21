@@ -23,7 +23,7 @@ server:
 
 alex:
   filesRootDir: "./target/test-files"
-  version: "2.1.0"
+  version: "2.1.1"
   admin:
     email: "admin@alex.example"
     password: "admin"

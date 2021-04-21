@@ -13,7 +13,7 @@ RUN tar -xzf ltsmin-v3.0.2-linux.tgz
 RUN mv v3.0.2 ltsmin
 
 FROM openjdk:15
-COPY --from=builder-backend /backend/target/ALEX-2.1.0.jar /usr/share/java/alex/alex.jar
+COPY --from=builder-backend /backend/target/ALEX-2.1.1.jar /usr/share/java/alex/alex.jar
 COPY --from=builder-ltsmin /ltsmin/ltsmin /opt/ltsmin
 WORKDIR /var/lib/alex
 

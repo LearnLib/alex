@@ -28,14 +28,14 @@ services:
     volumes:
       - alex-database:/var/lib/postgresql
   alex-frontend:
-    image: ghcr.io/learnlib/alex/alex-frontend:unstable
+    image: ghcr.io/learnlib/alex/alex-frontend:2.1.1
     environment:
       - ALEX_BACKEND_ADDRESS=http://localhost
       - ALEX_BACKEND_PORT=8000
     ports:
       - 80:4200
   alex-backend:
-    image: ghcr.io/learnlib/alex/alex-backend:unstable
+    image: ghcr.io/learnlib/alex/alex-backend:2.1.1
     depends_on:
       - alex-database
       - selenium-hub
