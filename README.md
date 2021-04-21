@@ -30,9 +30,9 @@ For **Windows 10**
 
 ### Production
 
-1. [Download](https://github.com/LearnLib/alex/releases/latest) the `docker-compose.alex-2.1.0.yml` file.
-2. Run `docker-compose -f docker-compose.alex-2.1.0.yml pull` once.
-3. Run `docker-compose -f docker-compose.alex-2.1.0.yml up`.
+1. [Download](https://github.com/LearnLib/alex/releases/latest) the `docker-compose.alex-2.1.1.yml` file.
+2. Run `docker-compose -f docker-compose.alex-2.1.1.yml pull` once.
+3. Run `docker-compose -f docker-compose.alex-2.1.1.yml up`.
 4. Open `127.0.0.1` in a web browser to access the frontend.
 
 **Services**

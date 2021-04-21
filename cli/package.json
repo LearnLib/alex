@@ -1,10 +1,10 @@
 {
   "name": "alex-cli",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "repository": {
     "url": "https://github.com/LearnLib/alex/tree/developer/cli"
   },
-  "description": "A command line interface for executing tests and learning experiments with ALEX v2.1.0",
+  "description": "A command line interface for executing tests and learning experiments with ALEX v2.1.1",
   "main": "alex-cli.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

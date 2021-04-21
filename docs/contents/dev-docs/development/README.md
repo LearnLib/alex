@@ -61,7 +61,7 @@ In the `developer` branch, perform the following steps:
     - Ensure that the [CI pipeline][ci] passes.
 4. In the `master` branch, create a new tag with the new version and perform a GitHub release.
     - Append the current `docker-compose.production.yml` file.
-      For this purpose, rename the file according to the current release version, e.g. ``docker-compose.alex-2.1.0.yml``
+      For this purpose, rename the file according to the current release version, e.g. ``docker-compose.alex-2.1.1.yml``
 5. In the `developer` branch, increment the version in all files from step 1 to the next minor version and append the *-SNAPSHOT* suffix.
   
   

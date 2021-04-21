@@ -250,9 +250,9 @@ public class TestResource {
                                        @PathVariable("testId") Long testId,
                                        @RequestBody Test test) {
         final var user = authContext.getUser();
-        testDAO.update(user, projectId, test);
-        webhookService.fireEvent(user, new TestEvent.Updated(test));
-        return ResponseEntity.ok(test);
+        final var updatedTest = testDAO.update(user, projectId, testId, test);
+        webhookService.fireEvent(user, new TestEvent.Updated(updatedTest));
+        return ResponseEntity.ok(updatedTest);
     }
 
     /**

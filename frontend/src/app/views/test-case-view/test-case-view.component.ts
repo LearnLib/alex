@@ -28,12 +28,12 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TestConfigModalComponent } from '../tests-view/test-config-modal/test-config-modal.component';
 import { TestConfigApiService } from '../../services/api/test-config-api.service';
+import { TestExecutionConfig } from '../../entities/test-execution-config';
 import { TestQueueItem, TestReportStatus } from '../../entities/test-status';
 import { TestReportApiService } from '../../services/api/test-report-api.service';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ParametrizedSymbol } from '../../entities/parametrized-symbol';
-import { WebDriverConfig } from '../../entities/web-driver-config';
 
 @Component({
   selector: 'test-case-view',
@@ -72,12 +72,6 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     window.addEventListener('keydown', this.keyDownHandler);
 
-    this.testConfig = {
-      tests: [this.testCase],
-      environment: this.project.getDefaultEnvironment(),
-      driverConfig: new WebDriverConfig()
-    };
-
     this.symbolGroupApi.getAll(this.project.id).subscribe(
       groups => {
         SymbolGroupUtils.getSymbols(groups).forEach(s => this.symbolMap[s.id] = s);
@@ -90,7 +84,10 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
       const i = configs.findIndex(c => c.default);
       if (i > -1) {
         this.testConfig = configs[i];
-        this.testConfig.environment = this.project.getEnvironmentById(this.testConfig.environment);
+        this.testConfig.environment = this.project.getEnvironmentById(this.testConfig.environment.id);
+      } else {
+        this.testConfig = new TestExecutionConfig();
+        this.testConfig.environment = this.project.getDefaultEnvironment();
       }
     });
   }
@@ -121,11 +118,9 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
 
     this.saveTest().subscribe(
       () => {
-        const config = JSON.parse(JSON.stringify(this.testConfig));
-        config.tests = [this.testCase.id];
-        config.environment = config.environment.id;
+        this.testConfig.tests = [this.testCase.id];
 
-        this.testApi.executeMany(this.project.id, config).subscribe(
+        this.testApi.executeMany(this.project.id, this.testConfig).subscribe(
           data => {
             this.currentTestRun = data;
             this.pollForResult();
@@ -143,9 +138,9 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
     const modalRef = this.modalService.open(TestConfigModalComponent);
     modalRef.componentInstance.configuration = JSON.parse(JSON.stringify(this.testConfig));
     modalRef.componentInstance.project = this.project;
-    modalRef.result.then(data => {
-      this.toastService.success('The settings have been updated.');
-      this.testConfig = data;
+    modalRef.result.then((config) => {
+      this.testConfig = config;
+      this.toastService.success(`The config has been saved for the moment.`);
     }).catch(() => {});
   }
 
@@ -204,5 +199,9 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
     this.testCase.steps.map(s => ps.push(s.pSymbol));
     this.testCase.postSteps.map(s => ps.push(s.pSymbol));
     return ps;
+  }
+
+  get canExecute(): boolean {
+    return TestExecutionConfig.isValid(this.testConfig) && this.testCase.steps.length > 0;
   }
 }

@@ -11,8 +11,8 @@ For **Windows 10**
 
 ## Using the latest Docker Compose file
 
-1. [Download][download] the latest `docker-compose.alex-2.1.0.yml` file.
-2. Open a terminal and start ALEX via `docker-compose -f docker-compose.alex-2.1.0.yml up`.
+1. [Download][download] the latest `docker-compose.alex-2.1.1.yml` file.
+2. Open a terminal and start ALEX via `docker-compose -f docker-compose.alex-2.1.1.yml up`.
 3. Wait until the command line prints something like `Started App in XX.XXX seconds`.
 4. Open [http://127.0.0.1](http://127.0.0.1) in a Web browser.
 

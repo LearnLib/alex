@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
-import { TestSelectTreeStore } from '../../common/test-select-tree/test-select-tree.store';
-import { TestExecutionConfig } from '../../entities/test-execution-config';
+import { WebDriverConfig } from './web-driver-config';
+import { ProjectEnvironment } from './project-environment';
 
-export abstract class TestConfigsCreateEditView {
+export class TestExecutionConfig {
 
-  config: any = {
-    driverConfig: {
-      platform: 'ANY',
-      width: 1920,
-      height: 1080
-    },
-    tests: []
-  };
+  id: number;
+  name: string;
+  tests: number[] = [];
+  driverConfig = new WebDriverConfig();
+  environment: ProjectEnvironment;
+  environmentId: number;
+  default = false;
 
-  protected constructor(protected store: TestSelectTreeStore) {
-  }
-
-  isValidConfig(): boolean {
-    return TestExecutionConfig.isValid(this.config) && this.store.testsSelectable.getSelected().length > 0;
+  static isValid(config: any): boolean {
+    return config != null
+      && config.driverConfig.browser != null
+      && config.driverConfig.browser !== ''
+      && config.driverConfig.platform != null
+      && config.driverConfig.width > 0
+      && config.driverConfig.height > 0;
   }
 }

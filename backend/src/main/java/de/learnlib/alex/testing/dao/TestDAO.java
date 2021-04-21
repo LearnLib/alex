@@ -238,8 +238,11 @@ public class TestDAO {
     }
 
     public Test get(User user, Long projectId, Long testId) {
-        final Project project = projectRepository.findById(projectId).orElse(null);
-        return get(user, project, testId);
+        final var project = projectRepository.findById(projectId).orElse(null);
+        final var test = testRepository.findById(testId).orElse(null);
+        checkAccess(user, project, test);
+        loadLazyRelations(test);
+        return test;
     }
 
     public List<Test> get(User user, Long projectId, List<Long> ids) {
@@ -262,8 +265,9 @@ public class TestDAO {
         return root;
     }
 
-    public void update(User user, Long projectId, Test test) {
-        final Project project = projectRepository.findById(projectId).orElse(null);
+    public Test update(User user, Long projectId, Long testId, Test test) {
+        final var project = projectRepository.findById(projectId).orElse(null);
+        final var testInDB = testRepository.findById(testId).orElse(null);
         checkAccess(user, project, test);
         checkRunningTestProcess(user, project, test);
 
@@ -271,58 +275,65 @@ public class TestDAO {
         testPresenceService.checkLockStatus(projectId, test.getId(), user.getId());
 
         // make sure the name of the Test Case is unique
-        Test testInDB = testRepository.findOneByParent_IdAndName(test.getParentId(), test.getName());
-        if (testInDB != null && !testInDB.getId().equals(test.getId())) {
+        final var testWithSameName = testRepository.findOneByParent_IdAndName(test.getParentId(), test.getName());
+        if (testWithSameName != null && !testWithSameName.getId().equals(testInDB.getId())) {
             throw new ValidationException("To update a test case or suite its name must be unique within its parent.");
         }
 
-        final Test root = testRepository.findFirstByProject_IdOrderByIdAsc(test.getProjectId());
-        if (test.getId().equals(root.getId()) && !test.getName().equals("Root")) {
+        final var rootTestSuite = testRepository.findFirstByProject_IdOrderByIdAsc(test.getProjectId());
+        if (test.getId().equals(rootTestSuite.getId()) && !test.getName().equals("Root")) {
             throw new ValidationException("The name of the root test suite may not be changed.");
         }
 
-        testInDB = get(user, test.getProjectId(), test.getId());
-
-        test.setId(testInDB.getId());
-        test.setProject(testInDB.getProject());
-        test.setParent(getParent(user, projectId, testInDB.getParentId()));
-
-        if (test instanceof TestSuite) {
-            updateTestSuite(user, (TestSuite) test, test.getProject());
-        } else if (test instanceof TestCase) {
-            updateTestCase(user, (TestCase) test, test.getProject());
+        if (testInDB instanceof TestSuite && test instanceof TestSuite) {
+            final var updatedTestSuite = updateTestSuite((TestSuite) testInDB, (TestSuite) test);
+            loadLazyRelations(updatedTestSuite);
+            return updatedTestSuite;
+        } else if (testInDB instanceof TestCase && test instanceof TestCase) {
+            final var updatedTestCase = updateTestCase(user, (TestCase) testInDB, (TestCase) test);
+            loadLazyRelations(updatedTestCase);
+            return updatedTestCase;
+        } else {
+            throw new IllegalStateException("Cannot update a test case with a test suite or vice versa.");
         }
     }
 
-    private List<Long> getStepsWithIds(List<TestCaseStep> steps) {
-        return steps.stream()
-                .filter(s -> s.getId() != null)
-                .map(TestCaseStep::getId)
-                .collect(Collectors.toList());
-    }
-
-    private void updateTestCase(User user, TestCase testCase, Project project) {
+    private Test updateTestCase(User user, TestCase testCaseInDB, TestCase testCase) {
         checkIfOutputMappingNamesAreUnique(testCase);
 
-        beforeSaving(user, project, testCase);
+        testCaseInDB.setName(testCase.getName());
+        testCaseInDB.setGenerated(false);
+        testCaseInDB.setUpdatedOn(ZonedDateTime.now());
+        testCaseInDB.setLastUpdatedBy(user);
 
-        testCase.setGenerated(false);
-        testCase.setUpdatedOn(ZonedDateTime.now());
-        testCase.setLastUpdatedBy(user);
+        testCaseInDB.getPreSteps().clear();
+        testCaseInDB.getSteps().clear();
+        testCaseInDB.getPostSteps().clear();
+        testRepository.save(testCaseInDB);
 
-        final List<Long> allStepIds = new ArrayList<>(); // all ids that still exist in the db
-        allStepIds.addAll(getStepsWithIds(testCase.getPreSteps()));
-        allStepIds.addAll(getStepsWithIds(testCase.getSteps()));
-        allStepIds.addAll(getStepsWithIds(testCase.getPostSteps()));
+        testCaseInDB.getPreSteps().addAll(testCase.getPreSteps());
+        testCaseInDB.getSteps().addAll(testCase.getSteps());
+        testCaseInDB.getPostSteps().addAll(testCase.getPostSteps());
+        removeIdsFromSteps(testCaseInDB);
+        beforeSaving(user, testCaseInDB.getProject(), testCaseInDB);
 
-        testCaseStepRepository.deleteAllByTestCase_IdAndIdNotIn(testCase.getId(), allStepIds);
+        saveTestCaseSteps(testCaseInDB.getPreSteps());
+        saveTestCaseSteps(testCaseInDB.getSteps());
+        saveTestCaseSteps(testCaseInDB.getPostSteps());
+        testRepository.save(testCaseInDB);
 
-        // delete all test case steps that have been removed in the update.
-        saveTestCaseSteps(testCase.getPreSteps());
-        saveTestCaseSteps(testCase.getSteps());
-        saveTestCaseSteps(testCase.getPostSteps());
+        return testCaseInDB;
+    }
 
-        testRepository.save(testCase);
+    private void removeIdsFromSteps(TestCase testCase) {
+        Stream.of(testCase.getPreSteps(), testCase.getSteps(), testCase.getPostSteps())
+                .flatMap(Collection::stream)
+                .forEach(s -> {
+                    s.setId(null);
+                    s.getPSymbol().setId(null);
+                    s.getPSymbol().getOutputMappings().forEach(om -> om.setId(null));
+                    s.getPSymbol().getParameterValues().forEach(om -> om.setId(null));
+                });
     }
 
     private void checkIfOutputMappingNamesAreUnique(TestCase testCase) {
@@ -336,10 +347,9 @@ public class TestDAO {
         SymbolOutputMappingUtils.checkIfMappedNamesAreUnique(oms);
     }
 
-    private void updateTestSuite(User user, TestSuite testSuite, Project project) {
-        testSuite.getTests().forEach(t -> t.setParent(null));
-        beforeSaving(user, project, testSuite);
-        testRepository.save(testSuite);
+    private Test updateTestSuite(TestSuite testSuiteInDB, TestSuite testSuite) {
+        testSuiteInDB.setName(testSuite.getName());
+        return testRepository.save(testSuiteInDB);
     }
 
     public void delete(User user, Long projectId, Long testId) {
@@ -568,13 +578,6 @@ public class TestDAO {
         });
     }
 
-    private Test get(User user, Project project, Long testId) {
-        final Test test = testRepository.findById(testId).orElse(null);
-        checkAccess(user, project, test);
-        loadLazyRelations(test);
-        return test;
-    }
-
     private void loadLazyRelations(TestResult testResult) {
         if (testResult instanceof TestCaseResult) {
             Hibernate.initialize(((TestCaseResult) testResult).getOutputs());
@@ -606,7 +609,8 @@ public class TestDAO {
         if (test instanceof TestSuite) {
             TestSuite testSuite = (TestSuite) test;
             for (Long testId : testSuite.getTestsAsIds()) {
-                Test otherTest = get(user, project, testId);
+                final var otherTest = testRepository.findById(testId).orElse(null);
+                checkAccess(user, project, otherTest);
                 testSuite.addTest(otherTest);
             }
         } else if (test instanceof TestCase) {

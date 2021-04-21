@@ -31,40 +31,13 @@
 
         <div class="list-group">
           <div
-            (click)="selectedEnvironment = env"
+            (click)="this.configuration.environmentId = env.id"
             *ngFor="let env of project.environments"
-            [ngClass]="{'active': env.id === selectedEnvironment.id}"
+            [ngClass]="{'active': env.id === this.configuration.environmentId}"
             class="list-group-item cursor-pointer"
           >
             {{env.name}}
           </div>
-        </div>
-      </ng-template>
-    </ng-container>
-    <ng-container ngbNavItem>
-      <a ngbNavLink>Test</a>
-      <ng-template ngbNavContent>
-        <br>
-
-        <div class="form-group">
-          <label>Name</label>
-          <textarea
-            [(ngModel)]="configuration.name"
-            class="form-control"
-            rows="1"
-            placeholder="Enter a name for the test config"
-          >
-          </textarea>
-        </div>
-        <div class="form-group">
-          <label>Description</label>
-          <textarea
-            [(ngModel)]="configuration.description"
-            class="form-control"
-            rows="3"
-            placeholder="Enter a description for the test config"
-          >
-          </textarea>
         </div>
       </ng-template>
     </ng-container>
@@ -75,7 +48,6 @@
 </div>
 
 <div class="modal-footer">
-  <button *ngIf="action === TestConfigModalAction.CREATE" (click)="create()" class="btn btn-success btn-sm">Create</button>
-  <button *ngIf="action === TestConfigModalAction.EDIT" (click)="update()" class="btn btn-primary btn-sm">Update</button>
+  <button (click)="update()" [disabled]="!validConfig" class="btn btn-primary btn-sm">Update</button>
   <button (click)="modal.dismiss(); $event.preventDefault()" class="btn btn-default btn-sm">Cancel</button>
 </div>

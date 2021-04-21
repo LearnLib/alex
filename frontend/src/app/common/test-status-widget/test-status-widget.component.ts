@@ -28,9 +28,6 @@ import { ToastService } from '../../services/toast.service';
 })
 export class TestStatusWidgetComponent implements OnInit, OnDestroy {
 
-  @Input()
-  flush = true;
-
   status: TestStatus;
 
   testReportStatus: any = TestReportStatus;

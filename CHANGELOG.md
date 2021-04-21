@@ -1,3 +1,11 @@
+# ALEX 2.1.1
+
+## Fixes
+
+* Fix bug where test cases could not be executed.
+* Fix bug where tests could not be saved when pre steps have changed.
+
+
 # ALEX 2.1.0
 
 ## Breaking Changes
