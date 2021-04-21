@@ -140,7 +140,7 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.project = this.project;
     modalRef.result.then((config) => {
       this.testConfig = config;
-      this.toastService.success(`The config has been saved for the moment.`)
+      this.toastService.success(`The config has been saved for the moment.`);
     }).catch(() => {});
   }
 

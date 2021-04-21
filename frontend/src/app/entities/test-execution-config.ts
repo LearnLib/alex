@@ -25,12 +25,12 @@ export class TestExecutionConfig {
   driverConfig = new WebDriverConfig();
   environment: ProjectEnvironment;
   environmentId: number;
-  default: boolean = false;
+  default = false;
 
   static isValid(config: any): boolean {
     return config != null
       && config.driverConfig.browser != null
-      && config.driverConfig.browser != ''
+      && config.driverConfig.browser !== ''
       && config.driverConfig.platform != null
       && config.driverConfig.width > 0
       && config.driverConfig.height > 0;

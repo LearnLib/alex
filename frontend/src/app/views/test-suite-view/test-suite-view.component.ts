@@ -284,7 +284,7 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.project = this.project;
     modalRef.result.then(config => {
       this.testConfig = config;
-      this.toastService.success(`Config has been saved for the moment.`)
+      this.toastService.success(`Config has been saved for the moment.`);
       }).catch(() => {
     });
   }
