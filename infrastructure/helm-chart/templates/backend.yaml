@@ -19,7 +19,7 @@ metadata:
   name: backend
 data:
   application.properties: |-
-    spring.jpa.hibernate.ddl-auto: update
+    spring.jpa.hibernate.ddl-auto: validate
     spring.datasource.url: jdbc:postgresql://database:5432/{{.Values.database.name}}
     spring.datasource.username: {{.Values.database.user}}
     spring.datasource.password: {{.Values.database.password}}
