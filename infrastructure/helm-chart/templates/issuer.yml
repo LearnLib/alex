@@ -1,0 +1,36 @@
+{{- if ne .Values.serverTier "local" }}
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  {{ if eq .Values.serverTier "staging" }}
+  name: letsencrypt-staging
+  {{ end }}
+  {{ if eq .Values.serverTier "production" }}
+  name: letsencrypt-production
+  {{ end }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  acme:
+    # The ACME server URL
+    {{ if eq .Values.serverTier "staging" }}
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    {{ end }}
+    {{ if eq .Values.serverTier "production" }}
+    server: https://acme-v02.api.letsencrypt.org/directory
+    {{ end }}
+    # Email address used for ACME registration
+    email: {{ .Values.certManager.email }}
+    # Name of a secret used to store the ACME account private key
+    privateKeySecretRef:
+    {{ if eq .Values.serverTier "staging" }}
+      name: letsencrypt-staging
+    {{ end }}
+    {{ if eq .Values.serverTier "production" }}
+      name: letsencrypt-production
+    {{ end }}
+    # Enable the HTTP-01 challenge provider
+    solvers:
+      - http01:
+          ingress:
+            class: {{ .Values.ingress.class | default "nginx" }}
+{{ end }}

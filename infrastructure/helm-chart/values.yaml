@@ -6,3 +6,6 @@ database:
   password:
 ingress:
   host: alex
+serverTier:
+certManager:
+  email:
