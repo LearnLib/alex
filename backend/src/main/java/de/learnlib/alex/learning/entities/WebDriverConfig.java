@@ -118,6 +118,7 @@ public class WebDriverConfig implements Serializable {
         final DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setPlatform(platform);
         capabilities.setBrowserName(browser);
+        capabilities.setAcceptInsecureCerts(true);
 
         switch (browser) {
             case "chrome":
