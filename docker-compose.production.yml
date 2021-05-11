@@ -11,6 +11,8 @@ services:
     environment:
       - HUB_HOST=selenium-hub
       - HUB_PORT=4444
+    volumes:
+      - alex-database:/var/alex/backend/target/postgresql
   firefox-node:
     image: selenium/node-firefox-debug:3
     shm_size: '2gb'
@@ -19,6 +21,8 @@ services:
     environment:
       - HUB_HOST=selenium-hub
       - HUB_PORT=4444
+    volumes:
+      - alex-database:/var/alex/backend/target/postgresql
   alex-database:
     image: postgres:10
     environment:
