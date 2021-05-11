@@ -13,6 +13,8 @@ services:
     environment:
       - HUB_HOST=selenium-hub
       - HUB_PORT=4444
+    volumes:
+      - alex-database:/var/alex/backend/target/postgresql
     networks:
       - backend
   firefox-node:
@@ -23,6 +25,8 @@ services:
     environment:
       - HUB_HOST=selenium-hub
       - HUB_PORT=4444
+    volumes:
+      - alex-database:/var/alex/backend/target/postgresql
     networks:
       - backend
   alex-database:

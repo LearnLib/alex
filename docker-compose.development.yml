@@ -13,6 +13,8 @@ services:
         environment:
             - HUB_HOST=selenium-hub
             - HUB_PORT=4444
+        volumes:
+            - alex-database:/var/alex/backend/target/postgresql
         extra_hosts:
             - "selenium-hub:127.0.0.1"
         network_mode: "host"
@@ -25,6 +27,8 @@ services:
 #        environment:
 #            - HUB_HOST=selenium-hub
 #            - HUB_PORT=4444
+#        volumes:
+#            - alex-database:/var/alex/backend/target/postgresql
 #        extra_hosts:
 #            - "selenium-hub:127.0.0.1"
 #        network_mode: "host"
