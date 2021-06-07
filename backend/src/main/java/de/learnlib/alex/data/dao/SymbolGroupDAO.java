@@ -16,25 +16,31 @@
 
 package de.learnlib.alex.data.dao;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.EntityLockedException;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolGroup;
+import de.learnlib.alex.data.entities.SymbolPSymbolStep;
 import de.learnlib.alex.data.entities.SymbolStep;
-import de.learnlib.alex.data.entities.export.SymbolGroupsImportableEntity;
-import de.learnlib.alex.data.entities.export.SymbolImportConflictResolutionStrategy;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
 import de.learnlib.alex.websocket.services.SymbolPresenceService;
-import java.io.IOException;
+import org.apache.commons.collections.BidiMap;
+import org.apache.commons.collections.bidimap.DualHashBidiMap;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.validation.ValidationException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -42,13 +48,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.validation.ValidationException;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.hibernate.Hibernate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Implementation of a SymbolGroupDAO using Spring Data.
@@ -65,7 +64,6 @@ public class SymbolGroupDAO {
     private final SymbolGroupRepository symbolGroupRepository;
     private final SymbolRepository symbolRepository;
     private final SymbolDAO symbolDAO;
-    private final ObjectMapper objectMapper;
     private final SymbolPresenceService symbolPresenceService;
 
     @Autowired
@@ -75,58 +73,54 @@ public class SymbolGroupDAO {
             SymbolGroupRepository symbolGroupRepository,
             SymbolRepository symbolRepository,
             @Lazy SymbolDAO symbolDAO,
-            ObjectMapper objectMapper,
             @Lazy SymbolPresenceService symbolPresenceService) {
         this.projectRepository = projectRepository;
         this.projectDAO = projectDAO;
         this.symbolGroupRepository = symbolGroupRepository;
         this.symbolRepository = symbolRepository;
         this.symbolDAO = symbolDAO;
-        this.objectMapper = objectMapper;
         this.symbolPresenceService = symbolPresenceService;
-    }
-
-    public List<SymbolGroup> importGroups(User user, Long projectId, SymbolGroupsImportableEntity importableEntity) {
-        final Project project = projectRepository.findById(projectId).orElse(null);
-        projectDAO.checkAccess(user, project);
-
-        try {
-            final var symbolGroupsAsString = importableEntity.getSymbolGroups().toString();
-            final var symbolGroups = objectMapper.readValue(symbolGroupsAsString, SymbolGroup[].class);
-            return importGroups(user, project, Arrays.asList(symbolGroups), importableEntity.getConflictResolutions());
-        } catch (IOException e) {
-            throw new ValidationException("The input could not be parsed");
-        }
     }
 
     public List<SymbolGroup> importGroups(
             User user,
             Project project,
             List<SymbolGroup> groups,
-            Map<String, SymbolImportConflictResolutionStrategy> conflictResolutions
+            Map<Long, Long> newSymbolIdToOldSymbolId
     ) {
         projectDAO.checkAccess(user, project);
 
         // name -> symbol
         // save symbols steps
-        final Map<String, List<SymbolStep>> symbolNameToStepsMap = new HashMap<>();
+        final Map<Long, List<SymbolStep>> oldSymbolIdToStepsMap = new HashMap<>();
         groups.forEach(group -> group.walk(g -> null, s -> {
-            symbolNameToStepsMap.put(s.getName(), s.getSteps());
+            oldSymbolIdToStepsMap.put(s.getId(), s.getSteps());
             s.setSteps(new ArrayList<>());
             return null;
         }));
 
         // create symbol groups and symbols without steps
         // because one might reference names of symbols in steps that have not yet been created
-        final List<SymbolGroup> importedGroups = importGroups(user, project, groups, null, conflictResolutions);
+        final List<SymbolGroup> importedGroups = importGroups(user, project, groups, null, newSymbolIdToOldSymbolId);
 
         // create symbol steps
         final Map<Long, List<SymbolStep>> symbolIdToStepsMap = new HashMap<>();
         final List<Symbol> symbols = symbolDAO.getAll(user, project.getId()).stream()
-                .filter(s -> symbolNameToStepsMap.containsKey(s.getName()))
+                .filter(s -> oldSymbolIdToStepsMap.containsKey(newSymbolIdToOldSymbolId.get(s.getId())))
                 .collect(Collectors.toList());
 
-        symbols.forEach(s -> symbolIdToStepsMap.put(s.getId(), symbolNameToStepsMap.get(s.getName())));
+        symbols.forEach(s -> symbolIdToStepsMap.put(s.getId(), oldSymbolIdToStepsMap.get(newSymbolIdToOldSymbolId.get(s.getId()))));
+
+        // replace old symbol id in symbolSteps
+        final BidiMap oldSymbolIdToNewSymbolId = new DualHashBidiMap(newSymbolIdToOldSymbolId).inverseBidiMap();
+        symbolIdToStepsMap.forEach((aLong, symbolSteps) -> {
+            symbolSteps.forEach(symbolStep -> {
+                if (symbolStep instanceof SymbolPSymbolStep) {
+                    var newPSymbolId = (Long) oldSymbolIdToNewSymbolId.get(((SymbolPSymbolStep) symbolStep).getPSymbol().getSymbol().getId());
+                    ((SymbolPSymbolStep) symbolStep).getPSymbol().getSymbol().setId(newPSymbolId);
+                }
+            });
+        });
 
         symbolDAO.saveSymbolSteps(project.getId(), symbols, symbolIdToStepsMap);
 
@@ -137,8 +131,8 @@ public class SymbolGroupDAO {
             User user,
             Project project,
             List<SymbolGroup> groups,
-            SymbolGroup parent, Map<String,
-            SymbolImportConflictResolutionStrategy> conflictResolutions
+            SymbolGroup parent,
+            Map<Long, Long> newSymbolIdToOldSymbolId
     ) {
         final List<SymbolGroup> importedGroups = new ArrayList<>();
         for (SymbolGroup group : groups) {
@@ -158,9 +152,9 @@ public class SymbolGroupDAO {
                 symbol.setProject(project);
                 symbol.setGroup(createdGroup);
             });
-            symbolDAO.importSymbols(user, project, new ArrayList<>(symbols), conflictResolutions);
+            symbolDAO.importSymbols(user, project, new ArrayList<>(symbols), newSymbolIdToOldSymbolId);
 
-            final var createdChildGroups = importGroups(user, project, children, createdGroup, conflictResolutions);
+            final var createdChildGroups = importGroups(user, project, children, createdGroup, newSymbolIdToOldSymbolId);
             createdGroup.setGroups(createdChildGroups);
             importedGroups.add(createdGroup);
         }

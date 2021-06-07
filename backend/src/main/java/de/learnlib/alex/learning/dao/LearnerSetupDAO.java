@@ -223,9 +223,9 @@ public class LearnerSetupDAO {
     }
 
     public List<LearnerSetup> importLearnerSetups(User user, Project project, List<LearnerSetup> setups) {
-        // symbol name -> symbol
+        // symbol id -> symbol
         final var symbolMap = symbolDAO.getAll(user, project.getId()).stream()
-                .collect(Collectors.toMap(Symbol::getName, Function.identity()));
+                .collect(Collectors.toMap(Symbol::getId, Function.identity()));
 
         // associate symbols
         for (var setup : setups) {
@@ -264,8 +264,8 @@ public class LearnerSetupDAO {
         return importedSetups;
     }
 
-    private ParameterizedSymbol importParameterizedSymbol(ParameterizedSymbol pSymbol, Map<String, Symbol> symbolMap) {
-        final var symbol = symbolMap.get(pSymbol.getSymbol().getName());
+    private ParameterizedSymbol importParameterizedSymbol(ParameterizedSymbol pSymbol, Map<Long, Symbol> symbolMap) {
+        final var symbol = symbolMap.get(pSymbol.getSymbol().getId());
         pSymbol.setSymbol(symbol);
         pSymbol.getParameterValues().forEach(pv -> {
             final var param = symbol.findInputByNameAndType(

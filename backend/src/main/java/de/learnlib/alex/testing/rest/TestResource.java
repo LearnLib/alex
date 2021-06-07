@@ -226,7 +226,7 @@ public class TestResource {
     public ResponseEntity<List<Test>> importTests(@PathVariable("projectId") Long projectId,
                                                   @RequestBody List<Test> tests) {
         final var user = authContext.getUser();
-        final var importedTests = testDAO.importTests(user, projectId, tests, null);
+        final var importedTests = testDAO.importTests(user, projectId, tests, null, null);
         return ResponseEntity.ok(importedTests);
     }
 

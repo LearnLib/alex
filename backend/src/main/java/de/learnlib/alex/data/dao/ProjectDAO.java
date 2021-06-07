@@ -336,7 +336,10 @@ public class ProjectDAO {
                 .collect(Collectors.toList())
         );
 
-        symbolGroupDAO.importGroups(user, createdProject, groups, new HashMap<>());
+        // newSymbolId -> oldSymbolId
+        Map<Long, Long> testRefMap = new HashMap<>();
+
+        symbolGroupDAO.importGroups(user, createdProject, groups, testRefMap);
 
         /*  oldTestId -> newTestId
          *  maps the exported testids to the corresponding newly created ones,
@@ -345,7 +348,7 @@ public class ProjectDAO {
         Map<Long, Long> configRefMap = new HashMap<>();
 
         if (!tests.isEmpty()) {
-            testDAO.importTests(user, createdProject.getId(), tests, configRefMap);
+            testDAO.importTests(user, createdProject.getId(), tests, configRefMap, testRefMap);
         }
 
         for (LtsFormulaSuite suite : formulaSuites) {

@@ -324,7 +324,7 @@ public class SymbolResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void shouldNotCreateASymbolIfNameExists() throws Exception {
+    public void shouldNotCreateASymbolIfNameExistsInTheSameGroup() throws Exception {
         final String symbol1 = createSymbolWithProjectJson(projectId1, "s1");
         final String symbol2 = createSymbolWithProjectJson(projectId1, "s1");
 
@@ -457,6 +457,19 @@ public class SymbolResourceIT extends AbstractResourceIT {
         assertEquals(HttpStatus.OK.value(), res.getStatus());
         assertEquals(g.getId(), s1.getGroupId());
         assertEquals(g.getId(), s2.getGroupId());
+    }
+
+    @Test
+    public void shouldFailToMoveSymbolToAnotherGroupWithASymbolWithTheSameName() throws Exception {
+        final Symbol s1 = createSymbol("s1", (long) projectId1, jwtUser1);
+        final SymbolGroup g = createGroup("g", (long) projectId1, jwtUser1);
+
+        final String symbolJson = createSymbolWithGroupJson(projectId1, Math.toIntExact(g.getId()), "s1");
+        final Response res1 = symbolApi.create(projectId1, symbolJson, jwtUser1);
+        assertEquals(HttpStatus.CREATED.value(), res1.getStatus());
+
+        final Response res = symbolApi.move(projectId1, s1.getId(), g.getId(), jwtUser1);
+        assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
     }
 
     @Test
@@ -685,10 +698,13 @@ public class SymbolResourceIT extends AbstractResourceIT {
 
     @Test
     public void shouldCreateSymbolsWithSymbolSteps() throws Exception {
-        symbolApi.create(projectId1, createSymbolWithAllPropertiesJson(projectId1, symbolGroupId1, "s2"), jwtUser1);
-        symbolApi.create(projectId1, createSymbolWithAllPropertiesJson(projectId1, symbolGroupId1, "s3"), jwtUser1);
+        final Response resS2 = symbolApi.create(projectId1, createSymbolWithAllPropertiesJson(projectId1, symbolGroupId1, "s2"), jwtUser1);
+        final Response resS3 = symbolApi.create(projectId1, createSymbolWithAllPropertiesJson(projectId1, symbolGroupId1, "s3"), jwtUser1);
 
-        final String symbolWithSymbolStepsJson = createSymbolWithSymbolStepsJson(projectId1, symbolGroupId1, "s1");
+        final int s2Id = JsonPath.read(resS2.readEntity(String.class), "id");
+        final int s3Id = JsonPath.read(resS3.readEntity(String.class), "id");
+
+        final String symbolWithSymbolStepsJson = createSymbolWithSymbolStepsJson(projectId1, symbolGroupId1, "s1", s2Id, s3Id);
         final Response resS1 = symbolApi.create(projectId1, symbolWithSymbolStepsJson, jwtUser1);
         assertEquals(HttpStatus.CREATED.value(), resS1.getStatus());
 
@@ -776,14 +792,14 @@ public class SymbolResourceIT extends AbstractResourceIT {
                 + "}";
     }
 
-    private String createSymbolWithSymbolStepsJson(int projectId, int groupId, String name) {
+    private String createSymbolWithSymbolStepsJson(int projectId, int groupId, String name, int stepId1, int stepId2) {
         return "{"
                 + "\"name\":\"" + name + "\""
                 + ",\"project\": " + projectId
                 + ",\"group\": " + groupId
                 + ",\"steps\": ["
-                + "{\"type\":\"symbol\", \"negated\": false, \"errorOutput\": null, \"ignoreFailure\": false, \"disabled\": false, \"pSymbol\": {\"symbol\": {\"name\": \"s2\"}, \"parameterValues\": []}}"
-                + ",{\"type\":\"symbol\", \"negated\": false, \"errorOutput\": null, \"ignoreFailure\": false, \"disabled\": false, \"pSymbol\": {\"symbol\": {\"name\": \"s3\"}, \"parameterValues\": []}}"
+                + "{\"type\":\"symbol\", \"negated\": false, \"errorOutput\": null, \"ignoreFailure\": false, \"disabled\": false, \"pSymbol\": {\"symbol\": {\"id\": " + stepId1 + "}, \"parameterValues\": []}}"
+                + ",{\"type\":\"symbol\", \"negated\": false, \"errorOutput\": null, \"ignoreFailure\": false, \"disabled\": false, \"pSymbol\": {\"symbol\": {\"id\": " + stepId2 + "}, \"parameterValues\": []}}"
                 + "]"
                 + "}";
     }

@@ -31,6 +31,7 @@
           "description": "",
           "expectedResult": "",
           "hidden": false,
+          "id": 1,
           "inputs": [
             {
               "type": "input",
@@ -87,6 +88,7 @@
           "description": "",
           "expectedResult": "",
           "hidden": false,
+          "id": 2,
           "inputs": [
             {
               "type": "input",
@@ -198,6 +200,7 @@
           "description": "",
           "expectedResult": "",
           "hidden": false,
+          "id": 3,
           "inputs": [
             {
               "type": "input",
@@ -254,6 +257,7 @@
           "description": "",
           "expectedResult": "",
           "hidden": false,
+          "id":4,
           "inputs": [],
           "name": "logout",
           "outputs": [
@@ -284,6 +288,7 @@
           "description": "",
           "expectedResult": "",
           "hidden": false,
+          "id":5,
           "inputs": [
             {
               "type": "input",
@@ -368,6 +373,7 @@
           "description": "",
           "expectedResult": "",
           "hidden": false,
+          "id": 6,
           "inputs": [
             {
               "type": "input",
@@ -424,6 +430,7 @@
           "description": "",
           "expectedResult": "",
           "hidden": false,
+          "id": 7,
           "inputs": [],
           "name": "reset",
           "outputs": [
@@ -481,7 +488,7 @@
                   }
                 ],
                 "symbol": {
-                  "name": "auth"
+                  "id": 5
                 }
               }
             },
@@ -666,6 +673,7 @@
           "description": "",
           "expectedResult": "",
           "hidden": false,
+          "id": 8,
           "inputs": [
             {
               "type": "input",
@@ -722,6 +730,7 @@
           "description": "",
           "expectedResult": "",
           "hidden": false,
+          "id": 9,
           "inputs": [
             {
               "type": "input",
@@ -809,7 +818,7 @@
           "pSymbol": {
             "parameterValues": [],
             "symbol": {
-              "name": "reset"
+              "id": 7
             }
           }
         },
@@ -846,7 +855,7 @@
               }
             ],
             "symbol": {
-              "name": "register"
+              "id": 2
             }
           }
         },
@@ -883,7 +892,7 @@
               }
             ],
             "symbol": {
-              "name": "register"
+              "id": 2
             }
           }
         },
@@ -912,7 +921,7 @@
               }
             ],
             "symbol": {
-              "name": "auth"
+              "id": 5
             }
           }
         },
@@ -941,7 +950,7 @@
               }
             ],
             "symbol": {
-              "name": "get profile"
+              "id": 1
             }
           }
         },
@@ -970,7 +979,7 @@
               }
             ],
             "symbol": {
-              "name": "get profile"
+              "id": 1
             }
           }
         }

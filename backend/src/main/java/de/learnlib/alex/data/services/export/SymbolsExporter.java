@@ -129,7 +129,7 @@ public class SymbolsExporter extends EntityExporter {
         @Override
         public void serialize(ParameterizedSymbol ps, JsonGenerator jgen, SerializerProvider provider) throws IOException {
             final ObjectNode symbolNode = om.createObjectNode();
-            symbolNode.put("name", ps.getSymbol().getName());
+            symbolNode.put("id", ps.getSymbol().getId());
 
             jgen.writeStartObject();
             jgen.writeObjectField("parameterValues", ps.getParameterValues());
@@ -147,6 +147,9 @@ public class SymbolsExporter extends EntityExporter {
     }
 
     private abstract static class IgnoreFieldsForSymbolMixin extends IgnoreIdFieldMixin {
+        @JsonIgnore(value = false)
+        abstract Long getId();
+
         @JsonIgnore
         abstract Long getProjectId();
 

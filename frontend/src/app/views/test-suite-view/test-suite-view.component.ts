@@ -15,7 +15,6 @@
  */
 
 import { orderBy, remove } from 'lodash';
-import { DateUtils } from '../../utils/date-utils';
 import { Selectable } from '../../utils/selectable';
 import { SymbolGroupApiService } from '../../services/api/symbol-group-api.service';
 import { ToastService } from '../../services/toast.service';
@@ -33,7 +32,6 @@ import { TestCase } from '../../entities/test-case';
 import { AppStoreService } from '../../services/app-store.service';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { TestsImportModalComponent } from './tests-import-modal/tests-import-modal.component';
 import { TestConfigModalComponent } from '../tests-view/test-config-modal/test-config-modal.component';
 import { TestsMoveModalComponent } from './tests-move-modal/tests-move-modal.component';
 import { TestReportStatus, TestStatus } from '../../entities/test-status';
@@ -286,37 +284,6 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
       this.testConfig = config;
       this.toastService.success(`Config has been saved for the moment.`);
       }).catch(() => {
-    });
-  }
-
-  /**
-   * Downloads the tests as JSON file.
-   */
-  exportSelectedTests(): void {
-    const tests = this.selectedTests.getSelected();
-    if (!tests.length) {
-      this.toastService.info('You have to select at least one test.');
-    } else {
-      const name = `tests-${this.testSuite.name}-${DateUtils.YYYYMMDD()}`;
-      this.promptService.prompt('Enter a name for the file', {defaultValue: name}).then(newName => {
-        this.testApi.export(this.project.id, {testIds: tests.map(t => t.id)}).subscribe(data => {
-          this.downloadService.downloadObject(data, newName);
-          this.toastService.success('The tests have been exported.');
-        });
-      });
-    }
-  }
-
-  importTests(): void {
-    const modalRef = this.modalService.open(TestsImportModalComponent);
-    modalRef.componentInstance.parent = this.testSuite;
-    modalRef.result.then(tests => {
-      this.toastService.success('Tests have been imported.');
-      tests.forEach(t => {
-        t.type = t.tests ? 'suite' : 'case';
-        this.testSuite.tests.push(t);
-      });
-    }).catch(() => {
     });
   }
 
