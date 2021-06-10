@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 - 2020 TU Dortmund
+ * Copyright 2018 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,22 +54,5 @@ module.exports = {
       str += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     return str;
-  },
-
-  /**
-   * Tests if two arrays are equal.
-   *
-   * @param a {*[]}
-   * @param b {*[]}
-   * @returns {boolean}
-   */
-  listsAreEqual: function(a, b) {
-    if (a.length !== b.length) return false;
-
-    for (let i = 0; i < a.length; i++) {
-      if (a[i] !== b[i]) return false;
-    }
-
-    return true;
   }
 }
