@@ -222,10 +222,10 @@ public class LearnerSetupDAO {
         return copiedSetup;
     }
 
-    public List<LearnerSetup> importLearnerSetups(User user, Project project, List<LearnerSetup> setups) {
+    public List<LearnerSetup> importLearnerSetups(User user, Project project, List<LearnerSetup> setups, Map<Long, Long> symbolRefMap) {
         // symbol id -> symbol
         final var symbolMap = symbolDAO.getAll(user, project.getId()).stream()
-                .collect(Collectors.toMap(Symbol::getId, Function.identity()));
+                .collect(Collectors.toMap(s -> symbolRefMap != null ? symbolRefMap.get(s.getId()) : s.getId(), Function.identity()));
 
         // associate symbols
         for (var setup : setups) {
