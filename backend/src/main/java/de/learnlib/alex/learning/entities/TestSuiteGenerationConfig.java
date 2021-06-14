@@ -41,7 +41,6 @@ public class TestSuiteGenerationConfig {
     private String name;
 
     /** The ID of the test suite to update. */
-    @NotNull
     private Long testSuiteToUpdateId;
 
     /** which method is used. */
