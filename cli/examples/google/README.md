@@ -8,7 +8,7 @@ Execute the following commands from the root of this repository.
 
 ```bash
 node alex-cli.js \
-        --uri "http://localhost:8000" \
+        --uri "http://127.0.0.1:8000" \
         -d "test" \
         -u "admin@alex.example:admin" \
         -p "./examples/google/project.json" \
@@ -22,7 +22,7 @@ node alex-cli.js \
 
 ```bash
 node alex-cli.js \
-        --uri "http://localhost:8000" \
+        --uri "http://127.0.0.1:8000" \
         -d "learn" \
         -u "admin@alex.example:admin" \
         -p "./examples/google/project.json" \
@@ -34,7 +34,7 @@ node alex-cli.js \
 
 ```bash
 alex-cli \
-    --uri "http://alex-backend:8000" \
+    --uri "http://127.0.0.1:8000" \
     --do "compare" \
     --user "admin@alex.example:admin" \
     --models "model1.json" "model2.json" \
