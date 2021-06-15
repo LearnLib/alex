@@ -144,7 +144,7 @@ public class TestDAO {
         return parent;
     }
 
-    public Test create(User user, Long projectId, Test test) throws NotFoundException, ValidationException {
+    public synchronized Test create(User user, Long projectId, Test test) throws NotFoundException, ValidationException {
         test.setId(null);
 
         final Test root = testRepository.findFirstByProject_IdOrderByIdAsc(projectId);
