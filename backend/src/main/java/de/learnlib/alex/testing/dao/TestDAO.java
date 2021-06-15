@@ -177,12 +177,12 @@ public class TestDAO {
         return create(user, projectId, new ArrayList<>(tests), null, configRefMap);
     }
 
-    public List<Test> importTests(User user, Long projectId, List<Test> tests, Map<Long, Long> configRefMap, Map<Long, Long> testRefMap) {
+    public List<Test> importTests(User user, Long projectId, List<Test> tests, Map<Long, Long> configRefMap, Map<Long, Long> symbolRefMap) {
         projectDAO.getByID(user, projectId);
 
         // fetch symbols and map with oldSymbolIds as keys when a testRefMap is provided
         final Map<Long, Symbol> symbolMap = symbolDAO.getAll(user, projectId).stream()
-                .collect(Collectors.toMap(s -> testRefMap != null ? testRefMap.get(s.getId()) : s.getId(), Function.identity()));
+                .collect(Collectors.toMap(s -> symbolRefMap != null ? symbolRefMap.get(s.getId()) : s.getId(), Function.identity()));
 
         mapSymbolsInTests(tests, symbolMap);
 
