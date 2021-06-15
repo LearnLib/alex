@@ -170,6 +170,9 @@ public class LearnerSetupDAO {
 
         setupInDb.setPreSymbol(setup.getPreSymbol().copy());
         setupInDb.setSymbols(setup.getSymbols().stream()
+                .collect(Collectors.groupingBy(ParameterizedSymbol::getAliasOrComputedName))
+                .values()
+                .stream().map(l -> l.get(0))
                 .map(ParameterizedSymbol::copy)
                 .collect(Collectors.toList()));
 
@@ -287,6 +290,13 @@ public class LearnerSetupDAO {
     public LearnerSetup create(User user, Long projectId, LearnerSetup setup) {
         final var project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
+
+        // remove duplicate symbols
+        setup.setSymbols(setup.getSymbols().stream()
+                .collect(Collectors.groupingBy(ParameterizedSymbol::getAliasOrComputedName))
+                .values()
+                .stream().map(l -> l.get(0))
+                .collect(Collectors.toList()));
 
         saveSymbols(setup);
 

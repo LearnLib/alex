@@ -243,9 +243,9 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
                 .map(SymbolParameterValue::getValue)
                 .collect(Collectors.toList());
         if (parameters.isEmpty()) {
-            return getSymbol().getName();
+            return getSymbol().getName() + " _id" + getSymbol().getId();
         } else {
-            return getSymbol().getName() + " <" + String.join(", ", parameters) + ">";
+            return getSymbol().getName() + " _id" + getSymbol().getId() + " <" + String.join(", ", parameters) + ">";
         }
     }
 
