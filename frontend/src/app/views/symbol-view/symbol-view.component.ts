@@ -180,7 +180,6 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
         ignoreFailure: false,
         pSymbol: ParametrizedSymbol.fromSymbol(symbol)
       };
-      console.log(step);
       this.symbol.steps.push(step);
       this.selectedSteps.addItem(step);
     }).catch(() => {});
@@ -192,7 +191,6 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
    * @param $index The index of the step to delete.
    */
   deleteStep($index: number): void {
-    console.log("test")
     const step = this.symbol.steps[$index];
     this.symbol.steps.splice($index, 1);
     this.selectedSteps.remove(step);
