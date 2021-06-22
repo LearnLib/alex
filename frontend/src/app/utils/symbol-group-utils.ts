@@ -80,7 +80,7 @@ export class SymbolGroupUtils {
       groupNames.push(current.name);
     }
 
-    return groupNames.reverse().join(' / ');
+    return `/${groupNames.reverse().join('/')}/`;
   }
 
 }

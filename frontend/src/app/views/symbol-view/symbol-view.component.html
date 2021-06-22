@@ -18,8 +18,12 @@
         >
           <i class="fas fa-fw fa-level-up-alt"></i>
         </a>
+        <span *ngIf="groups.length > 0" class="text-muted mt-1">{{getSymbolPath(this.symbol)}}</span>
+      </div>
+      <hr>
+
+      <div class="d-flex flex-row align-items-center">
         <div class="ml-2">
-          <small *ngIf="groups.length > 0" class="text-muted">{{getSymbolPath(this.symbol)}}</small>
           <h4 class="m-0">
             <strong>{{symbol.name}}</strong>
           </h4>
