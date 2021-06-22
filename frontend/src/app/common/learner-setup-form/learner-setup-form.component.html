@@ -50,6 +50,8 @@
     <div *ngIf="setup.preSymbol != null" class="list-group">
       <div class="d-flex flex-row list-group-item">
         <div class="w-100">
+          <small *ngIf="groups.length > 0" class="text-muted">{{getSymbolPath(setup.preSymbol.symbol)}}</small>
+          <br>
           <div>
             <a [routerLink]="['/app', 'projects', project.id, 'symbols', setup.preSymbol.symbol.id]">
               <strong>{{setup.preSymbol.symbol.name}}</strong>
@@ -74,6 +76,7 @@
       <div *ngFor="let pSymbol of setup.symbols; let i = index"
            class="list-group-item d-flex flex-row">
         <div class="w-100">
+          <small *ngIf="groups.length > 0" class="text-muted">{{getSymbolPath(pSymbol.symbol)}}</small>
           <div class="d-flex flex-row">
             <a class="flex-shrink-0"
                [routerLink]="['/app', 'projects', project.id, 'symbols', pSymbol.symbol.id]">
@@ -113,6 +116,8 @@
       <div class="d-flex flex-row list-group-item">
         <div class="w-100">
           <div>
+            <small *ngIf="groups.length > 0" class="text-muted">{{getSymbolPath(setup.postSymbol.symbol)}}</small>
+            <br>
             <a [routerLink]="['/app', 'projects', project.id, 'symbols', setup.postSymbol.symbol.id]">
               <strong>{{setup.postSymbol.symbol.name}}</strong>
             </a>

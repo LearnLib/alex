@@ -148,6 +148,10 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
     this.testCase.steps.push(TestCaseStep.fromSymbol(symbol));
   }
 
+  getSymbolPath(symbol: AlphabetSymbol): string {
+    return SymbolGroupUtils.getSymbolPath(this.groups, symbol);
+  }
+
   private pollForResult(): void {
     if (this.pollHandle != null) {
       window.clearTimeout(this.pollHandle);

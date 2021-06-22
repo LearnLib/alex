@@ -33,6 +33,7 @@ import { SettingsApiService } from '../../services/api/settings-api.service';
 import { SymbolGroupApiService } from '../../services/api/symbol-group-api.service';
 import { LtlFormulaSuite } from '../../entities/ltl-formula-suite';
 import { LtsFormulaSuiteApiService } from '../../services/api/lts-formula-suite-api.service';
+import { SymbolGroupUtils } from '../../utils/symbol-group-utils';
 
 @Component({
   selector: 'learner-setup-form',
@@ -118,6 +119,10 @@ export class LearnerSetupFormComponent implements OnInit {
 
   selectFormulaSuites(): void {
     this.setup.modelCheckingConfig.formulaSuites = [...this.selectedFormulaSuites.getSelected()];
+  }
+
+  getSymbolPath(symbol: AlphabetSymbol): string {
+    return SymbolGroupUtils.getSymbolPath(this.groups, symbol);
   }
 
   get project(): Project {

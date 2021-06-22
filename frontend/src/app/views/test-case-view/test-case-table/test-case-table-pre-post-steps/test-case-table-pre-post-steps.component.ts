@@ -15,6 +15,7 @@
  */
 
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { SymbolGroup } from '../../../../entities/symbol-group';
 
 @Component({
   selector: 'test-case-table-pre-post-steps',
@@ -30,6 +31,9 @@ export class TestCaseTablePrePostStepsComponent {
 
   @Input()
   symbolMap: any;
+
+  @Input()
+  groups: SymbolGroup[];
 
   @Output()
   stepsChange: EventEmitter<any[]>;

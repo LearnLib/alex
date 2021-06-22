@@ -19,6 +19,7 @@
           <i class="fas fa-fw fa-level-up-alt"></i>
         </a>
         <div class="ml-2">
+          <small *ngIf="groups.length > 0" class="text-muted">{{getSymbolPath(this.symbol)}}</small>
           <h4 class="m-0">
             <strong>{{symbol.name}}</strong>
           </h4>
@@ -163,6 +164,8 @@
                         {{step.action.toString()}}
                       </div>
                       <div *ngIf="step.type === 'symbol'" class="symbol-description">
+                        <small *ngIf="groups.length > 0" class="text-muted">{{getSymbolPath(step.pSymbol.symbol)}}</small>
+                        <br>
                         <span class="symbol-description">
                           Execute symbol
                           <a [routerLink]="['..', step.pSymbol.symbol.id]">
