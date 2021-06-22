@@ -3,9 +3,11 @@ registry:
 database:
   name: alex
   user: sa
-  password:
+  password: sa
 ingress:
   host: alex
-serverTier:
+serverTier: local
 certManager:
   email:
+imageConfig:
+  pullPolicy: Never

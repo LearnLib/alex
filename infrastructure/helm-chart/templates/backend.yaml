@@ -42,7 +42,8 @@ spec:
     spec:
       containers:
         - name: backend
-          image: '{{.Values.registry.base}}/alex-backend:{{ .Chart.AppVersion }}'
+          image: {{ .Values.backendImage }}
+          imagePullPolicy: {{ .Values.imageConfig.pullPolicy }}
           env:
             - name: REMOTE_DRIVER
               value: http://selenium-hub:4444/wd/hub

@@ -46,7 +46,8 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: '{{.Values.registry.base}}/alex-frontend:{{ .Chart.AppVersion }}'
+          image: {{ .Values.frontendImage }}
+          imagePullPolicy: {{ .Values.imageConfig.pullPolicy }}
           envFrom:
             - configMapRef:
                 name: frontend
