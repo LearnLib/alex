@@ -1,0 +1,24 @@
+apiVersion: skaffold/v2beta16
+kind: Config
+metadata:
+  name: alex
+deploy:
+  helm:
+    releases:
+      - name: release
+        artifactOverrides:
+          frontendImage: ghcr.io/learnlib/alex/alex-frontend
+          backendImage: ghcr.io/learnlib/alex/alex-backend
+        chartPath: ./infrastructure/helm-chart
+        valuesFiles:
+          - ./infrastructure/helm-chart/values.yaml
+build:
+  artifacts:
+    - image: ghcr.io/learnlib/alex/alex-frontend
+      context: ./frontend
+      docker:
+        dockerfile: Dockerfile
+    - image: ghcr.io/learnlib/alex/alex-backend
+      context: ./backend
+      docker:
+        dockerfile: Dockerfile
