@@ -82,9 +82,9 @@ export class ParametrizedSymbol {
         .map(v => v.value);
 
       if (params.length === 0) {
-        return this.symbol.name;
+        return `${this.symbol.name} _id${this.symbol.id}`;
       } else {
-        return `${this.symbol.name} <${params.join(', ')}>`;
+        return `${this.symbol.name} _id${this.symbol.id} <${params.join(', ')}>`;
       }
     }
   }
