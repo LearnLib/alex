@@ -27,6 +27,7 @@ data:
   ALEX_BACKEND_ADDRESS: http://{{ .Values.ingress.host }}
   ALEX_BACKEND_PORT: "80"
   {{- end }}
+  BASE_HREF: {{ .Values.alex.frontend.baseHref }}
 ---
 apiVersion: apps/v1
 kind: Deployment

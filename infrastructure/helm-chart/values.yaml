@@ -6,8 +6,18 @@ database:
   password: sa
 ingress:
   host: alex
+  # The path where the app is deployed to.
+  # Use "/" if the app should be deployed on the server root.
+  # If the app is deployed on a sub path, e.g. /sub-path, leave the trailing slash.
+  # Ensure that this value is aligned with alex.frontend.baseHref.
+  deployUrl: /alex
 serverTier: local
 certManager:
   email:
 imageConfig:
   pullPolicy: Never
+alex:
+  frontend:
+    # The value that is injected in the <base href="..."> tag.
+    # Should match with ingress.deployUrl with the trailing slash
+    baseHref: /alex/
