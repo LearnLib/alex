@@ -13,6 +13,8 @@ deploy:
         valuesFiles:
           - ./infrastructure/helm-chart/values.yaml
 build:
+  tagPolicy:
+    gitCommit: {}
   artifacts:
     - image: ghcr.io/learnlib/alex/alex-frontend
       context: ./frontend
