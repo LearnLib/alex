@@ -19,8 +19,9 @@ frontend/src/main/javascript/dist
 frontend/src/main/javascript/test/coverage
 frontend/src/main/javascript/npm-debug\.log
 
-infrastructure/helm-chart/secrets.yaml
-infrastructure/helm-chart/secrets.yml
+# helm value files
+infrastructure/helm-chart/values-temp.yml
+infrastructure/helm-chart/values-temp.yaml
 
 # uploaded files
 main/uploads

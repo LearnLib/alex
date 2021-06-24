@@ -12,6 +12,7 @@ deploy:
         chartPath: ./infrastructure/helm-chart
         valuesFiles:
           - ./infrastructure/helm-chart/values.yaml
+          - ./infrastructure/helm-chart/values-local.yaml
 build:
   tagPolicy:
     gitCommit: {}
@@ -24,3 +25,12 @@ build:
       context: ./backend
       docker:
         dockerfile: Dockerfile
+
+profiles:
+  # profile that can be used to deploy ALEX to an arbitrary, temporary server
+  # run with `skaffold run -p temp`
+  - name: temp
+    patches:
+      - op: replace
+        path: /deploy/helm/releases/0/valuesFiles/1
+        value: ./infrastructure/helm-chart/values-temp.yaml
