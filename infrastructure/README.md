@@ -9,13 +9,14 @@ This section describes the steps that are required to deploy and run ALEX on a l
 1. Install [docker](Docker), [minikube](Minikube), [kubectl](Kubectl), [helm](Helm) and [skaffold](Skaffold).
 2. Start minikube: `minikube start`.
 3. Install necessary add-ons: `minikube addons enable ingress storage-provisioner`
+4. Add a host alias to the `/etc/hosts` file:
+   Execute `minikube ip` to get the IP address of the local cluster and add an entry `<ip> alex` to the `/etc/hosts` file.
 
 ### Deploy ALEX to Minikube
 
-2. Add a host alias to the `/etc/hosts` file:
-   Execute `minikube ip` to get the IP address of the local cluster and add an entry `<ip> alex` to the `/etc/hosts` file.
-3. In the root of the repository, run `skaffold dev` to execute the deployment.
-4. Open `http://alex` in a Web browser.
+1. Ensure you use the local minikube kubernetes context: `kubectl config use-context minikube`
+2. In the root of the repository, run `skaffold dev` to execute the deployment.
+3. Open `http://alex` in a Web browser.
 
 
 ## Remote setup
