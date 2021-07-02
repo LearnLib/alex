@@ -20,7 +20,7 @@
     <tr>
       <td>Environments</td>
       <td>
-        <span *ngFor="let env of setup.environments" class="badge badge-secondary mr-2">{{env.name}}</span>
+        <span *ngFor="let env of setup.environments" class="badge badge-secondary env-badge mr-2">{{env.name}}</span>
       </td>
     </tr>
     <tr>
@@ -32,7 +32,7 @@
     <tr>
       <td>Input alphabet</td>
       <td>
-        <span *ngFor="let s of setup.symbols; let last = last">{{s.getAliasOrComputedName()}}{{last ? '' : ', '}}</span>
+        <span [ngbTooltip]="this.groups ? getSymbolPath(s.symbol): null" class="badge badge-primary symbol-badge mr-2" *ngFor="let s of setup.symbols">{{s.getAliasOrComputedName()}}</span>
       </td>
     </tr>
     <tr *ngIf="setup.postSymbol != null">

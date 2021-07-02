@@ -15,6 +15,8 @@
  */
 
 import { TestCaseStep } from './test-case-step';
+import { TestSuite } from './test-suite';
+import { User } from './user';
 
 export class TestCase {
   readonly type: string = 'case';
@@ -25,6 +27,8 @@ export class TestCase {
   preSteps: TestCaseStep[];
   steps: TestCaseStep[];
   postSteps: TestCaseStep[];
+  lastUpdatedBy: User;
+  updatedOn: string;
   generated: boolean;
 
   constructor() {
@@ -37,6 +41,7 @@ export class TestCase {
     tc.name = data.name;
     tc.parent = data.parent;
     tc.project = data.project;
+    tc.updatedOn = data.updatedOn;
     tc.generated = data.generated;
 
     if (data.preSteps && data.preSteps.length) {
@@ -51,6 +56,43 @@ export class TestCase {
       tc.postSteps = data.postSteps.map(s => new TestCaseStep(s));
     }
 
+    if (data.lastUpdatedBy) {
+      tc.lastUpdatedBy = User.fromData(data.lastUpdatedBy);
+    }
+
     return tc;
+  }
+
+  static findSuiteById(root: TestSuite, suiteId: number): TestSuite {
+
+    const find = (test: TestSuite) => {
+      if (test.id === suiteId) {
+        return test;
+      }
+
+      for (const t of test.tests) {
+        if (t instanceof TestSuite) {
+          const s = find(t);
+          if (s != null) {
+            return s;
+          }
+        }
+      }
+    };
+
+    const res = find(root);
+    return res != null ? res : null;
+  }
+
+  static getTestPath(root: TestSuite, test: TestCase|TestSuite): string {
+    let current = this.findSuiteById(root, test.parent);
+    const suiteNames = [current.name];
+
+    while (current.parent) {
+      current = this.findSuiteById(root, current.parent);
+      suiteNames.push(current.name);
+    }
+
+    return `/${suiteNames.reverse().join('/')}/`;
   }
 }

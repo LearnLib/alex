@@ -168,11 +168,12 @@
                         {{step.action.toString()}}
                       </div>
                       <div *ngIf="step.type === 'symbol'" class="symbol-description">
-                        <small *ngIf="groups.length > 0" class="text-muted">{{getSymbolPath(step.pSymbol.symbol)}}</small>
-                        <br>
                         <span class="symbol-description">
                           Execute symbol
-                          <a [routerLink]="['..', step.pSymbol.symbol.id]">
+                          <a
+                            [routerLink]="['..', step.pSymbol.symbol.id]"
+                            [ngbTooltip]="this.groups.length > 0 ? getSymbolPath(step.pSymbol.symbol) : null"
+                          >
                             <strong>{{step.pSymbol.symbol.name}}</strong>
                           </a>
                         </span>

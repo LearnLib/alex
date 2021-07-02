@@ -34,6 +34,8 @@ import { TestReportApiService } from '../../services/api/test-report-api.service
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ParametrizedSymbol } from '../../entities/parametrized-symbol';
+import { TestSuite } from '../../entities/test-suite';
+import { TestCase } from '../../entities/test-case';
 
 @Component({
   selector: 'test-case-view',
@@ -43,13 +45,16 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
 
   /** The current test. */
   @Input()
-  testCase: any;
+  testCase: TestCase;
+
   /** Map id -> symbol. */
   symbolMap: any;
   /** The config used for testing. */
   testConfig: any;
 
   groups: SymbolGroup[];
+
+  root: TestSuite;
 
   currentTestRun: TestQueueItem;
 
@@ -79,6 +84,8 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
       },
       console.error
     );
+
+    this.testApi.getRoot(this.appStore.project.id).subscribe(root => this.root = root);
 
     this.testConfigApi.getAll(this.project.id).subscribe((configs: any[]) => {
       const i = configs.findIndex(c => c.default);
@@ -207,5 +214,9 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
 
   get canExecute(): boolean {
     return TestExecutionConfig.isValid(this.testConfig) && this.testCase.steps.length > 0;
+  }
+
+  get casePath(): string {
+    return TestCase.getTestPath(this.root, this.testCase);
   }
 }

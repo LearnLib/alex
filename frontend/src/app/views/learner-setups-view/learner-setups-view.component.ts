@@ -21,6 +21,8 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { LearnerSetupApiService } from '../../services/api/learner-setup-api.service';
 import { LearnerSetup } from '../../entities/learner-setup';
+import { SymbolGroup } from '../../entities/symbol-group';
+import { SymbolGroupApiService } from '../../services/api/symbol-group-api.service';
 
 /**
  * The controller that handles the preparation of a learn process. Lists all symbol groups and its visible symbols.
@@ -33,15 +35,20 @@ export class LearnerSetupsViewComponent {
 
   learnerSetups: LearnerSetup[] = [];
 
+  groups: SymbolGroup[];
+
   constructor(private appStore: AppStoreService,
               private toastService: ToastService,
               private learnerSetupApi: LearnerSetupApiService,
+              private symbolGroupApi: SymbolGroupApiService,
               private router: Router) {
 
     this.learnerSetupApi.getAll(this.project.id).subscribe(
       learnerSetups => this.learnerSetups = learnerSetups,
       console.error
     );
+
+    this.symbolGroupApi.getAll(this.appStore.project.id).subscribe(groups => this.groups = groups);
   }
 
   deleteSetup(setup: LearnerSetup): void {

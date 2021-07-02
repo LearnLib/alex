@@ -22,16 +22,19 @@
         <hr>
       </div>
 
+      <div class="d-flex flex-row align-items-center">
+        <a
+          class="btn btn-sm btn-default mr-1"
+          [routerLink]="['/app', 'projects', testCase.project, 'tests', testCase.parent]"
+        >
+          <i class="fas fa-fw fa-level-up-alt"></i>
+        </a>
+        <span *ngIf="this.root" class="text-muted ml-2">{{casePath}}</span>
+      </div>
+      <hr>
+
       <div class="d-flex align-items-center">
-        <div class="mr-1">
-          <a
-            class="btn btn-sm btn-default mr-1"
-            [routerLink]="['/app', 'projects', testCase.project, 'tests', testCase.parent]"
-          >
-            <i class="fas fa-fw fa-level-up-alt"></i>
-          </a>
-        </div>
-        <div class="w-100 ml-2">
+        <div class="ml-2">
           <h4 class="m-0">
             <strong>
               {{testCase.name}}

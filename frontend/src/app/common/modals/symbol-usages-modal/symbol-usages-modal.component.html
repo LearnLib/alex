@@ -22,6 +22,7 @@
         (click)="modal.dismiss(); $event.preventDefault()"
         *ngFor="let s of result.symbols"
         [routerLink]="['/app', 'projects', s.project, 'symbols', s.id]"
+        [ngbTooltip]="this.groups ? getSymbolPath(s) : null"
         class="list-group-item list-group-item-action"
       >
         {{s.name}}
@@ -40,6 +41,7 @@
           (click)="modal.dismiss(); $event.preventDefault()"
           *ngFor="let t of result.testCases"
           [routerLink]="['/app', 'projects', t.project, 'tests', t.id]"
+          [ngbTooltip]="this.root ? getTestPath(t) : null"
           class="list-group-item list-group-item-action"
         >
           {{t.name}}

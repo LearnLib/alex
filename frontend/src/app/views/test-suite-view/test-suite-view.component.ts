@@ -27,7 +27,6 @@ import { NotificationService } from '../../services/notification.service';
 import { TestConfigApiService } from '../../services/api/test-config-api.service';
 import { TestReportApiService } from '../../services/api/test-report-api.service';
 import { Project } from '../../entities/project';
-import { SymbolGroup } from '../../entities/symbol-group';
 import { TestCase } from '../../entities/test-case';
 import { AppStoreService } from '../../services/app-store.service';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
@@ -37,6 +36,7 @@ import { TestsMoveModalComponent } from './tests-move-modal/tests-move-modal.com
 import { TestReportStatus, TestStatus } from '../../entities/test-status';
 import { TestLockInfo, TestPresenceService } from '../../services/test-presence.service';
 import { TestExecutionConfig } from '../../entities/test-execution-config';
+import { TestSuite } from '../../entities/test-suite';
 
 @Component({
   selector: 'test-suite-view',
@@ -54,7 +54,7 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
   /** The driver configuration. */
   testConfig: any;
 
-  groups: SymbolGroup[];
+  root: TestSuite;
 
   testConfigs: any[];
 
@@ -81,7 +81,6 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
               private testPresenceService: TestPresenceService) {
     this.testConfigs = [];
     this.selectedTests = new Selectable<any, any>(t => t.id);
-    this.groups = [];
   }
 
   get project(): Project {
@@ -106,10 +105,7 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
       console.error
     );
 
-    this.symbolGroupApi.getAll(this.project.id).subscribe(
-      groups => this.groups = groups,
-      console.error
-    );
+    this.testApi.getRoot(this.project.id).subscribe(r => this.root = r);
 
     this.testPresenceService.accessedTests$.subscribe(tests => {
       this.lockInfo = tests;
@@ -339,6 +335,10 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
 
   isLocked(testId: number): boolean {
     return this.lockInfo?.get(this.project.id)?.has(testId);
+  }
+
+  getSuitePath(suite: TestSuite): string {
+    return TestCase.getTestPath(this.root, suite);
   }
 
   private pollTestReport(reportId: number): void {

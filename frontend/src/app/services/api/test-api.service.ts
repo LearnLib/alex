@@ -21,6 +21,7 @@ import { Observable } from 'rxjs';
 import { TestStatus } from '../../entities/test-status';
 import { map } from 'rxjs/operators';
 import { EnvironmentProvider } from '../../../environments/environment.provider';
+import { TestSuite } from '../../entities/test-suite';
 
 /**
  * The resource to handle actions with test cases over the API.
@@ -46,8 +47,10 @@ export class TestApiService extends BaseApiService {
    *
    * @param projectId The id of the project to get all test cases from
    */
-  getRoot(projectId: number): Observable<any> {
-    return this.http.get(`${this.env.apiUrl}/projects/${projectId}/tests/root`, this.defaultHttpOptions);
+  getRoot(projectId: number): Observable<TestSuite> {
+    return this.http.get(`${this.env.apiUrl}/projects/${projectId}/tests/root`, this.defaultHttpOptions).pipe(
+      map((data: any) => TestSuite.fromData(data))
+    );
   }
 
   /**
