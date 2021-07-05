@@ -270,6 +270,7 @@ import { TestSelectTreeComponent } from './common/test-select-tree/test-select-t
 import { TestSelectTreeHeaderComponent } from './common/test-select-tree/test-select-tree-header/test-select-tree-header.component';
 import { TestSelectTreeItemComponent } from './common/test-select-tree/test-select-tree-item/test-select-tree-item.component';
 import { TestSelectTreeStore } from './common/test-select-tree/test-select-tree.store';
+import { WarningWidgetComponent } from './common/warning-widget/warning-widget.component';
 
 @NgModule({
   declarations: [
@@ -487,7 +488,8 @@ import { TestSelectTreeStore } from './common/test-select-tree/test-select-tree.
     TestConfigsEditViewComponent,
     TestSelectTreeComponent,
     TestSelectTreeHeaderComponent,
-    TestSelectTreeItemComponent
+    TestSelectTreeItemComponent,
+    WarningWidgetComponent
   ],
   imports: [
     BrowserModule,

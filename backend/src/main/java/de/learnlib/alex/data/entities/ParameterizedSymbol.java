@@ -238,15 +238,38 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
 
     @JsonIgnore
     public String getComputedName() {
-        final List<String> parameters = parameterValues.stream()
+        var parameters = getParameterList();
+        if (parameters.isEmpty()) {
+            return getSymbol().getName();
+        } else {
+            return getSymbol().getName() + " <" + String.join(", ", parameters) + ">";
+        }
+    }
+
+    @JsonIgnore
+    public String getAliasOrIdBasedName() {
+        if (alias != null && !alias.equals("")) {
+            return alias;
+        } else {
+            return getIdBasedName();
+        }
+    }
+
+    @JsonIgnore
+    public String getIdBasedName() {
+        var parameters = getParameterList();
+        if (parameters.isEmpty()) {
+            return getSymbol().getId().toString();
+        } else {
+            return getSymbol().getId().toString() + " <" + String.join(", ", parameters) + ">";
+        }
+    }
+
+    private List<String> getParameterList() {
+        return parameterValues.stream()
                 .filter(pv -> pv.getValue() != null)
                 .map(SymbolParameterValue::getValue)
                 .collect(Collectors.toList());
-        if (parameters.isEmpty()) {
-            return getSymbol().getName() + " _id" + getSymbol().getId();
-        } else {
-            return getSymbol().getName() + " _id" + getSymbol().getId() + " <" + String.join(", ", parameters) + ">";
-        }
     }
 
     /**

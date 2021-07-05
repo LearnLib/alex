@@ -75,8 +75,8 @@ public class SymbolMapperTest {
 
     @Test
     public void shouldMapInputStringToCorrectSymbol() {
-        assertEquals(ps1, sm.mapInput("s1 _id1"));
-        assertEquals(ps2, sm.mapInput("s2 _id2 <test>"));
+        assertEquals(ps1, sm.mapInput("s1"));
+        assertEquals(ps2, sm.mapInput("s2 <test>"));
     }
 
     @Test

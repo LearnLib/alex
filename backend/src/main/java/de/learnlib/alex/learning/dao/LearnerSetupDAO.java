@@ -170,7 +170,7 @@ public class LearnerSetupDAO {
 
         setupInDb.setPreSymbol(setup.getPreSymbol().copy());
         setupInDb.setSymbols(setup.getSymbols().stream()
-                .collect(Collectors.groupingBy(ParameterizedSymbol::getAliasOrComputedName))
+                .collect(Collectors.groupingBy(ParameterizedSymbol::getAliasOrIdBasedName))
                 .values()
                 .stream().map(l -> l.get(0))
                 .map(ParameterizedSymbol::copy)
@@ -293,7 +293,7 @@ public class LearnerSetupDAO {
 
         // remove duplicate symbols
         setup.setSymbols(setup.getSymbols().stream()
-                .collect(Collectors.groupingBy(ParameterizedSymbol::getAliasOrComputedName))
+                .collect(Collectors.groupingBy(ParameterizedSymbol::getAliasOrIdBasedName))
                 .values()
                 .stream().map(l -> l.get(0))
                 .collect(Collectors.toList()));

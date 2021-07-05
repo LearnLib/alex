@@ -49,6 +49,7 @@ export class LearnerSetupFormComponent implements OnInit {
   learningAlgorithms: any = learningAlgorithm;
 
   groups: SymbolGroup[] = [];
+
   selectedLearningAlgorithm: string = learningAlgorithm.TTT;
   formulaSuites: LtlFormulaSuite[] = [];
   selectedEnvironments = new Selectable<ProjectEnvironment, number>(e => e.id);
@@ -139,5 +140,35 @@ export class LearnerSetupFormComponent implements OnInit {
       ps.push(this.setup.postSymbol);
     }
     return ps;
+  }
+
+  get warnings(): string[] {
+    const occurrences = this.setup.symbols.map(s => s.getAliasOrComputedName())
+      .filter((name, index, array) => array.indexOf(name) !== index)
+      .reduce((prev, cur) => {
+        prev[cur] = (prev[cur] || 1) + 1;
+        return prev;
+      }, {});
+
+    return Object.entries(occurrences).map(([name, number]) => 'Ambiguous symbol name/alias: ' + name + ' (' + number + ') occurrences');
+  }
+
+  get errors(): string[] {
+    const res = [];
+
+    if (this.setup.webDriver.browser == null
+      || this.setup.webDriver.browser === '') {
+      res.push('No valid browser selected.');
+    }
+
+    if (this.setup.preSymbol == null) {
+      res.push('No valid Pre Symbol selected.');
+    }
+
+    if (this.setup.symbols.length === 0) {
+      res.push('Setup doesn\'t contain any symbols.');
+    }
+
+    return res;
   }
 }

@@ -43,7 +43,7 @@ public class ParameterizedSymbolTest {
     @Test
     public void shouldGetTheComputedNameWhenNoAliasIsSpecified() {
         final var ps = createDefaultPSymbol();
-        assertEquals("s1 _id" + ps.getSymbol().getId() + " <v1, v2>", ps.getAliasOrComputedName());
+        assertEquals("s1" + " <v1, v2>", ps.getAliasOrComputedName());
     }
 
     @Test
@@ -75,7 +75,7 @@ public class ParameterizedSymbolTest {
         final ParameterizedSymbol ps = createDefaultPSymbol();
         ps.getParameterValues().addAll(Arrays.asList(value1, value2));
 
-        assertEquals("s1 _id" + ps.getSymbol().getId() + " <v1, v2>", ps.getAliasOrComputedName());
+        assertEquals("s1" + " <v1, v2>", ps.getAliasOrComputedName());
     }
 
     @Test
@@ -83,7 +83,7 @@ public class ParameterizedSymbolTest {
         final ParameterizedSymbol ps = createDefaultPSymbol();
         ps.setParameterValues(new ArrayList<>());
 
-        assertEquals("s1 _id" + ps.getSymbol().getId(), ps.getAliasOrComputedName());
+        assertEquals("s1", ps.getAliasOrComputedName());
     }
 
     private ParameterizedSymbol createDefaultPSymbol() {
