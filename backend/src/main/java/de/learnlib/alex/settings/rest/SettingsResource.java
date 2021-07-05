@@ -16,6 +16,8 @@
 
 package de.learnlib.alex.settings.rest;
 
+import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.settings.dao.SettingsDAO;
 import de.learnlib.alex.settings.entities.Settings;
 import de.learnlib.alex.settings.events.SettingsEvent;
@@ -36,12 +38,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/rest/settings")
 public class SettingsResource {
 
+    private final AuthContext authContext;
     private final SettingsDAO settingsDAO;
     private final WebhookService webhookService;
 
     @Autowired
-    public SettingsResource(SettingsDAO settingsDAO,
+    public SettingsResource(AuthContext authContext, SettingsDAO settingsDAO,
                             WebhookService webhookService) {
+        this.authContext = authContext;
         this.settingsDAO = settingsDAO;
         this.webhookService = webhookService;
     }
@@ -71,8 +75,9 @@ public class SettingsResource {
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity<Settings> update(@RequestBody Settings settings) {
+        final User user = authContext.getUser();
         final var updatedSettings = settingsDAO.update(settings);
-        webhookService.fireEvent(new SettingsEvent.Updated(settings));
+        webhookService.fireEvent(user, new SettingsEvent.Updated(settings));
         return ResponseEntity.ok(updatedSettings);
     }
 

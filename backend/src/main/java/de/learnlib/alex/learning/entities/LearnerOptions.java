@@ -16,11 +16,15 @@
 
 package de.learnlib.alex.learning.entities;
 
+import de.learnlib.alex.webhooks.entities.Webhook;
+
 /** Options to pass to the learning process. */
 public class LearnerOptions {
 
     /** The comment to pass to the learner result. **/
     private String comment;
+
+    private Webhook webhook;
 
     public String getComment() {
         return comment;
@@ -28,5 +32,13 @@ public class LearnerOptions {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public Webhook getWebhook() {
+        return webhook;
+    }
+
+    public void setWebhook(Webhook webhook) {
+        this.webhook = webhook;
     }
 }

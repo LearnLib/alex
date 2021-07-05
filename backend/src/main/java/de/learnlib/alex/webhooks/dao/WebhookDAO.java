@@ -108,6 +108,8 @@ public class WebhookDAO {
         webhookInDb.setEvents(webhook.getEvents());
         webhookInDb.setUrl(webhook.getUrl());
         webhookInDb.setName(webhook.getName());
+        webhookInDb.setHeaders(webhook.getHeaders());
+        webhookInDb.setMethod(webhook.getMethod());
 
         return webhookRepository.save(webhookInDb);
     }

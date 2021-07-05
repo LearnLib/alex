@@ -20,18 +20,19 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.webhooks.dao.WebhookDAO;
 import de.learnlib.alex.webhooks.entities.Event;
 import de.learnlib.alex.webhooks.entities.Webhook;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
 import org.glassfish.jersey.client.ClientProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * The service that emits events to all remote subscribers.
@@ -84,29 +85,54 @@ public class WebhookService {
      */
     public <T> void fireEvent(User user, Event<T> event) {
         final List<Webhook> webhooks = webhookDAO.getByUserAndEvent(user, event.getEventType());
-        triggerWebhooks(event, webhooks);
+        triggerWebhooks(user, event, webhooks);
     }
 
-    /**
-     * Sends the event to all subscribers.
-     *
-     * @param event
-     *         The event that occurred.
-     * @param <T>
-     *         The type of the event.
-     */
-    public <T> void fireEvent(Event<T> event) {
-        final List<Webhook> webhooks = webhookDAO.getByEvent(event.getEventType());
-        triggerWebhooks(event, webhooks);
-    }
+//    /**
+//     * Sends the event to all subscribers.
+//     *
+//     * @param event
+//     *         The event that occurred.
+//     * @param <T>
+//     *         The type of the event.
+//     */
+//    public <T> void fireEvent(Event<T> event) {
+//        final List<Webhook> webhooks = webhookDAO.getByEvent(event.getEventType());
+//        triggerWebhooks(event, webhooks);
+//    }
 
-    private <T> void triggerWebhooks(Event<T> event, List<Webhook> webhooks) {
+    private <T> void triggerWebhooks(User user, Event<T> event, List<Webhook> webhooks) {
         for (final Webhook webhook : webhooks) {
             executorService.submit(() -> {
                 logger.info("send {} to {}", event, webhook.getUrl());
-                client.target(webhook.getUrl())
-                        .request(MediaType.APPLICATION_JSON)
-                        .post(Entity.json(event));
+                var request = client.target(webhook.getUrl())
+                        .request(MediaType.APPLICATION_JSON);
+
+                // set header
+                for (var header : webhook.getHeaders().entrySet()) {
+                    request = request.header(header.getKey(), header.getValue());
+                }
+
+                switch (webhook.getMethod()) {
+                    case GET -> {
+                        request.get();
+                        break;
+                    }
+                    case POST -> {
+                        request.post(Entity.json(event));
+                        break;
+                    }
+                    case PUT -> {
+                        request.put(Entity.json(event));
+                        break;
+                    }
+                    case DELETE -> request.delete();
+                }
+
+                if (webhook.getOnce()) {
+                    this.webhookDAO.delete(user, webhook.getId());
+                }
+
             });
         }
     }

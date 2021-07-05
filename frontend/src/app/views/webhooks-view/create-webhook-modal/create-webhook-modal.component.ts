@@ -44,6 +44,7 @@ export class CreateWebhookModalComponent {
     const wh = this.webhook.copy();
     wh.name = this.form.controls.name.value;
     wh.url = this.form.controls.url.value;
+    wh.method = this.form.controls.method.value;
 
     this.webhookApi.create(wh).subscribe(
       createdWh => this.modal.close(createdWh),
