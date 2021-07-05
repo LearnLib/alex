@@ -1,13 +1,6 @@
+# base values file
+
 registry:
   base:  ghcr.io/learnlib/alex
-database:
-  name: alex
-  user: sa
-  password: sa
-ingress:
-  host: alex
-serverTier: local
 certManager:
   email:
-imageConfig:
-  pullPolicy: Never
