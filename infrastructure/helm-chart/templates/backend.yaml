@@ -20,9 +20,9 @@ metadata:
 data:
   application.properties: |-
     spring.jpa.hibernate.ddl-auto: validate
-    spring.datasource.url: jdbc:postgresql://database:5432/{{.Values.database.name}}
-    spring.datasource.username: {{.Values.database.user}}
-    spring.datasource.password: {{.Values.database.password}}
+    spring.datasource.url: jdbc:postgresql://postgres:5432/{{ .Values.database.name }}
+    spring.datasource.username: {{ .Values.database.user }}
+    spring.datasource.password: {{ .Values.database.password }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -42,7 +42,8 @@ spec:
     spec:
       containers:
         - name: backend
-          image: '{{.Values.registry.base}}/alex-backend:{{ .Chart.AppVersion }}'
+          image: {{ .Values.backendImage }}
+          imagePullPolicy: {{ .Values.imageConfig.pullPolicy }}
           env:
             - name: REMOTE_DRIVER
               value: http://selenium-hub:4444/wd/hub

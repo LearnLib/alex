@@ -17,6 +17,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AppStoreService } from '../../services/app-store.service';
 import { TestApiService } from '../../services/api/test-api.service';
+import { TestSuite } from '../../entities/test-suite';
+import { TestCase } from '../../entities/test-case';
 
 @Component({
   selector: 'test-config-table',
@@ -27,6 +29,9 @@ export class TestConfigTableComponent implements OnInit {
 
   @Input()
   config: any;
+
+  @Input()
+  root: TestSuite;
 
   tests: any[] = [];
 
@@ -40,5 +45,9 @@ export class TestConfigTableComponent implements OnInit {
         this.tests = tests;
       });
     }
+  }
+
+  getCasePath(test: TestCase): string {
+    return TestCase.getTestPath(this.root, test);
   }
 }

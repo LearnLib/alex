@@ -46,6 +46,16 @@ import de.learnlib.alex.testing.repositories.TestRepository;
 import de.learnlib.alex.testing.repositories.TestResultRepository;
 import de.learnlib.alex.testing.services.TestService;
 import de.learnlib.alex.websocket.services.TestPresenceService;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.validation.ValidationException;
 import java.time.ZonedDateTime;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -58,15 +68,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.validation.ValidationException;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.hibernate.Hibernate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /** The implementation of the test dao. */
 @Service
@@ -143,7 +144,7 @@ public class TestDAO {
         return parent;
     }
 
-    public Test create(User user, Long projectId, Test test) throws NotFoundException, ValidationException {
+    public synchronized Test create(User user, Long projectId, Test test) throws NotFoundException, ValidationException {
         test.setId(null);
 
         final Test root = testRepository.findFirstByProject_IdOrderByIdAsc(projectId);
@@ -176,16 +177,19 @@ public class TestDAO {
         return create(user, projectId, new ArrayList<>(tests), null, configRefMap);
     }
 
-    public List<Test> importTests(User user, Long projectId, List<Test> tests, Map<Long, Long> configRefMap) {
+    public List<Test> importTests(User user, Long projectId, List<Test> tests, Map<Long, Long> configRefMap, Map<Long, Long> symbolRefMap) {
         projectDAO.getByID(user, projectId);
-        final Map<String, Symbol> symbolMap = symbolDAO.getAll(user, projectId).stream()
-                .collect(Collectors.toMap(Symbol::getName, Function.identity()));
+
+        // fetch symbols and map with oldSymbolIds as keys when a testRefMap is provided
+        final Map<Long, Symbol> symbolMap = symbolDAO.getAll(user, projectId).stream()
+                .collect(Collectors.toMap(s -> symbolRefMap != null ? symbolRefMap.get(s.getId()) : s.getId(), Function.identity()));
+
         mapSymbolsInTests(tests, symbolMap);
 
         return create(user, projectId, tests, configRefMap);
     }
 
-    private void mapSymbolsInTests(List<Test> tests, Map<String, Symbol> symbolMap) {
+    private void mapSymbolsInTests(List<Test> tests, Map<Long, Symbol> symbolMap) {
         for (Test test : tests) {
             if (test instanceof TestCase) {
                 final TestCase tc = (TestCase) test;
@@ -198,9 +202,9 @@ public class TestDAO {
         }
     }
 
-    private void mapSymbolsInTestCaseSteps(List<TestCaseStep> steps, Map<String, Symbol> symbolMap) {
+    private void mapSymbolsInTestCaseSteps(List<TestCaseStep> steps, Map<Long, Symbol> symbolMap) {
         for (TestCaseStep step : steps) {
-            step.getPSymbol().setSymbol(symbolMap.get(step.getPSymbol().getSymbol().getName()));
+            step.getPSymbol().setSymbol(symbolMap.get(step.getPSymbol().getSymbol().getId()));
         }
     }
 

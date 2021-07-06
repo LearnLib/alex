@@ -33,7 +33,9 @@ export class EnvironmentProvider {
       .get<Env>('assets/config.json')
       .toPromise()
       .then(env => {
-        this.apiUrl = env.url + '/rest';
+        const baseElement = document.head.getElementsByTagName('base')[0];
+        const baseUrl = baseElement == null ? '/' : baseElement.getAttribute('href');
+        this.apiUrl = `${env.url}${baseUrl}rest`;
       });
   }
 }

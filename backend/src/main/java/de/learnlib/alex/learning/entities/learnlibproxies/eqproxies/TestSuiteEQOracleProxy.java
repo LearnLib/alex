@@ -88,13 +88,13 @@ public class TestSuiteEQOracleProxy extends AbstractEquivalenceOracleProxy
         this.batchSize = batchSize;
 
         try {
-            Map<String, String> symbolNameMapping = new HashMap<>();
-            result.getSetup().getSymbols().forEach(s -> symbolNameMapping.put(s.getComputedName(), s.getAliasOrComputedName()));
+            Map<Long, String> symbolNameMapping = new HashMap<>();
+            result.getSetup().getSymbols().forEach(s -> symbolNameMapping.put(s.getId(), s.getAliasOrComputedName()));
 
             testDAO.getTestCases(user, result.getProjectId(), testSuiteId).forEach(tc -> {
                 final Word<String> input = Word.fromList(
                         tc.getSteps().stream()
-                                .map(step -> symbolNameMapping.get(step.getPSymbol().getComputedName()))
+                                .map(step -> symbolNameMapping.get(step.getPSymbol().getId()))
                                 .collect(Collectors.toList())
                 );
                 testCases.add(input);

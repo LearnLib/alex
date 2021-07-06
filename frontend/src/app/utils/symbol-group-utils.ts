@@ -70,4 +70,17 @@ export class SymbolGroupUtils {
   static findDefaultGroup(groups: SymbolGroup[]): SymbolGroup {
     return groups.reduce((acc, val) => val.id < acc.id ? val : acc);
   }
+
+  static getSymbolPath(groups: SymbolGroup[], symbol: AlphabetSymbol): string {
+    let current = this.findGroupById(groups, symbol.group);
+    const groupNames = [current.name];
+
+    while (current.parent) {
+      current = this.findGroupById(groups, current.parent);
+      groupNames.push(current.name);
+    }
+
+    return `/${groupNames.reverse().join('/')}/`;
+  }
+
 }

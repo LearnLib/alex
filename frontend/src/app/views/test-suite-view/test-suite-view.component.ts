@@ -15,7 +15,6 @@
  */
 
 import { orderBy, remove } from 'lodash';
-import { DateUtils } from '../../utils/date-utils';
 import { Selectable } from '../../utils/selectable';
 import { SymbolGroupApiService } from '../../services/api/symbol-group-api.service';
 import { ToastService } from '../../services/toast.service';
@@ -28,17 +27,16 @@ import { NotificationService } from '../../services/notification.service';
 import { TestConfigApiService } from '../../services/api/test-config-api.service';
 import { TestReportApiService } from '../../services/api/test-report-api.service';
 import { Project } from '../../entities/project';
-import { SymbolGroup } from '../../entities/symbol-group';
 import { TestCase } from '../../entities/test-case';
 import { AppStoreService } from '../../services/app-store.service';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { TestsImportModalComponent } from './tests-import-modal/tests-import-modal.component';
 import { TestConfigModalComponent } from '../tests-view/test-config-modal/test-config-modal.component';
 import { TestsMoveModalComponent } from './tests-move-modal/tests-move-modal.component';
 import { TestReportStatus, TestStatus } from '../../entities/test-status';
 import { TestLockInfo, TestPresenceService } from '../../services/test-presence.service';
 import { TestExecutionConfig } from '../../entities/test-execution-config';
+import { TestSuite } from '../../entities/test-suite';
 
 @Component({
   selector: 'test-suite-view',
@@ -56,7 +54,7 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
   /** The driver configuration. */
   testConfig: any;
 
-  groups: SymbolGroup[];
+  root: TestSuite;
 
   testConfigs: any[];
 
@@ -83,7 +81,6 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
               private testPresenceService: TestPresenceService) {
     this.testConfigs = [];
     this.selectedTests = new Selectable<any, any>(t => t.id);
-    this.groups = [];
   }
 
   get project(): Project {
@@ -108,10 +105,7 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
       console.error
     );
 
-    this.symbolGroupApi.getAll(this.project.id).subscribe(
-      groups => this.groups = groups,
-      console.error
-    );
+    this.testApi.getRoot(this.project.id).subscribe(r => this.root = r);
 
     this.testPresenceService.accessedTests$.subscribe(tests => {
       this.lockInfo = tests;
@@ -289,37 +283,6 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Downloads the tests as JSON file.
-   */
-  exportSelectedTests(): void {
-    const tests = this.selectedTests.getSelected();
-    if (!tests.length) {
-      this.toastService.info('You have to select at least one test.');
-    } else {
-      const name = `tests-${this.testSuite.name}-${DateUtils.YYYYMMDD()}`;
-      this.promptService.prompt('Enter a name for the file', {defaultValue: name}).then(newName => {
-        this.testApi.export(this.project.id, {testIds: tests.map(t => t.id)}).subscribe(data => {
-          this.downloadService.downloadObject(data, newName);
-          this.toastService.success('The tests have been exported.');
-        });
-      });
-    }
-  }
-
-  importTests(): void {
-    const modalRef = this.modalService.open(TestsImportModalComponent);
-    modalRef.componentInstance.parent = this.testSuite;
-    modalRef.result.then(tests => {
-      this.toastService.success('Tests have been imported.');
-      tests.forEach(t => {
-        t.type = t.tests ? 'suite' : 'case';
-        this.testSuite.tests.push(t);
-      });
-    }).catch(() => {
-    });
-  }
-
   copyTests(): void {
     const tests = this.selectedTests.getSelected();
     if (tests.length > 0) {
@@ -372,6 +335,10 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
 
   isLocked(testId: number): boolean {
     return this.lockInfo?.get(this.project.id)?.has(testId);
+  }
+
+  getSuitePath(suite: TestSuite): string {
+    return TestCase.getTestPath(this.root, suite);
   }
 
   private pollTestReport(reportId: number): void {

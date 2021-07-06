@@ -33,6 +33,7 @@ import { SettingsApiService } from '../../services/api/settings-api.service';
 import { SymbolGroupApiService } from '../../services/api/symbol-group-api.service';
 import { LtlFormulaSuite } from '../../entities/ltl-formula-suite';
 import { LtsFormulaSuiteApiService } from '../../services/api/lts-formula-suite-api.service';
+import { SymbolGroupUtils } from '../../utils/symbol-group-utils';
 
 @Component({
   selector: 'learner-setup-form',
@@ -48,6 +49,7 @@ export class LearnerSetupFormComponent implements OnInit {
   learningAlgorithms: any = learningAlgorithm;
 
   groups: SymbolGroup[] = [];
+
   selectedLearningAlgorithm: string = learningAlgorithm.TTT;
   formulaSuites: LtlFormulaSuite[] = [];
   selectedEnvironments = new Selectable<ProjectEnvironment, number>(e => e.id);
@@ -120,6 +122,10 @@ export class LearnerSetupFormComponent implements OnInit {
     this.setup.modelCheckingConfig.formulaSuites = [...this.selectedFormulaSuites.getSelected()];
   }
 
+  getSymbolPath(symbol: AlphabetSymbol): string {
+    return SymbolGroupUtils.getSymbolPath(this.groups, symbol);
+  }
+
   get project(): Project {
     return this.appStore.project;
   }
@@ -134,5 +140,35 @@ export class LearnerSetupFormComponent implements OnInit {
       ps.push(this.setup.postSymbol);
     }
     return ps;
+  }
+
+  get warnings(): string[] {
+    const occurrences = this.setup.symbols.map(s => s.getAliasOrComputedName())
+      .filter((name, index, array) => array.indexOf(name) !== index)
+      .reduce((prev, cur) => {
+        prev[cur] = (prev[cur] || 1) + 1;
+        return prev;
+      }, {});
+
+    return Object.entries(occurrences).map(([name, number]) => 'Ambiguous symbol name/alias: ' + name + ' (' + number + ') occurrences');
+  }
+
+  get errors(): string[] {
+    const res = [];
+
+    if (this.setup.webDriver.browser == null
+      || this.setup.webDriver.browser === '') {
+      res.push('No valid browser selected.');
+    }
+
+    if (this.setup.preSymbol == null) {
+      res.push('No valid Pre Symbol selected.');
+    }
+
+    if (this.setup.symbols.length === 0) {
+      res.push('Setup doesn\'t contain any symbols.');
+    }
+
+    return res;
   }
 }

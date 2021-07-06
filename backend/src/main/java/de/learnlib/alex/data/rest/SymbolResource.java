@@ -22,15 +22,11 @@ import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolUsageResult;
 import de.learnlib.alex.data.entities.export.ExportableEntity;
 import de.learnlib.alex.data.entities.export.SymbolsExportConfig;
-import de.learnlib.alex.data.entities.export.SymbolsImportableEntity;
 import de.learnlib.alex.data.events.SymbolEvent;
 import de.learnlib.alex.data.services.SymbolUsageService;
 import de.learnlib.alex.data.services.export.SymbolsExporter;
 import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.webhooks.services.WebhookService;
-import java.util.Collections;
-import java.util.List;
-import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +38,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.ws.rs.core.MediaType;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * REST API to manage the symbols.
@@ -108,20 +108,6 @@ public class SymbolResource {
         final List<Symbol> createdSymbols = symbolDAO.create(user, projectId, symbols);
         webhookService.fireEvent(user, new SymbolEvent.CreatedMany(createdSymbols));
         return ResponseEntity.status(HttpStatus.CREATED).body(createdSymbols);
-    }
-
-    @PostMapping(
-            value = "/import",
-            consumes = MediaType.APPLICATION_JSON,
-            produces = MediaType.APPLICATION_JSON
-    )
-    public ResponseEntity importSymbols(@PathVariable("projectId") Long projectId,
-                                        @RequestBody SymbolsImportableEntity symbolsImportable) {
-
-        final User user = authContext.getUser();
-        final List<Symbol> importedSymbols = symbolDAO.importSymbols(user, projectId, symbolsImportable);
-        webhookService.fireEvent(user, new SymbolEvent.CreatedMany(importedSymbols));
-        return ResponseEntity.status(HttpStatus.CREATED).body(importedSymbols);
     }
 
     /**

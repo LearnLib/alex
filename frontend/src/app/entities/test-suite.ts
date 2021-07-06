@@ -14,32 +14,33 @@
  * limitations under the License.
  */
 
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { SymbolGroup } from '../../../../entities/symbol-group';
+import { TestCase } from './test-case';
 
-@Component({
-  selector: 'test-case-table-pre-post-steps',
-  templateUrl: './test-case-table-pre-post-steps.component.html'
-})
-export class TestCaseTablePrePostStepsComponent {
-
-  @Input()
-  steps: any[];
-
-  @Input()
-  options: any;
-
-  @Input()
-  symbolMap: any;
-
-  @Input()
-  groups: SymbolGroup[];
-
-  @Output()
-  stepsChange: EventEmitter<any[]>;
+export class TestSuite {
+  readonly type: string = 'suite';
+  id: number;
+  name: string;
+  parent?: number;
+  project: number;
+  tests: (TestCase|TestSuite)[];
 
   constructor() {
-    this.steps = [];
-    this.stepsChange = new EventEmitter<any[]>();
+    this.tests = [];
+  }
+
+  static fromData(data: any = {}): TestSuite {
+    const ts = new TestSuite();
+    ts.id = data.id;
+    ts.name = data.name;
+    ts.parent = data.parent;
+    ts.project = data.project;
+
+    if (data.tests) {
+      data.tests.forEach(t => {
+          ts.tests.push(t.type === 'case' ? TestCase.fromData(t) : TestSuite.fromData(t));
+      });
+    }
+
+    return ts;
   }
 }

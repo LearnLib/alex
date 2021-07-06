@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.data.entities.export;
+import { Component, Input } from '@angular/core';
 
-/**
- * Strategies for how to handle conflicts between symbol names on import.
- */
-public enum SymbolImportConflictResolutionStrategy {
+@Component({
+  selector: 'warning-widget',
+  templateUrl: './warning-widget.component.html'
+})
+export class WarningWidgetComponent {
 
-    /** Keep the newly imported symbol. Update the old one. */
-    KEEP_NEW,
+  @Input()
+  warnings: string[] = [];
 
-    /** Ignore the newly imported symbol. */
-    KEEP_EXISTING,
+  @Input()
+  errors: string[] = [];
 
-    /** Also add the new symbol, but with a different name. */
-    KEEP_BOTH
 }

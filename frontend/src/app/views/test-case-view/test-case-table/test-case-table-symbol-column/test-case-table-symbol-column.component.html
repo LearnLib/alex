@@ -3,6 +3,7 @@
     <a
       class="text-black"
       [routerLink]="['/app', 'projects', appStore.project.id, 'symbols', pSymbol.symbol.id]"
+      [ngbTooltip]="groups ? getSymbolPath(pSymbol.symbol) : null"
     >
       {{pSymbol.symbol.name}}
     </a>

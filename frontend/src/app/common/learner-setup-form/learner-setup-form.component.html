@@ -31,6 +31,12 @@
       class="d-block mb-4"
     >
     </symbols-data-context>
+
+    <warning-widget
+      [warnings]="warnings"
+      [errors]="errors"
+    >
+    </warning-widget>
   </div>
   <div class="col-md-4 col-lg-6">
 
@@ -51,7 +57,9 @@
       <div class="d-flex flex-row list-group-item">
         <div class="w-100">
           <div>
-            <a [routerLink]="['/app', 'projects', project.id, 'symbols', setup.preSymbol.symbol.id]">
+            <a [routerLink]="['/app', 'projects', project.id, 'symbols', setup.preSymbol.symbol.id]"
+               [ngbTooltip]="this.groups.length > 0 ? getSymbolPath(setup.preSymbol.symbol) : null"
+            >
               <strong>{{setup.preSymbol.symbol.name}}</strong>
             </a>
           </div>
@@ -76,7 +84,9 @@
         <div class="w-100">
           <div class="d-flex flex-row">
             <a class="flex-shrink-0"
-               [routerLink]="['/app', 'projects', project.id, 'symbols', pSymbol.symbol.id]">
+              [routerLink]="['/app', 'projects', project.id, 'symbols', pSymbol.symbol.id]"
+              [ngbTooltip]="this.groups.length > 0 ? getSymbolPath(pSymbol.symbol) : null"
+            >
               <strong>{{pSymbol.symbol.name}}</strong>
             </a>
             <span class="text-muted w-100 d-flex flex-row ml-1">
@@ -112,11 +122,11 @@
     <div *ngIf="setup.postSymbol != null" class="list-group">
       <div class="d-flex flex-row list-group-item">
         <div class="w-100">
-          <div>
-            <a [routerLink]="['/app', 'projects', project.id, 'symbols', setup.postSymbol.symbol.id]">
+            <a [routerLink]="['/app', 'projects', project.id, 'symbols', setup.postSymbol.symbol.id]"
+               [ngbTooltip]="this.groups.length > 0 ? getSymbolPath(setup.postSymbol.symbol) : null"
+            >
               <strong>{{setup.postSymbol.symbol.name}}</strong>
             </a>
-          </div>
           <symbol-input-values
             [parameterizedSymbol]="setup.postSymbol"
           >

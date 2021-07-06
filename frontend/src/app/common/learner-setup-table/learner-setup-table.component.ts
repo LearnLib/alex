@@ -16,6 +16,9 @@
 
 import { Component, Input } from '@angular/core';
 import { LearnerSetup } from '../../entities/learner-setup';
+import { SymbolGroup } from '../../entities/symbol-group';
+import { AlphabetSymbol } from '../../entities/alphabet-symbol';
+import { SymbolGroupUtils } from '../../utils/symbol-group-utils';
 
 @Component({
   selector: 'learner-setup-table',
@@ -26,4 +29,11 @@ export class LearnerSetupTableComponent {
 
   @Input()
   setup: LearnerSetup;
+
+  @Input()
+  groups: SymbolGroup[];
+
+  getSymbolPath(symbol: AlphabetSymbol): string {
+    return SymbolGroupUtils.getSymbolPath(this.groups, symbol);
+  }
 }
