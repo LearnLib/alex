@@ -70,6 +70,12 @@ module.exports = {
     console.log(chalk.white.dim(`User "${email}" logged in.`));
   },
   projects: {
+    getAll: async function() {
+      return fetch(`${_uri}/projects`, {
+        method: 'get',
+        headers: _getDefaultHttpHeaders()
+      });
+    },
     import: async function(project) {
       return fetch(`${_uri}/projects/import`, {
         method: 'post',

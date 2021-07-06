@@ -24,7 +24,8 @@ const api = require('./api');
 const Actions = {
   TEST: 'test',
   LEARN: 'learn',
-  COMPARE: 'compare'
+  COMPARE: 'compare',
+  POLL: 'poll'
 };
 
 /**
@@ -92,19 +93,32 @@ let _action = null;
 let _models = [];
 
 async function createProject() {
+  if (options.projectName) {
+    // hole project
+    const res1 = await api.projects.getAll();
+    await utils.assertStatus(res1, 200);
+    const projects = await res1.json();
+    const projectWithName = projects.filter(p => p.name === options.projectName)[0];
+    if (projectWithName == null) {
+      throw `Could not find project by name '${options.projectName}'`;
+    } else {
+      _project = projectWithName;
+      console.log(chalk.white.dim(`Project ${_project.name} has been fetched.`));
+    }
+  } else {
+    // generate unique project name
+    _project.project.name = 'alex-cli-'
+      + `${dateformat(new Date(), 'isoDateTime')}-`
+      + utils.randomString(10);
 
-  // generate unique project name
-  _project.project.name = 'alex-cli-'
-    + `${dateformat(new Date(), 'isoDateTime')}-`
-    + utils.randomString(10);
+    // create project
+    const res1 = await api.projects.import(_project);
+    await utils.assertStatus(res1, 201);
 
-  // create project
-  const res1 = await api.projects.import(_project);
-  await utils.assertStatus(res1, 201);
+    _project = await res1.json();
 
-  _project = await res1.json();
-
-  console.log(chalk.white.dim(`Project ${_project.name} has been imported.`));
+    console.log(chalk.white.dim(`Project ${_project.name} has been imported.`));
+  }
 }
 
 /**
@@ -138,49 +152,13 @@ async function startTesting() {
   let result = await startTestingFromSetup();
   let report = result.report;
 
-  // poll for result
-  const startTime = Date.now();
-  while (true) {
-    const timeElapsed = Date.now() - startTime;
-    console.log(chalk.white.dim(`Waiting for tests to finish... (${Math.floor(timeElapsed / 1000)}s elapsed)`));
-
-    const res2 = await api.testReports.get(_project.id, report.id);
-    await utils.assertStatus(res2, 200);
-    report = await res2.json();
-
-    if (report.status === 'IN_PROGRESS' || report.status === 'PENDING') {
-      await utils.timeout(POLL_TIME_TESTING);
-    } else {
-      break;
-    }
+  if (!options.wait) {
+    console.log(chalk.white.dim('Do not wait for tests to finish.'));
+    console.log(chalk.white.dim(`reportId: ${report.id}`));
+    return;
   }
 
-  function printReport(report) {
-    report.testResults.forEach(tr => {
-      if (tr.passed) {
-        console.log(`${chalk.bgGreen("success")} ${tr.test.name}`);
-      } else {
-        console.log(`${chalk.bgRed("failed")} ${tr.test.name}`);
-      }
-    });
-  }
-
-  // print report to terminal
-  printReport(report);
-
-  const res3 = await api.testReports.get(_project.id, report.id, 'junit');
-  await utils.assertStatus(res3, 200);
-
-  // write junit test report in a file
-  if (options.out) {
-    writeOutputFile(res3.body);
-  }
-
-  if (report.passed) {
-    console.log(chalk.green(`${report.numTestsPassed}/${report.numTests} tests passed.`));
-  } else {
-    throw `${report.numTestsFailed}/${report.numTests} tests failed.`;
-  }
+  await pollForTestReport(report.id, -1);
 }
 
 async function startTestingFromSetup() {
@@ -202,9 +180,12 @@ async function startTestingFromSetup() {
   return await res2.json();
 }
 
-async function waitForLearnerToFinish(startTime, testNo) {
+async function waitForLearnerToFinish(startTime, timeout, testNo) {
   while(true) {
     const timeElapsed = Date.now() - startTime;
+    if (timeout > -1 && timeElapsed > timeout) {
+      throw `Timeout for learner process.`;
+    }
 
     process.stdout.cursorTo(0);
     process.stdout.write(chalk.white.dim(`Wait for the learning process to finish... (${Math.floor(timeElapsed / 1000)}s elapsed)`));
@@ -252,26 +233,13 @@ async function startLearning() {
   // start the learning process
   let result = await startLearningFromSetup();
 
-  // poll for learner result
-  const startTime = Date.now();
-  result = await waitForLearnerToFinish(startTime, result.testNo);
-  console.log(chalk.white.dim(`The learning process finished.`));
-
-  if (result.error) {
-    throw 'The learning process finished with errors.';
+  if (!options.wait) {
+    console.log(chalk.white.dim('Do not wait for learner process to finish.'));
+    console.log(chalk.white.dim(`resultId: ${result.testNo}`));
+    return;
   }
 
-  // write learned model to a file
-  if (options.out) {
-    const model = result.steps[result.steps.length - 1].hypothesis;
-    writeOutputFile(JSON.stringify(model));
-  }
-
-  // analyze model checking results
-  const lastStep = result.steps[result.steps.length - 1];
-  if (lastStep.modelCheckingResults.length > 0) {
-    assertCheckResults(lastStep.modelCheckingResults);
-  }
+  await pollForLearnerResult(result.testNo, -1);
 }
 
 async function startComparing() {
@@ -310,7 +278,84 @@ function assertCheckResults(checkResults) {
   }
 }
 
+async function pollForTestReport(reportId, timeout) {
+  // poll for result
+  let report = null;
+  const startTime = Date.now();
+  while (true) {
+    const timeElapsed = Date.now() - startTime;
+    if (timeout > -1 && timeElapsed > timeout) {
+      throw `Timeout for test process.`;
+    }
+
+    process.stdout.cursorTo(0);
+    process.stdout.write(chalk.white.dim(`Waiting for tests to finish... (${Math.floor(timeElapsed / 1000)}s elapsed)`));
+
+    const res2 = await api.testReports.get(_project.id, reportId);
+    await utils.assertStatus(res2, 200);
+    report = await res2.json();
+
+    if (report.status === 'IN_PROGRESS' || report.status === 'PENDING') {
+      await utils.timeout(POLL_TIME_TESTING);
+    } else {
+      process.stdout.write('\n');
+      break;
+    }
+  }
+
+  function printReport(report) {
+    report.testResults.forEach(tr => {
+      if (tr.passed) {
+        console.log(`${chalk.bgGreen("success")} ${tr.test.name}`);
+      } else {
+        console.log(`${chalk.bgRed("failed")} ${tr.test.name}`);
+      }
+    });
+  }
+
+  // print report to terminal
+  printReport(report);
+
+  const res3 = await api.testReports.get(_project.id, report.id, 'junit');
+  await utils.assertStatus(res3, 200);
+
+  // write junit test report in a file
+  if (options.out) {
+    writeOutputFile(res3.body);
+  }
+
+  if (report.passed) {
+    console.log(chalk.green(`${report.numTestsPassed}/${report.numTests} tests passed.`));
+  } else {
+    throw `${report.numTestsFailed}/${report.numTests} tests failed.`;
+  }
+}
+
+async function pollForLearnerResult(testNo, timeout) {
+  // poll for learner result
+  const startTime = Date.now();
+  const result = await waitForLearnerToFinish(startTime, timeout, testNo);
+  console.log(chalk.white.dim(`The learning process finished.`));
+
+  if (result.error) {
+    throw 'The learning process finished with errors.';
+  }
+
+  // write learned model to a file
+  if (options.out) {
+    const model = result.steps[result.steps.length - 1].hypothesis;
+    writeOutputFile(JSON.stringify(model));
+  }
+
+  // analyze model checking results
+  const lastStep = result.steps[result.steps.length - 1];
+  if (lastStep.modelCheckingResults.length > 0) {
+    assertCheckResults(lastStep.modelCheckingResults);
+  }
+}
+
 function processProgram() {
+
   // process required options
   _action = processors.action(options.do);
   _uri = processors.uri(options.uri);
@@ -320,11 +365,25 @@ function processProgram() {
   api.init(_uri);
 
   if (options.do !== Actions.COMPARE) {
-    if (!options.project) {
+    if (!options.project && !options.projectName) {
       throw `You haven't specified a project.`;
+    } else if (options.project && options.projectName) {
+      throw `You have to specify a project by a json file or by a name.`;
     }
 
-    _project = processors.project(options.project);
+    if (options.project) {
+      _project = processors.project(options.project);
+    }
+  }
+
+  if (options.do === Actions.POLL) {
+    if (options.pollTestReport) {
+      processors.pollOptions(options.pollTestReport)
+    } else if (options.pollLearnerResult) {
+      processors.pollOptions(options.pollLearnerResult)
+    } else {
+      throw `You haven't specified what to poll for.`;
+    }
   }
 
   if (_action === Actions.TEST) {
@@ -352,7 +411,20 @@ module.exports = {
     processProgram();
 
     await api.auth(_user.email, _user.password);
+
     await createProject();
+
+    if (options.pollTestReport) {
+      const timeout = options.pollTestReport[1] == null ? 300000 : parseInt(options.pollTestReport[1]);
+      await pollForTestReport(parseInt(options.pollTestReport[0]), timeout);
+      return;
+    }
+
+    if (options.pollLearnerResult) {
+      const timeout = options.pollLearnerResult[1] == null ? 300000 : parseInt(options.pollLearnerResult[1]);
+      await pollForLearnerResult(parseInt(options.pollLearnerResult[0]), timeout);
+      return;
+    }
 
     switch (_action) {
       case Actions.TEST:

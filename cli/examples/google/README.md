@@ -40,3 +40,27 @@ alex-cli \
     --models "model1.json" "model2.json" \
     --output "model-difference-${aspect}.json"
 ```
+
+## Polling
+
+### Test report
+
+```bash
+node alex-cli.js \
+        --uri "http://127.0.0.1:8000" \
+        -d "poll" \
+        -u "admin@alex.example:admin" \
+        -pn "projectName" \
+        --poll-test-report 5 5000
+```
+
+### Learner result
+
+```bash
+node alex-cli.js \
+        --uri "http://127.0.0.1:8000" \
+        -d "poll" \
+        -u "admin@alex.example:admin" \
+        -pn "projectName" \
+        --poll-learner-result 5 5000
+```

@@ -58,8 +58,8 @@ module.exports = {
    * @returns {string}
    */
   action: function(value) {
-    if (['test', 'learn'].indexOf(value.trim()) === -1) {
-      throw `You have specified an invalid action. It can either be 'test' or 'learn'.`;
+    if (['test', 'learn', 'poll', 'compare'].indexOf(value.trim()) === -1) {
+      throw `You have specified an invalid action. It can either be 'test', 'learn', 'compare' or 'poll'.`;
     } else {
       return value;
     }
@@ -96,4 +96,25 @@ module.exports = {
       return JSON.parse(fs.readFileSync(value));
     }
   },
+
+  pollOptions: function(values) {
+    if (values == null || values.length <= 1) {
+      throw `You must specify at least one argument.`
+    }
+
+    try {
+      const id = parseInt(values[0]);
+      if (id < 0) {
+        throw `The id must not be < 0.`;
+      }
+      if (values[1] != null) {
+        const timeout = parseInt(values[1]);
+        if (timeout < 0) {
+          throw `The timeout must not be < 0.`;
+        }
+      }
+    } catch (e) {
+      throw `Failed to parse arguments. ${e}`;
+    }
+  }
 }
