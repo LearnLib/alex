@@ -207,6 +207,7 @@ public class WebhookResourceIT extends AbstractResourceIT {
                 + "\"name\":\"" + name + "\""
                 + ",\"url\":\"" + url + "\""
                 + ",\"events\":[" + String.join(",", events) + "]"
+                + ",\"method\":\"POST\""
                 + "}";
     }
 }
