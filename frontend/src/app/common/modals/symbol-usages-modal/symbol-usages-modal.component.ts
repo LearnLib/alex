@@ -22,9 +22,9 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { SymbolGroup } from '../../../entities/symbol-group';
 import { SymbolGroupUtils } from '../../../utils/symbol-group-utils';
 import { SymbolGroupApiService } from '../../../services/api/symbol-group-api.service';
-import { TestSuite } from "../../../entities/test-suite";
-import { TestCase } from "../../../entities/test-case";
-import { TestApiService } from "../../../services/api/test-api.service";
+import { TestSuite } from '../../../entities/test-suite';
+import { TestCase } from '../../../entities/test-case';
+import { TestApiService } from '../../../services/api/test-api.service';
 
 @Component({
   selector: 'symbol-usages-modal',
