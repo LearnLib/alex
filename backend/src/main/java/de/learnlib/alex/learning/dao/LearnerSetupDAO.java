@@ -170,6 +170,9 @@ public class LearnerSetupDAO {
 
         setupInDb.setPreSymbol(setup.getPreSymbol().copy());
         setupInDb.setSymbols(setup.getSymbols().stream()
+                .collect(Collectors.groupingBy(ParameterizedSymbol::getAliasOrIdBasedName))
+                .values()
+                .stream().map(l -> l.get(0))
                 .map(ParameterizedSymbol::copy)
                 .collect(Collectors.toList()));
 
@@ -222,10 +225,10 @@ public class LearnerSetupDAO {
         return copiedSetup;
     }
 
-    public List<LearnerSetup> importLearnerSetups(User user, Project project, List<LearnerSetup> setups) {
-        // symbol name -> symbol
+    public List<LearnerSetup> importLearnerSetups(User user, Project project, List<LearnerSetup> setups, Map<Long, Long> symbolRefMap) {
+        // symbol id -> symbol
         final var symbolMap = symbolDAO.getAll(user, project.getId()).stream()
-                .collect(Collectors.toMap(Symbol::getName, Function.identity()));
+                .collect(Collectors.toMap(s -> symbolRefMap != null ? symbolRefMap.get(s.getId()) : s.getId(), Function.identity()));
 
         // associate symbols
         for (var setup : setups) {
@@ -264,8 +267,8 @@ public class LearnerSetupDAO {
         return importedSetups;
     }
 
-    private ParameterizedSymbol importParameterizedSymbol(ParameterizedSymbol pSymbol, Map<String, Symbol> symbolMap) {
-        final var symbol = symbolMap.get(pSymbol.getSymbol().getName());
+    private ParameterizedSymbol importParameterizedSymbol(ParameterizedSymbol pSymbol, Map<Long, Symbol> symbolMap) {
+        final var symbol = symbolMap.get(pSymbol.getSymbol().getId());
         pSymbol.setSymbol(symbol);
         pSymbol.getParameterValues().forEach(pv -> {
             final var param = symbol.findInputByNameAndType(
@@ -287,6 +290,13 @@ public class LearnerSetupDAO {
     public LearnerSetup create(User user, Long projectId, LearnerSetup setup) {
         final var project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
+
+        // remove duplicate symbols
+        setup.setSymbols(setup.getSymbols().stream()
+                .collect(Collectors.groupingBy(ParameterizedSymbol::getAliasOrIdBasedName))
+                .values()
+                .stream().map(l -> l.get(0))
+                .collect(Collectors.toList()));
 
         saveSymbols(setup);
 

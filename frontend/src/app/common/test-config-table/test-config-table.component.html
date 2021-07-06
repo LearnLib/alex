@@ -29,7 +29,7 @@
     <tr>
       <td>Environment</td>
       <td>
-        <span class="badge badge-secondary mr-2">{{config.environment.name}}</span>
+        <span class="badge badge-secondary env-badge mr-2">{{config.environment.name}}</span>
       </td>
     </tr>
     <tr>
@@ -37,7 +37,7 @@
       <td>
         <ng-container *ngIf="tests.length > 0; then hasTests; else hasNoTests"></ng-container>
         <ng-template #hasTests>
-          <span class="badge badge-primary mr-2" *ngFor="let test of tests">{{test.name}}</span>
+          <span [ngbTooltip]="this.root ? getCasePath(test): null" class="badge badge-primary test-badge mr-2" *ngFor="let test of tests">{{test.name}}</span>
         </ng-template>
         <ng-template #hasNoTests>
           <div class="text-muted" style="font-style: italic">No tests defined</div>

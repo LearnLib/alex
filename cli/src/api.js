@@ -1,7 +1,7 @@
 const chalk = require('chalk');
 
 /*
- * Copyright 2018 - 2020 TU Dortmund
+ * Copyright 2018 - 2021 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,20 +84,20 @@ module.exports = {
       });
     }
   },
-  projectEnvironments: {
-    getOutputs: async function(projectId, envId, config) {
-      return fetch(`${_uri}/projects/${projectId}/environments/${envId}/outputs`, {
-        method: 'post',
-        headers: _getDefaultHttpHeaders(),
-        body: JSON.stringify(config)
-      });
-    }
-  },
   symbolGroups: {
     getAll: async function(projectId) {
       return fetch(`${_uri}/projects/${projectId}/groups`, {
         method: 'get',
         headers: _getDefaultHttpHeaders()
+      });
+    }
+  },
+  learner: {
+    calculateSeparatingWord: async function(models) {
+      return fetch(`${_uri}/projects/0/learner/compare/separatingWord`, {
+        method: 'post',
+        headers: _getDefaultHttpHeaders(),
+        body: JSON.stringify(models)
       });
     }
   },
@@ -120,15 +120,6 @@ module.exports = {
       return fetch(`${_uri}/projects/${projectId}/results/${resultId}?embed=steps`, {
         method: 'get',
         headers: _getDefaultHttpHeaders()
-      });
-    }
-  },
-  learnerResultSteps: {
-    getHypothesisOutputs: async function(projectId, resultId, stepId, inputs) {
-      return fetch(`${_uri}/projects/${projectId}/results/${resultId}/steps/${stepId}/hypothesis/outputs`, {
-        method: 'post',
-        headers: _getDefaultHttpHeaders(),
-        body: JSON.stringify(inputs)
       });
     }
   },
@@ -167,52 +158,6 @@ module.exports = {
       return fetch(`${_uri}/projects/${projectId}/tests/reports/${testReportId}${params}`, {
         method: 'get',
         headers: _getDefaultHttpHeaders()
-      });
-    }
-  },
-  files: {
-    upload: async function(projectId, file) {
-      const headers = JSON.parse(JSON.stringify(_getDefaultHttpHeaders()));
-      headers['Content-Type'] = 'multipart/form-data';
-
-      return fetch(`${_uri}/projects/${projectId}/files/upload`,{
-        headers,
-        method: 'post',
-        formData: {
-          file
-        }
-      });
-    }
-  },
-  learner: {
-    start: async function(projectId, config) {
-      return fetch(`${_uri}/projects/${projectId}/learner/start`, {
-        method: 'post',
-        headers: _getDefaultHttpHeaders(),
-        body: JSON.stringify(config)
-      });
-    },
-    refine: async function(projectId, resultId, config) {
-      return fetch(`${_uri}/projects/${projectId}/learner/${resultId}/resume`, {
-        method: 'post',
-        headers: _getDefaultHttpHeaders(),
-        body: JSON.stringify(config)
-      });
-    },
-    calculateSeparatingWord: async function(models) {
-      return fetch(`${_uri}/projects/0/learner/compare/separatingWord`, {
-        method: 'post',
-        headers: _getDefaultHttpHeaders(),
-        body: JSON.stringify(models)
-      });
-    }
-  },
-  modelChecker: {
-    check: async function(projectId, config) {
-      return fetch(`${_uri}/projects/${projectId}/modelChecker/check`, {
-        method: 'post',
-        headers: _getDefaultHttpHeaders(),
-        body: JSON.stringify(config)
       });
     }
   }

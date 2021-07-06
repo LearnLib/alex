@@ -1,0 +1,29 @@
+<div class="card">
+  <div class="card-header">
+    <strong>Warnings</strong>
+  </div>
+  <div class="card-body">
+    <div *ngIf="errors.length > 0">
+      <div
+        class="alert alert-danger" role="alert"
+        *ngFor="let error of errors"
+      >
+        {{error}}
+      </div>
+    </div>
+
+    <div *ngIf="warnings.length > 0">
+      <div
+        class="alert alert-warning" role="alert"
+        *ngFor="let warning of warnings"
+      >
+        {{warning}}
+      </div>
+    </div>
+
+    <div class="alert alert-success mb-0" *ngIf="errors.length === 0 && warnings.length === 0">
+      No warnings.
+    </div>
+
+  </div>
+</div>

@@ -35,6 +35,7 @@ import { ActivatedRoute } from '@angular/router';
 import { EditActionModalComponent } from './edit-action-modal/edit-action-modal.component';
 import { CreateActionModalComponent } from './create-action-modal/create-action-modal.component';
 import { DragulaService } from 'ng2-dragula';
+import { SymbolGroupUtils } from '../../utils/symbol-group-utils';
 
 /**
  * The controller that handles the page for managing all actions of a symbol. The symbol whose actions should be
@@ -52,6 +53,9 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
 
   /** All symbol groups. */
   groups: SymbolGroup[];
+
+  /** A flattened view over all symbol groups. */
+  flatGroups: SymbolGroup[];
 
   /** The selected actions. */
   selectedSteps: Selectable<any, any>;
@@ -71,6 +75,7 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
 
     this.symbol = null;
     this.groups = [];
+    this.flatGroups = [];
     this.selectedSteps = new Selectable(s => s._id);
 
     currentRoute.paramMap.subscribe(map => {
@@ -87,9 +92,7 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
       );
     });
 
-    this.symbolGroupApi.getAll(this.project.id).subscribe(
-      groups => this.groups = groups
-    );
+    this.symbolGroupApi.getAll(this.project.id).subscribe(groups => this.groups = groups);
 
     this.keyDownHandler = this.handleKeyDown.bind(this);
   }
@@ -310,7 +313,6 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.created.subscribe(a => this.addAction(a));
   }
 
-
   get parameterizedSymbolSteps(): any[] {
     const pSymbols = this.symbol == null ? [] : this.symbol.steps
       .filter(s => s.type === 'symbol')
@@ -324,6 +326,10 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
     }
 
     return pSymbols;
+  }
+
+  getSymbolPath(symbol: AlphabetSymbol): string {
+    return SymbolGroupUtils.getSymbolPath(this.groups, symbol);
   }
 
   private handleKeyDown(e: KeyboardEvent) {

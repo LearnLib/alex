@@ -19,6 +19,12 @@ import { SymbolApiService } from '../../../services/api/symbol-api.service';
 import { SymbolUsageResult } from '../../../entities/symbol-usage-result';
 import { Component, Input, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { SymbolGroup } from '../../../entities/symbol-group';
+import { SymbolGroupUtils } from '../../../utils/symbol-group-utils';
+import { SymbolGroupApiService } from '../../../services/api/symbol-group-api.service';
+import { TestSuite } from '../../../entities/test-suite';
+import { TestCase } from '../../../entities/test-case';
+import { TestApiService } from '../../../services/api/test-api.service';
 
 @Component({
   selector: 'symbol-usages-modal',
@@ -29,9 +35,15 @@ export class SymbolUsagesModalComponent implements OnInit {
   @Input()
   symbol: AlphabetSymbol;
 
+  groups: SymbolGroup[];
+
+  root: TestSuite;
+
   result: SymbolUsageResult;
 
   constructor(private symbolApi: SymbolApiService,
+              private symbolGroupApi: SymbolGroupApiService,
+              private testApi: TestApiService,
               public modal: NgbActiveModal) {
   }
 
@@ -39,5 +51,17 @@ export class SymbolUsagesModalComponent implements OnInit {
     this.symbolApi.getUsages(this.symbol.project, this.symbol.id).subscribe(
       r => this.result = r
     );
+
+    this.symbolGroupApi.getAll(this.symbol.project).subscribe(groups => this.groups = groups);
+
+    this.testApi.getRoot(this.symbol.project).subscribe(root => this.root = root);
+  }
+
+  getSymbolPath(symbol: AlphabetSymbol): string {
+    return SymbolGroupUtils.getSymbolPath(this.groups, symbol);
+  }
+
+  getTestPath(test: TestCase): string {
+    return TestCase.getTestPath(this.root, test);
   }
 }

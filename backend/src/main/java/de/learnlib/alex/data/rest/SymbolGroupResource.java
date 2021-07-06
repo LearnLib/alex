@@ -19,7 +19,6 @@ package de.learnlib.alex.data.rest;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.dao.SymbolGroupDAO;
 import de.learnlib.alex.data.entities.SymbolGroup;
-import de.learnlib.alex.data.entities.export.SymbolGroupsImportableEntity;
 import de.learnlib.alex.data.events.SymbolGroupEvent;
 import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.webhooks.services.WebhookService;
@@ -102,21 +101,6 @@ public class SymbolGroupResource {
         final List<SymbolGroup> createdGroups = symbolGroupDAO.create(user, projectId, groups);
         webhookService.fireEvent(user, new SymbolGroupEvent.CreatedMany(createdGroups));
         return ResponseEntity.status(HttpStatus.CREATED).body(createdGroups);
-    }
-
-    @PostMapping(
-            value = "/import",
-            consumes = MediaType.APPLICATION_JSON,
-            produces = MediaType.APPLICATION_JSON
-    )
-    public ResponseEntity<List<SymbolGroup>> importGroups(
-            @PathVariable("projectId") Long projectId,
-            @RequestBody SymbolGroupsImportableEntity symbolGroupsImportable
-    ) {
-        final User user = authContext.getUser();
-        final List<SymbolGroup> importedGroups = symbolGroupDAO.importGroups(user, projectId, symbolGroupsImportable);
-        webhookService.fireEvent(user, new SymbolGroupEvent.CreatedMany(importedGroups));
-        return ResponseEntity.status(HttpStatus.CREATED).body(importedGroups);
     }
 
     /**

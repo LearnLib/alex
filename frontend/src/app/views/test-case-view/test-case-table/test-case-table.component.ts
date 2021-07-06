@@ -16,6 +16,7 @@
 
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { DragulaService } from 'ng2-dragula';
+import { SymbolGroup } from '../../../entities/symbol-group';
 
 @Component({
   selector: 'test-case-table',
@@ -32,6 +33,9 @@ export class TestCaseTableComponent implements OnInit, OnDestroy {
 
   @Input()
   symbolMap: any;
+
+  @Input()
+  groups: SymbolGroup[];
 
   constructor(private dragulaService: DragulaService) {
   }

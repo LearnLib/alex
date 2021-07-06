@@ -1,9 +1,11 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ingress
+  name: ingress-frontend
   annotations:
-    kubernetes.io/ingress.class: "nginx"
+    {{- if ne .Values.ingress.deployUrl "/" }}
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    {{- end }}
     {{- if ne .Values.serverTier "local" }}
     cert-manager.io/issuer: "letsencrypt-{{ .Values.serverTier }}"
     {{- end }}
@@ -18,14 +20,45 @@ spec:
     - host: {{ .Values.ingress.host }}
       http:
         paths:
+          {{- if eq .Values.ingress.deployUrl "/" }}
           - path: /
+          {{- else }}
+          - path: {{ .Values.ingress.deployUrl }}(/|$)(.*)
+          {{ end }}
             pathType: Prefix
             backend:
               service:
                 name: frontend
                 port:
                   number: 4200
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-backend
+  annotations:
+    {{- if ne .Values.ingress.deployUrl "/" }}
+    nginx.ingress.kubernetes.io/rewrite-target: /rest/$2
+    {{- end }}
+    {{- if ne .Values.serverTier "local" }}
+    cert-manager.io/issuer: "letsencrypt-{{ .Values.serverTier }}"
+    {{- end }}
+spec:
+  {{- if ne .Values.serverTier "local" }}
+  tls:
+    - hosts:
+        - {{ .Values.ingress.host }}
+      secretName: "letsencrypt-secret-{{ .Values.serverTier }}"
+  {{- end }}
+  rules:
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          {{- if eq .Values.ingress.deployUrl "/" }}
           - path: /rest
+          {{- else }}
+          - path: {{ .Values.ingress.deployUrl }}/rest(/|$)(.*)
+          {{- end }}
             pathType: Prefix
             backend:
               service:

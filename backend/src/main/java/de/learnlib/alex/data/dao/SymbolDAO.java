@@ -27,9 +27,7 @@ import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.data.entities.SymbolActionStep;
 import de.learnlib.alex.data.entities.SymbolGroup;
-import de.learnlib.alex.data.entities.SymbolInputParameter;
 import de.learnlib.alex.data.entities.SymbolOutputMapping;
-import de.learnlib.alex.data.entities.SymbolOutputParameter;
 import de.learnlib.alex.data.entities.SymbolPSymbolStep;
 import de.learnlib.alex.data.entities.SymbolParameter;
 import de.learnlib.alex.data.entities.SymbolStep;
@@ -37,8 +35,6 @@ import de.learnlib.alex.data.entities.actions.misc.CreateLabelAction;
 import de.learnlib.alex.data.entities.actions.misc.JumpToLabelAction;
 import de.learnlib.alex.data.entities.actions.rest.CallAction;
 import de.learnlib.alex.data.entities.actions.web.GotoAction;
-import de.learnlib.alex.data.entities.export.SymbolImportConflictResolutionStrategy;
-import de.learnlib.alex.data.entities.export.SymbolsImportableEntity;
 import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
 import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
@@ -56,23 +52,6 @@ import de.learnlib.alex.testing.entities.TestCaseStep;
 import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
 import de.learnlib.alex.testing.repositories.TestExecutionResultRepository;
 import de.learnlib.alex.websocket.services.SymbolPresenceService;
-import java.io.IOException;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import javax.validation.ValidationException;
 import net.automatalib.graphs.base.compact.CompactSimpleGraph;
 import net.automatalib.util.graphs.scc.SCCs;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -85,6 +64,22 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.validation.ValidationException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Implementation of a SymbolDAO using Spring Data.
@@ -159,50 +154,22 @@ public class SymbolDAO {
             User user,
             Project project,
             List<Symbol> symbols,
-            Map<String, SymbolImportConflictResolutionStrategy> conflictResolutions
+            Map<Long, Long> newSymbolIdToOldSymbolId
     ) {
         final List<Symbol> importedSymbols = new ArrayList<>();
 
         for (Symbol symbol : symbols) {
-            if (!symbolExistsInProject(project, symbol)) {
-                importedSymbols.add(create(user, project.getId(), symbol));
-            } else {
-                if (!conflictResolutions.containsKey(symbol.getName())) {
-                    throw new ValidationException("Symbol " + symbol.getName() + " exists but no conflict resolution "
-                            + "strategy is specified.");
-                }
+            var oldId = symbol.getId();
+            symbol.setId(null);
 
-                switch (conflictResolutions.get(symbol.getName())) {
-                    case KEEP_NEW:
-                        importedSymbols.add(mergeSymbolWithExisting(user, project, symbol));
-                        break;
-                    case KEEP_BOTH:
-                        importedSymbols.add(renameAndCreateSymbol(user, project, symbol));
-                        break;
-                    case KEEP_EXISTING:
-                        // do nothing
-                        continue;
-                    default:
-                        throw new ValidationException("Invalid conflict resolution strategy.");
-                }
-            }
+            var createdSymbol = create(user, project.getId(), symbol);
+            importedSymbols.add(createdSymbol);
+
+            newSymbolIdToOldSymbolId.put(createdSymbol.getId(), oldId);
         }
 
         importedSymbols.forEach(SymbolDAO::loadLazyRelations);
         return importedSymbols;
-    }
-
-    public List<Symbol> importSymbols(User user, Long projectId, SymbolsImportableEntity symbolsImportableEntity) {
-        final Project project = projectRepository.findById(projectId).orElse(null);
-        projectDAO.checkAccess(user, project);
-
-        try {
-            final var conflictResolutions = symbolsImportableEntity.getConflictResolutions();
-            final var symbols = objectMapper.readValue(symbolsImportableEntity.getSymbols().toString(), Symbol[].class);
-            return importSymbols(user, project, Arrays.asList(symbols), conflictResolutions);
-        } catch (IOException e) {
-            throw new ValidationException("Failed to parse input data.");
-        }
     }
 
     public Symbol create(User user, Long projectId, Symbol symbol) {
@@ -236,69 +203,11 @@ public class SymbolDAO {
         }
     }
 
-    private Symbol mergeSymbolWithExisting(User user, Project project, Symbol symbol) {
-        final Symbol symbolInDb = symbolRepository.findOneByProject_IdAndName(project.getId(), symbol.getName());
-        symbol.setId(symbolInDb.getId());
-        symbol.setProject(symbolInDb.getProject());
-        final Symbol updatedSymbol = update(user, project.getId(), symbol);
-
-        // delete removed inputs
-        for (SymbolInputParameter input : updatedSymbol.getInputs()) {
-            if (symbol.findInputByNameAndType(input.getName(), input.getParameterType()) == null) {
-                symbolParameterDAO.delete(user, project.getId(), updatedSymbol.getId(), input.getId());
-            }
-        }
-
-        // delete removed outputs
-        for (SymbolOutputParameter output : updatedSymbol.getOutputs()) {
-            if (symbol.findOutputByNameAndType(output.getName(), output.getParameterType()) == null) {
-                symbolParameterDAO.delete(user, project.getId(), updatedSymbol.getId(), output.getId());
-            }
-        }
-
-        // add new inputs
-        for (SymbolInputParameter input : symbol.getInputs()) {
-            if (updatedSymbol.findInputByNameAndType(input.getName(), input.getParameterType()) == null) {
-                symbolParameterDAO.create(user, project.getId(), updatedSymbol.getId(), input);
-            }
-        }
-
-        // add new outputs
-        for (SymbolOutputParameter output : symbol.getOutputs()) {
-            if (updatedSymbol.findOutputByNameAndType(output.getName(), output.getParameterType()) == null) {
-                symbolParameterDAO.create(user, project.getId(), updatedSymbol.getId(), output);
-            }
-        }
-
-        return symbolRepository.findById(updatedSymbol.getId()).orElse(null);
-    }
-
-    private Symbol renameAndCreateSymbol(User user, Project project, Symbol symbol) {
-        int i = 1;
-        String name = symbol.getName();
-        while (symbolRepository.findOneByProject_IdAndName(project.getId(), name) != null) {
-            name = symbol.getName() + " (" + i + ")";
-            i++;
-        }
-
-        symbol.setName(name);
-        symbol.setProject(project);
-        return create(user, project.getId(), symbol);
-    }
-
-    private boolean symbolExistsInProject(Project project, Symbol symbol) {
-        return symbolRepository.findOneByProject_IdAndName(project.getId(), symbol.getName()) != null;
-    }
-
     private Symbol createOne(User user, Long projectId, Symbol symbol) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
         symbol.setProject(project);
 
-        // make sure the name of the symbol is unique
-        if (symbolRepository.findOneByProject_IdAndName(projectId, symbol.getName()) != null) {
-            throw new ValidationException("To create a symbol its name must be unique.");
-        }
 
         final SymbolGroup group;
         if (symbol.getGroup() == null || symbol.getGroup().getId() == null) {
@@ -306,6 +215,11 @@ public class SymbolDAO {
         } else {
             group = symbolGroupRepository.findById(symbol.getGroup().getId()).orElse(null);
             symbolGroupDAO.checkAccess(user, project, group);
+        }
+
+        // make sure the name of the symbol is unique within its group
+        if (symbolRepository.findOneByGroup_IdAndName(group.getId(), symbol.getName()) != null) {
+            throw new ValidationException("To create a symbol its name must be unique within its group.");
         }
 
         // create default symbols
@@ -343,8 +257,8 @@ public class SymbolDAO {
             Map<Long, List<SymbolStep>> symbolStepMap
     ) {
         final List<Symbol> allSymbols = symbolRepository.findAllByProject_Id(projectId);
-        final Map<String, Symbol> symbolMap = new HashMap<>();
-        allSymbols.forEach(symbol -> symbolMap.put(symbol.getName(), symbol));
+        final Map<Long, Symbol> symbolMap = new HashMap<>();
+        allSymbols.forEach(symbol -> symbolMap.put(symbol.getId(), symbol));
 
         for (Symbol createdSymbol : createdSymbols) {
             createdSymbol.setSteps(symbolStepMap.get(createdSymbol.getId()));
@@ -363,10 +277,10 @@ public class SymbolDAO {
                 } else if (step instanceof SymbolPSymbolStep) {
                     // first, set the reference to the corresponding symbol
                     final SymbolPSymbolStep symbolStep = (SymbolPSymbolStep) step;
-                    final String symbolname = symbolStep.getPSymbol().getSymbol().getName();
-                    final Symbol symbol = symbolMap.get(symbolname);
+                    final long symbolId = symbolStep.getPSymbol().getSymbol().getId();
+                    final Symbol symbol = symbolMap.get(symbolId);
                     if (symbol == null) {
-                        throw new NotFoundException("The symbol with the name " + symbolname + " does not exist.");
+                        throw new NotFoundException("The symbol with the id " + symbolId + " does not exist.");
                     }
                     symbolStep.getPSymbol().setSymbol(symbol);
 
@@ -509,10 +423,10 @@ public class SymbolDAO {
         // check lock status
         this.symbolPresenceService.checkSymbolLockStatus(projectId, symbol.getId(), user.getId());
 
-        // make sure the name of the symbol is unique
-        final Symbol symbolWithSameName = symbolRepository.findOneByProject_IdAndName(projectId, symbol.getName());
+        // make sure the name of the symbol is unique within its group
+        final Symbol symbolWithSameName = symbolRepository.findOneByGroup_IdAndName(symbol.getGroupId(), symbol.getName());
         if (symbolWithSameName != null && !symbolWithSameName.getId().equals(symbol.getId())) {
-            throw new ValidationException("To update a symbol its name must be unique.");
+            throw new ValidationException("To update a symbol its name must be unique within its group.");
         }
 
         checkLabelsConsistency(symbol);
@@ -584,6 +498,11 @@ public class SymbolDAO {
 
             // check symbol lock status
             this.symbolPresenceService.checkSymbolLockStatusStrict(projectId, symbol.getId(), user.getId());
+
+            // make sure the name of the symbol is unique within the new group
+            if (symbolRepository.findOneByGroup_IdAndName(newGroupId, symbol.getName()) != null) {
+                throw new ValidationException("At least one symbols name is already present in the target group.");
+            }
         }
 
         for (Symbol symbol : symbols) {
@@ -618,12 +537,12 @@ public class SymbolDAO {
     }
 
     private boolean containsCycles(List<Symbol> symbols) {
-        final Map<String, Integer> map = new HashMap<>();
+        final Map<Long, Integer> map = new HashMap<>();
 
         final CompactSimpleGraph<Void> graph = new CompactSimpleGraph<>();
         symbols.forEach(symbol -> {
             final int state = graph.addNode();
-            map.put(symbol.getName(), state);
+            map.put(symbol.getId(), state);
         });
 
         for (final Symbol symbol : symbols) {
@@ -631,10 +550,10 @@ public class SymbolDAO {
                 if (step instanceof SymbolPSymbolStep) {
                     final SymbolPSymbolStep symbolStep = (SymbolPSymbolStep) step;
                     final Symbol target = symbolStep.getPSymbol().getSymbol();
-                    graph.connect(map.get(symbol.getName()), map.get(target.getName()));
+                    graph.connect(map.get(symbol.getId()), map.get(target.getId()));
 
                     // fail fast if a symbol references itself
-                    if (symbol.getName().equals(target.getName())) {
+                    if (symbol.getId().equals(target.getId())) {
                         return true;
                     }
                 }

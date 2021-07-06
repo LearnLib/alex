@@ -32,9 +32,7 @@ import { ToastService } from '../../services/toast.service';
 import { PromptService } from '../../services/prompt.service';
 import { EditSymbolModalComponent } from './edit-symbol-modal/edit-symbol-modal.component';
 import { MoveSymbolsModalComponent } from './move-symbols-modal/move-symbols-modal.component';
-import { ImportSymbolsModalComponent } from './import-symbols-modal/import-symbols-modal.component';
 import { Selectable } from '../../utils/selectable';
-import { ExportSymbolsModalComponent } from './export-symbols-modal/export-symbols-modal.component';
 import { map } from 'rxjs/operators';
 import { SymbolGroupLockInfo, SymbolLockInfo, SymbolPresenceService } from '../../services/symbol-presence.service';
 
@@ -163,40 +161,12 @@ export class SymbolsViewStoreService {
       });
   }
 
-  importSymbols(): void {
-    const modalRef = this.modalService.open(ImportSymbolsModalComponent);
-    modalRef.componentInstance.groups = this.groups.value;
-    modalRef.result.then(data => {
-      if (data.type === 'symbols') {
-        const symbols: AlphabetSymbol[] = data.symbols.filter(s => !s.hidden);
-        symbols.forEach(s => this.groupsMap.get(s.group).symbols.push(s));
-        this.symbolsSelectable.addItems(symbols);
-      } else {
-        const groups: SymbolGroup[] = data.groups;
-        groups.forEach(group => group.walk(g => {
-          this.symbolsSelectable.addItems(g.symbols);
-          this._addGroup(g);
-        }, () => {}));
-      }
-    }).catch(() => {});
-  }
-
   deleteSelectedSymbols(): void {
     const selectedSymbols = this.symbolsSelectable.getSelected();
     this.symbolApi.removeMany(this.appStore.project.id, selectedSymbols).subscribe(
       () => selectedSymbols.forEach(s => this._deleteSymbol(s)),
       res => this.toastService.danger(`Failed to deleted symbols. ${res.error.message}`)
     );
-  }
-
-  /**
-   * Deletes all properties that are not needed for downloading symbols which are the id, project, group
-   * and hidden properties. They are removed so that they can later be uploaded and created like new symbols.
-   */
-  exportSelectedSymbols(): void {
-    const modalRef = this.modalService.open(ExportSymbolsModalComponent);
-    modalRef.componentInstance.groups = this.groups.value;
-    modalRef.componentInstance.symbols = this.symbolsSelectable.getSelected();
   }
 
   createGroup(): void {

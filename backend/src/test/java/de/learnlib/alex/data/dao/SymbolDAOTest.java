@@ -170,7 +170,7 @@ public class SymbolDAOTest {
     }
 
     @Test
-    public void shouldFailToCreateASymbolsWithADuplicateNameWithinOneProject() {
+    public void shouldFailToCreateASymbolWithADuplicateNameWithinOneSymbolGroup() {
         User user = new User();
         user.setId(USER_ID);
 
@@ -192,7 +192,8 @@ public class SymbolDAOTest {
         symbol2.setName("Test");
 
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
-        given(symbolRepository.findOneByProject_IdAndName(PROJECT_ID, "Test")).willReturn(symbol2);
+        given(symbolGroupRepository.findById(GROUP_ID)).willReturn(Optional.of(group));
+        given(symbolRepository.findOneByGroup_IdAndName(GROUP_ID, "Test")).willReturn(symbol2);
 
         assertThrows(ValidationException.class, () -> symbolDAO.create(user, PROJECT_ID, symbol));
     }
@@ -355,7 +356,7 @@ public class SymbolDAOTest {
         symbol2.setName("Test");
 
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
-        given(symbolRepository.findOneByProject_IdAndName(PROJECT_ID, "Test")).willReturn(symbol2);
+        given(symbolRepository.findOneByGroup_IdAndName(GROUP_ID, "Test")).willReturn(symbol2);
 
         assertThrows(ValidationException.class, () -> symbolDAO.update(user, PROJECT_ID, symbol));
     }

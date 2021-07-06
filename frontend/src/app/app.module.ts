@@ -113,8 +113,6 @@ import { SymbolUsagesModalComponent } from './common/modals/symbol-usages-modal/
 import { SymbolsArchiveViewComponent } from './views/symbols-archive-view/symbols-archive-view.component';
 import { SearchFormComponent } from './common/search-form/search-form.component';
 import { SymbolSearchFormComponent } from './common/search-form/symbol-search-form/symbol-search-form.component';
-import { ExportSymbolsModalComponent } from './views/symbols-view/export-symbols-modal/export-symbols-modal.component';
-import { ImportSymbolsModalComponent } from './views/symbols-view/import-symbols-modal/import-symbols-modal.component';
 import { ExecutionResultModalComponent } from './common/modals/execution-result-modal/execution-result-modal.component';
 import { ReportChartsComponent } from './views/test-report-view/report-donut-chart/report-charts.component';
 import { ReportOutputsColumnComponent } from './views/test-report-view/report-output-column/report-outputs-column.component';
@@ -129,7 +127,6 @@ import { TestsViewComponent } from './views/tests-view/tests-view.component';
 import { TestCaseViewComponent } from './views/test-case-view/test-case-view.component';
 import { TestSuiteViewComponent } from './views/test-suite-view/test-suite-view.component';
 import { TestConfigModalComponent } from './views/tests-view/test-config-modal/test-config-modal.component';
-import { TestsImportModalComponent } from './views/test-suite-view/tests-import-modal/tests-import-modal.component';
 import { TestSuiteTreeComponent } from './views/test-suite-view/tests-move-modal/test-suite-tree-component/test-suite-tree.component';
 import { TestsMoveModalComponent } from './views/test-suite-view/tests-move-modal/tests-move-modal.component';
 import { DriverConfigFormComponent } from './common/web-driver-config-form/driver-config-form.component';
@@ -273,6 +270,7 @@ import { TestSelectTreeComponent } from './common/test-select-tree/test-select-t
 import { TestSelectTreeHeaderComponent } from './common/test-select-tree/test-select-tree-header/test-select-tree-header.component';
 import { TestSelectTreeItemComponent } from './common/test-select-tree/test-select-tree-item/test-select-tree-item.component';
 import { TestSelectTreeStore } from './common/test-select-tree/test-select-tree.store';
+import { WarningWidgetComponent } from './common/warning-widget/warning-widget.component';
 
 @NgModule({
   declarations: [
@@ -351,8 +349,6 @@ import { TestSelectTreeStore } from './common/test-select-tree/test-select-tree.
     SymbolsArchiveViewComponent,
     SearchFormComponent,
     SymbolSearchFormComponent,
-    ExportSymbolsModalComponent,
-    ImportSymbolsModalComponent,
     ReportChartsComponent,
     ReportOutputsColumnComponent,
     ExecutionResultModalComponent,
@@ -369,7 +365,6 @@ import { TestSelectTreeStore } from './common/test-select-tree/test-select-tree.
     TestSuiteTreeComponent,
     TestConfigModalComponent,
     TestsMoveModalComponent,
-    TestsImportModalComponent,
     DriverConfigFormComponent,
     LearnerResultListModalComponent,
     SeparatingWordModalComponent,
@@ -493,7 +488,8 @@ import { TestSelectTreeStore } from './common/test-select-tree/test-select-tree.
     TestConfigsEditViewComponent,
     TestSelectTreeComponent,
     TestSelectTreeHeaderComponent,
-    TestSelectTreeItemComponent
+    TestSelectTreeItemComponent,
+    WarningWidgetComponent
   ],
   imports: [
     BrowserModule,

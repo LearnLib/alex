@@ -18,6 +18,9 @@
 import { Component, Input } from '@angular/core';
 import { ParametrizedSymbol } from '../../../../entities/parametrized-symbol';
 import { AppStoreService } from '../../../../services/app-store.service';
+import { SymbolGroup } from '../../../../entities/symbol-group';
+import { AlphabetSymbol } from '../../../../entities/alphabet-symbol';
+import { SymbolGroupUtils } from '../../../../utils/symbol-group-utils';
 
 @Component({
   selector: 'test-case-table-symbol-column',
@@ -31,6 +34,13 @@ export class TestCaseTableSymbolColumnComponent {
   @Input()
   symbolMap: any;
 
+  @Input()
+  groups: SymbolGroup[];
+
   constructor(public appStore: AppStoreService) {
+  }
+
+  getSymbolPath(symbol: AlphabetSymbol): string {
+    return SymbolGroupUtils.getSymbolPath(this.groups, symbol);
   }
 }

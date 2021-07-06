@@ -31,6 +31,7 @@
           "description": "",
           "expectedResult": "",
           "hidden": false,
+          "id": 223,
           "inputs": [
             {
               "type": "input",
@@ -65,7 +66,8 @@
                   "name": "",
                   "password": ""
                 },
-                "cookies": {}
+                "cookies": {},
+                "data": null
               }
             },
             {
@@ -81,12 +83,13 @@
             }
           ],
           "successOutput": null,
-          "updatedOn": "2019-12-19T11:47:33.276+01:00"
+          "updatedOn": "2021-06-08T11:09:29.114+00:00"
         },
         {
           "description": "",
           "expectedResult": "",
           "hidden": false,
+          "id": 224,
           "inputs": [
             {
               "type": "input",
@@ -192,12 +195,13 @@
             }
           ],
           "successOutput": null,
-          "updatedOn": "2019-12-19T11:47:33.163+01:00"
+          "updatedOn": "2021-06-08T11:09:29.165+00:00"
         },
         {
           "description": "",
           "expectedResult": "",
           "hidden": false,
+          "id": 225,
           "inputs": [
             {
               "type": "input",
@@ -232,7 +236,8 @@
                   "name": "",
                   "password": ""
                 },
-                "cookies": {}
+                "cookies": {},
+                "data": null
               }
             },
             {
@@ -248,12 +253,13 @@
             }
           ],
           "successOutput": null,
-          "updatedOn": "2019-12-19T11:47:33.295+01:00"
+          "updatedOn": "2021-06-08T11:09:29.190+00:00"
         },
         {
           "description": "",
           "expectedResult": "",
           "hidden": false,
+          "id": 226,
           "inputs": [],
           "name": "logout",
           "outputs": [
@@ -278,12 +284,13 @@
             }
           ],
           "successOutput": null,
-          "updatedOn": "2019-12-19T11:47:33.308+01:00"
+          "updatedOn": "2021-06-08T11:09:29.207+00:00"
         },
         {
           "description": "",
           "expectedResult": "",
           "hidden": false,
+          "id": 227,
           "inputs": [
             {
               "type": "input",
@@ -362,12 +369,13 @@
             }
           ],
           "successOutput": null,
-          "updatedOn": "2019-12-19T11:47:33.210+01:00"
+          "updatedOn": "2021-06-08T11:09:29.222+00:00"
         },
         {
           "description": "",
           "expectedResult": "",
           "hidden": false,
+          "id": 228,
           "inputs": [
             {
               "type": "input",
@@ -402,7 +410,8 @@
                   "name": "",
                   "password": ""
                 },
-                "cookies": {}
+                "cookies": {},
+                "data": null
               }
             },
             {
@@ -418,12 +427,13 @@
             }
           ],
           "successOutput": null,
-          "updatedOn": "2019-12-19T11:47:33.320+01:00"
+          "updatedOn": "2021-06-08T11:09:29.244+00:00"
         },
         {
           "description": "",
           "expectedResult": "",
           "hidden": false,
+          "id": 229,
           "inputs": [],
           "name": "reset",
           "outputs": [
@@ -481,7 +491,7 @@
                   }
                 ],
                 "symbol": {
-                  "name": "auth"
+                  "id": 227
                 }
               }
             },
@@ -504,7 +514,8 @@
                   "name": "",
                   "password": ""
                 },
-                "cookies": {}
+                "cookies": {},
+                "data": null
               }
             },
             {
@@ -549,7 +560,8 @@
                   "name": "",
                   "password": ""
                 },
-                "cookies": {}
+                "cookies": {},
+                "data": null
               }
             },
             {
@@ -621,7 +633,8 @@
                   "name": "",
                   "password": ""
                 },
-                "cookies": {}
+                "cookies": {},
+                "data": null
               }
             },
             {
@@ -660,12 +673,13 @@
             }
           ],
           "successOutput": null,
-          "updatedOn": "2019-12-19T11:47:33.236+01:00"
+          "updatedOn": "2021-06-08T11:09:29.262+00:00"
         },
         {
           "description": "",
           "expectedResult": "",
           "hidden": false,
+          "id": 230,
           "inputs": [
             {
               "type": "input",
@@ -700,7 +714,8 @@
                   "name": "",
                   "password": ""
                 },
-                "cookies": {}
+                "cookies": {},
+                "data": null
               }
             },
             {
@@ -716,12 +731,13 @@
             }
           ],
           "successOutput": null,
-          "updatedOn": "2019-12-19T11:47:33.336+01:00"
+          "updatedOn": "2021-06-08T11:09:29.278+00:00"
         },
         {
           "description": "",
           "expectedResult": "",
           "hidden": false,
+          "id": 231,
           "inputs": [
             {
               "type": "input",
@@ -751,7 +767,8 @@
                   "name": "",
                   "password": ""
                 },
-                "cookies": {}
+                "cookies": {},
+                "data": null
               }
             },
             {
@@ -790,7 +807,7 @@
             }
           ],
           "successOutput": null,
-          "updatedOn": "2019-12-19T11:47:33.259+01:00"
+          "updatedOn": "2021-06-08T11:09:29.296+00:00"
         }
       ],
       "groups": []
@@ -798,6 +815,7 @@
   ],
   "tests": [
     {
+      "id": 104,
       "name": "test",
       "preSteps": [],
       "steps": [
@@ -809,7 +827,7 @@
           "pSymbol": {
             "parameterValues": [],
             "symbol": {
-              "name": "reset"
+              "id": 229
             }
           }
         },
@@ -846,7 +864,7 @@
               }
             ],
             "symbol": {
-              "name": "register"
+              "id": 224
             }
           }
         },
@@ -883,7 +901,7 @@
               }
             ],
             "symbol": {
-              "name": "register"
+              "id": 224
             }
           }
         },
@@ -912,7 +930,7 @@
               }
             ],
             "symbol": {
-              "name": "auth"
+              "id": 227
             }
           }
         },
@@ -941,7 +959,7 @@
               }
             ],
             "symbol": {
-              "name": "get profile"
+              "id": 223
             }
           }
         },
@@ -970,19 +988,270 @@
               }
             ],
             "symbol": {
-              "name": "get profile"
+              "id": 223
             }
           }
         }
       ],
       "postSteps": [],
       "generated": false,
-      "updatedOn": "2019-12-19T11:47:57.795+01:00",
       "status": "DONE",
+      "updatedOn": "2019-12-19T10:47:57.795+00:00",
       "type": "case"
     }
   ],
   "formulaSuites": [],
-  "learnerSetups": [],
-  "testExecutionConfigs": []
+  "learnerSetups": [
+    {
+      "name": "LearnerSetup",
+      "enableCache": true,
+      "saved": true,
+      "algorithm": {
+        "name": "TTT"
+      },
+      "environments": [
+        {
+          "name": "Production",
+          "urls": [
+            {
+              "name": "Base",
+              "url": "http://localhost:9090",
+              "default": false
+            },
+            {
+              "name": "REST",
+              "url": "http://localhost:9090/rest",
+              "default": true
+            }
+          ],
+          "variables": [],
+          "default": true
+        }
+      ],
+      "symbols": [
+        {
+          "parameterValues": [
+            {
+              "parameter": {
+                "type": "input",
+                "name": "jwt",
+                "parameterType": "STRING"
+              },
+              "value": "{{$jwt}}"
+            },
+            {
+              "parameter": {
+                "type": "input",
+                "name": "userId",
+                "parameterType": "STRING"
+              },
+              "value": "{{$userId}}"
+            }
+          ],
+          "symbol": {
+            "id": 223
+          }
+        },
+        {
+          "parameterValues": [
+            {
+              "parameter": {
+                "type": "input",
+                "name": "email",
+                "parameterType": "STRING"
+              },
+              "value": "user1@alex.de"
+            },
+            {
+              "parameter": {
+                "type": "input",
+                "name": "password",
+                "parameterType": "STRING"
+              },
+              "value": "password"
+            },
+            {
+              "parameter": {
+                "type": "input",
+                "name": "username",
+                "parameterType": "STRING"
+              },
+              "value": "user1"
+            }
+          ],
+          "symbol": {
+            "id": 224
+          }
+        },
+        {
+          "parameterValues": [
+            {
+              "parameter": {
+                "type": "input",
+                "name": "jwt",
+                "parameterType": "STRING"
+              },
+              "value": "{{$jwt}}"
+            },
+            {
+              "parameter": {
+                "type": "input",
+                "name": "userId",
+                "parameterType": "STRING"
+              },
+              "value": "{{$userId}}"
+            }
+          ],
+          "symbol": {
+            "id": 225
+          }
+        },
+        {
+          "parameterValues": [],
+          "symbol": {
+            "id": 226
+          }
+        },
+        {
+          "parameterValues": [
+            {
+              "parameter": {
+                "type": "input",
+                "name": "email",
+                "parameterType": "STRING"
+              },
+              "value": "user1@alex.de"
+            },
+            {
+              "parameter": {
+                "type": "input",
+                "name": "password",
+                "parameterType": "STRING"
+              },
+              "value": "password"
+            }
+          ],
+          "symbol": {
+            "id": 227
+          }
+        },
+        {
+          "parameterValues": [
+            {
+              "parameter": {
+                "type": "input",
+                "name": "jwt",
+                "parameterType": "STRING"
+              },
+              "value": "{{$jwt}}"
+            },
+            {
+              "parameter": {
+                "type": "input",
+                "name": "userId",
+                "parameterType": "STRING"
+              },
+              "value": "{{$userId}}"
+            }
+          ],
+          "symbol": {
+            "id": 228
+          }
+        },
+        {
+          "parameterValues": [
+            {
+              "parameter": {
+                "type": "input",
+                "name": "jwt",
+                "parameterType": "STRING"
+              },
+              "value": "{{$jwt}}"
+            },
+            {
+              "parameter": {
+                "type": "input",
+                "name": "userId",
+                "parameterType": "STRING"
+              },
+              "value": "{{$userId}}"
+            }
+          ],
+          "symbol": {
+            "id": 230
+          }
+        },
+        {
+          "parameterValues": [
+            {
+              "parameter": {
+                "type": "input",
+                "name": "jwt",
+                "parameterType": "STRING"
+              },
+              "value": "{{$jwt}}"
+            }
+          ],
+          "symbol": {
+            "id": 231
+          }
+        }
+      ],
+      "preSymbol": {
+        "parameterValues": [],
+        "symbol": {
+          "id": 229
+        }
+      },
+      "postSymbol": null,
+      "equivalenceOracle": {
+        "type": "random_word",
+        "batchSize": 20,
+        "minLength": 10,
+        "maxLength": 20,
+        "seed": 42,
+        "maxNoOfTests": 50
+      },
+      "webDriver": {
+        "width": 1920,
+        "height": 1080,
+        "implicitlyWait": 0,
+        "pageLoadTimeout": 10,
+        "scriptTimeout": 10,
+        "platform": "ANY",
+        "browser": "chrome",
+        "version": "",
+        "headless": false
+      },
+      "modelCheckingConfig": {
+        "formulaSuites": [],
+        "minUnfolds": 1,
+        "multiplier": 0.1
+      }
+    }
+  ],
+  "testExecutionConfigs": [
+    {
+      "name": "TestConfig",
+      "driverConfig": {
+        "width": 1920,
+        "height": 1080,
+        "implicitlyWait": 0,
+        "pageLoadTimeout": 10,
+        "scriptTimeout": 10,
+        "platform": "ANY",
+        "browser": "chrome",
+        "version": "",
+        "headless": false
+      },
+      "environment": {
+        "name": "Production"
+      },
+      "description": "Test",
+      "default": false,
+      "tests": [
+        104
+      ]
+    }
+  ]
 }

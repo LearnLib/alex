@@ -42,12 +42,14 @@ public class SymbolMapperTest {
     public void before() {
         final Symbol s1 = new Symbol();
         s1.setName("s1");
+        s1.setId(1L);
 
         this.ps1 = new ParameterizedSymbol();
         this.ps1.setSymbol(s1);
 
         final Symbol s2 = new Symbol();
         s2.setName("s2");
+        s2.setId(2L);
 
         final SymbolInputParameter input = new SymbolInputParameter();
         input.setName("in");

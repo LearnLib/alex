@@ -18,6 +18,8 @@ import { Component } from '@angular/core';
 import { AppStoreService } from '../../services/app-store.service';
 import { TestConfigApiService } from '../../services/api/test-config-api.service';
 import { ToastService } from '../../services/toast.service';
+import { TestSuite } from '../../entities/test-suite';
+import { TestApiService } from '../../services/api/test-api.service';
 
 @Component({
   selector: 'test-configs-view',
@@ -27,14 +29,19 @@ export class TestConfigsViewComponent {
 
   testConfigs: any[] = [];
 
+  root: TestSuite;
+
   constructor(private appStore: AppStoreService,
               private testConfigApi: TestConfigApiService,
+              private testApi: TestApiService,
               private toastService: ToastService) {
 
     this.testConfigApi.getAll(this.appStore.project.id).subscribe(
       testConfigs => this.testConfigs = testConfigs,
       console.error
     );
+
+    this.testApi.getRoot(this.appStore.project.id).subscribe(root => this.root = root);
   }
 
   deleteConfig(config: any): void {
@@ -66,6 +73,5 @@ export class TestConfigsViewComponent {
         this.toastService.danger('The test process could not be started. ' + res.error.message);
       }
     );
-
   }
 }

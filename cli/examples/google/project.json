@@ -45,6 +45,7 @@
               "parameterType": "STRING"
             }
           ],
+          "id": 1,
           "name": "search",
           "outputs": [],
           "steps": [
@@ -102,6 +103,7 @@
           "hidden": false,
           "inputs": [],
           "name": "reset",
+          "id": 2,
           "outputs": [],
           "steps": [
             {
@@ -146,6 +148,7 @@
           "hidden": false,
           "inputs": [],
           "name": "is home",
+          "id": 3,
           "outputs": [],
           "steps": [
             {
@@ -183,7 +186,7 @@
           "pSymbol": {
             "parameterValues": [],
             "symbol": {
-              "name": "reset"
+              "id": 2
             }
           }
         }
@@ -197,7 +200,7 @@
           "pSymbol": {
             "parameterValues": [],
             "symbol": {
-              "name": "is home"
+              "id": 3
             }
           }
         },
@@ -218,7 +221,7 @@
               }
             ],
             "symbol": {
-              "name": "search"
+              "id": 1
             }
           }
         }
@@ -276,20 +279,20 @@
             }
           ],
           "symbol": {
-            "name": "search"
+            "id": 1
           }
         },
         {
           "parameterValues": [],
           "symbol": {
-            "name": "is home"
+            "id": 3
           }
         }
       ],
       "preSymbol": {
         "parameterValues": [],
         "symbol": {
-          "name": "reset"
+          "id": 2
         }
       },
       "postSymbol": null,
