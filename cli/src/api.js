@@ -114,10 +114,11 @@ module.exports = {
         headers: _getDefaultHttpHeaders()
       });
     },
-    execute: async function(projectId, setupId) {
+    execute: async function(projectId, setupId, options = null) {
       return fetch(`${_uri}/projects/${projectId}/learner/setups/${setupId}/run`, {
         method: 'post',
-        headers: _getDefaultHttpHeaders()
+        headers: _getDefaultHttpHeaders(),
+        body: options == null ? '' : JSON.stringify(options)
       });
     }
   },

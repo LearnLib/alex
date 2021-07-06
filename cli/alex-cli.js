@@ -42,6 +42,7 @@ program
   .option('--no-wait', 'Don\'t wait for learner or testing processes to finish.')
   .option('--poll-test-report <args...>', 'Poll for a specific test report. 1. srg is the id, 2. arg is a timeout in ms. Cannot be used with anything else.')
   .option('--poll-learner-result <args...>', 'Poll for a specific learner result. 1. srg is the id, 2. arg is a timeout in ms. Cannot be used with anything else.')
+  .option('--callback-url <args...>', `Callback URL that is called when a learner process or test process is finished. 1. arg: Method ['GET', 'POST', 'PUT', 'DELETE'], 2. arg: URL.`)
   .parse(process.argv);
 
 (async () => {

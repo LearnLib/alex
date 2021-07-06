@@ -203,6 +203,15 @@ async function waitForLearnerToFinish(startTime, timeout, testNo) {
   }
 }
 
+function createCallbackWebhook(events) {
+  return {
+    url: options.callbackUrl[1],
+    method: options.callbackUrl[0],
+    name: `wh-${dateformat(new Date(), 'isoDateTime')}-${utils.randomString(10)}`,
+    events
+  }
+}
+
 async function startLearningFromSetup() {
   const setupName = options.setup;
 
@@ -216,7 +225,14 @@ async function startLearningFromSetup() {
     throw `There is no learner setup with the name "${setupName}" in the project.`;
   }
 
-  const res2 = await api.learnerSetups.execute(_project.id, setupsWithRequiredName[0].id);
+  let learnerOptions = {};
+  if (options.callbackUrl) {
+    learnerOptions = {
+      webhook: createCallbackWebhook(['LEARNER_FINISHED'])
+    };
+  }
+
+  const res2 = await api.learnerSetups.execute(_project.id, setupsWithRequiredName[0].id, learnerOptions);
   await utils.assertStatus(res2, 200);
 
   return await res2.json();
@@ -363,6 +379,10 @@ function processProgram() {
 
   // initialize api with given uri
   api.init(_uri);
+
+  if (options.callbackUrl) {
+    processors.callbackUrl(options.callbackUrl);
+  }
 
   if (options.do !== Actions.COMPARE) {
     if (!options.project && !options.projectName) {

@@ -99,7 +99,7 @@ module.exports = {
 
   pollOptions: function(values) {
     if (values == null || values.length <= 1) {
-      throw `You must specify at least one argument.`
+      throw `You must specify at least one argument.`;
     }
 
     try {
@@ -115,6 +115,20 @@ module.exports = {
       }
     } catch (e) {
       throw `Failed to parse arguments. ${e}`;
+    }
+  },
+
+  callbackUrl: function(values) {
+    if (values == null || values.length !== 2) {
+      throw `You must specify a method and a URL.`;
+    }
+
+    if (!['GET', 'POST', 'PUT', 'DELETE'].includes(values[0])) {
+      throw `Invalid HTTP method.`;
+    }
+
+    if (!values[1].match(/https?:\/\/.*?/)) {
+      throw `Invalid callback URL.`;
     }
   }
 }
