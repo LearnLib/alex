@@ -16,11 +16,11 @@
 
 package de.learnlib.alex.settings.rest;
 
+import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.settings.dao.SettingsDAO;
 import de.learnlib.alex.settings.entities.Settings;
 import de.learnlib.alex.settings.events.SettingsEvent;
 import de.learnlib.alex.webhooks.services.WebhookService;
-import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.ws.rs.core.MediaType;
 
 /**
  * REST API to manage the settings.
@@ -40,7 +42,7 @@ public class SettingsResource {
     private final WebhookService webhookService;
 
     @Autowired
-    public SettingsResource(SettingsDAO settingsDAO,
+    public SettingsResource(AuthContext authContext, SettingsDAO settingsDAO,
                             WebhookService webhookService) {
         this.settingsDAO = settingsDAO;
         this.webhookService = webhookService;

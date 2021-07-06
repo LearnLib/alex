@@ -20,10 +20,13 @@ export class Webhook {
   url: string;
   name: string;
   events: string[];
+  method: string;
+  headers: any;
 
   constructor() {
     this.url = 'http://';
     this.events = [];
+    this.headers = {};
   }
 
   static fromData(data: any): Webhook {
@@ -32,12 +35,28 @@ export class Webhook {
     w.user = data.user;
     w.url = data.url;
     w.name = data.name;
+    w.method = data.method;
+    w.headers = data.headers || {};
 
     if (data.events != null && data.events.length > 0) {
       w.events = data.events;
     }
 
     return w;
+  }
+
+  hasHeaders(): boolean {
+    return Object.keys(this.headers).length > 0;
+  }
+
+  addHeader(key: string, value: string): void {
+    this.headers[key] = value;
+  }
+
+  removeHeader(key: string): void {
+    if (typeof this.headers[key] !== 'undefined') {
+      delete this.headers[key];
+    }
   }
 
   copy(): Webhook {

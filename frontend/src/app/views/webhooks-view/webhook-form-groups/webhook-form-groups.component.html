@@ -28,6 +28,65 @@
   </div>
 </div>
 
+<div class="form-group">
+  <label>Method</label>
+  <select
+    [formControl]="form.controls.method"
+    class="form-control"
+  >
+    <option [value]="null" disabled>Select a Method</option>
+    <option *ngFor="let m of ['DELETE', 'GET', 'POST', 'PUT']" [value]="m">{{m}}</option>
+  </select>
+</div>
+
+<label>Header</label>
+<form [formGroup]="headerForm" (submit)="addHeader(); $event.preventDefault()" class="d-flex flex-row">
+  <div class="form-group flex-grow-1">
+    <input
+      [formControl]="headerForm.controls.name"
+      [class.is-invalid]="formUtils.isInvalidFormControl(headerForm.controls.name)"
+      class="form-control"
+      placeholder="Header Name"
+      type="text"
+    >
+    <div class="invalid-feedback">
+      Add a header name.
+    </div>
+  </div>
+  <div class="form-group flex-grow-1 mx-2">
+    <input
+      [formControl]="headerForm.controls.value"
+      class="form-control"
+      placeholder="Header Value"
+      type="text"
+    >
+  </div>
+  <div>
+    <button class="btn btn-default" [disabled]="headerForm.invalid">
+      <i class="fas fa-fw fa-plus"></i>
+    </button>
+  </div>
+</form>
+
+<table class="table" *ngIf="webhook.hasHeaders()">
+  <thead>
+  <tr>
+    <th>Header</th>
+    <th>Value</th>
+    <th width="1">&nbsp;</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let i of webhook.headers | keyvalue">
+    <td><strong>{{i.key}}</strong></td>
+    <td>{{webhook.headers[i.key]}}</td>
+    <td>
+      <i (click)="webhook.removeHeader(i.key)" class="fas fa-trash fa-fw cursor-pointer"></i>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
 <div>
   <label>Events</label>
   <div class="d-flex flex-row">

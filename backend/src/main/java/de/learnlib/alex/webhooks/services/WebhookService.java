@@ -20,18 +20,20 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.webhooks.dao.WebhookDAO;
 import de.learnlib.alex.webhooks.entities.Event;
 import de.learnlib.alex.webhooks.entities.Webhook;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
+import de.learnlib.alex.webhooks.repositories.WebhookRepository;
 import org.glassfish.jersey.client.ClientProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * The service that emits events to all remote subscribers.
@@ -53,6 +55,8 @@ public class WebhookService {
     /** The webhook DAO to use. */
     private final WebhookDAO webhookDAO;
 
+    private final WebhookRepository webhookRepository;
+
     /** The thread executor for webhooks. */
     private final ExecutorService executorService;
 
@@ -61,10 +65,12 @@ public class WebhookService {
      *
      * @param webhookDAO
      *         The injected webhook DAO.
+     * @param webhookRepository
      */
     @Autowired
-    public WebhookService(WebhookDAO webhookDAO) {
+    public WebhookService(WebhookDAO webhookDAO, WebhookRepository webhookRepository) {
         this.webhookDAO = webhookDAO;
+        this.webhookRepository = webhookRepository;
         this.client = ClientBuilder.newClient()
                 .property(ClientProperties.READ_TIMEOUT, READ_CONNECT_TIMEOUT)
                 .property(ClientProperties.CONNECT_TIMEOUT, READ_CONNECT_TIMEOUT);
@@ -104,9 +110,35 @@ public class WebhookService {
         for (final Webhook webhook : webhooks) {
             executorService.submit(() -> {
                 logger.info("send {} to {}", event, webhook.getUrl());
-                client.target(webhook.getUrl())
-                        .request(MediaType.APPLICATION_JSON)
-                        .post(Entity.json(event));
+                var request = client.target(webhook.getUrl())
+                        .request(MediaType.APPLICATION_JSON);
+
+                // set header
+                for (var header : webhook.getHeaders().entrySet()) {
+                    request = request.header(header.getKey(), header.getValue());
+                }
+
+                switch (webhook.getMethod()) {
+                    case GET -> {
+                        request.get();
+                        break;
+                    }
+                    case POST -> {
+                        request.post(Entity.json(event));
+                        break;
+                    }
+                    case PUT -> {
+                        request.put(Entity.json(event));
+                        break;
+                    }
+                    case DELETE -> request.delete();
+                }
+
+                if (webhook.getOnce()) {
+                    final Webhook webhookInDB = webhookRepository.findById(webhook.getId()).orElse(null);
+                    this.webhookRepository.delete(webhookInDB);
+                }
+
             });
         }
     }

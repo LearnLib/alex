@@ -35,6 +35,11 @@ export class WebhookFormGroupsComponent implements OnInit {
   @Input()
   public events: string[];
 
+  headerForm = new FormGroup({
+    name: new FormControl('', [Validators.required]),
+    value: new FormControl('')
+  });
+
   public selectedEvent: string;
 
   constructor(public formUtils: FormUtilsService) {
@@ -52,6 +57,9 @@ export class WebhookFormGroupsComponent implements OnInit {
     ]));
     this.form.addControl('url', new FormControl(this.webhook.url, [
       Validators.required, Validators.pattern(/^https?:\/\/.*?/)
+    ]));
+    this.form.addControl('method', new FormControl(this.webhook.method, [
+      Validators.required
     ]));
     this.form.addControl('events', new FormControl(this.webhook.events.length, [
       Validators.min(1)
@@ -73,6 +81,12 @@ export class WebhookFormGroupsComponent implements OnInit {
   removeEvent(i: number): void {
     this.webhook.events.splice(i, 1);
     this.updateEventsFC();
+  }
+
+  addHeader(): void {
+    const header = this.headerForm.value;
+    this.webhook.addHeader(header.name, header.value);
+    this.headerForm.reset();
   }
 
   private updateEventsFC(): void {

@@ -20,21 +20,27 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.learnlib.alex.auth.entities.User;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import org.hibernate.annotations.Type;
+import org.springframework.util.SerializationUtils;
+
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Webhook.
@@ -42,6 +48,15 @@ import javax.validation.constraints.Pattern;
 @Entity
 @JsonPropertyOrder(alphabetic = true)
 public class Webhook implements Serializable {
+
+    public enum Method {
+
+        GET,
+        POST,
+        PUT,
+        DELETE
+
+    }
 
     private static final long serialVersionUID = 2533300421211466078L;
 
@@ -68,6 +83,18 @@ public class Webhook implements Serializable {
     @ElementCollection
     @NotEmpty
     private List<EventType> events;
+
+    @Lob
+    @Column(columnDefinition = "BYTEA")
+    @Type(type = "org.hibernate.type.BinaryType")
+    private byte[] headers;
+
+    @NotNull
+    private Method method;
+
+    @JsonIgnore
+    @NotNull
+    private boolean once = false;
 
     /** Constructor. */
     public Webhook() {
@@ -122,6 +149,35 @@ public class Webhook implements Serializable {
 
     public void setEvents(List<EventType> events) {
         this.events = events;
+    }
+
+    public HashMap<String, String> getHeaders() {
+        if (headers == null) {
+            return new HashMap<>();
+        }
+        return (HashMap<String, String>) SerializationUtils.deserialize(headers);
+    }
+
+    public void setHeaders(HashMap<String, String> headers) {
+        this.headers = SerializationUtils.serialize(headers);
+    }
+
+    public Webhook.Method getMethod() {
+        return method;
+    }
+
+    public void setMethod(Webhook.Method method) {
+        this.method = method;
+    }
+
+    @JsonIgnore
+    public boolean getOnce() {
+        return once;
+    }
+
+    @JsonIgnore
+    public void setOnce(boolean once) {
+        this.once = once;
     }
 
     @Override

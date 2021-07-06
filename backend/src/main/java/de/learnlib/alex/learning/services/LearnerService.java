@@ -51,6 +51,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import de.learnlib.alex.webhooks.dao.WebhookDAO;
 import net.automatalib.automata.transducers.impl.compact.CompactMealy;
 import net.automatalib.util.automata.Automata;
 import net.automatalib.util.automata.conformance.WpMethodTestsIterator;
@@ -92,6 +94,7 @@ public class LearnerService {
     private final TestService testService;
     private final UserDAO userDAO;
     private final TransactionTemplate transactionTemplate;
+    private final WebhookDAO webhookDAO;
 
     /** The learner threads for users (userId -> thread). */
     private final Map<Long, LearnerThread> learnerThreads;
@@ -104,7 +107,8 @@ public class LearnerService {
                           ProjectDAO projectDAO,
                           @Lazy TestService testService,
                           UserDAO userDAO,
-                          TransactionTemplate transactionTemplate) {
+                          TransactionTemplate transactionTemplate,
+                          WebhookDAO webhookDAO) {
         this.learnerSetupDAO = learnerSetupDAO;
         this.learnerResultDAO = learnerResultDAO;
         this.contextHandlerFactory = contextHandlerFactory;
@@ -113,6 +117,7 @@ public class LearnerService {
         this.testService = testService;
         this.userDAO = userDAO;
         this.transactionTemplate = transactionTemplate;
+        this.webhookDAO = webhookDAO;
 
         this.learnerThreads = new HashMap<>();
     }
@@ -144,6 +149,13 @@ public class LearnerService {
             final var options = startConfiguration.getOptions();
             if (options.getComment() == null || options.getComment().trim().equals("")) {
                 options.setComment(createdSetup.getName());
+            }
+
+            // create onetime webhook
+            if (options.getWebhook() != null) {
+                final var webhook = options.getWebhook();
+                webhook.setOnce(true);
+                this.webhookDAO.create(user, webhook);
             }
 
             final var result = new LearnerResult();
