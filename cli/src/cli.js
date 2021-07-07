@@ -187,7 +187,7 @@ async function waitForLearnerToFinish(startTime, timeout, testNo) {
       throw `Timeout for learner process.`;
     }
 
-    process.stdout.cursorTo(0);
+    if (process.stdout.cursorTo != null) process.stdout.cursorTo(0);
     process.stdout.write(chalk.white.dim(`Wait for the learning process to finish... (${Math.floor(timeElapsed / 1000)}s elapsed)`));
 
     const res2 = await api.learnerResults.get(_project.id, testNo);
@@ -304,7 +304,7 @@ async function pollForTestReport(reportId, timeout) {
       throw `Timeout for test process.`;
     }
 
-    process.stdout.cursorTo(0);
+    if (process.stdout.cursorTo != null) process.stdout.cursorTo(0);
     process.stdout.write(chalk.white.dim(`Waiting for tests to finish... (${Math.floor(timeElapsed / 1000)}s elapsed)`));
 
     const res2 = await api.testReports.get(_project.id, reportId);
