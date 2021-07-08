@@ -22,6 +22,7 @@ import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
+import de.learnlib.alex.testing.entities.TestOptions;
 import de.learnlib.alex.testing.entities.TestQueueItem;
 import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.entities.TestResult;
@@ -184,7 +185,7 @@ public class TestResource {
     public ResponseEntity<TestQueueItem> execute(@PathVariable("projectId") Long projectId,
                                                  @RequestBody TestExecutionConfig testConfig) {
         final var user = authContext.getUser();
-        final var testRun = testService.start(user, projectId, testConfig);
+        final var testRun = testService.start(user, projectId, testConfig, null);
         return ResponseEntity.ok(testRun);
     }
 

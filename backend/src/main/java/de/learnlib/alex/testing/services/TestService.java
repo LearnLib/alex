@@ -24,6 +24,7 @@ import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.learning.services.LearnerService;
 import de.learnlib.alex.testing.dao.TestReportDAO;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
+import de.learnlib.alex.testing.entities.TestOptions;
 import de.learnlib.alex.testing.entities.TestProcessQueueItem;
 import de.learnlib.alex.testing.entities.TestQueueItem;
 import de.learnlib.alex.testing.entities.TestReport;
@@ -36,6 +37,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import de.learnlib.alex.webhooks.dao.WebhookDAO;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -54,6 +57,7 @@ public class TestService {
     private final LearnerService learnerService;
     private final UserDAO userDAO;
     private final TransactionTemplate transactionTemplate;
+    private final WebhookDAO webhookDAO;
 
 
     /** The running testing threads (projectId -> TestThread). */
@@ -66,13 +70,15 @@ public class TestService {
             ProjectDAO projectDAO,
             @Lazy LearnerService learnerService,
             @Lazy UserDAO userDAO,
-            TransactionTemplate transactionTemplate) {
+            TransactionTemplate transactionTemplate,
+            WebhookDAO webhookDAO) {
         this.applicationContext = applicationContext;
         this.testReportDAO = testReportDAO;
         this.projectDAO = projectDAO;
         this.learnerService = learnerService;
         this.userDAO = userDAO;
         this.transactionTemplate = transactionTemplate;
+        this.webhookDAO = webhookDAO;
 
         this.testThreads = new HashMap<>();
     }
@@ -88,7 +94,7 @@ public class TestService {
      *         The config for the tests.
      * @return A test status.
      */
-    public TestQueueItem start(User user, Long projectId, TestExecutionConfig config) {
+    public TestQueueItem start(User user, Long projectId, TestExecutionConfig config, TestOptions testOptions) {
         final var project = projectDAO.getByID(user, projectId);
         User userInDb = this.userDAO.getByID(user.getId());
 
@@ -106,6 +112,15 @@ public class TestService {
 
             return cr;
         });
+
+        if (testOptions != null) {
+            // create onetime webhook
+            if (testOptions.getWebhook() != null) {
+                final var webhook = testOptions.getWebhook();
+                webhook.setOnce(true);
+                this.webhookDAO.create(user, webhook);
+            }
+        }
 
         final var item = new TestProcessQueueItem(
                 user.getId(),
