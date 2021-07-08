@@ -109,7 +109,7 @@ public class WebhookService {
     private <T> void triggerWebhooks(Event<T> event, List<Webhook> webhooks) {
         for (final Webhook webhook : webhooks) {
             executorService.submit(() -> {
-                logger.info("send {} to {}", event, webhook.getUrl());
+                logger.info("send {} to {} {}", event, webhook.getMethod(), webhook.getUrl());
                 var request = client.target(webhook.getUrl())
                         .request(MediaType.APPLICATION_JSON);
 
@@ -119,27 +119,19 @@ public class WebhookService {
                 }
 
                 switch (webhook.getMethod()) {
-                    case GET -> {
-                        request.get();
-                        break;
-                    }
-                    case POST -> {
-                        request.post(Entity.json(event));
-                        break;
-                    }
-                    case PUT -> {
-                        request.put(Entity.json(event));
-                        break;
-                    }
+                    case GET -> request.get();
+                    case POST -> request.post(Entity.json(event));
+                    case PUT -> request.put(Entity.json(event));
                     case DELETE -> request.delete();
                 }
 
-                if (webhook.getOnce()) {
-                    final Webhook webhookInDB = webhookRepository.findById(webhook.getId()).orElse(null);
-                    this.webhookRepository.delete(webhookInDB);
-                }
-
             });
+
+            if (webhook.getOnce()) {
+                final Webhook webhookInDB = webhookRepository.findById(webhook.getId()).orElse(null);
+                this.webhookRepository.delete(webhookInDB);
+            }
+
         }
     }
 }
