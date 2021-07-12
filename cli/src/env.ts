@@ -14,9 +14,4 @@
  * limitations under the License.
  */
 
-/**
- * The version of the CLI.
- *
- * @type {string}
- */
-module.exports.VERSION = "2.1.1"
+export const VERSION = '2.1.1-SNAPSHOT';

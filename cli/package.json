@@ -1,24 +1,40 @@
 {
-  "name": "alex-cli",
+  "name": "cli",
   "version": "2.1.1",
+  "description": "A command line interface for ALEX",
+  "main": "index.ts",
   "repository": {
     "url": "https://github.com/LearnLib/alex/tree/developer/cli"
   },
-  "description": "A command line interface for executing tests and learning experiments with ALEX v2.1.1",
-  "main": "alex-cli.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "bin": {
-    "alex-cli": "./alex-cli.js"
+    "start": "ts-node index.ts",
+    "lint": "eslint index.ts ./src/**/*.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "rimraf ./dest",
+    "compile": "tsc --project tsconfig.json",
+    "build:image": "npm run clean && npm run lint && npm run compile && npm run package:image",
+    "package:image": "pkg ./dest/index.js --targets node14-alpine-x64 --out-path ./dest/.bin/"
   },
   "author": "Alexander Bainczyk",
   "license": "Apache-2.0",
+  "devDependencies": {
+    "@types/dateformat": "^3.0.1",
+    "@types/node": "^16.0.1",
+    "@types/node-fetch": "^2.5.11",
+    "@typescript-eslint/eslint-plugin": "^4.28.2",
+    "@typescript-eslint/parser": "^4.28.2",
+    "eslint": "^7.30.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.23.4",
+    "pkg": "^5.3.0",
+    "rimraf": "^3.0.2",
+    "ts-node": "^10.0.0",
+    "typescript": "^4.3.5"
+  },
   "dependencies": {
     "chalk": "^4.1.1",
-    "commander": "^7.2.0",
+    "commander": "^8.0.0",
     "dateformat": "^4.5.1",
-    "node-fetch": "^2.6.1",
-    "readline": "^1.3.0"
+    "node-fetch": "^2.6.1"
   }
 }

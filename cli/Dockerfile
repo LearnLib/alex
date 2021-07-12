@@ -1,7 +1,15 @@
-FROM node:14
-WORKDIR /root/workdir
+FROM docker.io/library/node:14-alpine as builder-cli
+WORKDIR ./cli
+COPY ./package.json ./package.json
+COPY ./package-lock.json ./package-lock.json
+RUN npm ci
 COPY . .
-# The project is packed first to prevent the working directory from simply
-# being symlinked into the global node_modules directory
-RUN npm pack
-RUN npm install --global alex-cli-*.tgz
+RUN npm run build:image
+RUN mv ./dest/.bin/index ./dest/.bin/cli
+
+FROM docker.io/library/alpine:latest
+WORKDIR ./cli
+COPY --from=builder-cli /cli/dest/.bin/cli ./cli
+RUN pwd
+RUN ls -all
+ENTRYPOINT ["/cli/cli"]

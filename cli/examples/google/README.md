@@ -4,41 +4,68 @@ Execute the following commands from the root of this repository.
 
 ## Testing
 
-### With a project file by setup name
+### With a project file and setup name
 
 ```bash
-node alex-cli.js \
-        --uri "http://127.0.0.1:8000" \
-        -d "test" \
-        -u "admin@alex.example:admin" \
-        -p "./examples/google/project.json" \
-        --setup "test google" \
-        --clean-up
+npm run start -- \
+    test \
+    --url "http://127.0.0.1:8000" \
+    --email "admin@alex.example" \
+    --password "admin" \
+    --project-file "./examples/google/project.json" \
+    --setup-name "test google" \
+    --delete-project
+```
+
+### With an existing project and setup name
+
+```bash
+npm run start -- \
+    test \
+    --url "http://127.0.0.1:8000" \
+    --email "admin@alex.example" \
+    --password "admin" \
+    --project-name "google" \
+    --setup-name "test google"
 ```
 
 ## Learning
 
-### With a project file by setup name
+### With a project file and setup name
 
 ```bash
-node alex-cli.js \
-        --uri "http://127.0.0.1:8000" \
-        -d "learn" \
-        -u "admin@alex.example:admin" \
-        -p "./examples/google/project.json" \
-        --setup "learn google" \
-        --clean-up
+npm run start -- \
+    learn \
+    --url "http://127.0.0.1:8000" \
+    --email "admin@alex.example" \
+    --password "admin" \
+    --project-file "./examples/google/project.json" \
+    --setup-name "learn google" \
+    --delete-project
+```
+
+### With an existing project and setup name
+
+```bash
+npm run start -- \
+    learn \
+    --url "http://127.0.0.1:8000" \
+    --email "admin@alex.example" \
+    --password "admin" \
+    --project-name "google" \
+    --setup-name "learn google"
 ```
 
 ## Model comparison
 
 ```bash
-alex-cli \
-    --uri "http://127.0.0.1:8000" \
-    --do "compare" \
-    --user "admin@alex.example:admin" \
+npm run start -- \
+    compare \
+    --url "http://127.0.0.1:8000" \
+    --email "admin@alex.example" \
+    --password "admin" \
     --models "model1.json" "model2.json" \
-    --output "model-difference-${aspect}.json"
+    --out "model-difference-${aspect}.json"
 ```
 
 ## Polling
@@ -46,21 +73,27 @@ alex-cli \
 ### Test report
 
 ```bash
-node alex-cli.js \
-        --uri "http://127.0.0.1:8000" \
-        -d "poll" \
-        -u "admin@alex.example:admin" \
-        -pn "projectName" \
-        --poll-test-report 5 5000
+npm run start -- \
+    poll \
+    test-report \
+    --url "http://127.0.0.1:8000" \
+    --email "admin@alex.example" \
+    --password "admin" \
+    --project-name "google" \
+    --report-id 5
+    --timeout 5000
 ```
 
 ### Learner result
 
 ```bash
-node alex-cli.js \
-        --uri "http://127.0.0.1:8000" \
-        -d "poll" \
-        -u "admin@alex.example:admin" \
-        -pn "projectName" \
-        --poll-learner-result 5 5000
+npm run start -- \
+    poll \
+    learner-result \
+    --url "http://127.0.0.1:8000" \
+    --email "admin@alex.example" \
+    --password "admin" \
+    --project-name "google" \
+    --result-id 5
+    --timeout 500000
 ```
