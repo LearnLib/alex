@@ -10,6 +10,5 @@ RUN mv ./dest/.bin/index ./dest/.bin/cli
 FROM docker.io/library/alpine:latest
 WORKDIR ./cli
 COPY --from=builder-cli /cli/dest/.bin/cli ./cli
-RUN pwd
 RUN ls -all
-ENTRYPOINT ["/cli/cli"]
+RUN mv /cli/cli /usr/local/bin/alex-cli
