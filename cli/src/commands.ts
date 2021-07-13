@@ -302,7 +302,7 @@ export async function runCompareCommand(options: CompareCommandOptions): Promise
   const separatingWord: { input: Array<string>, output: Array<string> } = await res.json();
 
   if (separatingWord.input.length === 0) {
-    throw 'Could not find a difference between both models.';
+    console.log(chalk.white.dim('Could not find a difference between both models.'));
   } else {
     console.log(chalk.white.dim(`Found a difference for word ${separatingWord.input}.`));
     if (options.out != null) {
