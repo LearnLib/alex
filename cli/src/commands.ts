@@ -135,7 +135,7 @@ async function pollForTestReport(
   }
 }
 
-async function startTestingFromSetup(projectId: number, setupName: string): Promise<any> {
+async function startTestingFromSetup(projectId: number, setupName: string, webhook?: Webhook): Promise<any> {
   const res1 = await testSetupApi.getAll(projectId);
   await assertStatus(res1, 200);
 
@@ -146,7 +146,13 @@ async function startTestingFromSetup(projectId: number, setupName: string): Prom
     throw `There is no test setup with the name "${setupName}" in the project.`;
   }
 
-  const res2 = await testSetupApi.execute(projectId, setupsWithRequiredName[0].id);
+  let testOptions = {};
+  if (webhook) {
+    webhook.events.push('TEST_EXECUTION_FINISHED');
+    testOptions = { webhook };
+  }
+
+  const res2 = await testSetupApi.execute(projectId, setupsWithRequiredName[0].id, testOptions);
   await assertStatus(res2, 200);
 
   return res2.json();
@@ -250,7 +256,7 @@ export async function runTestCommand(options: TestCommandOptions): Promise<void>
     ? await getProjectByFile(options.projectFile)
     : await getProjectByName(options.projectName);
 
-  const res = await startTestingFromSetup(project.id, options.setupName);
+  const res = await startTestingFromSetup(project.id, options.setupName, options.callbackUrl);
 
   if (!options.wait) {
     console.log(chalk.white.dim('Do not wait for tests to finish.'));

@@ -20,6 +20,7 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.testing.dao.TestExecutionConfigDAO;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
+import de.learnlib.alex.testing.entities.TestOptions;
 import de.learnlib.alex.testing.entities.TestQueueItem;
 import de.learnlib.alex.testing.services.TestService;
 import java.util.List;
@@ -168,10 +169,11 @@ public class TestExecutionConfigResource {
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity<TestQueueItem> run(@PathVariable("projectId") Long projectId,
-                                             @PathVariable("configId") Long configId) {
+                                             @PathVariable("configId") Long configId,
+                                             @RequestBody(required = false) TestOptions testOptions) {
         final var user = authContext.getUser();
         final var config = this.testExecutionConfigDAO.get(user, projectId, configId);
-        final var testRun = testService.start(user, projectId, config);
+        final var testRun = testService.start(user, projectId, config, testOptions);
         return ResponseEntity.ok(testRun);
     }
 }

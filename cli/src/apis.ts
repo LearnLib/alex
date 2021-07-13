@@ -78,7 +78,7 @@ export const learnerSetupApi = {
     fetch(`${getUrl()}/projects/${projectId}/learner/setups/${setupId}/run`, {
       method: 'post',
       headers: getDefaultHttpHeaders(),
-      body: options == null ? '' : JSON.stringify(options)
+        ...(options != null && {body: JSON.stringify(options)})
     })
 };
 
@@ -110,10 +110,11 @@ export const testSetupApi = {
       method: 'get',
       headers: getDefaultHttpHeaders()
     }),
-  execute: async (projectId: number, setupId: number): Promise<Response> =>
+  execute: async (projectId: number, setupId: number, options: any = null): Promise<Response> =>
     fetch(`${getUrl()}/projects/${projectId}/testConfigs/${setupId}/run`, {
       method: 'post',
-      headers: getDefaultHttpHeaders()
+      headers: getDefaultHttpHeaders(),
+      ...(options != null && {body: JSON.stringify(options)})
     })
 };
 
