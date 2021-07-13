@@ -10,5 +10,5 @@ RUN mv ./dest/.bin/index ./dest/.bin/cli
 FROM docker.io/library/alpine:latest
 WORKDIR ./cli
 COPY --from=builder-cli /cli/dest/.bin/cli ./cli
-RUN ls -all
+RUN apk add curl
 RUN mv /cli/cli /usr/local/bin/alex-cli
