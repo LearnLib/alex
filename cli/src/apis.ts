@@ -78,7 +78,7 @@ export const learnerSetupApi = {
     fetch(`${getUrl()}/projects/${projectId}/learner/setups/${setupId}/run`, {
       method: 'post',
       headers: getDefaultHttpHeaders(),
-        ...(options != null && {body: JSON.stringify(options)})
+      ...(options != null && { body: JSON.stringify(options) })
     })
 };
 
@@ -114,7 +114,7 @@ export const testSetupApi = {
     fetch(`${getUrl()}/projects/${projectId}/testConfigs/${setupId}/run`, {
       method: 'post',
       headers: getDefaultHttpHeaders(),
-      ...(options != null && {body: JSON.stringify(options)})
+      ...(options != null && { body: JSON.stringify(options) })
     })
 };
 
