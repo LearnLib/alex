@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.webhooks.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.webhooks.dao.WebhookDAO;
 import de.learnlib.alex.webhooks.entities.Event;
@@ -61,17 +62,13 @@ public class WebhookService {
     /** The thread executor for webhooks. */
     private final ExecutorService executorService;
 
-    /**
-     * Constructor.
-     *
-     * @param webhookDAO
-     *         The injected webhook DAO.
-     * @param webhookRepository
-     */
+    private final ObjectMapper objectMapper;
+
     @Autowired
-    public WebhookService(WebhookDAO webhookDAO, WebhookRepository webhookRepository) {
+    public WebhookService(WebhookDAO webhookDAO, WebhookRepository webhookRepository, ObjectMapper objectMapper) {
         this.webhookDAO = webhookDAO;
         this.webhookRepository = webhookRepository;
+        this.objectMapper = objectMapper;
         this.client = ClientBuilder.newClient()
                 .property(ClientProperties.READ_TIMEOUT, READ_CONNECT_TIMEOUT)
                 .property(ClientProperties.CONNECT_TIMEOUT, READ_CONNECT_TIMEOUT);
@@ -112,18 +109,20 @@ public class WebhookService {
             executorService.submit(() -> {
                 try {
                     logger.info("Send {} to {} {}.", event, webhook.getMethod(), webhook.getUrl());
-                    var request = client.target(webhook.getUrl())
-                            .request(MediaType.APPLICATION_JSON);
+                    var request = client.target(webhook.getUrl()).request();
 
                     // set header
                     for (var header : webhook.getHeaders().entrySet()) {
                         request = request.header(header.getKey(), header.getValue());
                     }
 
+                    final var body = objectMapper.writeValueAsString(event);
+                    final var bodyEntity = Entity.entity(body, MediaType.APPLICATION_JSON);
+
                     final var response = switch (webhook.getMethod()) {
                         case GET -> request.get();
-                        case POST -> request.post(Entity.json(event));
-                        case PUT -> request.put(Entity.json(event));
+                        case POST -> request.post(bodyEntity);
+                        case PUT -> request.put(bodyEntity);
                         case DELETE -> request.delete();
                     };
 
