@@ -127,9 +127,7 @@ export const processCompareModelFiles = (args: Array<string>): Array<string> => 
   try {
     const a = readFileSync(args[0], 'utf8');
     const b = readFileSync(args[1], 'utf8');
-    JSON.parse(a);
-    JSON.parse(b);
-    return [a, b];
+    return [JSON.parse(a), JSON.parse(b)];
   } catch (e) {
     throw 'Failed to parse one of the model files to JSON.';
   }
