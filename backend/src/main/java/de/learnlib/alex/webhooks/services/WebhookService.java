@@ -31,6 +31,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -109,7 +110,7 @@ public class WebhookService {
     private <T> void triggerWebhooks(Event<T> event, List<Webhook> webhooks) {
         for (final Webhook webhook : webhooks) {
             executorService.submit(() -> {
-                logger.info("send {} to {} {}", event, webhook.getMethod(), webhook.getUrl());
+                logger.info("Send {} to {} {}.", event, webhook.getMethod(), webhook.getUrl());
                 var request = client.target(webhook.getUrl())
                         .request(MediaType.APPLICATION_JSON);
 
@@ -118,13 +119,16 @@ public class WebhookService {
                     request = request.header(header.getKey(), header.getValue());
                 }
 
+                final Response response;
                 switch (webhook.getMethod()) {
-                    case GET -> request.get();
-                    case POST -> request.post(Entity.json(event));
-                    case PUT -> request.put(Entity.json(event));
-                    case DELETE -> request.delete();
+                    case GET -> response = request.get();
+                    case POST -> response = request.post(Entity.json(event));
+                    case PUT -> response = request.put(Entity.json(event));
+                    case DELETE -> response = request.delete();
+                    default -> throw new IllegalStateException("Unexpected value: " + webhook.getMethod());
                 }
 
+                logger.info("Receive response from {} {} with status {}.", webhook.getMethod(), webhook.getUrl(), response.getStatus());
             });
 
             if (webhook.getOnce()) {
