@@ -110,25 +110,27 @@ public class WebhookService {
     private <T> void triggerWebhooks(Event<T> event, List<Webhook> webhooks) {
         for (final Webhook webhook : webhooks) {
             executorService.submit(() -> {
-                logger.info("Send {} to {} {}.", event, webhook.getMethod(), webhook.getUrl());
-                var request = client.target(webhook.getUrl())
-                        .request(MediaType.APPLICATION_JSON);
+                try {
+                    logger.info("Send {} to {} {}.", event, webhook.getMethod(), webhook.getUrl());
+                    var request = client.target(webhook.getUrl())
+                            .request(MediaType.APPLICATION_JSON);
 
-                // set header
-                for (var header : webhook.getHeaders().entrySet()) {
-                    request = request.header(header.getKey(), header.getValue());
+                    // set header
+                    for (var header : webhook.getHeaders().entrySet()) {
+                        request = request.header(header.getKey(), header.getValue());
+                    }
+
+                    final var response = switch (webhook.getMethod()) {
+                        case GET -> request.get();
+                        case POST -> request.post(Entity.json(event));
+                        case PUT -> request.put(Entity.json(event));
+                        case DELETE -> request.delete();
+                    };
+
+                    logger.info("Receive response from {} {} with status {}.", webhook.getMethod(), webhook.getUrl(), response.getStatus());
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-
-                final Response response;
-                switch (webhook.getMethod()) {
-                    case GET -> response = request.get();
-                    case POST -> response = request.post(Entity.json(event));
-                    case PUT -> response = request.put(Entity.json(event));
-                    case DELETE -> response = request.delete();
-                    default -> throw new IllegalStateException("Unexpected value: " + webhook.getMethod());
-                }
-
-                logger.info("Receive response from {} {} with status {}.", webhook.getMethod(), webhook.getUrl(), response.getStatus());
             });
 
             if (webhook.getOnce()) {
