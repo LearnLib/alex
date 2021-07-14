@@ -66,6 +66,7 @@ const program: Command = new Command()
       .option('-pf, --project-file <file>', 'The path to the file with a serialized project.', processProjectFile)
       .option('-pn, --project-name <name>', 'The name of the project.')
       .option('-o, --out <file>', 'The file where to save the learner result as dot file.')
+      .option('-lo, --ltl-out <file>', 'The file where to save the modelchecker result.')
       .option('--callback-url <args...>', 'The URL that is called when the learner process is finished.')
       .option('--delete-project', 'If the project should be deleted after the learner process. Is ignored if -pn is used.', false)
       .option('--no-wait', 'Do not wait for the learner process to finish.', false)
@@ -110,6 +111,7 @@ const program: Command = new Command()
           .requiredOption('--result-id <id>', 'The ID of the learner result to wait for to finish.', processId)
           .option('--timeout <ms>', 'The maximum amount of time to wait in ms.', processTimeout, -1)
           .option('-o, --out <file>', 'The file where to save the result.')
+          .option('-lo, --ltl-out <file>', 'The file where to save the modelchecker result.')
           .action(async (options) => {
             await context.init(program.opts());
             const mergedOptions = { ...program.opts(), ...options };

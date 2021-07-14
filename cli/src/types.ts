@@ -46,6 +46,7 @@ export interface TestCommandOptions extends CommandOptions {
 }
 
 export interface LearnCommandOptions extends TestCommandOptions {
+  ltlOut?: string
 }
 
 export interface CompareCommandOptions extends CommandOptions {
@@ -64,5 +65,6 @@ export interface PollTestReportCommandOptions extends PollCommandOptions {
 }
 
 export interface PollLearnerResultCommandOptions extends PollCommandOptions {
-  resultId: number
+  resultId: number,
+  ltlOut?: string
 }
