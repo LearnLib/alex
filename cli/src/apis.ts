@@ -91,13 +91,18 @@ export const learnerResultApi = {
 };
 
 export const learnerResultStepApi = {
-    getModelCheckingResults: async (projectId: number, resultId: number, stepId: number, format: string | null = null): Promise<Response> => {
-        const params = format ? `?format=${encodeURIComponent(format)}` : '';
-        return fetch(`${getUrl()}/projects/${projectId}/results/${resultId}/steps/${stepId}/modelCheckingResults${params}`, {
-            method: 'get',
-            headers: getDefaultHttpHeaders()
-        })
-    }
+  getModelCheckingResults: async (
+    projectId: number,
+    resultId: number,
+    stepId: number,
+    format: string | null = null
+  ): Promise<Response> => {
+    const params = format ? `?format=${encodeURIComponent(format)}` : '';
+    return fetch(`${getUrl()}/projects/${projectId}/results/${resultId}/steps/${stepId}/modelCheckingResults${params}`, {
+      method: 'get',
+      headers: getDefaultHttpHeaders()
+    });
+  }
 };
 
 export const testApi = {

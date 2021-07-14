@@ -217,7 +217,7 @@ async function pollForLearnerResult(
     throw 'The learning process finished with errors.';
   }
 
-  if (result.steps.length == 0) {
+  if (result.steps.length === 0) {
     console.log(chalk.white.dim('No steps have been learned in this learning process.'));
     return;
   }
@@ -231,7 +231,6 @@ async function pollForLearnerResult(
   // analyze model checking results
   const lastStep = result.steps[result.steps.length - 1];
   if (lastStep.modelCheckingResults.length > 0) {
-
     // write model checking results to a file
     if (ltlOut) {
       const res = await learnerResultStepApi.getModelCheckingResults(projectId, result.id, lastStep.id, 'junit');

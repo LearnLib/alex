@@ -152,7 +152,18 @@ jobs:
           context: ./frontend
           tag: alex-frontend
 
+  lint-cli:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Lint CI TypeScript code
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - run: cd ./cli && npm ci && npm run lint
+
   package-cli:
+    needs: lint-cli
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     steps:
