@@ -28,6 +28,7 @@ import {
 import {
   learnerApi,
   learnerResultApi,
+  learnerResultStepApi,
   learnerSetupApi,
   projectApi,
   testReportApi,
@@ -184,7 +185,8 @@ async function pollForLearnerResult(
   testNo: number,
   pollInterval: number,
   timeout: number,
-  out?: string
+  out?: string,
+  ltlOut?: string
 ) {
   let result = null;
   let polling = true;
@@ -215,6 +217,11 @@ async function pollForLearnerResult(
     throw 'The learning process finished with errors.';
   }
 
+  if (result.steps.length == 0) {
+    console.log(chalk.white.dim('No steps have been learned in this learning process.'));
+    return;
+  }
+
   // write learned model to a file
   if (out) {
     const model = result.steps[result.steps.length - 1].hypothesis;
@@ -224,6 +231,13 @@ async function pollForLearnerResult(
   // analyze model checking results
   const lastStep = result.steps[result.steps.length - 1];
   if (lastStep.modelCheckingResults.length > 0) {
+
+    // write model checking results to a file
+    if (ltlOut) {
+      const res = await learnerResultStepApi.getModelCheckingResults(projectId, result.id, lastStep.id, 'junit');
+      writeToFile(ltlOut, await res.text());
+    }
+
     assertCheckResults(lastStep.modelCheckingResults);
   }
 }
@@ -287,7 +301,7 @@ export async function runLearnCommand(options: LearnCommandOptions): Promise<voi
     return;
   }
 
-  await pollForLearnerResult(project.id, result.testNo, 5000, -1, options.out);
+  await pollForLearnerResult(project.id, result.testNo, 5000, -1, options.out, options.ltlOut);
 
   if (options.deleteProject) {
     await deleteProject(project.id);
@@ -318,5 +332,5 @@ export async function runPollTestReportCommand(options: PollTestReportCommandOpt
 
 export async function runPollLearnerResultCommand(options: PollLearnerResultCommandOptions): Promise<void> {
   const project = await getProjectByName(options.projectName);
-  await pollForLearnerResult(project.id, options.resultId, 5000, options.timeout, options.out);
+  await pollForLearnerResult(project.id, options.resultId, 5000, options.timeout, options.out, options.ltlOut);
 }
