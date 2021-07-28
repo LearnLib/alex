@@ -291,12 +291,16 @@ public class LearnerSetupDAO {
         final var project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
-        // remove duplicate symbols
-        setup.setSymbols(setup.getSymbols().stream()
-                .collect(Collectors.groupingBy(ParameterizedSymbol::getAliasOrIdBasedName))
-                .values()
-                .stream().map(l -> l.get(0))
-                .collect(Collectors.toList()));
+        if (!setup.getSymbols().stream()
+                .peek(ps -> {
+                    ps.setSymbol(symbolDAO.get(user, project, ps.getSymbol().getId()));
+                })
+                .collect(Collectors.groupingBy(ParameterizedSymbol::getAliasOrComputedName))
+                .values().stream()
+                .map(l -> l.size() == 1)
+                .reduce(Boolean.TRUE, (a, b) -> a && b)) {
+            throw new IllegalArgumentException("The list of symbols may not contain duplicates");
+        }
 
         saveSymbols(setup);
 

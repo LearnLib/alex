@@ -18,7 +18,6 @@ package de.learnlib.alex.learning.rest;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.dao.ProjectDAO;
-import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
@@ -31,7 +30,6 @@ import de.learnlib.alex.learning.services.LearnerService;
 import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.ws.rs.core.MediaType;
 import net.automatalib.automata.transducers.impl.compact.CompactMealy;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,14 +87,6 @@ public class LearnerResource {
 
         if (startConfiguration.getSetup().getSymbols().contains(startConfiguration.getSetup().getPreSymbol())) {
             throw new IllegalArgumentException("The reset may not be a part of the input alphabet");
-        }
-
-        if (startConfiguration.getSetup().getSymbols().stream()
-                .collect(Collectors.groupingBy(ParameterizedSymbol::getAliasOrComputedName))
-                .values().stream()
-                .map(l -> l.size() == 1)
-                .reduce(Boolean.TRUE, (a, b) -> a & b)) {
-            throw new IllegalArgumentException("The list of symbols may not contain duplicates");
         }
 
         final Project project = projectDAO.getByID(user, projectId);

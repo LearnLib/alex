@@ -51,6 +51,7 @@ import de.learnlib.alex.modelchecking.entities.LtsFormulaSuite;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -201,6 +202,31 @@ public class LearnerSetupResourceIT extends AbstractResourceIT {
         assertEquals(1, getAllSetups().size());
         assertNotNull(createdSetup.getModelCheckingConfig());
         compareTo(ls, createdSetup);
+    }
+
+    @Test
+    public void shouldNotCreateLearnerSetupWithDuplicateSymbolAliases() {
+        final var ls = createDefaultLearnerSetup();
+        ls.getSymbols().forEach(ps -> ps.setAlias("test"));
+
+        final var res = learnerSetupApi.create(project.getId(), ls, jwt);
+
+        assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
+        res.readEntity(SpringRestError.class);
+    }
+
+    @Test
+    public void shouldNotCreateLearnerSetupWithDuplicateSymbols() {
+        final var ls = createDefaultLearnerSetup();
+        ls.setSymbols(Arrays.asList(
+                ls.getSymbols().get(0),
+                ls.getSymbols().get(0)
+        ));
+
+        final var res = learnerSetupApi.create(project.getId(), ls, jwt);
+
+        assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
+        res.readEntity(SpringRestError.class);
     }
 
     @Test
