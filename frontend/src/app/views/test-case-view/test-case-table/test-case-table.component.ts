@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { DragulaService } from 'ng2-dragula';
+import { Component, Input } from '@angular/core';
 import { SymbolGroup } from '../../../entities/symbol-group';
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'test-case-table',
   styleUrls: ['./test-case-table.component.scss'],
   templateUrl: './test-case-table.component.html'
 })
-export class TestCaseTableComponent implements OnInit, OnDestroy {
+export class TestCaseTableComponent {
 
   @Input()
   testCase: any;
@@ -37,17 +37,14 @@ export class TestCaseTableComponent implements OnInit, OnDestroy {
   @Input()
   groups: SymbolGroup[];
 
-  constructor(private dragulaService: DragulaService) {
-  }
-
-  ngOnInit() {
-    this.dragulaService.createGroup('STEPS', {
-      moves: (el, container, handle) => handle.classList.contains('handle'),
-      removeOnSpill: false
-    });
-  }
-
-  ngOnDestroy(): void {
-    this.dragulaService.destroy('STEPS');
+  drop(event: CdkDragDrop<string[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex);
+    }
   }
 }

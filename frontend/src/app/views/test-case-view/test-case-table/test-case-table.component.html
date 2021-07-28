@@ -8,6 +8,8 @@
       [steps]="testCase.preSteps"
       [symbolMap]="symbolMap"
       [groups]="groups"
+      [dropListId]="'test-case-pre-steps-drop-list'"
+      [connectedDropListIds]="['test-case-steps-drop-list', 'test-case-post-steps-drop-list']"
     >
     </test-case-table-pre-post-steps>
   </div>
@@ -28,16 +30,22 @@
         <th width="1">&nbsp;</th>
       </tr>
       </thead>
-      <tbody (dragulaModelChange)="testCase.steps = $event" [dragulaModel]="testCase.steps" dragula="STEPS">
+      <tbody
+        cdkDropList
+        [cdkDropListData]="testCase.steps"
+        (cdkDropListDropped)="drop($event)"
+        [id]="'test-case-steps-drop-list'"
+        [cdkDropListConnectedTo]="['test-case-pre-steps-drop-list', 'test-case-post-steps-drop-list']">
       <ng-container *ngIf="testCase.steps.length > 0">
         <tr
           class="test-case-step-row"
           *ngFor="let step of testCase.steps; let i = index" [class.table-danger]="result && result.failedStep === i"
           [class.disabled]="step.disabled"
+          cdkDrag
         >
           <td>
             <div class="pl-2">
-              <i class="fas fa-grip-vertical handle text-muted cursor-grabbing"></i>
+              <i class="fas fa-grip-vertical handle text-muted cursor-grabbing" cdkDragHandle></i>
             </div>
           </td>
 
@@ -105,6 +113,8 @@
       [steps]="testCase.postSteps"
       [symbolMap]="symbolMap"
       [groups]="groups"
+      [dropListId]="'test-case-post-steps-drop-list'"
+      [connectedDropListIds]="['test-case-steps-drop-list', 'test-case-pre-steps-drop-list']"
     >
     </test-case-table-pre-post-steps>
   </div>

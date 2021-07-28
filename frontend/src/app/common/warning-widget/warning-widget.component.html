@@ -2,7 +2,7 @@
   <div class="card-header">
     <strong>Warnings</strong>
   </div>
-  <div class="card-body">
+  <div class="card-body pb-0">
     <div *ngIf="errors.length > 0">
       <div
         class="alert alert-danger" role="alert"
@@ -21,7 +21,7 @@
       </div>
     </div>
 
-    <div class="alert alert-success mb-0" *ngIf="errors.length === 0 && warnings.length === 0">
+    <div class="alert alert-success" *ngIf="errors.length === 0 && warnings.length === 0">
       No warnings.
     </div>
 

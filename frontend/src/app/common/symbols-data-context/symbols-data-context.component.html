@@ -12,9 +12,7 @@
         </span>
         <button
           class="btn btn-default btn-sm ml-2"
-          ngxClipboard
-          *ngxClipboardIfSupported
-          [cbContent]="getCopyData(v)"
+          [cdkCopyToClipboard]="getCopyData(v)"
           ngbTooltip="Copy to clipboard"
           placement="left"
         >

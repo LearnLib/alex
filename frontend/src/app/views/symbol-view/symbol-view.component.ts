@@ -34,8 +34,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { EditActionModalComponent } from './edit-action-modal/edit-action-modal.component';
 import { CreateActionModalComponent } from './create-action-modal/create-action-modal.component';
-import { DragulaService } from 'ng2-dragula';
 import { SymbolGroupUtils } from '../../utils/symbol-group-utils';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 /**
  * The controller that handles the page for managing all actions of a symbol. The symbol whose actions should be
@@ -70,8 +70,7 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
               private errorViewStore: ErrorViewStoreService,
               private symbolGroupApi: SymbolGroupApiService,
               private modalService: NgbModal,
-              private currentRoute: ActivatedRoute,
-              private dragulaService: DragulaService) {
+              private currentRoute: ActivatedRoute) {
 
     this.symbol = null;
     this.groups = [];
@@ -103,15 +102,14 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     document.addEventListener('keydown', this.keyDownHandler);
-    this.dragulaService.createGroup('SYMBOL_STEPS', {
-      moves: (el, container, handle) => true,
-      removeOnSpill: false
-    });
   }
 
   ngOnDestroy(): void {
     document.removeEventListener('keydown', this.keyDownHandler);
-    this.dragulaService.destroy('SYMBOL_STEPS');
+  }
+
+  drop(event: CdkDragDrop<string[]>): void {
+    moveItemInArray(this.symbol.steps, event.previousIndex, event.currentIndex);
   }
 
   /**

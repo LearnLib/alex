@@ -138,18 +138,18 @@
             <div class="card-body p-0">
               <div
                 class="action-list"
-                dragula="SYMBOL_STEPS"
-                [dragulaModel]="symbol.steps"
-                (dragulaModelChange)="symbol.steps = $event"
+                cdkDropList
+                (cdkDropListDropped)="drop($event)"
                 *ngIf="symbol.steps.length > 0"
               >
                 <div
                   class="action-list-item"
+                  cdkDrag
                   [ngClass]="{'disabled': step.disabled}"
                   (dblclick)="editStep(step)"
                   *ngFor="let step of symbol.steps; let i = index"
                 >
-
+                  <div class="action-list-dnd-placeholder" *cdkDragPlaceholder></div>
                   <div class="d-flex flex-row align-items-center">
                     <div>
                       <selectable-checkbox

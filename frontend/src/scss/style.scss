@@ -189,3 +189,15 @@ a.disabled {
     color: #7a1515;
   }
 }
+
+/* drag and drop animations. */
+
+/* items while being sorted. */
+.cdk-drop-list-dragging .cdk-drag {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* item that has been dropped. */
+.cdk-drag-animating {
+  transition: transform 300ms cubic-bezier(0, 0, 0.2, 1);
+}

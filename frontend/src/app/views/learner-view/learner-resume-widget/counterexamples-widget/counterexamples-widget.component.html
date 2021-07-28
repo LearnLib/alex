@@ -6,11 +6,21 @@
       </div>
       <div *ngIf="counterexample.length > 0">
         <br>
-        <div class="list-group list-group-condensed mb-3">
-          <div *ngFor="let io of counterexample; let i = index" class="list-group-item counterexample-list-item">
-            <i (click)="removeInputOutputAt(i)" class="fas fa-fw fa-times float-right"></i>
+        <div
+          class="list-group list-group-condensed mb-3"
+          cdkDropList
+          (cdkDropListDropped)="drop($event)"
+        >
+          <div
+            class="list-group-item counterexample-list-item d-flex flex-row"
+            *ngFor="let io of counterexample; let i = index"
+            cdkDrag
+          >
+            <div class="counterexample-list-item-dnd-placeholder" *cdkDragPlaceholder></div>
+            <i class="fas fa-grip-vertical handle text-muted cursor-grabbing mr-3" cdkDragHandle></i>
             <span class="badge badge-primary mr-1">{{io.input}}</span>
-            <span class="badge badge-secondary">{{io.output}}</span>
+            <span class="badge badge-secondary mr-3">{{io.output}}</span>
+            <i (click)="removeInputOutputAt(i)" class="fas fa-fw fa-times ml-auto"></i>
           </div>
         </div>
         <div class="form-group">
@@ -27,12 +37,7 @@
     </form>
     <div *ngIf="tmpCounterexamples.length > 0">
       <hr>
-      <ul
-        class="list-group"
-        dragula="CE"
-        (dragulaModelChange)="tmpCounterexamples = $event"
-        [dragulaModel]="tmpCounterexamples"
-      >
+      <ul class="list-group">
         <li *ngFor="let ce of tmpCounterexamples; let i = index" class="list-group-item">
           <span (click)="removeCounterExampleAt(i)" class="float-right">
             <i class="fas fa-fw fa-trash"></i>

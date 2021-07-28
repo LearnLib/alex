@@ -19,11 +19,11 @@ import { ToastService } from '../../../../services/toast.service';
 import { SymbolApiService } from '../../../../services/api/symbol-api.service';
 import { LearnerResult } from '../../../../entities/learner-result';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { DragulaService } from 'ng2-dragula';
 import { LearnerViewStoreService } from '../../learner-view-store.service';
 import { LearnerResultStepApiService } from '../../../../services/api/learner-result-step-api.service';
 import { ProjectEnvironmentApiService } from '../../../../services/api/project-environment-api.service';
 import { listEquals } from '../../../../utils/list-utils';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 interface IOPair {
   input: string;
@@ -37,9 +37,10 @@ type Counterexample = Array<IOPair>;
  */
 @Component({
   selector: 'counterexamples-widget',
-  templateUrl: './counterexamples-widget.component.html'
+  templateUrl: './counterexamples-widget.component.html',
+  styleUrls: ['./counterexamples-widget.component.scss']
 })
-export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
+export class CounterexamplesWidgetComponent implements OnInit {
 
   @Output()
   counterexamples = new EventEmitter<Counterexample[]>();
@@ -60,7 +61,6 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
   constructor(private learnerApi: LearnerApiService,
               private toastService: ToastService,
               private symbolApi: SymbolApiService,
-              private dragulaService: DragulaService,
               private projectEnvironmentApi: ProjectEnvironmentApiService,
               private learnerResultStepApi: LearnerResultStepApiService,
               private store: LearnerViewStoreService) {
@@ -74,16 +74,7 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.dragulaService.createGroup('CE', {
-      moves: () => true,
-      removeOnSpill: false
-    });
-
     this.selectedEnvironmentId = this.result.setup.environments[0].id;
-  }
-
-  ngOnDestroy(): void {
-    this.dragulaService.destroy('CE');
   }
 
   /**
@@ -131,6 +122,10 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
   removeCounterExampleAt(i: number): void {
     this.tmpCounterexamples.splice(i, 1);
     this.renewCounterexamples();
+  }
+
+  drop(event: CdkDragDrop<string[]>): void {
+    moveItemInArray(this.counterexample, event.previousIndex, event.currentIndex);
   }
 
   /**

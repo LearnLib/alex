@@ -1,21 +1,44 @@
-# ALEX 2.1.1
+# Changelog
 
-## Fixes
+## ALEX 3.0.0
+
+### Breaking Changes
+
+* Due to the removal of the unique name constraint for symbols, project files created with previous releases are not compatible with this release.
+* Due to the CLI overhaul, the CLI got a new API with is not compatible with previous releases.
+
+### Features
+
+* Make ALEX Kubernetes ready:
+    * Added Helm chart to `infratructure/helm`.
+    * Added Skaffold pipeline for local Kubernetes development.
+* Symbol names must not be unique in the project.
+  Instead, symbol names must be unique within a symbol group.
+* CLI overhaul: new API.
+* Allow Webhooks to have custom HTTP headers.
+* Add validation widget for learner setups.
+
+### Changes
+
+* Symbols and tests cannot be exported and imported separately anymore.
+
+## ALEX 2.1.1
+
+### Fixes
 
 * Fix bug where test cases could not be executed.
 * Fix bug where tests could not be saved when pre steps have changed.
 
+## ALEX 2.1.0
 
-# ALEX 2.1.0
-
-## Breaking Changes
+### Breaking Changes
 
 * Use Docker for development and production versions of ALEX.
   The standalone build is no longer supported.
 * Due to the previous point, the web drivers have been removed.
   It is only possible to set the URL to a Selenium Hub.
 
-## Features
+### Features
 
 * See which symbols and tests are used by other users in a project
 * Export formula suites while exporting a project
@@ -23,13 +46,13 @@
 * Automated model checking of learned models
     * Associate LTL formula suites with a learner setup
 
-# ALEX 2.0.0
+## ALEX 2.0.0
 
-## Fixes
+### Fixes
 
 * Scoping issues with variables
 
-## Improvements
+### Improvements
 
 * Add Flyway support
 * Migrate frontend to Angular 8 
@@ -39,7 +62,7 @@
 * Show symbol references
 * Support for Java 11
 
-## Features
+### Features
 
 * Project environments: create environments and environment variables 
 * New actions:
@@ -55,22 +78,22 @@
 * Save learning setups
 * Collaboration for projects
 
-# ALEX 1.7.2
+## ALEX 1.7.2
 
-## Fixes
+### Fixes
 
 * Generate test case from model
 * Add cookie to request action
 
-# ALEX 1.7.1
+## ALEX 1.7.1
 
-## Fixes
+### Fixes
 
 * Fix model not displayed in testing view
 
-# ALEX 1.7.0
+## ALEX 1.7.0
 
-## Breaking Changes
+### Breaking Changes
 
 * Removed the HTML Element Picker.
   The picker only really worked in Chrome and then only in some selected use cases, i.e. static pages.
@@ -79,7 +102,7 @@
   The option was introduced when major browsers did not have a headless mode.
   Since the option only worked on Linux systems and all major browsers have such a mode, the option has been removed.
 
-## Features
+### Features
 
 * Basic LTL-based model checking using [LTSmin](https://ltsmin.utwente.nl/).
 * Compatibility with Java > 8.
@@ -92,22 +115,22 @@
 * New model checker related events.
 * The JWT expires after 7 days.
 
-## Fixes
+### Fixes
 
 * Test results are ordered properly.
 * Fix resuming learning processes with new input symbols.
 
 
-# ALEX 1.6.1
+## ALEX 1.6.1
 
-## Fixes
+### Fixes
 
 * Fix issues with HTML Element Picker
 
 
-# ALEX 1.6.0
+## ALEX 1.6.0
 
-## Breaking Changes
+### Breaking Changes
 
 * Symbols have to be migrated to the new version.
   Please use the migration script `src/main/resources/migration/1.6.0/migrate-symbols-1.5.0-to-1.6.0.js` via:
@@ -119,7 +142,7 @@
      
   `node migrate-tests-1.5.0-to-1.6.0.js ./tests-from-1.5.0.json ./tests-for-1.6.0.json`
      
-## Features
+### Features
 
 * Symbols can be composed of other symbols.
 * Symbols can be parameterized in learning experiments.
@@ -134,14 +157,14 @@
   If it is private, its value cannot be set manually, but is resolved by the value in the global data context.
 
 
-# ALEX 1.5.1
+## ALEX 1.5.1
 
 This release only contains some bug fixes.
 
 
-# ALEX 1.5.0
+## ALEX 1.5.0
 
-## Breaking Changes
+### Breaking Changes
 
 * Symbols and tests that have been exported with v.1.4.0 and lower can not be imported directly.
   Apply the new export format and for each symbol in an exported JSON file add the properties `inputs` and `outputs` so that the resulting file looks like:
@@ -162,12 +185,12 @@ This release only contains some bug fixes.
   }
   ```
 
-## Bug Fixes
+### Bug Fixes
 
 * Resuming a learning process should now work as expected.
 * Various smaller fixes.
 
-## Features
+### Features
 
 * The results of test executions are saved in reports.
 * Added webhooks to notify external applications about changes.
@@ -186,14 +209,14 @@ This release only contains some bug fixes.
 * Learner results can be cloned.
 * Import and export symbol groups.
 
-## Further Comments
+### Further Comments
 
 * The CLI for ALEX is now a standalone NPM package and can be installed via `npm install alex-cli`
 
 
-# ALEX 1.4.0
+## ALEX 1.4.0
 
-## Breaking Changes
+### Breaking Changes
 
 * Symbol abbreviations have been removed. To use old exported symbol sets, remove the *abbreviation* property manually
 from the JSON file.
@@ -202,7 +225,7 @@ from the JSON file.
 disabled CORS rules or use a plugin. See the [user documentation](http://learnlib.github.io/alex/book/1.4.0/) for 
 detailed instructions.
 
-## Features
+### Features
 
 * Define a default web driver to execute tests in
 * Immediately stop learning instead of waiting for the current iteration to finish
@@ -219,19 +242,19 @@ detailed instructions.
     
 See the [user documentation](http://learnlib.github.io/alex/book/1.4.0/) for more details.
 
-# ALEX 1.3.0
+## ALEX 1.3.0
 
-## Breaking Changes
+### Breaking Changes
 
 * The execute symbol action is no longer supported
 
-## Features
+### Features
 
 * Possibility to resume old learning experiments
 
-# ALEX v1.2.1
+## ALEX v1.2.1
 
-## Breaking Changes
+### Breaking Changes
 
 * Actions that deal with web elements have to be updated:
 
@@ -239,7 +262,7 @@ See the [user documentation](http://learnlib.github.io/alex/book/1.4.0/) for mor
         node: {selector: '...', type: 'CSS|XPATH'}
     ```
 
-## Features
+### Features
 
 * New actions:
     * Set a variable by node count
@@ -247,9 +270,9 @@ See the [user documentation](http://learnlib.github.io/alex/book/1.4.0/) for mor
 * Switch between XPath and CSS selectors in actions
 * Experimental parallel test execution support
 
-# ALEX v1.2
+## ALEX v1.2
 
-## Features
+### Features
 
 * New actions:
     * Press special keys like enter, ctrl, etc.
@@ -258,32 +281,32 @@ See the [user documentation](http://learnlib.github.io/alex/book/1.4.0/) for mor
 * Test symbols without starting a learning process
 * Support for the edge driver
 
-# ALEX v1.1.2
+## ALEX v1.1.2
 
-## Breaking Changes
+### Breaking Changes
 
 * Dropped support for IE web driver
 * Firefox and Chrome drivers are not supported by default any longer.
   Instead, you have specify the paths to the driver executables.
 
-## Bug Fixes
+### Bug Fixes
 
 * Fixed the parsing of JSON paths in various REST actions.
 
-## Features
+### Features
 
 * New action: Move mouse
 * Click action supports double click
 
-# ALEX v1.1 (and hidden ALEX v1.1.1)
+## ALEX v1.1 (and hidden ALEX v1.1.1)
 
-## Bug Fixes
+### Bug Fixes
 
 * Allow symbol groups to be edited via the frontend again
 * Properly close connectors after finished learning
 * ALEX v1.1.1 fixed a problem with the fonts.
 
-## Features
+### Features
 
 * New action: Execute JavaScript
 * GoTo action and Call action support Basic HTTP authentication
@@ -291,7 +314,7 @@ See the [user documentation](http://learnlib.github.io/alex/book/1.4.0/) for mor
 * New REST endpoint: rest/users/batch/{ids} to delete multiple users at once
 * Additional visual enhancements
 
-## Other
+### Other
 
 * Updated frontend and backend dependencies
 * Removed requirement to have grunt and grunt-cli installed globally

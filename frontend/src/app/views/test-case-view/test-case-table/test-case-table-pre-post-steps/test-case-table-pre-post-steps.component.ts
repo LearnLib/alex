@@ -16,10 +16,12 @@
 
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { SymbolGroup } from '../../../../entities/symbol-group';
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'test-case-table-pre-post-steps',
-  templateUrl: './test-case-table-pre-post-steps.component.html'
+  templateUrl: './test-case-table-pre-post-steps.component.html',
+  styleUrls: ['../test-case-table.component.scss']
 })
 export class TestCaseTablePrePostStepsComponent {
 
@@ -27,13 +29,16 @@ export class TestCaseTablePrePostStepsComponent {
   steps: any[];
 
   @Input()
-  options: any;
-
-  @Input()
   symbolMap: any;
 
   @Input()
   groups: SymbolGroup[];
+
+  @Input()
+  dropListId: string;
+
+  @Input()
+  connectedDropListIds: string[] = [];
 
   @Output()
   stepsChange: EventEmitter<any[]>;
@@ -41,5 +46,16 @@ export class TestCaseTablePrePostStepsComponent {
   constructor() {
     this.steps = [];
     this.stepsChange = new EventEmitter<any[]>();
+  }
+
+  drop(event: CdkDragDrop<string[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex);
+    }
   }
 }

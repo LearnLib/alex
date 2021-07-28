@@ -11,7 +11,6 @@ import { ToastrModule } from 'ngx-toastr';
 import { ToastService } from './services/toast.service';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ActionBarComponent } from './common/action-bar/action-bar.component';
-import { DragulaModule } from 'ng2-dragula';
 import { SelectableCheckboxComponent } from './common/selectable-checkbox/selectable-checkbox.component';
 import { SelectableCheckboxMultipleComponent } from './common/selectable-checkbox-multiple/selectable-checkbox-multiple.component';
 import { AppStoreService } from './services/app-store.service';
@@ -231,7 +230,6 @@ import { TestReportProgressComponent } from './common/test-report-progress/test-
 import { ProjectUsersViewComponent } from './views/project-users-view/project-users-view.component';
 import { AddUserModalComponent } from './views/project-users-view/add-user-modal/add-user-modal.component';
 import { SymbolsDataContextComponent } from './common/symbols-data-context/symbols-data-context.component';
-import { ClipboardModule } from 'ngx-clipboard';
 import { ToggleButtonComponent } from './common/toggle-button/toggle-button.component';
 import { LearnerSetupApiService } from './services/api/learner-setup-api.service';
 import { LearnerSetupTableComponent } from './common/learner-setup-table/learner-setup-table.component';
@@ -271,6 +269,8 @@ import { TestSelectTreeHeaderComponent } from './common/test-select-tree/test-se
 import { TestSelectTreeItemComponent } from './common/test-select-tree/test-select-tree-item/test-select-tree-item.component';
 import { TestSelectTreeStore } from './common/test-select-tree/test-select-tree.store';
 import { WarningWidgetComponent } from './common/warning-widget/warning-widget.component';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { ClipboardModule } from '@angular/cdk/clipboard';
 
 @NgModule({
   declarations: [
@@ -504,10 +504,10 @@ import { WarningWidgetComponent } from './common/warning-widget/warning-widget.c
       preventDuplicates: true
     }),
     NgbModule,
-    DragulaModule.forRoot(),
     AceEditorModule,
     NgxGraphModule,
     NgxChartsModule,
+    DragDropModule,
     ClipboardModule
   ],
   providers: [
