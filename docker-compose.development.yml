@@ -11,6 +11,7 @@ services:
         depends_on:
             - selenium-hub
         environment:
+            - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
             - HUB_HOST=selenium-hub
             - HUB_PORT=4444
         volumes:

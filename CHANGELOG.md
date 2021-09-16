@@ -7,6 +7,11 @@
 * Due to the removal of the unique name constraint for symbols, project files created with previous releases are not compatible with this release.
 * Due to the CLI overhaul, the CLI got a new API with is not compatible with previous releases.
 
+### Fixes
+
+* Fix issue with JSON path evaluation that returns a JSON object
+* Fix issue with local usage of ALEX with the Chrome image
+
 ### Features
 
 * Make ALEX Kubernetes ready:
