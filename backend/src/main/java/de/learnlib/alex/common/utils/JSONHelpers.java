@@ -16,6 +16,8 @@
 
 package de.learnlib.alex.common.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.JsonPath;
@@ -31,6 +33,8 @@ import org.slf4j.LoggerFactory;
 public final class JSONHelpers {
 
     private static final Logger logger = LoggerFactory.getLogger(JSONHelpers.class);
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
      * Disabled default constructor, this is only a utility class with static methods.
@@ -49,10 +53,13 @@ public final class JSONHelpers {
      */
     public static String getAttributeValue(String json, String attribute) {
         try {
-            String value = JsonPath.read(json, attribute).toString();
-            logger.info("The attribute '{}' has the value '{}' in the body '{}'.", attribute, value, json);
-            return value;
-        } catch (InvalidJsonException e) {
+            Object object = JsonPath.parse(json).read(attribute);
+            if (object instanceof LinkedHashMap) {
+                return objectMapper.writeValueAsString(object);
+            } else {
+                return object.toString();
+            }
+        } catch (InvalidJsonException | JsonProcessingException e) {
             logger.info("JSON was not valid, e.g. the body was empty.", e);
             return null;
         } catch (InvalidPathException e) {

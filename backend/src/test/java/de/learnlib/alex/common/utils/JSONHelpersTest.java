@@ -41,6 +41,13 @@ public class JSONHelpersTest {
     }
 
     @Test
+    public void shouldReturnSerializedJSONString() {
+        final var json = "{\"field\":{\"sub\":0}}";
+        final var result = JSONHelpers.getAttributeValue(json, "field");
+        assertEquals("{\"sub\":0}", result);
+    }
+
+    @Test
     public void shouldReturnNullIfJSONIsEmptyOnGetValue() {
         assertNull(JSONHelpers.getAttributeValue("", "field"));
     }
