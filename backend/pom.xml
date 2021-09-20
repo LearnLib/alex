@@ -103,7 +103,7 @@
         <automatalib.version>0.9.0</automatalib.version>
         <selenium.version>3.141.59</selenium.version>
         <jose4j.version>0.7.0</jose4j.version>
-        <shiro.version>1.5.2</shiro.version>
+        <shiro.version>1.8.0</shiro.version>
         <xml-apis.version>1.4.01</xml-apis.version>
         <jsoup.version>1.13.1</jsoup.version>
         <json-path.version>2.4.0</json-path.version>
