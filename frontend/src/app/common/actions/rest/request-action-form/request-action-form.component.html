@@ -24,7 +24,7 @@
   <select [(ngModel)]="action.method"
           class="form-control">
     <option [value]="null" disabled>Select a Method</option>
-    <option *ngFor="let m of ['DELETE', 'GET', 'POST', 'PUT']" [value]="m">{{m}}</option>
+    <option *ngFor="let m of ['DELETE', 'GET', 'PATCH', 'POST', 'PUT']" [value]="m">{{m}}</option>
   </select>
 </div>
 

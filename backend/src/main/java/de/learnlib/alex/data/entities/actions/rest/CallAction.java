@@ -49,25 +49,11 @@ public class CallAction extends RESTSymbolAction {
      * Enumeration to specify the HTTP method.
      */
     public enum Method {
-        /**
-         * Refers to the GET method.
-         */
         GET,
-
-        /**
-         * Refers to the POST method.
-         */
         POST,
-
-        /**
-         * Refers to the PUT method.
-         */
         PUT,
-
-        /**
-         * Refers to the DELETE method.
-         */
-        DELETE
+        DELETE,
+        PATCH
     }
 
     /**
@@ -289,6 +275,10 @@ public class CallAction extends RESTSymbolAction {
                 break;
             case DELETE:
                 target.delete(baseUrl, getUrlWithVariableValues(), requestHeaders, getCookiesWithVariableValues(), timeout);
+                break;
+            case PATCH:
+                target.patch(baseUrl, getUrlWithVariableValues(), requestHeaders, getCookiesWithVariableValues(),
+                        getDataWithVariableValues(), timeout);
                 break;
             default:
                 logger.error(LoggerMarkers.LEARNER, "Tried to make a call to a REST API with an unknown method '{}'.",

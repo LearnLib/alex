@@ -198,6 +198,28 @@ public class WebServiceConnector implements Connector {
     }
 
     /**
+     * Perform an HTTP PATCH request.
+     *
+     * @param path
+     *         The path to send the request to.
+     * @param requestHeaders
+     *         The headers to send with the request.
+     * @param requestCookies
+     *         The cookies to send with the request.
+     * @param data
+     *         The data to send with the request.
+     * @param timeout
+     *         The amount of time in ms before the request is canceled.
+     */
+    public void patch(String baseUrl, String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies,
+                    String data, int timeout) throws Exception {
+        final Entity body = getBody(requestHeaders, data);
+        final Response response = getRequestObject(baseUrl, path, requestHeaders, requestCookies, timeout).method("PATCH", body);
+        rememberResponseComponents(response);
+        followRedirects(response);
+    }
+
+    /**
      * Do a HTTP DELETE request.
      *
      * @param path
