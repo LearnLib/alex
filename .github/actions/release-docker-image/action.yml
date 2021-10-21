@@ -44,6 +44,6 @@ runs:
           VERSION="$GITHUB_SHA"
         fi
 
-        docker load < ${{ inputs.tag }}:$GITHUB_SHA.tar.gz
+        docker load < ${{ inputs.tag }}-image.tar.gz
         docker tag ${{ inputs.tag }} $IMAGE_ID:$VERSION
         docker push $IMAGE_ID:$VERSION
