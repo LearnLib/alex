@@ -19,11 +19,11 @@ runs:
       shell: bash
       run: |
         docker build ${{ inputs.context }} --file ${{ inputs.context }}/Dockerfile --tag ${{ inputs.tag }}:$GITHUB_SHA
-        docker save ${{ inputs.tag }}:$GITHUB_SHA | gzip > ${{ inputs.tag }}:$GITHUB_SHA
+        docker save ${{ inputs.tag }}:$GITHUB_SHA | gzip > ${{ inputs.tag }}-image
 
     - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
-        name: ${{ inputs.tag }}-$GITHUB_SHA-image
-        path: ${{ inputs.tag }}:$GITHUB_SHA.tar.gz
+        name: ${{ inputs.tag }}-image
+        path: ${{ inputs.tag }}-image.tar.gz
         retention-days: 1
