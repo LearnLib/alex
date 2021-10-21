@@ -1,5 +1,5 @@
-name: build-and-deply
-description: build and deploy docker images
+name: release-docker-image
+description: release a docker image to the github registry
 
 inputs:
   username:
@@ -8,28 +8,26 @@ inputs:
   password:
     description: 'GitHub password'
     required: true
-  context:
-    description: 'Docker build context'
-    required: true
-  tag:
-    description: 'Docker image name'
+  image:
+    description: 'Docker image'
     required: true
 
 runs:
   using: "composite"
   steps:
-    - name: Build Docker Image
-      shell: bash
-      run: docker build ${{ inputs.context }} --file ${{ inputs.context }}/Dockerfile --tag ${{ inputs.tag }}
-
     - name: Login to GitHub Container Registry
       shell: bash
       run: echo "${{ inputs.password }}" | docker login https://ghcr.io -u ${{ inputs.username }} --password-stdin
 
+    - name: Download artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: ${{ inputs.image }}-image
+
     - name: Push to GitHub Container Registry
       shell: bash
       run: |
-        IMAGE_ID=ghcr.io/learnlib/alex/${{ inputs.tag }}
+        IMAGE_ID=ghcr.io/learnlib/alex/${{ inputs.image }}
         BRANCH=${GITHUB_REF#"refs/heads/"}
         VERSION=
 
@@ -43,5 +41,6 @@ runs:
           VERSION="$GITHUB_SHA"
         fi
 
+        docker load < ${{ inputs.tag }}:$GITHUB_SHA.tar.gz
         docker tag ${{ inputs.tag }} $IMAGE_ID:$VERSION
         docker push $IMAGE_ID:$VERSION

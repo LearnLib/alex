@@ -1,0 +1,29 @@
+name: build-docker-image
+description: build a docker image
+
+inputs:
+  context:
+    description: 'Docker build context'
+    required: true
+  tag:
+    description: 'Docker image name'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Build Docker Image
+      shell: bash
+      run: |
+        docker build ${{ inputs.context }} --file ${{ inputs.context }}/Dockerfile --tag ${{ inputs.tag }}:$GITHUB_SHA
+        docker save ${{ inputs.tag }}:$GITHUB_SHA | gzip > ${{ inputs.tag }}:$GITHUB_SHA
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ inputs.tag }}-$GITHUB_SHA-image
+        path: ${{ inputs.tag }}:$GITHUB_SHA.tar.gz
+        retention-days: 1

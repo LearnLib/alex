@@ -109,11 +109,9 @@ jobs:
     if: github.event_name == 'push'
     steps:
       - uses: actions/checkout@v2
-      - name: Push backend to GitHub repositories
-        uses: ./.github/actions/build-and-deploy
+      - name: Build the Docker image for the backend
+        uses: ./.github/actions/build-docker-image
         with:
-          username: ${{ github.actor }}
-          password: ${{ secrets.CR_PAT }}
           context: ./backend
           tag: alex-backend
 
@@ -144,11 +142,9 @@ jobs:
     if: github.event_name == 'push'
     steps:
       - uses: actions/checkout@v2
-      - name: Push frontend to GitHub repositories
-        uses: ./.github/actions/build-and-deploy
+      - name: Build the Docker image for the frontend
+        uses: ./.github/actions/build-docker-image
         with:
-          username: ${{ github.actor }}
-          password: ${{ secrets.CR_PAT }}
           context: ./frontend
           tag: alex-frontend
 
@@ -168,11 +164,9 @@ jobs:
     if: github.event_name == 'push'
     steps:
       - uses: actions/checkout@v2
-      - name: Push CLI to GitHub repositories
-        uses: ./.github/actions/build-and-deploy
+      - name: Build the Docker image for the CLI
+        uses: ./.github/actions/build-docker-image
         with:
-          username: ${{ github.actor }}
-          password: ${{ secrets.CR_PAT }}
           context: ./cli
           tag: alex-cli
 
@@ -192,10 +186,42 @@ jobs:
     if: github.event_name == 'push'
     steps:
       - uses: actions/checkout@v2
-      - name: Push docs to GitHub repositories
-        uses: ./.github/actions/build-and-deploy
+      - name: Build the Docker image for the docs
+        uses: ./.github/actions/build-docker-image
+        with:
+          context: ./docs
+          tag: alex-docs
+
+  release-images:
+    needs:
+      - package-frontend
+      - package-backend
+      - package-cli
+      - package-docs
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - name: Release frontend
+        uses: ./.github/actions/release-docker-image
         with:
           username: ${{ github.actor }}
           password: ${{ secrets.CR_PAT }}
-          context: ./docs
-          tag: alex-docs
+          image: alex-frontend
+      - name: Release backend
+        uses: ./.github/actions/release-docker-image
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.CR_PAT }}
+          image: alex-backend
+      - name: Release CLI
+        uses: ./.github/actions/release-docker-image
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.CR_PAT }}
+          image: alex-cli
+      - name: Release docs
+        uses: ./.github/actions/release-docker-image
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.CR_PAT }}
+          image: alex-docs
