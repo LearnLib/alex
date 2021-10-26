@@ -22,6 +22,7 @@
 * CLI overhaul: new API.
 * Allow Webhooks to have custom HTTP headers.
 * Add validation widget for learner setups.
+* Allow to send PATCH requests via an action.
 
 ### Changes
 
