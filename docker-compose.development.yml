@@ -74,7 +74,7 @@ services:
         network_mode: "host"
 
     alex-frontend:
-        image: node
+        image: node:14
         working_dir: /var/alex/frontend
         volumes:
             - ./frontend:/var/alex/frontend:rw
