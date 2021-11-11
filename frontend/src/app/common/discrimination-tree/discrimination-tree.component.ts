@@ -14,81 +14,74 @@
  * limitations under the License.
  */
 
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { Edge as NgxGraphEdge, Node, NodePosition } from '@swimlane/ngx-graph';
+import { Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import { graphviz } from 'd3-graphviz';
+import { wasmFolder } from '@hpcc-js/wasm';
 
 @Component({
   selector: 'discrimination-tree',
   templateUrl: './discrimination-tree.component.html',
   styleUrls: ['./discrimination-tree.component.scss']
 })
-export class DiscriminationTreeComponent implements OnChanges {
+export class DiscriminationTreeComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input()
   data: string;
 
-  links: NgxGraphEdge[] = [];
-  nodes: Node[] = [];
-  layoutSettings = {
-    orientation: 'TB'
-  };
+  renderer: any;
+
+  constructor(private hostEl: ElementRef) {
+  }
+
+  ngOnInit(): void {
+    wasmFolder('/assets/@hpcc-js/wasm/dist/');
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.init();
   }
 
-  init(): void {
-    this.nodes = [];
-    this.links = [];
+  ngOnDestroy() {
+    this.renderer?.destroy();
+  }
 
-    let i = 0; // for uniquely prefixing discriminators
+  init(): void {
+    const nodes = [];
+    const links = [];
 
     const buildTree = (dTree) => {
       if (dTree.discriminator) {
-        dTree.discriminator = (i++) + '_' + dTree.discriminator;
-
-        this.nodes.push({
-          id: this.generateNodeId(dTree.discriminator),
-          label: dTree.discriminator.replace(/^[0-9]+_/, '')
-        });
+        const label = this.escapeForDot(dTree.discriminator);
+        nodes.push(`${label} [shape="rectangle" label="${label}"]`);
       }
 
       if (dTree.data) { // node is a leaf
-        dTree.data = (i++) + '_' + dTree.data;
-
-        this.nodes.push({
-          id: this.generateNodeId(dTree.data),
-          label: dTree.data.replace(/^[0-9]+_/, '')
-        });
+        nodes.push(`${dTree.data} [shape="rectangle" label="${dTree.data}"]`);
       } else if (dTree.children) {
         dTree.children.forEach(buildTree);
         dTree.children.forEach(child => {
-          const targetId = this.generateNodeId(child.discriminator ? child.discriminator : child.data);
-          const sourceId = this.generateNodeId(dTree.discriminator);
-
-          this.links.push({
-            id: `link-${sourceId}-${targetId}`,
-            source: sourceId,
-            target: targetId,
-            label: child.edgeLabel
-          });
+          const targetId = this.escapeForDot(child.discriminator ? child.discriminator : child.data);
+          const sourceId = this.escapeForDot(dTree.discriminator);
+          links.push(`${sourceId} -> ${targetId} [label="${child.edgeLabel}"]`);
         });
       }
     };
 
     buildTree(JSON.parse(this.data));
+
+    const dot = `
+      digraph hypothesis {
+        ${nodes.join(';\n')}
+        ${links.join(';\n')}
+      }
+    `;
+
+    const graphEl = this.hostEl.nativeElement.querySelector('.graph');
+    this.renderer = graphviz(graphEl);
+    this.renderer.fit(true).renderDot(dot);
   }
 
-  getMidPoint(link: NgxGraphEdge): NodePosition {
-    if (link.points != null) {
-      const i = Math.floor(link.points.length / 2);
-      return link.points[i];
-    } else {
-      return {x: 0, y: 0};
-    }
-  }
-
-  private generateNodeId(val: string) {
-    return CSS.escape(val);
+  private escapeForDot(value: string) {
+    return value.replace(/\s/g, '_');
   }
 }

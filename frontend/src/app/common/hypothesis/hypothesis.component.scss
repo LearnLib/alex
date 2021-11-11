@@ -1,6 +1,12 @@
 :host,
 .hypothesis-wrapper,
-.hypothesis {
+.hypothesis,
+.graph {
+  width: 100%;
+  height: 100%;
+}
+
+::ng-deep svg {
   width: 100%;
   height: 100%;
 }

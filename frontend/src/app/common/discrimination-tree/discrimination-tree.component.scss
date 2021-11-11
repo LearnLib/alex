@@ -1,6 +1,12 @@
 :host,
 .discrimination-tree-wrapper,
-.discrimination-tree {
+.discrimination-tree,
+.graph {
+  width: 100%;
+  height: 100%;
+}
+
+::ng-deep svg {
   width: 100%;
   height: 100%;
 }

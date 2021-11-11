@@ -14,8 +14,21 @@
  * limitations under the License.
  */
 
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { Edge as NgxGraphEdge, Node, NodePosition } from '@swimlane/ngx-graph';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges, OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges
+} from '@angular/core';
+
+import { graphviz } from 'd3-graphviz';
+import { wasmFolder } from '@hpcc-js/wasm';
+import * as d3 from 'd3';
 
 export interface Edge {
   from: string;
@@ -35,7 +48,7 @@ export interface Hypothesis {
   templateUrl: './hypothesis.component.html',
   styleUrls: ['./hypothesis.component.scss']
 })
-export class HypothesisComponent implements OnChanges {
+export class HypothesisComponent implements OnInit, OnChanges, OnDestroy {
 
   @Output()
   selectEdge = new EventEmitter<Edge>();
@@ -46,10 +59,13 @@ export class HypothesisComponent implements OnChanges {
   @Input()
   layoutSettings: any;
 
-  links: NgxGraphEdge[] = [];
-  nodes: Node[] = [];
+  renderer: any;
 
-  constructor(private cd: ChangeDetectorRef) {
+  constructor(private cd: ChangeDetectorRef, private hostEl: ElementRef) {
+  }
+
+  ngOnInit(): void {
+    wasmFolder('/assets/@hpcc-js/wasm/dist/');
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -60,66 +76,65 @@ export class HypothesisComponent implements OnChanges {
     this.cd.detectChanges();
   }
 
-  handleEdgeClick(link: NgxGraphEdge, label: string): void {
+  ngOnDestroy() {
+    this.renderer?.destroy();
+  }
+
+  handleEdgeClick(label: string): void {
     const io = label.split(' / ');
     this.selectEdge.emit({
-      from: link.source,
-      to: link.target,
+      from: null,
+      to: null,
       input: io[0],
       output: io[1]
     });
   }
 
   init(): void {
-    this.nodes = [];
-    this.links = [];
-
     setTimeout(() => {
-      this.nodes = this.data.nodes.map(node => ({
-        id: node.toString(),
-        label: node.toString()
-      }));
-
+      // combine edges
       const edges = {};
       this.data.edges.forEach(edge => {
-        if (edges[edge.from] == null) {edges[edge.from] = {};}
-        if (edges[edge.from][edge.to] == null) {edges[edge.from][edge.to] = [];}
+        if (edges[edge.from] == null) {
+          edges[edge.from] = {};
+        }
+        if (edges[edge.from][edge.to] == null) {
+          edges[edge.from][edge.to] = [];
+        }
         edges[edge.from][edge.to].push(`${edge.input} / ${edge.output}`);
       });
 
-      this.links = [];
+      const links = [];
       for (const from in edges) {
         if (edges.hasOwnProperty(from)) {
           for (const to in edges[from]) {
             if (edges[from].hasOwnProperty(to)) {
-              this.links.push({
-                id: `edge-${from}-${to}`,
-                source: `${from}`,
-                target: `${to}`,
-                label: edges[from][to]
-              });
+              links.push(`${from} -> ${to} [label="${edges[from][to].join('\n')}"]`);
             }
           }
         }
       }
+
+      const nodes = this.data.nodes
+        .map(node => `${node.toString()} [shape="circle" label="${node.toString()}"]`)
+
+      const dot = `
+        digraph hypothesis {
+          __start0 [label="" shape="none"];
+          __start0 -> 0;
+          ${nodes.join(';\n')}
+          ${links.join(';\n')}
+        }
+      `;
+
+      const graphEl = this.hostEl.nativeElement.querySelector('.graph');
+      this.renderer = graphviz(graphEl);
+      this.renderer.fit(true).renderDot(dot).on('end', () => {
+        d3.select(graphEl.querySelector('svg')).selectAll('.edge text').on('click', (e) => {
+          this.handleEdgeClick(e.target.textContent);
+        })
+      });
     });
-  }
-
-  getMidPoint(link: NgxGraphEdge): NodePosition {
-    if (link.points != null) {
-      const i = Math.floor(link.points.length / 2);
-      return link.points[i];
-    } else {
-      return {x: 0, y: 0};
-    }
-  }
-
-  getNodeFill(node: Node): string {
-      return node.id === '0' ? '#abdbb6': 'white';
-  }
-
-  getNodeStroke(node: Node): string {
-    return node.id === '0' ? 'green': 'black';
   }
 
   private stateSizeChanged(changes: SimpleChanges): boolean {
@@ -131,5 +146,4 @@ export class HypothesisComponent implements OnChanges {
     const prev = new Set(changes.data.previousValue.edges.map(e => e.input));
     return curr.size !== prev.size;
   }
-
 }

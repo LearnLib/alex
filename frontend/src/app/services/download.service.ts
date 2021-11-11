@@ -126,8 +126,8 @@ export class DownloadService {
    * @param filename The name of the file to download.
    */
   downloadHypothesisAsSvg(svg: any, filename: string): void {
-    const panningRectEl = svg.querySelector('.panning-rect');
-    const originalWidth = panningRectEl.getAttributeNS(null, 'height');
+    const panningRectEl = svg.querySelector('g');
+    const originalWidth = panningRectEl.getAttributeNS(null, 'width');
     const originalHeight = panningRectEl.getAttributeNS(null, 'height');
 
     panningRectEl.setAttributeNS(null, 'width', '0');
@@ -143,19 +143,15 @@ export class DownloadService {
     svgCopy.setAttribute('version', '1.1');
     svgCopy.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
 
-    svgCopy.querySelectorAll('.edge > path').forEach(p => {
-      p.setAttributeNS(null, 'fill', 'none');
-      p.setAttributeNS(null, 'stroke', '#000');
-    });
-
     const dimension = g.getBoundingClientRect();
 
     svgCopy.setAttributeNS(null,'width', '' + dimension.width);
     svgCopy.setAttributeNS(null,'height', '' + dimension.height);
-    svgCopy.querySelector('g').removeAttribute('transform');
 
-    const svgSaver = new SvgSaver();
-    svgSaver.asSvg(svgCopy, filename + '.svg');
+    const h = svg.getAttribute('viewBox').split(/\s+|,/)[3];
+    svgCopy.querySelector('g').setAttribute('transform', 'translate(0, ' + h + ') scale(1)');
+
+    this.downloadSvg(svgCopy, filename);
 
     g.setAttribute('transform', transform);
     panningRectEl.setAttributeNS(null, 'width', '' + originalWidth);

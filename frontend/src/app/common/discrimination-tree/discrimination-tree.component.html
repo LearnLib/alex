@@ -1,51 +1,5 @@
 <div class="discrimination-tree-wrapper">
   <div class="discrimination-tree">
-
-    <ngx-graph
-      [links]="links"
-      [nodes]="nodes"
-      [draggingEnabled]="false"
-      [animate]="false"
-      [layoutSettings]="layoutSettings"
-    >
-      <ng-template #defsTemplate>
-        <svg:marker id="arrow" viewBox="0 -5 10 10" refX="8" refY="0" markerWidth="6" markerHeight="6" orient="auto">
-          <svg:path d="M0,-5L10,0L0,5" class="arrow-head" />
-        </svg:marker>
-      </ng-template>
-
-      <ng-template #nodeTemplate let-node>
-        <svg:g class="node">
-          <svg:rect
-            [attr.height]="node.dimension.height"
-            [attr.width]="node.dimension.width"
-            [attr.fill]="'white'"
-            [attr.stroke]="'black'"
-            [attr.stroke-width]="2"
-          />
-          <svg:text
-            alignment-baseline="central"
-            [attr.x]="10"
-            [attr.y]="node.dimension.height / 2"
-          >
-            {{node.label}}
-          </svg:text>
-        </svg:g>
-      </ng-template>
-
-      <ng-template #linkTemplate let-link>
-        <svg:g class="edge">
-          <svg:path class="line" stroke-width="2" marker-end="url(#arrow)"></svg:path>
-          <svg:text
-            class="edge-label"
-            [attr.y]="getMidPoint(link).y"
-            [attr.x]="getMidPoint(link).x"
-          >
-            {{link.label}}
-          </svg:text>
-        </svg:g>
-      </ng-template>
-    </ngx-graph>
-
+    <div class="graph"></div>
   </div>
 </div>
