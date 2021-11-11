@@ -49,7 +49,8 @@ module.exports = {
                 children: [
                     ['/contents/dev-docs/development/', 'Develop'],
                     ['/contents/dev-docs/rest-api/', 'REST API'],
-                    ['/contents/dev-docs/cli/', 'CLI']
+                    ['/contents/dev-docs/cli/', 'CLI'],
+                    ['/contents/dev-docs/dependency/', 'ALEX as dependency']
                 ]
             },
             ['/contents/about/', 'About']
