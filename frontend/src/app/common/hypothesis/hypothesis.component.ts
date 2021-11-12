@@ -116,7 +116,7 @@ export class HypothesisComponent implements OnInit, OnChanges, OnDestroy {
       }
 
       const nodes = this.data.nodes
-        .map(node => `${node.toString()} [shape="circle" label="${node.toString()}"]`)
+        .map(node => `${node.toString()} [shape="circle" label="${node.toString()}"]`);
 
       const dot = `
         digraph hypothesis {
@@ -132,7 +132,7 @@ export class HypothesisComponent implements OnInit, OnChanges, OnDestroy {
       this.renderer.fit(true).renderDot(dot).on('end', () => {
         d3.select(graphEl.querySelector('svg')).selectAll('.edge text').on('click', (e) => {
           this.handleEdgeClick(e.target.textContent);
-        })
+        });
       });
     });
   }
