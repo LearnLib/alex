@@ -66,7 +66,6 @@
           *ngIf="view !== 'DATA_STRUCTURE'"
           (selectEdge)="panelService.edgeSelected$.next($event)"
           [data]="result.steps[pointer].hypothesis"
-          [layoutSettings]="layoutSettings"
         >
         </hypothesis>
 
@@ -86,10 +85,8 @@
       <div class="right-sidebar" *ngIf="showSidebar">
         <learner-result-panel-default-view
           *ngIf="view === 'DEFAULT'"
-          [layoutSettings]="layoutSettings"
           [pointer]="pointer"
           [result]="result"
-          (layoutSettingsChange)="layoutSettings = $event"
         >
         </learner-result-panel-default-view>
 

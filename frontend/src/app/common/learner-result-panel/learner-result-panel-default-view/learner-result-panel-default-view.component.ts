@@ -27,13 +27,7 @@ import { LearnerResultApiService } from '../../../services/api/learner-result-ap
   selector: 'learner-result-panel-default-view',
   templateUrl: './learner-result-panel-default-view.component.html'
 })
-export class LearnerResultPanelDefaultViewComponent implements OnInit {
-
-  @Output()
-  layoutSettingsChange = new EventEmitter<any>();
-
-  @Input()
-  layoutSettings: any;
+export class LearnerResultPanelDefaultViewComponent {
 
   @Input()
   result: LearnerResult;
@@ -41,43 +35,12 @@ export class LearnerResultPanelDefaultViewComponent implements OnInit {
   @Input()
   pointer: number;
 
-  form = new FormGroup({
-    nodePadding: new FormControl(0, [Validators.required, Validators.min(1)]),
-    edgePadding: new FormControl(0, [Validators.required, Validators.min(1)]),
-    rankPadding: new FormControl(0, [Validators.required, Validators.min(1)])
-  });
-
   constructor(private modalService: NgbModal,
               private promptService: PromptService,
               private downloadService: DownloadService,
               private element: ElementRef,
               private learnerResultApi: LearnerResultApiService,
               public formUtils: FormUtilsService) {
-  }
-
-  ngOnInit(): void {
-    this.form.controls.nodePadding.setValue(this.layoutSettings.nodePadding);
-    this.form.controls.edgePadding.setValue(this.layoutSettings.edgePadding);
-    this.form.controls.rankPadding.setValue(this.layoutSettings.rankPadding);
-  }
-
-  /**
-   * Closes the modal window and passes the updated layout settings.
-   */
-  update(): void {
-    const layout = {};
-    Object.assign(layout, this.layoutSettings, this.form.value);
-    this.layoutSettingsChange.emit(layout);
-  }
-
-  /**
-   * Sets the layout settings to its default values.
-   */
-  defaultLayoutSettings(): void {
-    this.form.controls.nodePadding.setValue(50);
-    this.form.controls.edgePadding.setValue(35);
-    this.form.controls.rankPadding.setValue(50);
-    this.update();
   }
 
   /** Downloads the currently displayed hypothesis as svg. */

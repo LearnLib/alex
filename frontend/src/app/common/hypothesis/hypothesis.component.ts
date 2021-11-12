@@ -56,9 +56,6 @@ export class HypothesisComponent implements OnInit, OnChanges, OnDestroy {
   @Input()
   data: Hypothesis;
 
-  @Input()
-  layoutSettings: any;
-
   renderer: any;
 
   constructor(private cd: ChangeDetectorRef, private hostEl: ElementRef) {

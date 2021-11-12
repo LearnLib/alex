@@ -26,9 +26,6 @@ import { Component, Input } from '@angular/core';
 export class LearnerResultPanelTestingViewComponent {
 
   @Input()
-  layoutSettings: any;
-
-  @Input()
   result: LearnerResult;
 
   @Input()

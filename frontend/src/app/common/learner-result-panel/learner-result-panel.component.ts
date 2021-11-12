@@ -52,17 +52,6 @@ export class LearnerResultPanelComponent implements OnInit {
   result: LearnerResult;
 
   @Input()
-  layoutSettings = {
-    orientation: 'TB',
-    align: 'UL',
-    ranker: 'tight-tree',
-    multigraph: true,
-    edgePadding: 35,
-    rankPadding: 50,
-    nodePadding: 50
-  };
-
-  @Input()
   pointer: number;
 
   view: string;
