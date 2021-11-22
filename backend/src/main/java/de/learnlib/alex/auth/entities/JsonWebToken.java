@@ -20,6 +20,9 @@ public class JsonWebToken {
 
     private String token;
 
+    public JsonWebToken() {
+    }
+
     public JsonWebToken(String token) {
         this.token = token;
     }
