@@ -7,7 +7,7 @@ In this section, we present the steps in order to learn the *ReactJS* implementa
 
 ## Requirements
 
-* ALEX v2.1.1
+* ALEX v3.0.0
 * [TodoMVC](http://todomvc.com/) v1.3
 
 

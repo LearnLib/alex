@@ -15,7 +15,7 @@ The CLI is available as a NodeJS module *alex-cli* and can be installed with
 
 1. The CLI is available as a Docker image and can be installed with 
     
-    `docker pull ghcr.io/learnlib/alex/alex-cli:2.1.1`
+    `docker pull ghcr.io/learnlib/alex/alex-cli:3.0.0`
 
 2. Run the docker image and execute CLI commands:
 

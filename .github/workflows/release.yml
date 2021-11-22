@@ -29,7 +29,7 @@ jobs:
 
       - name: Tag latest images with release version
         run: |
-          VERSION="2.1.1"
+          VERSION="3.0.0"
           IMAGES="alex-frontend alex-backend alex-cli alex-docs"
 
           for img in $IMAGES

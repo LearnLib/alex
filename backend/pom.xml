@@ -52,16 +52,21 @@
         <developerConnection>https://github.com/LearnLib/alex.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
+
     <issueManagement>
         <system>GitHub</system>
         <url>https://github.com/LearnLib/alex/issues</url>
     </issueManagement>
+    <ciManagement>
+        <system>GitHub Actions</system>
+        <url>https://github.com/LearnLib/alex/actions</url>
+    </ciManagement>
 
     <artifactId>alex-backend</artifactId>
     <packaging>jar</packaging>
 
     <name>Automata Learning Experience (ALEX)</name>
-    <version>2.1.1</version>
+    <version>3.0.0-SNAPSHOT</version>
     <groupId>de.learnlib.alex</groupId>
 
     <description>
