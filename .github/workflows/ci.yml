@@ -256,7 +256,7 @@ jobs:
           MVN_PACKAGE_REGISTRY_PASSWORD: ${{ secrets.MVN_PACKAGE_REGISTRY_PASSWORD }}
         run: |
           cd backend && mvn -B -s $GITHUB_WORKSPACE/.github/settings.xml deploy:deploy-file \
-            -DpomFile=-/pom.xml
+            -DpomFile=-/pom.xml \
             -Dfile=target/ALEX-3.0.0-SNAPSHOT-jar-with-dependencies.jar \
             -DrepositoryId=github \
             -Durl=https://maven.pkg.github.com/learnlib/alex \
