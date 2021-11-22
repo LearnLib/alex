@@ -61,6 +61,13 @@
         <system>GitHub Actions</system>
         <url>https://github.com/LearnLib/alex/actions</url>
     </ciManagement>
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/learnlib/alex</url>
+        </repository>
+    </distributionManagement>
 
     <artifactId>alex-backend</artifactId>
     <packaging>jar</packaging>
