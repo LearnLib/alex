@@ -226,3 +226,32 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.CR_PAT }}
           image: alex-docs
+
+  release-packages:
+    needs:
+      - package-frontend
+      - package-backend
+      - package-cli
+      - package-docs
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up JDK 15
+        uses: actions/setup-java@v1
+        with:
+          java-version: 15
+      - name: Set up cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2
+            !~/.m2/repository/de/learnlib/alex
+          key: cache-deploy-${{ hashFiles('backend/**/pom.xml') }}
+          restore-keys: cache-deploy-
+      - name: Run Maven
+        env: # make secrets available as environment variables
+          OSSRH_TOKEN_USERNAME: ${{ secrets.OSSRH_TOKEN_USERNAME }}
+          OSSRH_TOKEN_PASSWORD: ${{ secrets.OSSRH_TOKEN_PASSWORD }}
+        run: cd backend && mvn -B -s $GITHUB_WORKSPACE/.github/settings.xml install deploy -DskipTests
