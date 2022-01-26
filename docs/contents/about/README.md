@@ -13,7 +13,7 @@
 
 This project is open source and licensed under the [Apache-2 license][apache2].
 
-Copyright 2015 - 2021 TU Dortmund
+Copyright 2015 - 2022 TU Dortmund
 
 
 ## Issue management
