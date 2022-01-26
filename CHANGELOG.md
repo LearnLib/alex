@@ -27,6 +27,8 @@
 ### Changes
 
 * Symbols and tests cannot be exported and imported separately anymore.
+* Update to Selenium 4
+* Remove support for Internet Explorer and HTML Unit
 
 ## ALEX 2.1.1
 

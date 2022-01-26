@@ -2,11 +2,9 @@ export class WebDriverConfig {
 
   static Browsers = {
     Chrome: 'chrome',
-    Edge: 'MicrosoftEdge',
+    Edge: 'msedge',
     Firefox: 'firefox',
-    'HTML Unit': 'htmlunit',
-    'Internet Explorer': 'iexplore',
-    Opera: 'operablink',
+    Opera: 'opera',
     Safari: 'safari'
   };
 

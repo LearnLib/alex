@@ -51,13 +51,13 @@ For **Windows 10**
 
 **Services**
 
-| Port | Service                     |
-|------|-----------------------------|  
-| 4200 | Frontend (with live reload) |
-| 8000 | API                         |
-| 4444 | Selenium Hub                |
-| 5900 | Chrome VNC server           |
-| 5901 | Firefox VNC server          |
+| Port | Service                       |
+|------|-------------------------------|
+| 4200 | Frontend (with live reload)   |
+| 8000 | API                           |
+| 4444 | Selenium Hub                  |
+| 7901 | Chrome VNC (open in browser)  |
+| 7901 | Firefox VNC (open in browser) |
 
 For both, the Chrome and the Firefox VNC server, you can use the password `secret`.
 

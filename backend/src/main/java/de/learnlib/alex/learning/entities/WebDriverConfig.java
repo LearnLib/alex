@@ -19,7 +19,7 @@ package de.learnlib.alex.learning.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.net.URL;
-import java.util.concurrent.TimeUnit;
+import java.time.Duration;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -31,9 +31,12 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.opera.OperaOptions;
+import org.openqa.selenium.remote.AbstractDriverOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.safari.SafariOptions;
 
 /**
  * The abstract web driver configuration class.
@@ -115,31 +118,33 @@ public class WebDriverConfig implements Serializable {
     public WebDriver createWebDriver() throws Exception {
         final URL remoteURL = new URL(System.getProperty("webdriver.remote.url"));
 
-        final DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setPlatform(platform);
-        capabilities.setBrowserName(browser);
-        capabilities.setAcceptInsecureCerts(true);
+        final AbstractDriverOptions<?> options;
 
         switch (browser) {
-            case "chrome":
-                final ChromeOptions chromeOptions = new ChromeOptions();
+            case "chrome" -> {
+                final var chromeOptions = new ChromeOptions();
                 chromeOptions.setHeadless(headless);
-                capabilities.merge(chromeOptions);
-                break;
-            case "firefox":
+                options = chromeOptions;
+            }
+            case "firefox" -> {
                 final FirefoxOptions firefoxOptions = new FirefoxOptions();
                 firefoxOptions.setHeadless(headless);
-                capabilities.merge(firefoxOptions);
-                break;
-            default:
-                break;
+                options = firefoxOptions;
+            }
+            case "msedge" -> options = new EdgeOptions();
+            case "opera" -> options = new OperaOptions();
+            case "safari" -> options = new SafariOptions();
+            default -> throw new IllegalArgumentException("Invalid browser specified");
         }
+
+        options.setPlatformName(platform.toString());
+        options.setAcceptInsecureCerts(true);
 
         if (!version.trim().equals("")) {
-            capabilities.setVersion(version);
+            options.setBrowserVersion(version);
         }
 
-        final WebDriver driver = new RemoteWebDriver(remoteURL, capabilities);
+        final WebDriver driver = new RemoteWebDriver(remoteURL, options);
         manage(driver);
         return driver;
     }
@@ -151,11 +156,11 @@ public class WebDriverConfig implements Serializable {
      *         The web driver.
      */
     protected void manage(final WebDriver driver) {
-        driver.manage().timeouts().pageLoadTimeout(pageLoadTimeout, TimeUnit.SECONDS);
-        driver.manage().timeouts().setScriptTimeout(scriptTimeout, TimeUnit.SECONDS);
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(pageLoadTimeout));
+        driver.manage().timeouts().scriptTimeout(Duration.ofSeconds(scriptTimeout));
 
         if (implicitlyWait > 0) {
-            driver.manage().timeouts().implicitlyWait(implicitlyWait, TimeUnit.SECONDS);
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(implicitlyWait));
         }
 
         if (height > 0 && width > 0) {

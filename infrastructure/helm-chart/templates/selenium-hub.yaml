@@ -6,9 +6,15 @@ metadata:
     app: selenium-hub
 spec:
   ports:
+    - port: 4442
+      targetPort: 4442
+      name: port0
+    - port: 4443
+      targetPort: 4443
+      name: port1
     - port: 4444
       targetPort: 4444
-      name: port0
+      name: port2
   selector:
     app: selenium-hub
   type: NodePort
@@ -32,8 +38,10 @@ spec:
     spec:
       containers:
         - name: selenium-hub
-          image: selenium/hub:3.141.59-20201119
+          image: selenium/hub:4.0.0
           ports:
+            - containerPort: 4442
+            - containerPort: 4443
             - containerPort: 4444
           resources:
             limits:

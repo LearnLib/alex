@@ -38,6 +38,7 @@
           "description": "",
           "expectedResult": "",
           "hidden": false,
+          "id": 4,
           "inputs": [
             {
               "type": "input",
@@ -45,7 +46,6 @@
               "parameterType": "STRING"
             }
           ],
-          "id": 1,
           "name": "search",
           "outputs": [],
           "steps": [
@@ -95,15 +95,15 @@
             }
           ],
           "successOutput": null,
-          "updatedOn": "2021-04-16T09:32:14.432+00:00"
+          "updatedOn": "2022-01-26T13:20:20.967+00:00"
         },
         {
           "description": "",
           "expectedResult": "",
           "hidden": false,
+          "id": 5,
           "inputs": [],
           "name": "reset",
-          "id": 2,
           "outputs": [],
           "steps": [
             {
@@ -137,18 +137,33 @@
                 "waitCriterion": "CLICKABLE",
                 "maxWaitTime": 5
               }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": true,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_click",
+                "node": {
+                  "selector": "#L2AGLb",
+                  "type": "CSS"
+                },
+                "doubleClick": false
+              }
             }
           ],
           "successOutput": null,
-          "updatedOn": "2021-04-16T09:32:14.468+00:00"
+          "updatedOn": "2022-01-26T15:17:21.396+00:00"
         },
         {
           "description": "",
           "expectedResult": "",
           "hidden": false,
+          "id": 6,
           "inputs": [],
           "name": "is home",
-          "id": 3,
           "outputs": [],
           "steps": [
             {
@@ -167,7 +182,7 @@
             }
           ],
           "successOutput": null,
-          "updatedOn": "2021-04-16T09:32:14.483+00:00"
+          "updatedOn": "2022-01-26T13:20:20.993+00:00"
         }
       ],
       "groups": []
@@ -175,7 +190,7 @@
   ],
   "tests": [
     {
-      "id": 2,
+      "id": 3,
       "name": "search",
       "preSteps": [
         {
@@ -186,7 +201,7 @@
           "pSymbol": {
             "parameterValues": [],
             "symbol": {
-              "id": 2
+              "id": 5
             }
           }
         }
@@ -200,7 +215,7 @@
           "pSymbol": {
             "parameterValues": [],
             "symbol": {
-              "id": 3
+              "id": 6
             }
           }
         },
@@ -221,7 +236,7 @@
               }
             ],
             "symbol": {
-              "id": 1
+              "id": 4
             }
           }
         }
@@ -229,7 +244,7 @@
       "postSteps": [],
       "generated": false,
       "status": "DONE",
-      "updatedOn": "2020-12-18T11:41:15.432+00:00",
+      "updatedOn": "2022-01-26T15:23:37.932+00:00",
       "type": "case"
     }
   ],
@@ -268,6 +283,12 @@
       ],
       "symbols": [
         {
+          "parameterValues": [],
+          "symbol": {
+            "id": 6
+          }
+        },
+        {
           "parameterValues": [
             {
               "parameter": {
@@ -279,20 +300,14 @@
             }
           ],
           "symbol": {
-            "id": 1
-          }
-        },
-        {
-          "parameterValues": [],
-          "symbol": {
-            "id": 3
+            "id": 4
           }
         }
       ],
       "preSymbol": {
         "parameterValues": [],
         "symbol": {
-          "id": 2
+          "id": 5
         }
       },
       "postSymbol": null,
@@ -352,7 +367,7 @@
       "description": "",
       "default": true,
       "tests": [
-        2
+        3
       ]
     }
   ]

@@ -2,28 +2,39 @@ version: '3.7'
 
 services:
   selenium-hub:
-    image: selenium/hub:3
+    image: selenium/hub:4.0.0
+    ports:
+      - "4444:4444"
+
   chrome-node:
-    image: selenium/node-chrome-debug:3
+    image: selenium/node-chrome:4.0.0
     shm_size: '2gb'
     depends_on:
       - selenium-hub
     environment:
       - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
-      - HUB_HOST=selenium-hub
-      - HUB_PORT=4444
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+    ports:
+      - "7901:7900"
     volumes:
       - alex-database:/var/alex/backend/target/postgresql
+
   firefox-node:
-    image: selenium/node-firefox-debug:3
+    image: selenium/node-firefox:4.0.0
     shm_size: '2gb'
     depends_on:
       - selenium-hub
     environment:
-      - HUB_HOST=selenium-hub
-      - HUB_PORT=4444
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+    ports:
+      - "7902:7900"
     volumes:
       - alex-database:/var/alex/backend/target/postgresql
+
   alex-database:
     image: postgres:10
     environment:
@@ -32,13 +43,15 @@ services:
       - POSTGRES_DB=alex
     volumes:
       - alex-database:/var/lib/postgresql
+
   alex-frontend:
     image: ghcr.io/learnlib/alex/alex-frontend:3.0.0
     environment:
       - ALEX_BACKEND_ADDRESS=http://localhost
       - ALEX_BACKEND_PORT=8000
     ports:
-      - 80:4200
+      - "80:4200"
+
   alex-backend:
     image: ghcr.io/learnlib/alex/alex-backend:3.0.0
     depends_on:
@@ -49,7 +62,7 @@ services:
     environment:
       - REMOTE_DRIVER=http://selenium-hub:4444/wd/hub
     ports:
-      - 8000:8000
+      - "8000:8000"
 
 volumes:
   alex-database:

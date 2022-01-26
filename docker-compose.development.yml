@@ -2,37 +2,43 @@ version: '3.7'
 
 services:
     selenium-hub:
-        image: selenium/hub:3
-        network_mode: "host"
+        image: selenium/hub:4.0.0
+        ports:
+            - "4442:4442"
+            - "4443:4443"
+            - "4444:4444"
 
     chrome-node:
-        image: selenium/node-chrome-debug:3
+        image: selenium/node-chrome:4.0.0
         shm_size: '2gb'
         depends_on:
             - selenium-hub
         environment:
             - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
-            - HUB_HOST=selenium-hub
-            - HUB_PORT=4444
+            - SE_EVENT_BUS_HOST=selenium-hub
+            - SE_NODE_GRID_URL=selenium-hub
+            - SE_EVENT_BUS_PUBLISH_PORT=4442
+            - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
         volumes:
             - alex-database:/var/alex/backend/target/postgresql
-        extra_hosts:
-            - "selenium-hub:127.0.0.1"
-        network_mode: "host"
+        ports:
+            - "5901:5900"
+            - "7901:7900"
 
-#    firefox-node:
-#        image: selenium/node-firefox-debug:3
-#        shm_size: '2gb'
-#        depends_on:
-#            - selenium-hub
-#        environment:
-#            - HUB_HOST=selenium-hub
-#            - HUB_PORT=4444
-#        volumes:
-#            - alex-database:/var/alex/backend/target/postgresql
-#        extra_hosts:
-#            - "selenium-hub:127.0.0.1"
-#        network_mode: "host"
+    firefox-node:
+        image: selenium/node-firefox:4.0.0
+        shm_size: '2gb'
+        depends_on:
+            - selenium-hub
+        environment:
+            - SE_EVENT_BUS_HOST=selenium-hub
+            - SE_EVENT_BUS_PUBLISH_PORT=4442
+            - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+        volumes:
+            - alex-database:/var/alex/backend/target/postgresql
+        ports:
+            - "5902:5900"
+            - "7902:7900"
 
     alex-database:
         image: postgres:10
@@ -41,8 +47,9 @@ services:
             - POSTGRES_USER=sa
             - POSTGRES_DB=alex
         volumes:
-          - alex-database:/var/lib/postgresql
-        network_mode: "host"
+            - alex-database:/var/lib/postgresql
+        ports:
+            - "5432:5432"
 
     alex-backend:
         image: maven:3.8-openjdk-15
@@ -61,6 +68,9 @@ services:
             - alex-backend-maven:/root/.m2
             - alex-database:/var/alex/backend/target/postgresql
             - alex-backend-ltsmin:/var/ltsmin
+        ports:
+            - "5005:5005"
+            - "8000:8000"
         command:
             bash -c "if [ ! -d "/var/ltsmin/bin" ]; then
             curl -fsSL -o /var/ltsmin/ltsmin-v3.0.2-linux.tgz https://github.com/utwente-fmt/ltsmin/releases/download/v3.0.2/ltsmin-v3.0.2-linux.tgz;
@@ -68,18 +78,15 @@ services:
             mv /var/ltsmin/v3.0.2/* /var/ltsmin/;
             rm -rf /var/ltsmin/v3.0.2 /var/ltsmin/ltsmin-v3.0.2-linux.tgz;
             fi && mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005" -Dspring-boot.run.arguments=\"--ltsmin.path=/var/ltsmin/bin --webdriver.remote.url=http://selenium-hub:4444/wd/hub --spring.datasource.url=jdbc:postgresql://$${DATABASE_HOST}:$${DATABASE_PORT}/$${DATABASE_NAME} --spring.datasource.username=$${DATABASE_USER}\""
-        extra_hosts:
-          - "alex-database:127.0.0.1"
-          - "selenium-hub:127.0.0.1"
-        network_mode: "host"
 
     alex-frontend:
         image: node:14
         working_dir: /var/alex/frontend
         volumes:
             - ./frontend:/var/alex/frontend:rw
+        ports:
+            - "4200:4200"
         command: bash -c "npm install && npm run start:docker"
-        network_mode: "host"
 
 volumes:
   alex-backend-maven:
