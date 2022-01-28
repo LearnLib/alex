@@ -1,4 +1,4 @@
-FROM docker.io/library/maven:3.8-openjdk-15-slim as builder-backend
+FROM docker.io/library/maven:3.8-openjdk-17-slim as builder-backend
 RUN mkdir -p /backend
 WORKDIR /backend
 COPY . /backend
@@ -12,7 +12,7 @@ RUN wget https://github.com/utwente-fmt/ltsmin/releases/download/v3.0.2/ltsmin-v
 RUN tar -xzf ltsmin-v3.0.2-linux.tgz
 RUN mv v3.0.2 ltsmin
 
-FROM docker.io/library/openjdk:15-slim
+FROM docker.io/library/openjdk:17-slim
 COPY --from=builder-backend /backend/target/ALEX-3.0.0-SNAPSHOT-exec.jar /usr/share/java/alex/alex.jar
 COPY --from=builder-ltsmin /ltsmin/ltsmin /opt/ltsmin
 WORKDIR /var/lib/alex

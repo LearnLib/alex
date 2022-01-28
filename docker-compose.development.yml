@@ -52,7 +52,7 @@ services:
             - "5432:5432"
 
     alex-backend:
-        image: maven:3.8-openjdk-15
+        image: maven:3.8-openjdk-17
         depends_on:
             - selenium-hub
             - alex-database
