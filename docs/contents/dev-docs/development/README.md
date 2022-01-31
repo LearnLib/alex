@@ -11,7 +11,7 @@ On this page, we present some information for developers and maintainers of ALEX
 
 Make sure you have the following software installed on your development machine:
 
-- Node.js v12 and NPM v6
+- Node.js v14 and NPM v7
 
 The frontend is developed with [Angular][angular], relies on the Angular CLI and is written in Typescript.
 Styling in ALEX is done with [Bootstrap v4][bootstrap] and SASS stylesheets.
@@ -22,8 +22,8 @@ All frontend files can be found in *frontend/src/main/javascript*.
 
 Make sure you have the following software installed on your development machine:
 
-- Java JDK 11
-- Maven 3.3.*
+- Java JDK 17
+- Maven 3.8.*
 
 ### Maven goals
 
@@ -37,12 +37,33 @@ Make sure you `mvn install`ed ALEX once before executing any of the following co
 | `mvn spotbugs:check -Pcode-analysis`    | Execute static code analysis with Spotbugs.                          |
 | `mvn spring-boot:run`                   | Start the REST API of ALEX.                                          |
 
+### Docker debugging
+
+You can debug the backend of ALEX from within Docker.
+In this case, we use IntelliJ to connect to the remote debugger.
+Therefore, create a new run configuration.
+Go to `Run`, `Edit Configurations...`, add a new configuration of type `Remote JVM Debug` and configure it according the following image:
+
+![Docker debug](./assets/docker-debug.png)
+
+Then, start ALEX via the `docker-compose.develop.yml`, wait until the application is started and run the created configuration.
+
+### Live reload
+
+Thanks to Spring devtools, we can leverage the live reload capability to restart the application automatically as soon as the code changes.
+Therefore, create a new run configuration.
+Go to `Run`, `Edit Configurations...`, add a new configuration of type `Application` and configure it according the following image:
+
+![Live reload](./assets/live-reload.png)
+
+Then, start ALEX via the `docker-compose.develop.yml`, wait until the application is started and run the created configuration.
+Now you can make changes in the Java files, rebuild the module (e.g. via `STRG+Shift+F9`) and the application is rebuild inside the container.
 
 ## CLI
 
 Make sure you have the following software installed on your development machine:
 
-- Node.js v12 and NPM v6
+- Node.js v14 and NPM v7
 
 
 ## Performing a release

@@ -55,6 +55,7 @@ For **Windows 10**
 |------|-------------------------------|
 | 4200 | Frontend (with live reload)   |
 | 8000 | API                           |
+| 5005 | API Debug Port                |
 | 4444 | Selenium Hub                  |
 | 7901 | Chrome VNC (open in browser)  |
 | 7901 | Firefox VNC (open in browser) |

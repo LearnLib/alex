@@ -7,6 +7,9 @@ spring:
         jdbc:
           lob:
             non_contextual_creation: true
+  devtools:
+    remote:
+      secret: "mysecret"
   datasource:
     initialization-mode: "always"
     platform: "postgres"
