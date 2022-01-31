@@ -35,7 +35,6 @@ import de.learnlib.alex.learning.services.connectors.PreparedConnectorContextHan
 import de.learnlib.alex.learning.services.connectors.PreparedContextHandler;
 import de.learnlib.alex.learning.services.oracles.ContextAwareSulOracle;
 import de.learnlib.alex.learning.services.oracles.DelegationOracle;
-import de.learnlib.alex.learning.services.oracles.InterruptibleOracle;
 import de.learnlib.alex.learning.services.oracles.QueryMonitorOracle;
 import de.learnlib.alex.learning.services.oracles.StatisticsOracle;
 import de.learnlib.alex.modelchecking.services.ModelCheckerService;
@@ -46,6 +45,8 @@ import de.learnlib.api.oracle.EquivalenceOracle;
 import de.learnlib.api.query.DefaultQuery;
 import de.learnlib.filter.cache.mealy.MealyCacheOracle;
 import de.learnlib.oracle.parallelism.DynamicParallelOracleBuilder;
+import io.reactivex.rxjava3.subjects.BehaviorSubject;
+import io.reactivex.rxjava3.subjects.Subject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -111,9 +112,6 @@ public abstract class AbstractLearnerProcess<C extends AbstractLearnerProcessQue
     /** The oracle that monitors which queries are being posed. */
     protected QueryMonitorOracle<String, String> monitorOracle;
 
-    /** The oracle that can be interrupted. */
-    protected InterruptibleOracle<String, String> interruptOracle;
-
     protected StatisticsOracle<String, Word<String>> counterOracle;
 
     protected PreparedContextHandler preparedContextHandler;
@@ -125,6 +123,8 @@ public abstract class AbstractLearnerProcess<C extends AbstractLearnerProcessQue
     protected AbstractEquivalenceOracleProxy equivalenceOracleProxy;
 
     protected EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> equivalenceOracle;
+
+    private final Subject<Boolean> abortSubject = BehaviorSubject.createDefault(false);
 
     public AbstractLearnerProcess(
             UserDAO userDAO,
@@ -179,7 +179,7 @@ public abstract class AbstractLearnerProcess<C extends AbstractLearnerProcessQue
 
         // create a sul oracle for each url
         this.sulOracles = setup.getEnvironments().stream()
-                .map(env -> new ContextAwareSulOracle(symbolMapper, preparedContextHandler.create(env)))
+                .map(env -> new ContextAwareSulOracle(symbolMapper, preparedContextHandler.create(env), abortSubject))
                 .collect(Collectors.toList());
 
         final var parallelOracle =
@@ -189,14 +189,11 @@ public abstract class AbstractLearnerProcess<C extends AbstractLearnerProcessQue
                         .create();
 
         monitorOracle = new QueryMonitorOracle<>(parallelOracle);
-        monitorOracle.addPostProcessingListener(queries -> {
-            this.currentQueries = queries.stream()
-                    .map(q -> DefaultQueryProxy.createFrom(new DefaultQuery<>(q)))
-                    .collect(Collectors.toList());
-        });
+        monitorOracle.addPostProcessingListener(queries -> this.currentQueries = queries.stream()
+                .map(q -> DefaultQueryProxy.createFrom(new DefaultQuery<>(q)))
+                .collect(Collectors.toList()));
 
-        interruptOracle = new InterruptibleOracle<>(monitorOracle);
-        counterOracle = new StatisticsOracle<>(interruptOracle);
+        counterOracle = new StatisticsOracle<>(monitorOracle);
 
         // create the concrete membership oracle.
         this.mqOracle = new DelegationOracle<>();
@@ -283,10 +280,7 @@ public abstract class AbstractLearnerProcess<C extends AbstractLearnerProcessQue
 
     public void abort() {
         result = learnerResultDAO.updateStatus(result.getId(), LearnerResult.Status.ABORTED);
-
-        if (isInitialized()) {
-            this.interruptOracle.interrupt();
-        }
+        abortSubject.onNext(true);
     }
 
     public LearnerService.LearnerPhase getLearnerPhase() {
