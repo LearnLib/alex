@@ -139,7 +139,7 @@ export class LearnerViewComponent implements OnInit, OnDestroy {
     this.learnerApi.getStatus(this.project.id).subscribe(
       status => {
         this.status = status;
-        this.timeElapsed = Date.now() - new Date(this.currentResult.statistics.startDate);
+        this.timeElapsed = new Date().getTime() - new Date(this.currentResult.statistics.startDate).getTime();
 
         if (status.active && status.currentProcess.result.testNo === this.currentResult.testNo) {
           this.currentResult = status.currentProcess.result;
