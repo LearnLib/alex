@@ -15,19 +15,19 @@
  */
 
 export interface GridStatus {
-  value?: GridStatusValue
+  value?: GridStatusValue;
 }
 
 export interface GridStatusValue {
-  nodes?: GridNode[]
+  nodes?: GridNode[];
 }
 
 export interface GridNode {
-  slots?: GridNodeSlot[]
+  slots?: GridNodeSlot[];
 }
 
 export interface GridNodeSlot {
-  stereotype?: GridNodeSlotStereotype
+  stereotype?: GridNodeSlotStereotype;
 }
 
 export interface GridNodeSlotStereotype {

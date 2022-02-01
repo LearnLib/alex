@@ -22,13 +22,13 @@
 
 <div class="form-group form-check">
   <label class="form-check-label">
-    <input [(ngModel)]="action.cookieType" class="form-check-input" name="cookieType" type="radio" value="WEB"> Browser
-    Cookie
+    <input [(ngModel)]="action.cookieType" class="form-check-input" name="cookieType" type="radio" value="WEB">
+    Browser Cookie <em class="text-muted">(The cookie is extracted from the web browser)</em>
   </label>
 </div>
 <div class="form-group form-check">
   <label class="form-check-label">
-    <input [(ngModel)]="action.cookieType" class="form-check-input" name="cookieType" type="radio" value="REST"> Request
-    Cookie
+    <input [(ngModel)]="action.cookieType" class="form-check-input" name="cookieType" type="radio" value="REST">
+    Request Cookie <em class="text-muted">(The cookie is extracted from the last HTTP request)</em>
   </label>
 </div>

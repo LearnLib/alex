@@ -16,7 +16,7 @@ export class GridApiService extends BaseApiService {
   getStatus(): Observable<GridStatus> {
     return this.http.get(`${this.env.apiUrl}/grid/status`, this.defaultHttpOptions)
       .pipe(
-        map((body: any) => <GridStatus> body)
+        map((body: any) => body as GridStatus)
       );
   }
 }
