@@ -1,0 +1,11 @@
+version: '3.7'
+
+services:
+  selenium-hub:
+    image: seleniarm/hub:4.0.0-20211213
+
+  chrome-node:
+    image: seleniarm/node-chromium:4.0.0-20211213
+
+  firefox-node:
+    image: seleniarm/node-firefox:4.0.0-20211213

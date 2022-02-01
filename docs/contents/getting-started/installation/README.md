@@ -11,10 +11,20 @@ For **Windows 10**
 
 ## Using the latest Docker Compose file
 
-1. [Download][download] the latest `docker-compose.alex-3.0.0.yml` file.
-2. Open a terminal and start ALEX via `docker-compose -f docker-compose.alex-3.0.0.yml up`.
+**Windows, Linux, Mac (Intel)**
+
+1. [Download][download]  the `docker-compose.alex-3.0.0.yml` file.
+2. Run `docker-compose -f docker-compose.alex-3.0.0.yml up`.
 3. Wait until the command line prints something like `Started App in XX.XXX seconds`.
-4. Open [http://127.0.0.1](http://127.0.0.1) in a Web browser.
+4. Open [http://127.0.0.1](http://127.0.0.1) in a web browser to access the frontend.
+
+**Mac (ARM)**
+
+1. [Download][download]  the `docker-compose.alex-3.0.0.yml` file.
+2. [Download][download]  the `docker-compose.overrides.m1.yml` file.
+3. Run `docker-compose -f docker-compose.alex-3.0.0.yml -f docker-compose.overrides.m1.yml up`.
+4. Wait until the command line prints something like `Started App in XX.XXX seconds`.
+5. Open [http://127.0.0.1](http://127.0.0.1) in a web browser to access the frontend.
 
 After the first start, you can log in as an admin using the account below:
 
