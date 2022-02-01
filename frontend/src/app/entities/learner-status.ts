@@ -20,6 +20,8 @@ export interface LearnerProcessStatus {
   result: LearnerResult;
   phase: string;
   currentQueries: any[];
+  currentQueryCount: number;
+  currentSymbolCount: number;
 }
 
 export interface LearnerStatus {

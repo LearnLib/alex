@@ -311,4 +311,8 @@ public abstract class AbstractLearnerProcess<C extends AbstractLearnerProcessQue
             step.setModelCheckingResults(results);
         }
     }
+
+    public StatisticsOracle<String, Word<String>> getCounterOracle() {
+        return counterOracle;
+    }
 }

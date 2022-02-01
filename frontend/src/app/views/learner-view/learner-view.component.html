@@ -24,32 +24,18 @@
             </div>
             <div class="card-body pb-0">
               <table class="table table-striped">
-                <thead>
-                <tr>
-                  <th width="140">&nbsp;</th>
-                  <th>Total</th>
-                  <th>Learner</th>
-                  <th>EQ Oracle</th>
-                </tr>
-                </thead>
                 <tbody>
                 <tr>
-                  <td><strong>Time passed</strong></td>
-                  <td *ngIf="currentResult">{{currentResult.statistics.duration.total | formatMilliseconds}}</td>
-                  <td *ngIf="currentResult">{{currentResult.statistics.duration.learner | formatMilliseconds}}</td>
-                  <td *ngIf="currentResult">{{currentResult.statistics.duration.eqOracle | formatMilliseconds}}</td>
+                  <td style="width: 140px"><strong>Time passed</strong></td>
+                  <td *ngIf="currentResult">{{timeElapsed | formatMilliseconds}}</td>
                 </tr>
                 <tr>
-                  <td><strong>MQs executed</strong></td>
-                  <td>{{currentResult.statistics.mqsUsed.total}}</td>
-                  <td>{{currentResult.statistics.mqsUsed.learner}}</td>
-                  <td>{{currentResult.statistics.mqsUsed.eqOracle}}</td>
+                  <td style="width: 140px"><strong>MQs executed</strong></td>
+                  <td>{{currentResult.statistics.mqsUsed.total + status.currentProcess.currentQueryCount}}</td>
                 </tr>
                 <tr>
-                  <td><strong>Symbols executed</strong></td>
-                  <td>{{currentResult.statistics.symbolsUsed.total}}</td>
-                  <td>{{currentResult.statistics.symbolsUsed.learner}}</td>
-                  <td>{{currentResult.statistics.symbolsUsed.eqOracle}}</td>
+                  <td style="width: 140px"><strong>Symbols executed</strong></td>
+                  <td>{{currentResult.statistics.symbolsUsed.total + status.currentProcess.currentSymbolCount}}</td>
                 </tr>
                 </tbody>
               </table>

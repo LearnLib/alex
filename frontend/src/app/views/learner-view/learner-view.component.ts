@@ -53,6 +53,8 @@ export class LearnerViewComponent implements OnInit, OnDestroy {
 
   status: LearnerStatus;
 
+  timeElapsed: number = 0;
+
   /** The interval time for polling. */
   private readonly INTERVAL_TIME = 5000;
 
@@ -137,6 +139,7 @@ export class LearnerViewComponent implements OnInit, OnDestroy {
     this.learnerApi.getStatus(this.project.id).subscribe(
       status => {
         this.status = status;
+        this.timeElapsed = Date.now() - new Date(this.currentResult.statistics.startDate);
 
         if (status.active && status.currentProcess.result.testNo === this.currentResult.testNo) {
           this.currentResult = status.currentProcess.result;

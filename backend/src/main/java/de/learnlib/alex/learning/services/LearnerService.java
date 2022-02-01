@@ -364,6 +364,12 @@ public class LearnerService {
             processStatus.setPhase(process.getLearnerPhase());
             processStatus.setResult(process.getResult());
 
+            final var counterOracle = process.getCounterOracle();
+            if (counterOracle != null) {
+                processStatus.setCurrentQueryCount(counterOracle.getQueryCount());
+                processStatus.setCurrentSymbolCount(counterOracle.getSymbolCount());
+            }
+
             final var status = new LearnerStatus();
             status.setCurrentProcess(processStatus);
 
