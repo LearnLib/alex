@@ -82,9 +82,10 @@ volumes:
 
 The following environment variables can be passed to the **alex-backend** service:
 
-| Name            | Description                                      |
-|-----------------|--------------------------------------------------|
-| `REMOTE_DRIVER` | The URI to the remote Selenium server            |
+| Name        | Description                                 |
+|-------------|---------------------------------------------|
+| `GRID_HOST` | The host where the Selenium Grid is running |
+| `GRID_PORT` | The port to the Selenium Grid               |
 
 ### Frontend
 

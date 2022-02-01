@@ -22,7 +22,7 @@ import org.springframework.http.HttpStatus;
 /**
  * Entity class for the JSON error messages.
  */
-public class RESTError {
+public class RestError {
 
     /**
      * Status of the error.
@@ -42,7 +42,7 @@ public class RESTError {
      * @param exception
      *         The exception that caused the error, could be null.
      */
-    public RESTError(HttpStatus status, Exception exception) {
+    public RestError(HttpStatus status, Exception exception) {
         this.status = status;
         this.exception = exception;
     }

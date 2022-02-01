@@ -125,7 +125,7 @@ public class AlexComponent {
         if (settings == null) {
             try {
                 settings = new Settings();
-                final var remoteDriverURL = env.getProperty("webdriver.remote.url", "");
+                final var remoteDriverURL = getWebdriverUrl();
                 final var driverSettings = new DriverSettings();
                 driverSettings.setRemote(remoteDriverURL);
                 settings.setDriverSettings(driverSettings);
@@ -138,7 +138,7 @@ public class AlexComponent {
 
         // overwrite web driver paths if specified as command line arguments
         try {
-            final var remoteDriverUrl = env.getProperty("webdriver.remote.url", "");
+            final var remoteDriverUrl = getWebdriverUrl();
             if (!remoteDriverUrl.isEmpty()) {
                 new URL(remoteDriverUrl);
                 settings.getDriverSettings().setRemote(remoteDriverUrl);
@@ -167,5 +167,13 @@ public class AlexComponent {
         source.registerCorsConfiguration("/**", config);
 
         return source;
+    }
+
+    private String getWebdriverUrl() {
+        return "http://"
+                + env.getProperty("selenium.grid.host", "")
+                + ":"
+                + env.getProperty("selenium.grid.port", "")
+                + "/wd/hub";
     }
 }

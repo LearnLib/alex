@@ -270,6 +270,7 @@ import { TestSelectTreeStore } from './common/test-select-tree/test-select-tree.
 import { WarningWidgetComponent } from './common/warning-widget/warning-widget.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ClipboardModule } from '@angular/cdk/clipboard';
+import { GridApiService } from './services/api/grid-api.service';
 
 @NgModule({
   declarations: [
@@ -516,6 +517,7 @@ import { ClipboardModule } from '@angular/cdk/clipboard';
     },
     ToastService,
     AppStoreService,
+    GridApiService,
     SettingsApiService,
     SymbolGroupApiService,
     SymbolParameterApiService,

@@ -1,18 +1,13 @@
-<div class="form-group">
-  <label class="control-label">Platform</label>
-  <select [(ngModel)]="config.platform" class="form-control" required>
-    <option [value]="undefined" disabled>Select a platform</option>
-    <optgroup [label]="platform.key" *ngFor="let platform of platforms | keyvalue">
-      <option *ngFor="let p of platform.value | keyvalue" [value]="p.value">{{p.key}}</option>
-    </optgroup>
-  </select>
+<div class="alert alert-condensed alert-warning mb-3" *ngIf="config.browser != null && config.browser !== '' && !availableBrowsersList.includes(config.browser)">
+  The browser you selected is currently not available: <strong>{{config.browser | formatWebBrowser}}</strong>.
+  Please select another one.
 </div>
 
 <div class="form-group">
   <label class="control-label">Browser</label>
   <select [(ngModel)]="config.browser" class="form-control" required>
-    <option [value]="undefined" disabled>Select a browser</option>
-    <option *ngFor="let item of browsers | keyvalue" [value]="item.value">{{item.key}}</option>
+    <option [value]="''" disabled>Select a browser</option>
+    <option *ngFor="let item of availableBrowsers | keyvalue" [value]="item.key">{{item.key | formatWebBrowser}}</option>
   </select>
 </div>
 
@@ -21,16 +16,6 @@
     <input [(ngModel)]="config.headless" class="form-check-input" type="checkbox">
     <span class="ml-1">Use headless mode</span>
   </label>
-</div>
-
-<div class="form-group">
-  <label class="control-label">Version</label>
-  <input
-    [(ngModel)]="config.version"
-    class="form-control"
-    placeholder="The version of the browser"
-    type="text"
-  >
 </div>
 
 <div class="form-group">

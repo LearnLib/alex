@@ -60,7 +60,8 @@ services:
     volumes:
       - alex-database:/var/alex/backend/target/postgresql
     environment:
-      - REMOTE_DRIVER=http://selenium-hub:4444/wd/hub
+      - GRID_HOST=selenium-hub
+      - GRID_PORT=4444
     ports:
       - "8000:8000"
 

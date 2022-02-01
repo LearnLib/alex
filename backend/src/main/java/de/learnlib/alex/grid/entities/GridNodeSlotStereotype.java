@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-import { TestSelectTreeStore } from '../../common/test-select-tree/test-select-tree.store';
-import { TestExecutionConfig } from '../../entities/test-execution-config';
-import { WebDriverConfig } from '../../entities/web-driver-config';
+package de.learnlib.alex.grid.entities;
 
-export abstract class TestConfigsCreateEditView {
+public class GridNodeSlotStereotype {
 
-  config: any = {
-    driverConfig: new WebDriverConfig(),
-    tests: []
-  };
+    public String browserName;
 
-  protected constructor(protected store: TestSelectTreeStore) {
-  }
+    public String browserVersion;
 
-  isValidConfig(): boolean {
-    return TestExecutionConfig.isValid(this.config) && this.store.testsSelectable.getSelected().length > 0;
-  }
+    public String platformName;
 }

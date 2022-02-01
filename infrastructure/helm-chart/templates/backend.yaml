@@ -45,8 +45,10 @@ spec:
           image: {{ .Values.backendImage }}
           imagePullPolicy: {{ .Values.imageConfig.pullPolicy }}
           env:
-            - name: REMOTE_DRIVER
-              value: http://selenium-hub:4444/wd/hub
+            - name: GRID_HOST
+              value: "selenium-hub"
+            - name: GRID_PORT
+              value: "4444"
           volumeMounts:
             - name: config
               mountPath: /var/lib/alex/config/

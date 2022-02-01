@@ -29,9 +29,10 @@ alex:
     password: "admin"
     username: "admin"
 
+selenium:
+  grid:
+    host: "selenium-hub"
+    port: "4444"
+
 ltsmin:
   path: ""
-
-webdriver:
-  remote:
-    url: ""

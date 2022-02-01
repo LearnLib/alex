@@ -19,4 +19,7 @@ WORKDIR /var/lib/alex
 
 EXPOSE 8000
 
-CMD java -jar /usr/share/java/alex/alex.jar --ltsmin.path=/opt/ltsmin/bin --webdriver.remote.url=${REMOTE_DRIVER}
+CMD java -jar /usr/share/java/alex/alex.jar \
+    --ltsmin.path=/opt/ltsmin/bin \
+    --selenium.grid.host=selenium-hub \
+    --selenium.grid.port=4444

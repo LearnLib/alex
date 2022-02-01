@@ -16,7 +16,7 @@
 
 package de.learnlib.alex.common.exceptions;
 
-import de.learnlib.alex.common.utils.RESTError;
+import de.learnlib.alex.common.utils.RestError;
 import de.learnlib.alex.learning.exceptions.LearnerException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,35 +49,35 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     protected ResponseEntity<Object> handleDataIntegrityViolation(DataIntegrityViolationException e) {
         logger.info("DataIntegrityViolationException caught.", e);
-        final RESTError error = new RESTError(HttpStatus.INTERNAL_SERVER_ERROR, e);
+        final RestError error = new RestError(HttpStatus.INTERNAL_SERVER_ERROR, e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 
     @ExceptionHandler(LearnerException.class)
     protected ResponseEntity<Object> handleLearnerException(LearnerException e) {
         logger.info("LearnerException caught.", e);
-        final RESTError error = new RESTError(HttpStatus.BAD_REQUEST, e);
+        final RestError error = new RestError(HttpStatus.BAD_REQUEST, e);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(ForbiddenOperationException.class)
     protected ResponseEntity<Object> handleForbiddenOperationException(ForbiddenOperationException e) {
         logger.info("ForbiddenOperationException caught.", e);
-        final RESTError error = new RESTError(HttpStatus.FORBIDDEN, e);
+        final RestError error = new RestError(HttpStatus.FORBIDDEN, e);
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
     }
 
     @ExceptionHandler(NotFoundException.class)
     protected ResponseEntity<Object> handleNotFoundException(NotFoundException e) {
         logger.info("NotFoundException caught.", e);
-        final RESTError error = new RESTError(HttpStatus.NOT_FOUND, e);
+        final RestError error = new RestError(HttpStatus.NOT_FOUND, e);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
     protected ResponseEntity<Object> handleEntityNotFoundException(EntityNotFoundException e) {
         logger.info("EntityNotFoundException caught.", e);
-        final RESTError error = new RESTError(HttpStatus.NOT_FOUND, e);
+        final RestError error = new RestError(HttpStatus.NOT_FOUND, e);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
@@ -96,49 +96,56 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             message = e.getMessage();
         }
 
-        final RESTError error = new RESTError(HttpStatus.BAD_REQUEST, new Exception(message));
+        final RestError error = new RestError(HttpStatus.BAD_REQUEST, new Exception(message));
         return ResponseEntity.badRequest().body(error);
     }
 
     @ExceptionHandler(UnauthorizedException.class)
     protected ResponseEntity<Object> handleUnauthorizedException(UnauthorizedException e) {
         logger.info("UnauthorizedException caught.", e);
-        final RESTError error = new RESTError(HttpStatus.UNAUTHORIZED, e);
+        final RestError error = new RestError(HttpStatus.UNAUTHORIZED, e);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
     @ExceptionHandler(InternalServerErrorException.class)
     protected ResponseEntity<Object> handleInternalServerErrorException(InternalServerErrorException e) {
         logger.info("InternalServerErrorException caught.", e);
-        final RESTError error = new RESTError(HttpStatus.INTERNAL_SERVER_ERROR, e);
+        final RestError error = new RestError(HttpStatus.INTERNAL_SERVER_ERROR, e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 
     @ExceptionHandler(ValidationException.class)
     protected ResponseEntity<Object> handleValidationException(ValidationException e) {
         logger.info("ValidationException caught.", e);
-        final RESTError error = new RESTError(HttpStatus.BAD_REQUEST, e);
+        final RestError error = new RestError(HttpStatus.BAD_REQUEST, e);
         return ResponseEntity.badRequest().body(error);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     protected ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException e) {
         logger.info("IllegalArgumentException caught.", e);
-        final RESTError error = new RESTError(HttpStatus.BAD_REQUEST, e);
+        final RestError error = new RestError(HttpStatus.BAD_REQUEST, e);
         return ResponseEntity.badRequest().body(error);
     }
 
     @ExceptionHandler(EntityLockedException.class)
     protected ResponseEntity<Object> handleEntityLockedException(EntityLockedException e) {
         logger.info("EntityLockedException caught.", e);
-        final RESTError error = new RESTError(HttpStatus.LOCKED, e);
+        final RestError error = new RestError(HttpStatus.LOCKED, e);
         return ResponseEntity.status(HttpStatus.LOCKED).body(error);
     }
 
     @ExceptionHandler(ResourcesExhaustedException.class)
     protected ResponseEntity<Object> handleResourcesExhaustedException(ResourcesExhaustedException e) {
         logger.info("ResourcesExhaustedException.java caught.", e);
-        final RESTError error = new RESTError(HttpStatus.LOCKED, e);
+        final RestError error = new RestError(HttpStatus.LOCKED, e);
         return ResponseEntity.status(HttpStatus.LOCKED).body(error);
+    }
+
+    @ExceptionHandler(RestException.class)
+    protected ResponseEntity<Object> handleRestException(RestException e) {
+        logger.info("RestException.java caught.", e);
+        final var error = new RestError(e.getStatus(), e);
+        return ResponseEntity.status(e.getStatus()).body(error);
     }
 }

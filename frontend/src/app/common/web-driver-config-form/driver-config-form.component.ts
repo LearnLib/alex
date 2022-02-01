@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { groupBy } from 'lodash';
 import { WebDriverConfig } from '../../entities/web-driver-config';
+import { GridApiService } from '../../services/api/grid-api.service';
+import { GridStatus } from '../../entities/grid';
 
 /**
  * The component to configure the web driver.
@@ -24,12 +27,10 @@ import { WebDriverConfig } from '../../entities/web-driver-config';
   selector: 'driver-config-form',
   templateUrl: './driver-config-form.component.html'
 })
-export class DriverConfigFormComponent {
+export class DriverConfigFormComponent implements OnInit {
 
   @Output()
-  configChange = new EventEmitter<any>();
-
-  configValue: any;
+  public configChange = new EventEmitter<any>();
 
   @Input()
   get config(): any {
@@ -41,12 +42,39 @@ export class DriverConfigFormComponent {
     this.configChange.emit(this.configValue);
   }
 
+  public configValue: any;
+
   /** If the timeouts fields are displayed. */
-  timeoutsCollapsed = true;
+  public timeoutsCollapsed = true;
 
-  /** Target web platform for the remote driver. */
-  platforms = WebDriverConfig.Platforms;
+  public gridStatus: GridStatus;
 
-  /** Target web browsers for the remote driver. */
-  browsers = WebDriverConfig.Browsers;
+  public availableBrowsers: any;
+
+  constructor(private gridApi: GridApiService) {
+  }
+
+  ngOnInit(): void {
+    this.gridApi.getStatus().subscribe(
+      status => {
+        this.gridStatus = status;
+
+        const stereotypes = this.gridStatus.value.nodes
+          .map(n => n.slots[0])
+          .map(s => s.stereotype);
+
+        const availableBrowsers: any = groupBy(stereotypes, 'browserName');
+        Object.keys(availableBrowsers).forEach(browser => {
+          availableBrowsers[browser] = groupBy(availableBrowsers[browser], 'platformName');
+        });
+
+        this.availableBrowsers = availableBrowsers;
+      },
+      console.error
+    );
+  }
+
+  get availableBrowsersList(): string[] {
+    return this.availableBrowsers == null ? [] : Object.keys(this.availableBrowsers);
+  }
 }

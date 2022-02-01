@@ -8,33 +8,6 @@ export class WebDriverConfig {
     Safari: 'safari'
   };
 
-  static Platforms = {
-    Default: {
-      Any: 'ANY'
-    },
-    Windows: {
-      Windows: 'WINDOWS',
-      'Windows 10': 'WIN10',
-      'Windows 8.1': 'WIN8_1',
-      'Windows 8': 'WIN8',
-      'Windows Vista': 'VISTA',
-      'Windows XP': 'XP'
-    },
-    'Mac OS': {
-      'Mac OS': 'MAC',
-      Sierra: 'SIERRA',
-      'El Capitan': 'EL_CAPITAN',
-      Yosemite: 'YOSEMITE',
-      Mavericks: 'MAVERICKS',
-      'Mountain Lion': 'MOUNTAIN_LION',
-      'Snow Leopard': 'SNOW_LEOPARD'
-    },
-    Unix: {
-      Linux: 'LINUX',
-      Unix: 'UNIX'
-    }
-  };
-
   width = 1920;
   height = 1080;
   implicitlyWait = 0;
