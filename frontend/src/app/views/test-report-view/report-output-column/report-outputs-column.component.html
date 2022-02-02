@@ -49,11 +49,10 @@
       [ngClass]="{'fa-caret-square-down': !collapse, 'fa-caret-square-right': collapse}"
       class="fas fa-fw cursor-pointer"
       ngbTooltip="Details"
-      placement="left"
     >
     </i>
   </div>
-  <div>
+  <div *ngIf="testResult.id != null">
     <a [routerLink]="['/app', 'projects', project.id, 'tests', 'reports', testResult.report, 'results', testResult.id]">
      <i
        class="fas fa-fw fa-image"

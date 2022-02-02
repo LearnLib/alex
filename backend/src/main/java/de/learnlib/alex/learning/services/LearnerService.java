@@ -43,12 +43,12 @@ import de.learnlib.alex.learning.services.connectors.PreparedConnectorContextHan
 import de.learnlib.alex.testing.services.TestService;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -119,7 +119,7 @@ public class LearnerService {
         this.transactionTemplate = transactionTemplate;
         this.webhookDAO = webhookDAO;
 
-        this.learnerThreads = new HashMap<>();
+        this.learnerThreads = new ConcurrentHashMap<>();
     }
 
     /**

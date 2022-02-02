@@ -3,86 +3,92 @@
   <action-bar>
 
     <div class="btn-group btn-group-sm mr-2">
-      <button (click)="deleteReport()" class="btn btn-default" [disabled]="!showReport">Delete</button>
+      <button (click)="deleteReport()" class="btn btn-default" [disabled]="!isFinished">Delete</button>
     </div>
 
     <div class="btn-group btn-group-sm">
-      <button (click)="downloadReport()" class="btn btn-default" [disabled]="!showReport">Download</button>
+      <button (click)="downloadReport()" class="btn btn-default" [disabled]="!isFinished">Download</button>
     </div>
 
   </action-bar>
 
   <div class="view-body">
-    <div class="container-fluid">
+    <div class="container-fluid" *ngIf="report != null">
 
-      <div class="alert alert-info d-flex flex-row" *ngIf="!showReport">
-        <span class="w-100">
-          The report for the test run is not yet available.
-        </span>
-        <button class="btn btn-sm btn-info flex-shrink-0" (click)="refresh()" [disabled]="loading">
-          <i class="fas fa-fw fa-sync-alt mr-1" [class.fa-spin]="loading"></i> Check again
-        </button>
-      </div>
+      <h4 class="d-flex">
+        <strong>{{report.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}, by: {{report.executedBy ? report.executedBy.username : "deleted/unknown user"}}</strong>
 
-      <ng-container *ngIf="showReport">
-        <h4 class="d-flex">
-          <strong>{{report.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}, by: {{report.executedBy ? report.executedBy.username : "deleted/unknown user"}}</strong>
-
-          <span class="badge badge-secondary ml-auto">
+        <span class="badge badge-secondary ml-auto">
           {{report.environment.name}}
         </span>
-        </h4>
+      </h4>
+      <hr>
 
+      <div *ngIf="report.description != null && report.description.trim() !== ''">
+        <strong>Description</strong>
+        <p>
+          {{report.description}}
+        </p>
         <hr>
+      </div>
 
-        <div class="d-flex justify-content-center">
-          <report-charts *ngIf="report != null" [report]="report"></report-charts>
-        </div>
+      <div class="alert alert-info d-flex flex-row" *ngIf="!isFinished">
+        <span class="w-100">
+          <i class="fas fa-fw fa-circle-notch fa-spin mr-2"></i>
+          <span *ngIf="isPending">
+            The test run is queued. {{getNumberOfTestRunsAheadText()}}
+          </span>
+          <span *ngIf="isInProgress">Test are currently being executed.</span>
+          Please wait...
+        </span>
+      </div>
 
-        <hr>
+      <div class="d-flex justify-content-center mb-4" *ngIf="isFinished">
+        <report-charts *ngIf="report != null" [report]="report"></report-charts>
+      </div>
 
-        <div *ngIf="report.description != null && report.description.trim() !== ''">
-          <strong>Description</strong>
-          <p>
-            {{report.description}}
-          </p>
-        </div>
-
-        <table class="table table-striped">
-          <thead>
-          <tr>
-            <th>Status</th>
-            <th>Name</th>
-            <th>Output</th>
-            <th>Message</th>
-            <th>Time</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let result of report.testResults">
-            <ng-container *ngIf="result.test.type === 'case'">
-              <td width="1%">
-                <span *ngIf="result.passed" class="badge badge-success">Passed</span>
-                <span *ngIf="!result.passed" class="badge badge-danger">Failed</span>
-              </td>
-              <td>
-                <a [title]="['/app', 'projects', result.project, 'tests', result.test.id]">{{result.test.name}}</a>
-              </td>
-              <td>
-                <report-outputs-column [testResult]="result" [project]="project"></report-outputs-column>
-              </td>
-              <td>
-                <em *ngIf="result.failureMessage">{{result.failureMessage}}</em>
-              </td>
-              <td style="min-width: 68px">
-                {{result.time | formatMilliseconds}}
-              </td>
-            </ng-container>
-          </tr>
-          </tbody>
-        </table>
-
-      </ng-container>
+      <table class="table table-striped" *ngIf="!isPending">
+        <thead>
+        <tr>
+          <th style="width: 1px">Status</th>
+          <th>Name</th>
+          <th>Output</th>
+          <th>Message</th>
+          <th>Time</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let testCase of testCases">
+          <ng-container *ngIf="testResults[testCase.id] == null">
+            <td>
+              <i class="fas fa-fw fa-circle-notch fa-spin"></i>
+            </td>
+            <td>
+              <a [routerLink]="['/app', 'projects', project.id, 'tests', testCase.id]">{{testCase.name}}</a>
+            </td>
+            <td>...</td>
+            <td>...</td>
+            <td>...</td>
+          </ng-container>
+          <ng-container *ngIf="testResults[testCase.id] != null">
+            <td>
+              <span *ngIf="testResults[testCase.id].passed" class="badge badge-success">Passed</span>
+              <span *ngIf="!testResults[testCase.id].passed" class="badge badge-danger">Failed</span>
+            </td>
+            <td>
+              <a [routerLink]="['/app', 'projects', project.id, 'tests', testCase.id]">{{testCase.name}}</a>
+            </td>
+            <td>
+              <report-outputs-column [testResult]="testResults[testCase.id]" [project]="project"></report-outputs-column>
+            </td>
+            <td>
+              <em *ngIf="testResults[testCase.id].failureMessage">{{testResults[testCase.id].failureMessage}}</em>
+            </td>
+            <td>{{testResults[testCase.id].time | formatMilliseconds}}</td>
+          </ng-container>
+        </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 

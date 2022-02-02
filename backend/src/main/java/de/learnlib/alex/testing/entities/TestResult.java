@@ -22,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.learnlib.alex.data.entities.Project;
 import java.io.Serializable;
+import java.util.Optional;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
@@ -162,7 +163,9 @@ public abstract class TestResult implements Serializable {
 
     @JsonProperty("report")
     public Long getReportId() {
-        return this.testReport.getId();
+        return Optional.ofNullable(this.testReport)
+                .map(TestReport::getId)
+                .orElse(null);
     }
 
     /**
