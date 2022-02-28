@@ -1,6 +1,8 @@
 FROM docker.io/library/maven:3.8-openjdk-17-slim as builder-backend
 RUN mkdir -p /backend
 WORKDIR /backend
+COPY ./pom.xml /backend/pom.xml
+RUN mvn verify -DskipTests
 COPY . /backend
 RUN mvn install package -DskipTests
 
