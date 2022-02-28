@@ -22,7 +22,7 @@ spec:
         - name: selenium-node-chrome
           image: selenium/node-chrome:4.0.0
           ports:
-            - containerPort: 5555
+            - containerPort: 5900
           volumeMounts:
             - mountPath: /dev/shm
               name: dshm
@@ -33,11 +33,11 @@ spec:
               value: "4442"
             - name: SE_EVENT_BUS_SUBSCRIBE_PORT
               value: "4443"
-            # Declare NODE_PORT manually and set default value (5555)
+            # Declare NODE_PORT manually and set default value (5900)
             # Leaving it undeclared will result the following exception
             # Caused by: org.openqa.selenium.json.JsonException: Unable to coerce to a number: BOOLEAN
             - name: NODE_PORT
-              value: "5555"
+              value: "5900"
           resources:
             limits:
               memory: "1000Mi"

@@ -22,7 +22,7 @@ spec:
         - name: selenium-node-firefox
           image: selenium/node-firefox:4.0.0
           ports:
-            - containerPort: 5555
+            - containerPort: 5900
           volumeMounts:
             - mountPath: /dev/shm
               name: dshm
@@ -37,7 +37,7 @@ spec:
             # Leaving it undeclared will result the following exception
             # Caused by: org.openqa.selenium.json.JsonException: Unable to coerce to a number: BOOLEAN
             - name: NODE_PORT
-              value: "5555"
+              value: "5900"
           resources:
             limits:
               memory: "1000Mi"
