@@ -106,7 +106,8 @@ export class HypothesisComponent implements OnInit, OnChanges, OnDestroy {
         if (edges.hasOwnProperty(from)) {
           for (const to in edges[from]) {
             if (edges[from].hasOwnProperty(to)) {
-              links.push(`${from} -> ${to} [label="${edges[from][to].join('\n')}"]`);
+              const label = edges[from][to].join('\n').replaceAll('"', '&quot;');
+              links.push(`${from} -> ${to} [label="${label}"]`);
             }
           }
         }
