@@ -1,4 +1,4 @@
-FROM docker.io/library/node:14-alpine as builder
+FROM docker.io/library/node:16-alpine as builder
 WORKDIR /frontend
 RUN npm install -g npm
 COPY ./package.json ./package.json

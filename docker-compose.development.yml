@@ -82,7 +82,7 @@ services:
             fi && mvn spring-boot:run -Dspring-boot.run.jvmArguments="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005" -Dspring-boot.run.arguments=\"--ltsmin.path=/var/ltsmin/bin --spring.datasource.url=jdbc:postgresql://$${DATABASE_HOST}:$${DATABASE_PORT}/$${DATABASE_NAME} --spring.datasource.username=$${DATABASE_USER} --selenium.grid.host=$${GRID_HOST} --selenium.grid.port=$${GRID_PORT}\""
 
     alex-frontend:
-        image: node:14
+        image: docker.io/library/node:16
         working_dir: /var/alex/frontend
         volumes:
             - ./frontend:/var/alex/frontend:rw
