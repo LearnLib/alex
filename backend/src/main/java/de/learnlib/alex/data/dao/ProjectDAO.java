@@ -258,6 +258,9 @@ public class ProjectDAO {
         symbolParameterRepository.deleteAllBySymbol_Project_Id(projectId);
         uploadableFileRepository.deleteAllByProject_Id(projectId);
 
+        // delete the screenshot directory
+        testReportDAO.deleteScreenshotDirectory(user, projectId);
+
         // clear relationships to members and owners first
         project.getOwners().clear();
         project.getMembers().clear();
@@ -267,9 +270,6 @@ public class ProjectDAO {
         this.symbolPresenceService.releaseSymbolLocksByProject(projectId);
         this.testPresenceService.releaseTestLocksByProject(projectId);
         this.projectPresenceService.removeProjectFromPresenceMap(projectId);
-
-        // delete the screenshot directory
-        testReportDAO.deleteScreenshotDirectory(user, projectId);
 
         // delete the project directory
         try {
