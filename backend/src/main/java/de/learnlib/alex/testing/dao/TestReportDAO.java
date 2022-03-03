@@ -26,6 +26,7 @@ import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.testing.entities.TestCaseResult;
 import de.learnlib.alex.testing.entities.TestExecutionResult;
 import de.learnlib.alex.testing.entities.TestReport;
+import de.learnlib.alex.testing.entities.TestReport.Status;
 import de.learnlib.alex.testing.entities.TestSuiteResult;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
 import de.learnlib.alex.testing.repositories.TestResultRepository;
@@ -158,6 +159,10 @@ public class TestReportDAO {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final TestReport testReport = testReportRepository.findById(testReportId).orElse(null);
         checkAccess(user, project, testReport);
+
+        if (List.of(Status.IN_PROGRESS, Status.PENDING).contains(testReport.getStatus())) {
+            throw new IllegalArgumentException("Cannot delete report. Please abort the process first.");
+        }
 
         // delete screenshots
         testReport.getTestResults().forEach(testResult -> {
