@@ -1,5 +1,12 @@
 <div class="view">
-  <div *ngIf="status != null && !finished" class="d-flex flex-column h-100">
+  <div class="container-fluid" *ngIf="pending">
+    <div class="alert alert-info my-3">
+      <i class="fas fa-circle-notch fa-spin"></i>&nbsp;
+      The learning process is enqueued. Please wait...
+    </div>
+  </div>
+
+  <div *ngIf="status != null && inProgress" class="d-flex flex-column h-100">
 
     <div class="container-fluid">
 

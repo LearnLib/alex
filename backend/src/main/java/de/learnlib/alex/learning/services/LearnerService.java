@@ -29,6 +29,7 @@ import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.dao.LearnerSetupDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
+import de.learnlib.alex.learning.entities.LearnerResult.Status;
 import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStatus;
@@ -207,6 +208,9 @@ public class LearnerService {
         if (configuration.getEqOracle() instanceof SampleEQOracleProxy) {
             validateCounterexample(user, result, configuration);
         }
+
+        // reset the status in case it has been aborted before
+        result = learnerResultDAO.updateStatus(result.getId(), Status.PENDING);
 
         enqueueLearningProcess(
                 result.getProjectId(),

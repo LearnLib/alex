@@ -75,6 +75,14 @@ export class LearnerViewComponent implements OnInit, OnDestroy {
     return this.currentResult != null && ([LearnerResultStatus.FINISHED, LearnerResultStatus.ABORTED].includes(this.currentResult.status));
   }
 
+  get pending(): boolean {
+    return this.currentResult != null && this.currentResult.status === LearnerResultStatus.PENDING;
+  }
+
+  get inProgress(): boolean {
+    return this.currentResult != null && this.currentResult.status === LearnerResultStatus.IN_PROGRESS;
+  }
+
   get project(): Project {
     return this.appStore.project;
   }
@@ -88,28 +96,31 @@ export class LearnerViewComponent implements OnInit, OnDestroy {
     this.currentRoute.queryParamMap.subscribe(params => {
       if (params.has('testNo')) {
         const testNo = Number(params.get('testNo'));
-
-        this.learnerResultApi.get(this.project.id, testNo).subscribe(
-          result => {
-            this.currentResult = result;
-
-            switch (result.status) {
-              case LearnerResultStatus.PENDING:
-                this.toastService.info(`The learning process <strong>Test ${result.testNo}</strong> has been queued.`);
-                this.router.navigate(['/app', 'projects', this.project.id, 'learner', 'setups']);
-                break;
-              case LearnerResultStatus.FINISHED:
-                this.updateResumeConfig();
-                break;
-              default:
-                this.poll();
-            }
-          }
-        );
+        this.fetchLearnerResultAndStartPolling(testNo);
       } else {
         this.router.navigate(['/app', 'projects', this.project.id, 'learner', 'setups']);
       }
     });
+  }
+
+  fetchLearnerResultAndStartPolling(testNo: number): void {
+    this.learnerResultApi.get(this.project.id, testNo).subscribe(
+      result => {
+        this.currentResult = result;
+
+        switch (result.status) {
+          case LearnerResultStatus.PENDING:
+            this.toastService.info(`The learning process <strong>Test ${result.testNo}</strong> has been queued.`);
+            this.poll();
+            break;
+          case LearnerResultStatus.FINISHED:
+            this.updateResumeConfig();
+            break;
+          default:
+            this.poll();
+        }
+      }
+    );
   }
 
   ngOnDestroy(): void {
@@ -166,9 +177,9 @@ export class LearnerViewComponent implements OnInit, OnDestroy {
 
     this.learnerApi.resume(this.project.id, this.currentResult.testNo, config).subscribe(
       result => {
-        this.currentResult = result;
+        this.currentResult = null;
         this.status = null;
-        this.poll();
+        this.fetchLearnerResultAndStartPolling(result.testNo);
       },
       res => {
         this.toastService.danger('<p><strong>Resume learning failed!</strong></p>' + res.error.message);
@@ -178,7 +189,7 @@ export class LearnerViewComponent implements OnInit, OnDestroy {
 
   abort(): void {
     this.learnerApi.stop(this.project.id, this.currentResult.testNo).subscribe(
-      () => {},
+      () => this.toastService.info('The process has been aborted and will terminate as soon as possible.'),
       console.error
     );
   }

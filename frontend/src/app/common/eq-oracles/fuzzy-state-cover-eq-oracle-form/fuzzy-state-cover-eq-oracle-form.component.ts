@@ -15,7 +15,7 @@
  */
 
 import { Component, Input } from '@angular/core';
-import { FormGroup } from "@angular/forms";
+import { FormGroup } from '@angular/forms';
 import { RandomEqOracle } from '../../../entities/eq-oracles/random-eq-oracle';
 
 @Component({
