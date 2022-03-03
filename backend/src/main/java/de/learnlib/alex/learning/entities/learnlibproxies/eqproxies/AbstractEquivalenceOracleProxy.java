@@ -16,7 +16,6 @@
 
 package de.learnlib.alex.learning.entities.learnlibproxies.eqproxies;
 
-
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.learnlib.api.oracle.EquivalenceOracle;
@@ -31,6 +30,7 @@ import net.automatalib.words.Word;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
+        @JsonSubTypes.Type(name = "fuzzy_state_cover", value = FuzzyStateCoverEQOracleProxy.class),
         @JsonSubTypes.Type(name = "random_word", value = MealyRandomWordsEQOracleProxy.class),
         @JsonSubTypes.Type(name = "complete", value = CompleteExplorationEQOracleProxy.class),
         @JsonSubTypes.Type(name = "sample", value = SampleEQOracleProxy.class),

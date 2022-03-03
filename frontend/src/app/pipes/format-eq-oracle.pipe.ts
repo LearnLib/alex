@@ -38,6 +38,8 @@ export class FormatEqOraclePipe implements PipeTransform {
         return 'Hypothesis';
       case eqOracleType.TEST_SUITE:
         return 'Test suite';
+      case eqOracleType.FUZZY_STATE_COVER:
+        return 'Fuzzy State Cover';
       default:
         return value;
     }

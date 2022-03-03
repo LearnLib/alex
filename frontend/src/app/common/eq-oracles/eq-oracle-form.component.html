@@ -22,6 +22,12 @@
     [oracle]="oracle"
   >
   </complete-eq-oracle-form>
+  <fuzzy-state-cover-eq-oracle-form
+    *ngIf="oracle.type === types.FUZZY_STATE_COVER"
+    [form]="form"
+    [oracle]="oracle"
+  >
+  </fuzzy-state-cover-eq-oracle-form>
   <w-method-eq-oracle-form
     *ngIf="oracle.type === types.WMETHOD"
     [form]="form"

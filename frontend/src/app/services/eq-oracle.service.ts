@@ -22,6 +22,7 @@ import { SampleEqOracle } from '../entities/eq-oracles/sample-eq-oracle';
 import { TestSuiteEqOracle } from '../entities/eq-oracles/test-suite-eq-oracle';
 import { WMethodEqOracle } from '../entities/eq-oracles/w-method-eq-oracle';
 import { WpMethodEqOracle } from '../entities/eq-oracles/wp-method-eq-oracle';
+import { FuzzyStateCoverEqOracle } from '../entities/eq-oracles/fuzzy-state-cover-eq-oracle';
 import { EqOracle } from '../entities/eq-oracles/eq-oracle';
 import { Injectable } from '@angular/core';
 
@@ -37,7 +38,8 @@ export class EqOracleService {
     [eqOracleType.WMETHOD]: (data) => new WMethodEqOracle(data.maxDepth),
     [eqOracleType.HYPOTHESIS]: (data) => new HypothesisEqOracle(data.hypothesis),
     [eqOracleType.TEST_SUITE]: (data) => new TestSuiteEqOracle(data.testSuiteId, data.includeChildTestSuites),
-    [eqOracleType.WP_METHOD]: (data) => new WpMethodEqOracle(data.maxDepth)
+    [eqOracleType.WP_METHOD]: (data) => new WpMethodEqOracle(data.maxDepth),
+    [eqOracleType.FUZZY_STATE_COVER]: (data) => new FuzzyStateCoverEqOracle(data.minLength, data.maxLength, data.maxNoOfTests, data.seed),
   };
 
   /**

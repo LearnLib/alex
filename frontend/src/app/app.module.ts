@@ -271,6 +271,7 @@ import { WarningWidgetComponent } from './common/warning-widget/warning-widget.c
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { GridApiService } from './services/api/grid-api.service';
+import { FuzzyStateCoverEqOracleFormComponent } from './common/eq-oracles/fuzzy-state-cover-eq-oracle-form/fuzzy-state-cover-eq-oracle-form.component';
 
 @NgModule({
   declarations: [
@@ -489,7 +490,8 @@ import { GridApiService } from './services/api/grid-api.service';
     TestSelectTreeComponent,
     TestSelectTreeHeaderComponent,
     TestSelectTreeItemComponent,
-    WarningWidgetComponent
+    WarningWidgetComponent,
+    FuzzyStateCoverEqOracleFormComponent
   ],
   imports: [
     BrowserModule,

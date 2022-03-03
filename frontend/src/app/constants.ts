@@ -34,7 +34,8 @@ export const eqOracleType = {
   WMETHOD: 'wmethod',
   WP_METHOD: 'wp_method',
   HYPOTHESIS: 'hypothesis',
-  TEST_SUITE: 'test_suite'
+  TEST_SUITE: 'test_suite',
+  FUZZY_STATE_COVER: 'fuzzy_state_cover'
 };
 
 export const userRole = {
