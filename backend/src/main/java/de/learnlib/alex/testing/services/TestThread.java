@@ -18,6 +18,7 @@ package de.learnlib.alex.testing.services;
 
 import de.learnlib.alex.auth.dao.UserDAO;
 import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
@@ -36,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -120,14 +122,20 @@ public class TestThread extends Thread {
             currentTestProcessQueueItem = testProcessQueue.poll();
             results.clear();
 
+            final var reportExists = new AtomicBoolean(true);
             transactionTemplate.execute((t) -> {
                 user = userDAO.getByID(currentTestProcessQueueItem.userId);
                 project = projectDAO.getByID(user, currentTestProcessQueueItem.projectId);
-                report = testReportDAO.get(user, project.getId(), currentTestProcessQueueItem.reportId);
+                try {
+                    report = testReportDAO.get(user, project.getId(), currentTestProcessQueueItem.reportId);
+                } catch (NotFoundException e) {
+                    // the report has been deleted, but the corresponding item is still in the queue
+                    reportExists.set(false);
+                }
                 return null;
             });
 
-            if (report.getStatus().equals(TestReport.Status.ABORTED)) {
+            if (!reportExists.get() || report.getStatus().equals(TestReport.Status.ABORTED)) {
                 continue;
             }
 
@@ -184,11 +192,14 @@ public class TestThread extends Thread {
                 report = testReportDAO.updateStatus(reportId, TestReport.Status.ABORTED);
                 testExecutor.abort();
             } else {
+                final var itemsToRemove = new ArrayList<TestProcessQueueItem>();
                 for (var item : testProcessQueue) {
                     if (item.reportId.equals(reportId)) {
                         testReportDAO.updateStatus(item.reportId, TestReport.Status.ABORTED);
+                        itemsToRemove.add(item);
                     }
                 }
+                itemsToRemove.forEach(testProcessQueue::remove);
             }
         }
     }

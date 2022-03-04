@@ -18,6 +18,7 @@ package de.learnlib.alex.testing.services;
 
 import de.learnlib.alex.auth.dao.UserDAO;
 import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.exceptions.ResourcesExhaustedException;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
@@ -159,7 +160,8 @@ public class TestService {
         if (!isActive(projectId)) {
             return false;
         }
-        TestStatus testStatus = this.getStatus(user, projectId);
+
+        final var testStatus = this.getStatus(user, projectId);
 
         List<TestQueueItem> currentTestRunSingletonList = Optional.ofNullable(testStatus.getCurrentTestRun())
                 .map(List::of)
@@ -199,11 +201,16 @@ public class TestService {
             final TestThread testThread = testThreads.get(project.getId());
             status.setTestRunQueue(testThread.getTestQueue().stream()
                     .map(item -> {
-                        final var i = new TestQueueItem();
-                        i.setReport(testReportDAO.get(user, projectId, item.reportId));
-                        i.setConfig(item.config);
-                        return i;
+                        try {
+                            final var i = new TestQueueItem();
+                            i.setReport(testReportDAO.get(user, projectId, item.reportId));
+                            i.setConfig(item.config);
+                            return i;
+                        } catch (NotFoundException e) { // the report has already been deleted
+                            return null;
+                        }
                     })
+                    .filter(Objects::nonNull)
                     .collect(Collectors.toList())
             );
             status.setCurrentTestRun(testThread.getCurrentTest());
