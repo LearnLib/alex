@@ -21,7 +21,8 @@ export enum LearnerResultStatus {
   PENDING = 'PENDING',
   IN_PROGRESS = 'IN_PROGRESS',
   FINISHED = 'FINISHED',
-  ABORTED = 'ABORTED'
+  ABORTED = 'ABORTED',
+  FAILED = 'FAILED'
 }
 
 /**

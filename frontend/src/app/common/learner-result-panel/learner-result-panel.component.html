@@ -61,76 +61,86 @@
   </div>
 
   <div class="learn-result-panel-body d-flex flex-row position-relative" *ngIf="result.steps.length > 0">
-      <div class="h-100 flex-grow-1">
-        <hypothesis
-          *ngIf="view !== 'DATA_STRUCTURE'"
-          (selectEdge)="panelService.edgeSelected$.next($event)"
-          [data]="result.steps[pointer].hypothesis"
-        >
-        </hypothesis>
+    <div class="h-100 flex-grow-1">
+      <hypothesis
+        *ngIf="view !== 'DATA_STRUCTURE'"
+        (selectEdge)="panelService.edgeSelected$.next($event)"
+        [data]="result.steps[pointer].hypothesis"
+      >
+      </hypothesis>
 
-        <ng-container *ngIf="view === 'DATA_STRUCTURE'">
-          <discrimination-tree
-            *ngIf="['DT', 'TTT'].indexOf(result.setup.algorithm.name) > -1"
-            [data]="result.steps[pointer].algorithmInformation"
-          >
-          </discrimination-tree>
-          <observation-table
-            *ngIf="['LSTAR'].indexOf(result.setup.algorithm.name) > -1"
-            [data]="result.steps[pointer].algorithmInformation"
-          >
-          </observation-table>
-        </ng-container>
-      </div>
-      <div class="right-sidebar" *ngIf="showSidebar">
-        <learner-result-panel-default-view
-          *ngIf="view === 'DEFAULT'"
-          [pointer]="pointer"
-          [result]="result"
+      <ng-container *ngIf="view === 'DATA_STRUCTURE'">
+        <discrimination-tree
+          *ngIf="['DT', 'TTT'].indexOf(result.setup.algorithm.name) > -1"
+          [data]="result.steps[pointer].algorithmInformation"
         >
-        </learner-result-panel-default-view>
+        </discrimination-tree>
+        <observation-table
+          *ngIf="['LSTAR'].indexOf(result.setup.algorithm.name) > -1"
+          [data]="result.steps[pointer].algorithmInformation"
+        >
+        </observation-table>
+      </ng-container>
+    </div>
+    <div class="right-sidebar" *ngIf="showSidebar">
+      <learner-result-panel-default-view
+        *ngIf="view === 'DEFAULT'"
+        [pointer]="pointer"
+        [result]="result"
+      >
+      </learner-result-panel-default-view>
 
-        <div class="card" *ngIf="view === 'DATA_STRUCTURE'">
-          <div class="card-header">
-            <strong>Export</strong>
-          </div>
-          <div class="card-body">
-            <button
-              class="btn btn-default btn-block"
-              (click)="exportObservationTable()"
-              *ngIf="['LSTAR'].indexOf(result.setup.algorithm.name) > -1"
-            >
-              <i class="fas fa-fw fa-download"></i> CSV
-            </button>
-            <button
-              class="btn btn-default btn-block"
-              (click)="exportHypothesisAsSvg()"
-              *ngIf="['DT', 'TTT'].indexOf(result.setup.algorithm.name) > -1"
-            >
-              <i class="fas fa-fw fa-download"></i> SVG
-            </button>
-          </div>
+      <div class="card" *ngIf="view === 'DATA_STRUCTURE'">
+        <div class="card-header">
+          <strong>Export</strong>
         </div>
-
-        <learner-result-panel-testing-view
-          *ngIf="view === 'TEST'"
-          [pointer]="pointer"
-          [result]="result"
-        >
-        </learner-result-panel-testing-view>
-
-        <learner-result-panel-checking-view
-          *ngIf="view === 'MODEL_CHECKING'"
-          [pointer]="pointer"
-          [result]="result"
-        >
-        </learner-result-panel-checking-view>
+        <div class="card-body">
+          <button
+            class="btn btn-default btn-block"
+            (click)="exportObservationTable()"
+            *ngIf="['LSTAR'].indexOf(result.setup.algorithm.name) > -1"
+          >
+            <i class="fas fa-fw fa-download"></i> CSV
+          </button>
+          <button
+            class="btn btn-default btn-block"
+            (click)="exportHypothesisAsSvg()"
+            *ngIf="['DT', 'TTT'].indexOf(result.setup.algorithm.name) > -1"
+          >
+            <i class="fas fa-fw fa-download"></i> SVG
+          </button>
+        </div>
       </div>
+
+      <learner-result-panel-testing-view
+        *ngIf="view === 'TEST'"
+        [pointer]="pointer"
+        [result]="result"
+      >
+      </learner-result-panel-testing-view>
+
+      <learner-result-panel-checking-view
+        *ngIf="view === 'MODEL_CHECKING'"
+        [pointer]="pointer"
+        [result]="result"
+      >
+      </learner-result-panel-checking-view>
+    </div>
   </div>
 
   <div class="learn-result-panel-body p-3" *ngIf="result.steps.length === 0">
-    <div class="alert alert-info">
-      <i class="fas fa-circle-notch fa-spin"></i>&nbsp; Learning initial model. Please wait...
+    <div class="alert alert-danger" *ngIf="result.status === 'ABORTED'; else failed">
+      The process has been aborted.
     </div>
+    <ng-template #failed>
+      <div class="alert alert-danger" *ngIf="result.status === 'FAILED'; else loading">
+        The process has failed.
+      </div>
+    </ng-template>
+    <ng-template #loading>
+      <div class="alert alert-info">
+        <i class="fas fa-circle-notch fa-spin"></i>&nbsp; Learning initial model. Please wait...
+      </div>
+    </ng-template>
   </div>
 </div>

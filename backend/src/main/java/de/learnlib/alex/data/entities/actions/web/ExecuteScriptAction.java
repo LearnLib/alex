@@ -24,6 +24,7 @@ import de.learnlib.alex.data.utils.ExecuteScriptUtils;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -74,7 +75,7 @@ public class ExecuteScriptAction extends SymbolAction {
             final Map<String, Map<String, ? extends Object>> store = ExecuteScriptUtils.createScriptStore(connector);
 
             try {
-                webSiteConnector.getDriver().manage().timeouts().setScriptTimeout(timeout, TimeUnit.SECONDS);
+                webSiteConnector.getDriver().manage().timeouts().scriptTimeout(Duration.ofSeconds(timeout));
 
                 final Object returnValue;
                 if (async) {

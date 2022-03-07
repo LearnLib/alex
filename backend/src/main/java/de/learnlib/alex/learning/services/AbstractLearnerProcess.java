@@ -18,6 +18,7 @@ package de.learnlib.alex.learning.services;
 
 import de.learnlib.alex.auth.dao.UserDAO;
 import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
@@ -25,6 +26,7 @@ import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.dao.LearnerResultStepDAO;
 import de.learnlib.alex.learning.dao.LearnerSetupDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
+import de.learnlib.alex.learning.entities.LearnerResult.Status;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.entities.LearnerSetup;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
@@ -150,8 +152,8 @@ public abstract class AbstractLearnerProcess<C extends AbstractLearnerProcessQue
         this.modelCheckerService = modelCheckerService;
     }
 
-    public boolean isAborted() {
-        return result.getStatus().equals(LearnerResult.Status.ABORTED);
+    public boolean isAbortedOrHasFailed() {
+        return List.of(Status.ABORTED, Status.FAILED).contains(result.getStatus());
     }
 
     public boolean isInitialized() {
@@ -295,14 +297,22 @@ public abstract class AbstractLearnerProcess<C extends AbstractLearnerProcessQue
         return result;
     }
 
+    private void shutdown(Status status) {
+        result = learnerResultDAO.updateStatus(result.getId(), status);
+        try {
+            sulOracles.forEach(ContextAwareSulOracle::shutdown);
+        } catch (Exception e) {
+            logger.error(LoggerMarkers.LEARNER, "Failed to shutdown gracefully:", e);
+            e.printStackTrace();
+        }
+    }
+
     protected void shutdownWithErrors() {
-        result = learnerResultDAO.updateStatus(result.getId(), LearnerResult.Status.ABORTED);
-        sulOracles.forEach(ContextAwareSulOracle::shutdown);
+        shutdown(Status.FAILED);
     }
 
     protected void shutdown() {
-        result = learnerResultDAO.updateStatus(result.getId(), LearnerResult.Status.FINISHED);
-        sulOracles.forEach(ContextAwareSulOracle::shutdown);
+        shutdown(Status.FINISHED);
     }
 
     private void modelCheck(LearnerResultStep step) {

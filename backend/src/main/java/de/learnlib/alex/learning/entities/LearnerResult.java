@@ -54,7 +54,8 @@ public class LearnerResult implements Serializable {
         PENDING,
         IN_PROGRESS,
         FINISHED,
-        ABORTED
+        ABORTED,
+        FAILED
     }
 
     /** The id of the LearnerResult in the DB. */

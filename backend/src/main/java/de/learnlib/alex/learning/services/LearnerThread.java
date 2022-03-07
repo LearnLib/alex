@@ -87,7 +87,7 @@ public class LearnerThread extends Thread {
                 ((ResumingLearnerProcess) currentProcess).init((ResumingLearnerProcessQueueItem) item);
             }
 
-            if (currentProcess.isAborted()) {
+            if (currentProcess.isAbortedOrHasFailed()) {
                 continue;
             }
 

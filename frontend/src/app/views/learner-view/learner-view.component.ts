@@ -72,7 +72,8 @@ export class LearnerViewComponent implements OnInit, OnDestroy {
   }
 
   get finished(): boolean {
-    return this.currentResult != null && ([LearnerResultStatus.FINISHED, LearnerResultStatus.ABORTED].includes(this.currentResult.status));
+    const finishedStatus = [LearnerResultStatus.FINISHED, LearnerResultStatus.ABORTED, LearnerResultStatus.FAILED];
+    return this.currentResult != null && (finishedStatus.includes(this.currentResult.status));
   }
 
   get pending(): boolean {

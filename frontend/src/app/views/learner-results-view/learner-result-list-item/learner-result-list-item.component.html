@@ -32,6 +32,9 @@
     </span>
   </div>
   <div *ngIf="result.status !== 'IN_PROGRESS'">
+    <span class="badge badge-danger" *ngIf="result.status === 'ABORTED' || result.status === 'FAILED'">
+      {{result.status | normalizeUpperCase}}
+    </span>
     <ng-content></ng-content>
   </div>
 </div>
