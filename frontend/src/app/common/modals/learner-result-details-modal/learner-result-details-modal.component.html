@@ -13,6 +13,10 @@
       <ng-template ngbNavContent>
         <br>
 
+        <div class="alert alert-danger mb-3" *ngIf="result.errorMessage != null && result.errorMessage != ''">
+          {{result.errorMessage}}
+        </div>
+
         <table class="table">
           <tr>
             <td>Description</td>

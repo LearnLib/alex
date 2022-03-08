@@ -96,11 +96,14 @@ public class LearnerResult implements Serializable {
     @JoinColumn(name = "executedById")
     private User executedBy;
 
+    private String errorMessage;
+
     /** Constructor. */
     public LearnerResult() {
         this.steps = new ArrayList<>();
         this.comment = "";
         this.status = Status.PENDING;
+        this.errorMessage = "";
     }
 
     public Long getId() {
@@ -160,6 +163,14 @@ public class LearnerResult implements Serializable {
 
     public void setSetup(LearnerSetup setup) {
         this.setup = setup;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 
     /**

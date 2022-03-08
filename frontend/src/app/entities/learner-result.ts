@@ -54,6 +54,8 @@ export class LearnerResult {
   /** The comment of the learn result. */
   comment: string;
 
+  errorMessage: string;
+
   status: LearnerResultStatus;
 
   setup: LearnerSetup;
@@ -72,6 +74,7 @@ export class LearnerResult {
     this.testNo = obj.testNo;
     this.error = obj.error;
     this.comment = obj.comment;
+    this.errorMessage = obj.errorMessage;
     this.status = obj.status;
     this.setup = LearnerSetup.fromData(obj.setup);
   }

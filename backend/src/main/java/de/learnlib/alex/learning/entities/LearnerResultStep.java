@@ -85,7 +85,7 @@ public class LearnerResultStep implements Serializable {
 
     /**
      * If this field is set some sort of error occurred during the learning. In this case this field stores more
-     * information about the error. All other field can still have data, that are valid to some extend and should only
+     * information about the error. All other field can still have data, that are valid to some extent and should only
      * be used carefully.
      */
     private String errorText;

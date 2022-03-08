@@ -83,7 +83,7 @@ public class StartingLearnerProcess extends AbstractLearnerProcess<StartingLearn
         } catch (Exception e) {
             logger.error(LoggerMarkers.LEARNER, "Something in the LearnerThread went wrong:", e);
             e.printStackTrace();
-            shutdownWithErrors();
+            shutdownWithErrors(e.getMessage());
         } finally {
             logger.info(LoggerMarkers.LEARNER, "The learner thread has finished.");
             ThreadContext.remove("userId");

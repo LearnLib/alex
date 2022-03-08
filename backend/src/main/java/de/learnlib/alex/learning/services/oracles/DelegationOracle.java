@@ -67,7 +67,7 @@ public class DelegationOracle<I, O> implements MembershipOracle<I, Word<O>> {
 
                 if (i == MAX_RETRIES) {
                     logger.error(LoggerMarkers.LEARNER, "Failed to execute query for " + MAX_RETRIES + " times\"", lastException);
-                    throw new LearnerException("Failed to execute query for " + MAX_RETRIES + " times", lastException);
+                    throw new LearnerException(lastException.getMessage());
                 } else {
                     try {
                         Thread.sleep(SLEEP_TIME);

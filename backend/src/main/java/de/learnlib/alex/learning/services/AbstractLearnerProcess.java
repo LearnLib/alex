@@ -297,8 +297,11 @@ public abstract class AbstractLearnerProcess<C extends AbstractLearnerProcessQue
         return result;
     }
 
-    private void shutdown(Status status) {
-        result = learnerResultDAO.updateStatus(result.getId(), status);
+    private void shutdown(Status status, String errorMessage) {
+        result.setStatus(status);
+        result.setErrorMessage(errorMessage);
+        result = learnerResultDAO.update(result.getId(), result);
+
         try {
             sulOracles.forEach(ContextAwareSulOracle::shutdown);
         } catch (Exception e) {
@@ -307,12 +310,12 @@ public abstract class AbstractLearnerProcess<C extends AbstractLearnerProcessQue
         }
     }
 
-    protected void shutdownWithErrors() {
-        shutdown(Status.FAILED);
+    protected void shutdownWithErrors(String errorMessage) {
+        shutdown(Status.FAILED, errorMessage);
     }
 
     protected void shutdown() {
-        shutdown(Status.FINISHED);
+        shutdown(Status.FINISHED, "");
     }
 
     private void modelCheck(LearnerResultStep step) {

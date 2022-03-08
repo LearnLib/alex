@@ -184,6 +184,18 @@ public class LearnerResultDAO {
         return result;
     }
 
+    public LearnerResult update(Long resultId, LearnerResult result) {
+        var resultInDB = learnerResultRepository.findById(resultId)
+            .orElseThrow(() -> new NotFoundException("result not found."));
+
+        resultInDB.setStatus(result.getStatus());
+        resultInDB.setErrorMessage(result.getErrorMessage());
+        resultInDB = learnerResultRepository.save(resultInDB);
+
+        initializeLazyRelations(resultInDB);
+        return resultInDB;
+    }
+
     public LearnerResult copy(User user, Long projectId, Long testNo) {
         final var project = projectDAO.getByID(user, projectId);
         final var result = learnerResultRepository.findOneByProject_IdAndTestNo(projectId, testNo);

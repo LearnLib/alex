@@ -138,7 +138,7 @@ public class ResumingLearnerProcess extends AbstractLearnerProcess<ResumingLearn
         } catch (Exception e) {
             logger.error(LoggerMarkers.LEARNER, "Something in the LearnerThread while resuming went wrong:", e);
             e.printStackTrace();
-            shutdownWithErrors();
+            shutdownWithErrors(e.getMessage());
         } finally {
             logger.info(LoggerMarkers.LEARNER, "The learner finished resuming the experiment.");
             ThreadContext.remove("userId");
