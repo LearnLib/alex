@@ -66,7 +66,7 @@ public class ClickElementByTextAction extends WebSymbolAction {
 
         final List<WebElement> candidates;
         if (tagName == null || tagName.trim().equals("")) {
-            candidates = root.findElements(By.xpath("//text()[normalize-space() = '" + textWithVariables + "']"));
+            candidates = root.findElements(By.xpath("//*[text()[normalize-space() = '" + textWithVariables + "']]"));
         } else {
             candidates = root.findElements(By.tagName(tagName));
         }
