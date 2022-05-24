@@ -1,0 +1,731 @@
+{
+  "version": "3.0.0",
+  "type": "project",
+  "project": {
+    "name": "TodoMVC React",
+    "environments": [
+      {
+        "name": "mirror1",
+        "urls": [
+          {
+            "name": "Base",
+            "url": "http://localhost:8080/examples/react",
+            "default": true
+          }
+        ],
+        "variables": [],
+        "default": false
+      },
+      {
+        "name": "mirror2",
+        "urls": [
+          {
+            "name": "Base",
+            "url": "http://localhost:8080/examples/react",
+            "default": true
+          }
+        ],
+        "variables": [],
+        "default": false
+      },
+      {
+        "name": "Production",
+        "urls": [
+          {
+            "name": "Base",
+            "url": "http://localhost:8080/examples/react",
+            "default": true
+          }
+        ],
+        "variables": [],
+        "default": true
+      }
+    ]
+  },
+  "groups": [
+    {
+      "name": "Default group",
+      "symbols": [
+        {
+          "description": "",
+          "expectedResult": "",
+          "hidden": false,
+          "id": 17,
+          "inputs": [],
+          "name": "show completed",
+          "outputs": [],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_clickLinkByText",
+                "value": "Completed",
+                "node": {
+                  "selector": ".filters",
+                  "type": "CSS"
+                }
+              }
+            }
+          ],
+          "successOutput": null,
+          "updatedOn": "2022-02-10T12:12:23.318+00:00"
+        },
+        {
+          "description": "",
+          "expectedResult": "",
+          "hidden": false,
+          "id": 18,
+          "inputs": [
+            {
+              "type": "input",
+              "name": "text",
+              "parameterType": "STRING"
+            }
+          ],
+          "name": "delete todo",
+          "outputs": [],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_executeScript",
+                "script": "var text = arguments[0].variables.text;\nvar item = localStorage.getItem('react-todos');\nif (item == null) return false;\nvar todos = JSON.parse(item);\nreturn todos.findIndex(t => t.title === text) > -1;",
+                "async": false,
+                "timeout": 10,
+                "name": "created"
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "assertVariable",
+                "name": "created",
+                "value": "true",
+                "regexp": false
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_moveMouse",
+                "node": {
+                  "selector": "//label[contains(text(),'{{$text}}')]/..",
+                  "type": "XPATH"
+                },
+                "offsetX": 0,
+                "offsetY": 0
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_waitForNode",
+                "node": {
+                  "selector": "//label[contains(text(),'{{$text}}')]/../button",
+                  "type": "XPATH"
+                },
+                "waitCriterion": "CLICKABLE",
+                "maxWaitTime": 10
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_click",
+                "node": {
+                  "selector": "//label[contains(text(),'{{$text}}')]/../button",
+                  "type": "XPATH"
+                },
+                "doubleClick": false
+              }
+            }
+          ],
+          "successOutput": null,
+          "updatedOn": "2022-02-10T12:12:23.324+00:00"
+        },
+        {
+          "description": "",
+          "expectedResult": "",
+          "hidden": false,
+          "id": 19,
+          "inputs": [],
+          "name": "clear completed",
+          "outputs": [],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_click",
+                "node": {
+                  "selector": ".clear-completed",
+                  "type": "CSS"
+                },
+                "doubleClick": false
+              }
+            }
+          ],
+          "successOutput": null,
+          "updatedOn": "2022-02-10T12:12:23.329+00:00"
+        },
+        {
+          "description": "",
+          "expectedResult": "",
+          "hidden": false,
+          "id": 20,
+          "inputs": [],
+          "name": "toggle completed all",
+          "outputs": [],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_click",
+                "node": {
+                  "selector": "label[for=\"toggle-all\"]",
+                  "type": "CSS"
+                },
+                "doubleClick": false
+              }
+            }
+          ],
+          "successOutput": null,
+          "updatedOn": "2022-02-10T12:12:23.334+00:00"
+        },
+        {
+          "description": "",
+          "expectedResult": "",
+          "hidden": false,
+          "id": 21,
+          "inputs": [
+            {
+              "type": "input",
+              "name": "text",
+              "parameterType": "STRING"
+            }
+          ],
+          "name": "toggle completed",
+          "outputs": [],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_click",
+                "node": {
+                  "selector": "//label[contains(text(),'{{$text}}')]/../input",
+                  "type": "XPATH"
+                },
+                "doubleClick": false
+              }
+            }
+          ],
+          "successOutput": null,
+          "updatedOn": "2022-02-10T12:12:23.339+00:00"
+        },
+        {
+          "description": "",
+          "expectedResult": "",
+          "hidden": false,
+          "id": 22,
+          "inputs": [],
+          "name": "show active",
+          "outputs": [],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_clickLinkByText",
+                "value": "Active",
+                "node": {
+                  "selector": ".filters",
+                  "type": "CSS"
+                }
+              }
+            }
+          ],
+          "successOutput": null,
+          "updatedOn": "2022-02-10T12:12:23.346+00:00"
+        },
+        {
+          "description": "",
+          "expectedResult": "",
+          "hidden": false,
+          "id": 12,
+          "inputs": [],
+          "name": "reset",
+          "outputs": [],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_goto",
+                "url": "/",
+                "baseUrl": "Base",
+                "credentials": {
+                  "name": "",
+                  "password": ""
+                }
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_waitForNode",
+                "node": {
+                  "selector": ".new-todo",
+                  "type": "CSS"
+                },
+                "waitCriterion": "CLICKABLE",
+                "maxWaitTime": 10
+              }
+            }
+          ],
+          "successOutput": null,
+          "updatedOn": "2022-02-10T12:12:23.283+00:00"
+        },
+        {
+          "description": "",
+          "expectedResult": "",
+          "hidden": false,
+          "id": 13,
+          "inputs": [
+            {
+              "type": "input",
+              "name": "text",
+              "parameterType": "STRING"
+            }
+          ],
+          "name": "create todo",
+          "outputs": [],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_executeScript",
+                "script": "var item = localStorage.getItem('react-todos');\nif (item == null) return false;\nvar todos = JSON.parse(item);\nreturn todos.findIndex(t => t.title === arguments[0].variables.text) > -1;",
+                "async": false,
+                "timeout": 10,
+                "name": "created"
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "assertVariable",
+                "name": "created",
+                "value": "false",
+                "regexp": false
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_clear",
+                "node": {
+                  "selector": ".new-todo",
+                  "type": "CSS"
+                }
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_fill",
+                "node": {
+                  "selector": ".new-todo",
+                  "type": "CSS"
+                },
+                "value": "{{$text}}"
+              }
+            },
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_pressKey",
+                "node": {
+                  "selector": ".new-todo",
+                  "type": "CSS"
+                },
+                "key": "\\ue007"
+              }
+            }
+          ],
+          "successOutput": null,
+          "updatedOn": "2022-02-10T12:12:23.293+00:00"
+        },
+        {
+          "description": "",
+          "expectedResult": "",
+          "hidden": false,
+          "id": 14,
+          "inputs": [],
+          "name": "get visible todos",
+          "outputs": [],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "setVariableByNodeCount",
+                "name": "count",
+                "node": {
+                  "selector": ".todo-list li",
+                  "type": "CSS"
+                }
+              }
+            }
+          ],
+          "successOutput": "{{$count}}",
+          "updatedOn": "2022-02-10T12:12:23.301+00:00"
+        },
+        {
+          "description": "",
+          "expectedResult": "",
+          "hidden": false,
+          "id": 15,
+          "inputs": [],
+          "name": "get todos left",
+          "outputs": [],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "setVariableByHTML",
+                "name": "count",
+                "node": {
+                  "selector": ".todo-count > strong",
+                  "type": "CSS"
+                }
+              }
+            }
+          ],
+          "successOutput": "{{$count}}",
+          "updatedOn": "2022-02-10T12:12:23.307+00:00"
+        },
+        {
+          "description": "",
+          "expectedResult": "",
+          "hidden": false,
+          "id": 16,
+          "inputs": [],
+          "name": "show all",
+          "outputs": [],
+          "steps": [
+            {
+              "type": "action",
+              "disabled": false,
+              "ignoreFailure": false,
+              "negated": false,
+              "errorOutput": null,
+              "action": {
+                "type": "web_clickLinkByText",
+                "value": "All",
+                "node": {
+                  "selector": ".filters",
+                  "type": "CSS"
+                }
+              }
+            }
+          ],
+          "successOutput": null,
+          "updatedOn": "2022-02-10T12:12:23.312+00:00"
+        }
+      ],
+      "groups": []
+    }
+  ],
+  "tests": [
+    {
+      "id": 3,
+      "name": "create and delete todo",
+      "preSteps": [],
+      "steps": [
+        {
+          "disabled": false,
+          "expectedResult": "",
+          "expectedOutputSuccess": true,
+          "expectedOutputMessage": "",
+          "pSymbol": {
+            "parameterValues": [],
+            "symbol": {
+              "id": 12
+            }
+          }
+        },
+        {
+          "disabled": false,
+          "expectedResult": "",
+          "expectedOutputSuccess": true,
+          "expectedOutputMessage": "",
+          "pSymbol": {
+            "parameterValues": [
+              {
+                "parameter": {
+                  "type": "input",
+                  "name": "text",
+                  "parameterType": "STRING"
+                },
+                "value": "apples"
+              }
+            ],
+            "symbol": {
+              "id": 13
+            }
+          }
+        },
+        {
+          "disabled": false,
+          "expectedResult": "",
+          "expectedOutputSuccess": true,
+          "expectedOutputMessage": "",
+          "pSymbol": {
+            "parameterValues": [
+              {
+                "parameter": {
+                  "type": "input",
+                  "name": "text",
+                  "parameterType": "STRING"
+                },
+                "value": "apples"
+              }
+            ],
+            "symbol": {
+              "id": 18
+            }
+          }
+        }
+      ],
+      "postSteps": [],
+      "generated": false,
+      "status": "DONE",
+      "updatedOn": "2022-02-10T12:12:48.667+00:00",
+      "type": "case"
+    }
+  ],
+  "formulaSuites": [],
+  "learnerSetups": [
+    {
+      "name": "setup with one todo item",
+      "enableCache": true,
+      "saved": true,
+      "algorithm": {
+        "name": "TTT"
+      },
+      "environments": [
+        {
+          "name": "Production",
+          "urls": [
+            {
+              "name": "Base",
+              "url": "http://localhost:8080/examples/react",
+              "default": true
+            }
+          ],
+          "variables": [],
+          "default": true
+        }
+      ],
+      "symbols": [
+        {
+          "parameterValues": [],
+          "symbol": {
+            "id": 12
+          }
+        },
+        {
+          "parameterValues": [
+            {
+              "parameter": {
+                "type": "input",
+                "name": "text",
+                "parameterType": "STRING"
+              },
+              "value": "bananas"
+            }
+          ],
+          "symbol": {
+            "id": 13
+          }
+        },
+        {
+          "parameterValues": [],
+          "symbol": {
+            "id": 14
+          }
+        },
+        {
+          "parameterValues": [],
+          "symbol": {
+            "id": 15
+          }
+        },
+        {
+          "parameterValues": [],
+          "symbol": {
+            "id": 16
+          }
+        },
+        {
+          "parameterValues": [],
+          "symbol": {
+            "id": 22
+          }
+        },
+        {
+          "parameterValues": [],
+          "symbol": {
+            "id": 17
+          }
+        },
+        {
+          "parameterValues": [
+            {
+              "parameter": {
+                "type": "input",
+                "name": "text",
+                "parameterType": "STRING"
+              },
+              "value": "bananas"
+            }
+          ],
+          "symbol": {
+            "id": 18
+          }
+        },
+        {
+          "parameterValues": [],
+          "symbol": {
+            "id": 19
+          }
+        },
+        {
+          "parameterValues": [],
+          "symbol": {
+            "id": 20
+          }
+        },
+        {
+          "parameterValues": [
+            {
+              "parameter": {
+                "type": "input",
+                "name": "text",
+                "parameterType": "STRING"
+              },
+              "value": "bananas"
+            }
+          ],
+          "symbol": {
+            "id": 21
+          }
+        }
+      ],
+      "preSymbol": {
+        "parameterValues": [],
+        "symbol": {
+          "id": 12
+        }
+      },
+      "postSymbol": null,
+      "equivalenceOracle": {
+        "type": "random_word",
+        "batchSize": 1,
+        "minLength": 60,
+        "maxLength": 60,
+        "seed": 42,
+        "maxNoOfTests": 60
+      },
+      "webDriver": {
+        "width": 1920,
+        "height": 1080,
+        "implicitlyWait": 0,
+        "pageLoadTimeout": 10,
+        "scriptTimeout": 10,
+        "platform": "ANY",
+        "browser": "chrome",
+        "version": "",
+        "headless": true
+      },
+      "modelCheckingConfig": {
+        "formulaSuites": [],
+        "minUnfolds": 1,
+        "multiplier": 0.1
+      }
+    }
+  ],
+  "testExecutionConfigs": []
+}
