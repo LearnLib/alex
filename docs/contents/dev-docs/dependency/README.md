@@ -25,7 +25,7 @@ You can use the `backend` module of ALEX as a dependency in other Maven projects
       <dependency>
         <groupId>de.learnlib.alex</groupId>
         <artifactId>alex-backend</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.0.0</version>
       </dependency>
     </dependencies>
     ```
@@ -39,7 +39,7 @@ You can use the `backend` module of ALEX as a dependency in other Maven projects
       <dependency>
         <groupId>de.learnlib.alex</groupId>
         <artifactId>alex-backend</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.0.0</version>
 
          <!-- exclude dependencies from Spring-Boot if you are using ALEX within another Spring-Boot app -->
          <exclusions>

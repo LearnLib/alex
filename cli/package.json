@@ -1,6 +1,6 @@
 {
   "name": "cli",
-  "version": "3.0.0-SNAPSHOT",
+  "version": "3.0.0",
   "description": "A command line interface for ALEX",
   "main": "index.ts",
   "repository": {
