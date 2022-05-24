@@ -120,7 +120,7 @@
         <xml-apis.version>1.4.01</xml-apis.version>
         <jsoup.version>1.14.2</jsoup.version>
         <json-path.version>2.6.0</json-path.version>
-        <postgresql.version>42.3.1</postgresql.version>
+        <postgresql.version>42.3.3</postgresql.version>
         <jackson-datatype.version>2.10.3</jackson-datatype.version>
         <junit.version>5.7.0</junit.version>
         <mockito.version>2.23.0</mockito.version>
