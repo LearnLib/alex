@@ -35,6 +35,6 @@
     "chalk": "^4.1.1",
     "commander": "^8.0.0",
     "dateformat": "^4.5.1",
-    "node-fetch": "^2.6.1"
+    "node-fetch": "^2.6.7"
   }
 }
