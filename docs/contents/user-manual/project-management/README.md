@@ -22,7 +22,11 @@ A new project has the following properties:
 | Description | A description of the  project.                                                         | no       |
 
 The URL of a new project has to start with *http://* or *https://* followed by at least one further character for the host. 
-The URL can, but does not have to end with a trailing '/'. 
+The URL can, but does not have to end with a trailing '/'.
+
+::: tip
+Note: When installed locally, and the target app is also locally, the base URL of a project should start with: "http://docker.host.internal" (for Linux) and "http://192.168.65.2" (for MacOS and Windows).
+:::
 
 Deleting and updating projects can be done under the premise that there is no active learning process with the project.
 Before deleting a project, make sure you have exported the project, your symbols, hypotheses or statistics because the deletion is irreversible.

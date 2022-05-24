@@ -13,6 +13,6 @@
   "devDependencies": {
     "stylus": "^0.54.8",
     "stylus-loader": "^3.0.2",
-    "vuepress": "^1.8.2"
+    "vuepress": "^1.9.7"
   }
 }

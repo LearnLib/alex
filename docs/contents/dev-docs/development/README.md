@@ -11,7 +11,7 @@ On this page, we present some information for developers and maintainers of ALEX
 
 Make sure you have the following software installed on your development machine:
 
-- Node.js v14 and NPM v7
+- Node.js v16 and NPM v8
 
 The frontend is developed with [Angular][angular], relies on the Angular CLI and is written in Typescript.
 Styling in ALEX is done with [Bootstrap v4][bootstrap] and SASS stylesheets.
@@ -63,7 +63,7 @@ Now you can make changes in the Java files, rebuild the module (e.g. via `STRG+S
 
 Make sure you have the following software installed on your development machine:
 
-- Node.js v14 and NPM v7
+- Node.js v16 and NPM v8When installed locally, and the target app is also locally, the base URL of a project should start with: "http://docker.host.internal" (for Linux) and "http://192.168.65.2" (for MacOS and Windows).
 
 
 ## Performing a release
