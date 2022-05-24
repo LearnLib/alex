@@ -33,5 +33,5 @@ The CLI is available as a NodeJS module *alex-cli* and can be installed with
 - For usage examples, look at the [examples directory][cli-examples] in the repository.
 
 
-[cli-readme]: https://github.com/LearnLib/alex/tree/master/cli
-[cli-examples]: https://github.com/LearnLib/alex/tree/master/cli/examples
+[cli-readme]: https://github.com/LearnLib/alex/tree/main/cli
+[cli-examples]: https://github.com/LearnLib/alex/tree/main/cli/examples

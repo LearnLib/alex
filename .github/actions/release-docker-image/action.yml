@@ -37,7 +37,7 @@ runs:
         if [ "$BRANCH" == "developer" ]
         then
           VERSION="unstable"
-        elif [ "$BRANCH" == "master" ]
+        elif [ "$BRANCH" == "main" ]
         then
           VERSION="latest"
         else
