@@ -22,6 +22,7 @@ import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
+import de.learnlib.alex.learning.entities.LearnerResult.Status;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;
 import java.util.ArrayList;
@@ -205,6 +206,9 @@ public class LearnerResultDAO {
         resultToClone.setTestNo(learnerResultRepository.findHighestTestNo(projectId) + 1);
         resultToClone.setComment(result.getComment());
         resultToClone.setProject(project);
+        resultToClone.setStatus(result.getStatus());
+        resultToClone.setExecutedBy(result.getExecutedBy());
+        resultToClone.setErrorMessage(result.getErrorMessage());
         resultToClone.setSetup(learnerSetupDAO.copy(user, projectId, result.getSetup().getId(), false));
         learnerResultRepository.save(resultToClone);
 
