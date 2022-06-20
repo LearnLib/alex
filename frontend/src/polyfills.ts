@@ -60,11 +60,6 @@ import '@angular/localize/init';
  * Zone JS is required by default for Angular itself.
  */
 import 'zone.js/dist/zone'; // Included with Angular CLI.
-import * as ace from 'brace';
-import 'brace/mode/javascript';
-import 'brace/mode/plain_text';
-import 'brace/theme/eclipse';
-
 
 /***************************************************************************************************
  * APPLICATION IMPORTS
@@ -72,5 +67,3 @@ import 'brace/theme/eclipse';
 
 // fix for dragula
 (window as any).global = window;
-
-(window as any).ace = ace;

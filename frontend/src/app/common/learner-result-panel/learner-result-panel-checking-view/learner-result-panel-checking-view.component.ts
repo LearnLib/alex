@@ -18,13 +18,12 @@ import { Selectable } from '../../../utils/selectable';
 import { LearnerResult } from '../../../entities/learner-result';
 import { ToastService } from '../../../services/toast.service';
 import { Project } from '../../../entities/project';
-import { flatMap, uniqueId } from 'lodash';
+import { flatMap, flatten, uniqueId } from 'lodash';
 import { AppStoreService } from '../../../services/app-store.service';
 import { Component, Input, OnInit } from '@angular/core';
 import { LtsFormulaSuiteApiService } from '../../../services/api/lts-formula-suite-api.service';
 import { ModelCheckerApiService } from '../../../services/api/model-checker-api.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { flatten } from '@angular/compiler';
 
 /** Panel view for model checking. */
 @Component({

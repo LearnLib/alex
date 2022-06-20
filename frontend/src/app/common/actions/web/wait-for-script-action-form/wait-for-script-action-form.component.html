@@ -7,15 +7,7 @@
 
 <div class="form-group">
   <label>JavaScript</label>
-
-  <div
-    ace-editor
-    [(text)]="action.script"
-    [theme]="'eclipse'"
-    [mode]="'javascript'"
-    style="min-height: 200px; width:100%; overflow: auto;"
-  >
-  </div>
+  <ace-editor [initialValue]="action.script" [mode]="'javascript'" (valueChange)="action.script = $event"></ace-editor>
 </div>
 
 <div class="form-group">

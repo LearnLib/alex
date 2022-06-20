@@ -218,7 +218,6 @@ import { WaitActionFormComponent } from './common/actions/misc/wait-action-form/
 import { ActionSearchFormComponent } from './views/symbol-view/create-action-modal/action-search-form/action-search-form.component';
 import { AppViewComponent } from './views/app-view/app-view.component';
 import { UnauthorizedHttpInterceptor } from './interceptors/unauthorized-http-interceptor';
-import { AceEditorModule } from 'ng2-ace-editor';
 import { AboutModalComponent } from './views/root-view/about-modal/about-modal.component';
 import { FormUtilsService } from './services/form-utils.service';
 import { JumpToLabelActionFormComponent } from './common/actions/misc/jump-to-label-action-form/jump-to-label-action-form.component';
@@ -272,6 +271,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { GridApiService } from './services/api/grid-api.service';
 import { FuzzyStateCoverEqOracleFormComponent } from './common/eq-oracles/fuzzy-state-cover-eq-oracle-form/fuzzy-state-cover-eq-oracle-form.component';
+import { AceEditorComponent } from './common/ace-editor/ace-editor.component';
 
 @NgModule({
   declarations: [
@@ -491,7 +491,8 @@ import { FuzzyStateCoverEqOracleFormComponent } from './common/eq-oracles/fuzzy-
     TestSelectTreeHeaderComponent,
     TestSelectTreeItemComponent,
     WarningWidgetComponent,
-    FuzzyStateCoverEqOracleFormComponent
+    FuzzyStateCoverEqOracleFormComponent,
+    AceEditorComponent
   ],
   imports: [
     BrowserModule,
@@ -506,7 +507,6 @@ import { FuzzyStateCoverEqOracleFormComponent } from './common/eq-oracles/fuzzy-
       preventDuplicates: true
     }),
     NgbModule,
-    AceEditorModule,
     NgxChartsModule,
     DragDropModule,
     ClipboardModule
