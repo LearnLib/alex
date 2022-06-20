@@ -122,7 +122,7 @@ jobs:
       - name: Lint TypeScript code
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '16'
       - run: cd ./frontend && npm ci && npm run lint
 
   test-unit-frontend:
@@ -133,7 +133,7 @@ jobs:
       - name: Run Angular unit tests
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '16'
       - run: cd ./frontend && npm ci && npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
 
   package-frontend:
@@ -155,7 +155,7 @@ jobs:
       - name: Lint CI TypeScript code
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '16'
       - run: cd ./cli && npm ci && npm run lint
 
   package-cli:

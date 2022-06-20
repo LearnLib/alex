@@ -1,4 +1,4 @@
-FROM docker.io/library/node:16 as builder
+FROM docker.io/library/node:16-alpine as builder
 WORKDIR /frontend
 COPY ./package.json ./package.json
 COPY ./package-lock.json ./package-lock.json

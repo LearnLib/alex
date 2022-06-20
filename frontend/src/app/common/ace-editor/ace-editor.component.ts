@@ -24,13 +24,13 @@ import * as ace from 'ace-builds';
 })
 export class AceEditorComponent implements AfterViewInit {
 
-  @Input() initialValue: string = '';
+  @Input() initialValue = '';
 
-  @Input() theme: string = 'eclipse';
+  @Input() theme = 'eclipse';
 
-  @Input() mode: string = 'text';
+  @Input() mode = 'text';
 
-  @Input() style: string = 'min-height: 200px; width:100%; overflow: auto;';
+  @Input() style = 'min-height: 200px; width:100%; overflow: auto;';
 
   @Output() valueChange = new EventEmitter<string>();
 
