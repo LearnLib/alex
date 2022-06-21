@@ -15,6 +15,14 @@ spring:
     platform: "postgres"
     url: "jdbc:postgresql://alex-database:5432/alex"
     username: "sa"
+    hikari:
+      connection-test-query: "SELECT 1"
+      connection-timeout: 600000
+      maximum-pool-size: 500
+      max-lifetime: 1800000
+      minimum-idle: 20
+      validation-timeout: 3000
+      idle-timeout: 60000
   servlet:
     multipart:
       max-file-size: "20MB"
