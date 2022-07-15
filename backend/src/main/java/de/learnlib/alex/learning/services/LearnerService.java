@@ -20,12 +20,8 @@ import de.learnlib.alex.auth.dao.UserDAO;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.exceptions.ResourcesExhaustedException;
-import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.dao.ProjectDAO;
-import de.learnlib.alex.data.entities.ExecuteResult;
-import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
-import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.dao.LearnerSetupDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
@@ -34,15 +30,10 @@ import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStatus;
 import de.learnlib.alex.learning.entities.LearningProcessStatus;
-import de.learnlib.alex.learning.entities.ReadOutputConfig;
 import de.learnlib.alex.learning.entities.SeparatingWord;
-import de.learnlib.alex.learning.entities.WebDriverConfig;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
-import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
-import de.learnlib.alex.learning.exceptions.LearnerException;
-import de.learnlib.alex.learning.services.connectors.PreparedConnectorContextHandlerFactory;
 import de.learnlib.alex.testing.services.TestService;
-import java.util.ArrayList;
+import de.learnlib.alex.webhooks.dao.WebhookDAO;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -52,16 +43,12 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import de.learnlib.alex.webhooks.dao.WebhookDAO;
 import net.automatalib.automata.transducers.impl.compact.CompactMealy;
 import net.automatalib.util.automata.Automata;
 import net.automatalib.util.automata.conformance.WpMethodTestsIterator;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import org.apache.shiro.authz.UnauthorizedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Lazy;
@@ -75,8 +62,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 @Service
 public class LearnerService {
 
-    private static final Logger logger = LoggerFactory.getLogger(LearnerService.class);
-
     /** Indicator for in which phase the learner currently is. */
     public enum LearnerPhase {
 
@@ -89,7 +74,6 @@ public class LearnerService {
 
     private final LearnerSetupDAO learnerSetupDAO;
     private final LearnerResultDAO learnerResultDAO;
-    private final PreparedConnectorContextHandlerFactory contextHandlerFactory;
     private final ProjectDAO projectDAO;
     private final ApplicationContext applicationContext;
     private final TestService testService;
@@ -104,7 +88,6 @@ public class LearnerService {
     public LearnerService(LearnerSetupDAO learnerSetupDAO,
                           LearnerResultDAO learnerResultDAO,
                           ApplicationContext applicationContext,
-                          PreparedConnectorContextHandlerFactory contextHandlerFactory,
                           ProjectDAO projectDAO,
                           @Lazy TestService testService,
                           UserDAO userDAO,
@@ -112,7 +95,6 @@ public class LearnerService {
                           WebhookDAO webhookDAO) {
         this.learnerSetupDAO = learnerSetupDAO;
         this.learnerResultDAO = learnerResultDAO;
-        this.contextHandlerFactory = contextHandlerFactory;
         this.projectDAO = projectDAO;
         this.applicationContext = applicationContext;
         this.testService = testService;
@@ -205,10 +187,6 @@ public class LearnerService {
             throw new IllegalStateException("You cannot resume from a failed step.");
         }
 
-        if (configuration.getEqOracle() instanceof SampleEQOracleProxy) {
-            validateCounterexample(user, result, configuration);
-        }
-
         // reset the status in case it has been aborted before
         result = learnerResultDAO.updateStatus(result.getId(), Status.PENDING);
 
@@ -238,50 +216,6 @@ public class LearnerService {
             learnerThreads.put(projectId, thread);
             thread.enqueue(item);
             thread.start();
-        }
-    }
-
-    private void validateCounterexample(User user, LearnerResult result, LearnerResumeConfiguration configuration)
-            throws IllegalArgumentException {
-
-        final SampleEQOracleProxy oracle = (SampleEQOracleProxy) configuration.getEqOracle();
-        for (List<SampleEQOracleProxy.InputOutputPair> counterexample : oracle.getCounterExamples()) {
-            List<ParameterizedSymbol> symbolsFromCounterexample = new ArrayList<>();
-            List<String> outputs = new ArrayList<>();
-
-            // search symbols in configuration where symbol.name == counterexample.input
-            for (SampleEQOracleProxy.InputOutputPair io : counterexample) {
-                Optional<ParameterizedSymbol> symbol = result.getSetup().getSymbols().stream()
-                        .filter(s -> s.getAliasOrComputedName().equals(io.getInput()))
-                        .findFirst();
-
-                // collect all outputs in order to compare it with the result of learner.readOutputs()
-                if (symbol.isPresent()) {
-                    symbolsFromCounterexample.add(symbol.get());
-                    outputs.add(io.getOutput());
-                } else {
-                    throw new IllegalArgumentException("The symbol with the name '" + io.getInput() + "'"
-                            + " is not used in this test setup.");
-                }
-            }
-
-            // check if the given sample matches the behavior of the SUL
-            final List<String> results = readOutputs(
-                    user,
-                    result.getProject(),
-                    result.getSetup().getEnvironments().get(0),
-                    result.getSetup().getPreSymbol(),
-                    symbolsFromCounterexample,
-                    result.getSetup().getPostSymbol(),
-                    result.getSetup().getWebDriver()
-            ).stream()
-                    .map(ExecuteResult::getOutput)
-                    .collect(Collectors.toList());
-
-            if (!results.equals(outputs)) {
-                throw new IllegalArgumentException("At least one of the given samples for counterexamples"
-                        + " is not matching the behavior of the SUL.");
-            }
         }
     }
 
@@ -386,83 +320,6 @@ public class LearnerService {
             return status;
         } else {
             return new LearnerStatus();
-        }
-    }
-
-    /**
-     * Determine the output of the SUL by testing a sequence of input symbols.
-     *
-     * @param user
-     *         The user in which context the test should happen.
-     * @param project
-     *         The project in which context the test should happen.
-     * @param resetSymbol
-     *         The reset symbol to use.
-     * @param symbols
-     *         The symbol sequence to process in order to generate the output sequence.
-     * @param driverConfig
-     *         The configuration to use for the web browser.
-     * @param postSymbol
-     *         The symbol to execute after each membership query.
-     * @return The following output sequence.
-     * @throws LearnerException
-     *         If something went wrong while testing the symbols.
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public List<ExecuteResult> readOutputs(User user, Project project, ProjectEnvironment environment, ParameterizedSymbol resetSymbol,
-                                           List<ParameterizedSymbol> symbols, ParameterizedSymbol postSymbol, WebDriverConfig driverConfig)
-            throws LearnerException {
-        logger.info(LoggerMarkers.LEARNER, "Learner.readOutputs({}, {}, {}, {}, {})", user, project, resetSymbol, symbols, driverConfig);
-
-        final ReadOutputConfig config = new ReadOutputConfig(
-                resetSymbol,
-                symbols,
-                postSymbol,
-                driverConfig
-        );
-
-        return readOutputs(user, project, environment, config);
-    }
-
-    /**
-     * Determine the output of the SUL by testing a sequence of input symbols.
-     *
-     * @param user
-     *         The current user.
-     * @param project
-     *         The project.
-     * @param readOutputConfig
-     *         The config to use.
-     * @return The outputs of the SUL.
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public List<ExecuteResult> readOutputs(
-            User user,
-            Project project,
-            ProjectEnvironment environment,
-            ReadOutputConfig readOutputConfig
-    ) {
-        final var ctxHandler = contextHandlerFactory.createPreparedContextHandler(
-                user,
-                project,
-                readOutputConfig.getDriverConfig(),
-                readOutputConfig.getPreSymbol(),
-                readOutputConfig.getPostSymbol()
-        );
-        final var connectors = ctxHandler.create(environment).createContext();
-
-        try {
-            final var outputs = readOutputConfig.getSymbols().stream()
-                    .map(s -> s.execute(connectors))
-                    .collect(Collectors.toList());
-            connectors.dispose();
-            connectors.post();
-            return outputs;
-        } catch (Exception e) {
-            connectors.dispose();
-            connectors.post();
-
-            throw new LearnerException("Could not read the outputs", e);
         }
     }
 

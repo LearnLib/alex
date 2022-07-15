@@ -29,6 +29,7 @@ import de.learnlib.alex.data.entities.ProjectEnvironmentVariable;
 import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.learning.entities.ReadOutputConfig;
+import de.learnlib.alex.learning.services.SULUtilsService;
 import de.learnlib.alex.learning.services.LearnerService;
 import de.learnlib.alex.security.AuthContext;
 import java.time.Duration;
@@ -64,8 +65,7 @@ public class ProjectEnvironmentResource {
     private final ProjectEnvironmentDAO environmentDAO;
     private final ProjectDAO projectDAO;
     private final SymbolDAO symbolDAO;
-    private final LearnerService learnerService;
-
+    private final SULUtilsService sulUtils;
     private final Map<String, OutputsJob> outputsJobMap = new ConcurrentHashMap<>();
 
     @Autowired
@@ -74,13 +74,13 @@ public class ProjectEnvironmentResource {
             ProjectEnvironmentDAO environmentDAO,
             @Lazy ProjectDAO projectDAO,
             SymbolDAO symbolDAO,
-            LearnerService learnerService
+            SULUtilsService sulUtils
     ) {
         this.authContext = authContext;
         this.environmentDAO = environmentDAO;
         this.projectDAO = projectDAO;
         this.symbolDAO = symbolDAO;
-        this.learnerService = learnerService;
+        this.sulUtils = sulUtils;
     }
 
     @PostMapping(
@@ -127,7 +127,7 @@ public class ProjectEnvironmentResource {
         outputsJobMap.put(job.id, job);
         new Thread(() -> {
             try {
-                final var outputs = learnerService.readOutputs(user, project, env, config).stream()
+                final var outputs = sulUtils.getSystemOutputs(user, project, env, config).stream()
                     .map(ExecuteResult::getOutput)
                     .toList();
                 job.finishedAt = Instant.now();

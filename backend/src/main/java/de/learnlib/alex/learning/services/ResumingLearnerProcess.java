@@ -17,9 +17,11 @@
 package de.learnlib.alex.learning.services;
 
 import de.learnlib.alex.auth.dao.UserDAO;
+import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.dao.SymbolDAO;
+import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
@@ -28,15 +30,19 @@ import de.learnlib.alex.learning.dao.LearnerSetupDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
+import de.learnlib.alex.learning.entities.ReadOutputConfig;
 import de.learnlib.alex.learning.entities.Statistics;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
+import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
 import de.learnlib.alex.learning.events.LearnerEvent;
 import de.learnlib.alex.learning.services.connectors.PreparedConnectorContextHandlerFactory;
 import de.learnlib.alex.modelchecking.services.ModelCheckerService;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.webhooks.services.WebhookService;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import net.automatalib.SupportsGrowingAlphabet;
 import org.apache.logging.log4j.ThreadContext;
@@ -52,6 +58,8 @@ public class ResumingLearnerProcess extends AbstractLearnerProcess<ResumingLearn
 
     private final SymbolDAO symbolDAO;
 
+    private final SULUtilsService sulUtils;
+
     private LearnerResumeConfiguration resumeConfiguration;
 
     @Autowired
@@ -66,7 +74,8 @@ public class ResumingLearnerProcess extends AbstractLearnerProcess<ResumingLearn
             PreparedConnectorContextHandlerFactory contextHandlerFactory,
             TransactionTemplate transactionTemplate,
             SymbolDAO symbolDAO,
-            ModelCheckerService modelCheckerService
+            ModelCheckerService modelCheckerService,
+            SULUtilsService sulUtils
     ) {
         super(
                 userDAO,
@@ -81,6 +90,7 @@ public class ResumingLearnerProcess extends AbstractLearnerProcess<ResumingLearn
                 modelCheckerService
         );
         this.symbolDAO = symbolDAO;
+        this.sulUtils = sulUtils;
     }
 
     @Override
@@ -152,6 +162,10 @@ public class ResumingLearnerProcess extends AbstractLearnerProcess<ResumingLearn
         final byte[] learnerState = result.getSteps().get(result.getSteps().size() - 1).getState();
         setup.getAlgorithm().resume(learner, learnerState);
 
+        if (resumeConfiguration.getEqOracle() instanceof SampleEQOracleProxy) {
+            validateCounterexample(user, result, resumeConfiguration);
+        }
+
         if (resumeConfiguration.getSymbolsToAdd().size() > 0 && learner instanceof SupportsGrowingAlphabet) {
             final SupportsGrowingAlphabet<String> growingAlphabetLearner = (SupportsGrowingAlphabet) learner;
             for (final ParameterizedSymbol symbol : resumeConfiguration.getSymbolsToAdd()) {
@@ -196,5 +210,53 @@ public class ResumingLearnerProcess extends AbstractLearnerProcess<ResumingLearn
         }
 
         webhookService.fireEvent(user, new LearnerEvent.Finished(result));
+    }
+
+    private void validateCounterexample(User user, LearnerResult result, LearnerResumeConfiguration configuration)
+        throws IllegalArgumentException {
+
+        final SampleEQOracleProxy oracle = (SampleEQOracleProxy) configuration.getEqOracle();
+        for (List<SampleEQOracleProxy.InputOutputPair> counterexample : oracle.getCounterExamples()) {
+            List<ParameterizedSymbol> symbolsFromCounterexample = new ArrayList<>();
+            List<String> outputs = new ArrayList<>();
+
+            // search symbols in configuration where symbol.name == counterexample.input
+            for (SampleEQOracleProxy.InputOutputPair io : counterexample) {
+                Optional<ParameterizedSymbol> symbol = result.getSetup().getSymbols().stream()
+                    .filter(s -> s.getAliasOrComputedName().equals(io.getInput()))
+                    .findFirst();
+
+                // collect all outputs in order to compare it with the result of learner.getSystemOutputs()
+                if (symbol.isPresent()) {
+                    symbolsFromCounterexample.add(symbol.get());
+                    outputs.add(io.getOutput());
+                } else {
+                    throw new IllegalArgumentException("The symbol with the name '" + io.getInput() + "'"
+                        + " is not used in this test setup.");
+                }
+            }
+
+            final ReadOutputConfig config = new ReadOutputConfig(
+                result.getSetup().getPreSymbol(),
+                symbolsFromCounterexample,
+                result.getSetup().getPostSymbol(),
+                result.getSetup().getWebDriver()
+            );
+
+            // check if the given sample matches the behavior of the SUL
+            final List<String> results = sulUtils.getSystemOutputs(
+                user,
+                result.getProject(),
+                result.getSetup().getEnvironments().get(0),
+                config
+            ).stream()
+                .map(ExecuteResult::getOutput)
+                .toList();
+
+            if (!results.equals(outputs)) {
+                throw new IllegalArgumentException("At least one of the given samples for counterexamples"
+                    + " is not matching the behavior of the SUL.");
+            }
+        }
     }
 }
