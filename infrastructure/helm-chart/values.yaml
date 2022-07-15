@@ -9,9 +9,9 @@ selenium:
     replicas: 1
     resources:
       cpu: ".5"
-      memory: "1000Mi"
+      memory: "2000Mi"
   firefox:
     replicas: 1
     resources:
       cpu: ".5"
-      memory: "1000Mi"
+      memory: "2000Mi"
