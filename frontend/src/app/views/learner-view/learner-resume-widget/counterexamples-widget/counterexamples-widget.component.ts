@@ -139,9 +139,7 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
         }, 2000);
       })
       .catch(() => {
-        this.toastService.danger('The word is not a counterexample');
-      }).finally(() => {
-        this.loading = false;
+        this.toastService.danger('Failed to check if the word is a counterexample.');
       });
   }
 
