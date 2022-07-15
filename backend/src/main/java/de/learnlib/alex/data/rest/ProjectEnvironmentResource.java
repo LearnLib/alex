@@ -18,10 +18,12 @@ package de.learnlib.alex.data.rest;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
+import de.learnlib.alex.common.exceptions.RestException;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.dao.ProjectEnvironmentDAO;
 import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.ExecuteResult;
+import de.learnlib.alex.data.entities.OutputsJob;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.ProjectEnvironmentVariable;
 import de.learnlib.alex.data.entities.ProjectUrl;
@@ -29,8 +31,14 @@ import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.learning.entities.ReadOutputConfig;
 import de.learnlib.alex.learning.services.LearnerService;
 import de.learnlib.alex.security.AuthContext;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import javax.validation.ValidationException;
 import javax.ws.rs.core.MediaType;
@@ -38,6 +46,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -57,6 +66,8 @@ public class ProjectEnvironmentResource {
     private final SymbolDAO symbolDAO;
     private final LearnerService learnerService;
 
+    private final Map<String, OutputsJob> outputsJobMap = new ConcurrentHashMap<>();
+
     @Autowired
     public ProjectEnvironmentResource(
             AuthContext authContext,
@@ -73,11 +84,11 @@ public class ProjectEnvironmentResource {
     }
 
     @PostMapping(
-            value = "/{environmentId}/outputs",
+            value = "/{environmentId}/outputs/jobs",
             produces = MediaType.APPLICATION_JSON,
             consumes = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity<List<String>> getOutputs(
+    public ResponseEntity<OutputsJob> getOutputs(
             @PathVariable("projectId") Long projectId,
             @PathVariable("environmentId") Long environmentId,
             @RequestBody ReadOutputConfig config
@@ -107,11 +118,54 @@ public class ProjectEnvironmentResource {
         symbols.forEach(s -> symbolMap.put(s.getId(), s));
         config.getSymbols().forEach(ps -> ps.setSymbol(symbolMap.get(ps.getSymbol().getId())));
 
-        final var outputs = learnerService.readOutputs(user, project, env, config).stream()
-                .map(ExecuteResult::getOutput)
-                .collect(Collectors.toList());
+        final var job = new OutputsJob();
+        job.id = UUID.randomUUID().toString();
+        job.statedAt = Instant.now();
+        job.projectId = projectId;
+        job.environmentId = environmentId;
 
-        return ResponseEntity.ok(outputs);
+        outputsJobMap.put(job.id, job);
+        new Thread(() -> {
+            try {
+                final var outputs = learnerService.readOutputs(user, project, env, config).stream()
+                    .map(ExecuteResult::getOutput)
+                    .toList();
+                job.finishedAt = Instant.now();
+                job.success = true;
+                job.outputs = outputs;
+            } catch (Exception e) {
+                job.finishedAt = Instant.now();
+                job.message = e.getMessage();
+                job.success = false;
+            }
+        }).start();
+
+        return ResponseEntity.ok(job);
+    }
+
+    @GetMapping(
+        value = "/{environmentId}/outputs/jobs/{jobId}",
+        produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity<OutputsJob> getOutputs(
+        @PathVariable("projectId") Long projectId,
+        @PathVariable("environmentId") Long environmentId,
+        @PathVariable("jobId") String jobId
+    ) {
+        final var user = authContext.getUser();
+        final var env = environmentDAO.getByID(user, environmentId);
+        final var project = projectDAO.getByID(user, projectId);
+
+        if (!outputsJobMap.containsKey(jobId)) {
+            throw new RestException(HttpStatus.NOT_FOUND, "The job does not exist (anymore).");
+        }
+
+        final var job = outputsJobMap.get(jobId);
+        if (!job.projectId.equals(project.getId())) {
+            throw new RestException(HttpStatus.FORBIDDEN, "You are not allowed to access the job.");
+        }
+
+        return ResponseEntity.ok(job);
     }
 
     @GetMapping(
@@ -249,5 +303,13 @@ public class ProjectEnvironmentResource {
         final var user = authContext.getUser();
         final var updatedVariable = environmentDAO.updateVariable(user, projectId, environmentId, varId, variable);
         return ResponseEntity.ok(updatedVariable);
+    }
+
+    @Scheduled(fixedDelay = 300000)
+    public void removeOldOutputJobs() {
+        final var now = Instant.now();
+        new ArrayList<>(outputsJobMap.values()).stream()
+            .filter(job -> job.finishedAt != null && now.minus(Duration.ofMinutes(5)).isAfter(job.statedAt))
+            .forEach(job -> outputsJobMap.remove(job.id));
     }
 }

@@ -40,7 +40,7 @@ type Counterexample = Array<IOPair>;
   templateUrl: './counterexamples-widget.component.html',
   styleUrls: ['./counterexamples-widget.component.scss']
 })
-export class CounterexamplesWidgetComponent implements OnInit {
+export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
 
   @Output()
   counterexamples = new EventEmitter<Counterexample[]>();
@@ -57,6 +57,8 @@ export class CounterexamplesWidgetComponent implements OnInit {
   tmpCounterexamples: Counterexample[] = [];
 
   loading = false;
+
+  pollOutputJobInterval = -1;
 
   constructor(private learnerApi: LearnerApiService,
               private toastService: ToastService,
@@ -75,6 +77,12 @@ export class CounterexamplesWidgetComponent implements OnInit {
 
   ngOnInit(): void {
     this.selectedEnvironmentId = this.result.setup.environments[0].id;
+  }
+
+  ngOnDestroy(): void {
+    if (this.pollOutputJobInterval > -1) {
+      window.clearInterval(this.pollOutputJobInterval);
+    }
   }
 
   /**
@@ -99,13 +107,36 @@ export class CounterexamplesWidgetComponent implements OnInit {
   testAndAddCounterExample(): void {
     this.loading = true;
     this.testCounterExample()
-      .then(counterexample => {
-        this.toastService.success('The selected word is a counterexample');
-        for (let i = 0; i < counterexample.length; i++) {
-          this.counterexample[i].output = counterexample[i];
-        }
-        this.tmpCounterexamples.push(JSON.parse(JSON.stringify(this.counterexample)));
-        this.renewCounterexamples();
+      .then(o => {
+        this.pollOutputJobInterval = window.setInterval(() => {
+          this.projectEnvironmentApi.getOutputJob(this.result.project, this.selectedEnvironmentId, o.job.id).subscribe({
+            next: job => {
+              if (job.finishedAt != null) {
+                window.clearInterval(this.pollOutputJobInterval);
+                if (job.success) {
+                  if (!listEquals(o.hypOutput, job.outputs)) {
+                    this.toastService.success('The selected word is a counterexample');
+                    for (let i = 0; i < job.outputs.length; i++) {
+                      this.counterexample[i].output = job.outputs[i];
+                    }
+                    this.tmpCounterexamples.push(JSON.parse(JSON.stringify(this.counterexample)));
+                    this.renewCounterexamples();
+                  } else {
+                    this.toastService.info(`The word is not a counterexample.`);
+                  }
+                } else {
+                  this.toastService.danger(`Failed to check if the word is a counterexample: ${job.message}`);
+                }
+                this.loading = false;
+              }
+            },
+            error: () => {
+              this.toastService.danger(`Failed to get outputs.`);
+              this.loading = false;
+              window.clearInterval(this.pollOutputJobInterval);
+            }
+          });
+        }, 2000);
       })
       .catch(() => {
         this.toastService.danger('The word is not a counterexample');
@@ -159,9 +190,8 @@ export class CounterexamplesWidgetComponent implements OnInit {
       }
 
       const input = testSymbols.map(ts => ts.getAliasOrComputedName());
-      this.learnerResultStepApi.getHypothesisOutput(this.result.project, this.result.id, this.result.steps[this.result.steps.length - 1].id, input).subscribe(
-        hypOutput => {
-
+      this.learnerResultStepApi.getHypothesisOutput(this.result.project, this.result.id, this.result.steps[this.result.steps.length - 1].id, input).subscribe({
+        next: hypOutput => {
           const config = {
             preSymbol,
             symbols,
@@ -169,19 +199,16 @@ export class CounterexamplesWidgetComponent implements OnInit {
             driverConfig: setup.webDriver
           };
 
-          this.projectEnvironmentApi.getOutput(this.result.project, this.selectedEnvironmentId, config).subscribe(
-            sulOutput => {
-              if (!listEquals(hypOutput, sulOutput)) {
-                resolve(sulOutput);
-              } else {
-                reject();
-              }
-            },
-            console.error
-          );
+          this.projectEnvironmentApi.createOutputJob(this.result.project, this.selectedEnvironmentId, config).subscribe({
+            next: job => resolve({
+              hypOutput,
+              job
+            }),
+            error: err => console.error(err)
+          });
         },
-        console.error
-      );
+        error: err => console.error(err)
+      });
     });
   }
 }

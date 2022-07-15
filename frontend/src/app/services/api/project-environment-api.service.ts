@@ -38,8 +38,12 @@ export class ProjectEnvironmentApiService extends BaseApiService {
       );
   }
 
-  getOutput(projectId: number, envId: number, config: any): Observable<any> {
-    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/environments/${envId}/outputs`, config, this.defaultHttpOptions);
+  createOutputJob(projectId: number, envId: number, config: any): Observable<any> {
+    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/environments/${envId}/outputs/jobs`, config, this.defaultHttpOptions);
+  }
+
+  getOutputJob(projectId: number, envId: number, jobId: any): Observable<any> {
+    return this.http.get(`${this.env.apiUrl}/projects/${projectId}/environments/${envId}/outputs/jobs/${jobId}`, this.defaultHttpOptions);
   }
 
   create(projectId: number, env: ProjectEnvironment): Observable<ProjectEnvironment> {
