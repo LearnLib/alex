@@ -5,7 +5,7 @@ metadata:
   labels:
     app: selenium-node-firefox
 spec:
-  replicas: 1
+  replicas: {{ .Values.selenium.firefox.replicas }}
   selector:
     matchLabels:
       app: selenium-node-firefox
@@ -33,12 +33,9 @@ spec:
               value: "4442"
             - name: SE_EVENT_BUS_SUBSCRIBE_PORT
               value: "4443"
-            # Declare NODE_PORT manually and set default value (5555)
-            # Leaving it undeclared will result the following exception
-            # Caused by: org.openqa.selenium.json.JsonException: Unable to coerce to a number: BOOLEAN
             - name: NODE_PORT
               value: "5900"
           resources:
             limits:
-              memory: "1000Mi"
-              cpu: ".5"
+              memory: {{ .Values.selenium.firefox.resources.memory }}
+              cpu: {{ .Values.selenium.firefox.resources.cpu }}

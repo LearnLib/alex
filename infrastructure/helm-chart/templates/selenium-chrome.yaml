@@ -5,7 +5,7 @@ metadata:
   labels:
     app: selenium-node-chrome
 spec:
-  replicas: 1
+  replicas: {{ .Values.selenium.chrome.replicas }}
   selector:
     matchLabels:
       app: selenium-node-chrome
@@ -33,12 +33,9 @@ spec:
               value: "4442"
             - name: SE_EVENT_BUS_SUBSCRIBE_PORT
               value: "4443"
-            # Declare NODE_PORT manually and set default value (5900)
-            # Leaving it undeclared will result the following exception
-            # Caused by: org.openqa.selenium.json.JsonException: Unable to coerce to a number: BOOLEAN
             - name: NODE_PORT
               value: "5900"
           resources:
             limits:
-              memory: "1000Mi"
-              cpu: ".5"
+              memory: {{ .Values.selenium.chrome.resources.memory }}
+              cpu: {{ .Values.selenium.chrome.resources.cpu }}
