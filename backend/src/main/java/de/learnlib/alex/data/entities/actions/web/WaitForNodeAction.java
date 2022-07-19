@@ -124,10 +124,22 @@ public class WaitForNodeAction extends WebSymbolAction {
                     nodeWithVariables, waitCriterion);
             switch (waitCriterion) {
                 case VISIBLE:
-                    wait.until(wd -> connector.getElement(nodeWithVariables).isDisplayed());
+                    wait.until(wd -> {
+                        try {
+                            return connector.getElement(nodeWithVariables).isDisplayed();
+                        } catch (Exception e) {
+                            return false;
+                        }
+                    });
                     break;
                 case INVISIBLE:
-                    wait.until(wd -> !connector.getElement(nodeWithVariables).isDisplayed());
+                    wait.until(wd -> {
+                        try {
+                            return !connector.getElement(nodeWithVariables).isDisplayed();
+                        } catch (Exception e) {
+                            return false;
+                        }
+                    });
                     break;
                 case ADDED:
                     wait.until(wd -> {
@@ -151,8 +163,12 @@ public class WaitForNodeAction extends WebSymbolAction {
                     break;
                 case CLICKABLE:
                     wait.until(wd -> {
-                        final WebElement element = connector.getElement(nodeWithVariables);
-                        return element.isDisplayed() && element.isEnabled();
+                        try {
+                            final WebElement element = connector.getElement(nodeWithVariables);
+                            return element.isDisplayed() && element.isEnabled();
+                        } catch (Exception e) {
+                            return false;
+                        }
                     });
                     break;
                 default:
