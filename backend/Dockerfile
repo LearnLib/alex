@@ -23,5 +23,8 @@ EXPOSE 8000
 
 CMD java -jar /usr/share/java/alex/alex.jar \
     --ltsmin.path=/opt/ltsmin/bin \
-    --selenium.grid.host=selenium-hub \
-    --selenium.grid.port=4444
+    --spring.datasource.url="jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}" \
+    --spring.datasource.username="${DATABASE_USER}" \
+    --spring.datasource.password="${DATABASE_PASSWORD}" \
+    --selenium.grid.host="${GRID_HOST}" \
+    --selenium.grid.port="${GRID_PORT}"

@@ -11,7 +11,7 @@ spec:
       targetPort: 4200
   selector:
     app: frontend
-  type: NodePort
+  type: ClusterIP
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -27,7 +27,7 @@ data:
   ALEX_BACKEND_ADDRESS: http://{{ .Values.ingress.host }}
   ALEX_BACKEND_PORT: "80"
   {{- end }}
-  BASE_HREF: {{ .Values.alex.frontend.baseHref }}
+  BASE_HREF: {{ .Values.frontend.baseHref }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -48,7 +48,7 @@ spec:
       containers:
         - name: frontend
           image: {{ .Values.frontendImage }}
-          imagePullPolicy: {{ .Values.imageConfig.pullPolicy }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
           envFrom:
             - configMapRef:
                 name: frontend

@@ -62,6 +62,7 @@ services:
             - DATABASE_PORT=5432
             - DATABASE_NAME=alex
             - DATABASE_USER=sa
+            - DATABASE_PASSWORD=sa
             - GRID_HOST=selenium-hub
             - GRID_PORT=4444
         volumes:

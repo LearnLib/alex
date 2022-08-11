@@ -1,17 +1,80 @@
-# base values file
+# The environment where ALEX is deployed.
+# Valid values are 'local', 'staging' and 'production'
+serverTier: production
 
-registry:
-  base:  ghcr.io/learnlib/alex
+# The policy according to which images are pulled.
+imagePullPolicy: IfNotPresent
+
+# The storage class name to use for persistent volumes.
+storageClassName: standard
+
+# The image used for the frontend
+frontendImage: ghcr.io/learnlib/alex/alex-frontend:unstable
+
+# The image used for the backend
+backendImage: ghcr.io/learnlib/alex/alex-backend:unstable
+
+# Configuration for the cert manager.
 certManager:
-  email:
+  # The email the certificate is assigned to.
+  email: demo@example.com
+
+# Configuration for ingress.
+ingress:
+  # The host where ALEX is running on.
+  host: app.example.com
+  # The path where the app is deployed to.
+  # Use "/" if the app should be deployed on the server root.
+  # If the app is deployed on a sub path, e.g. /sub-path, leave the trailing slash.
+  # Ensure that this value is aligned with frontend.baseHref.
+  deployUrl: /
+
+# Configuration for frontend of ALEX.
+frontend:
+  # The value that is injected in the <base href="..."> tag.
+  # Should match with ingress.deployUrl with the trailing slash.
+  baseHref: /
+
+# Configuration for backend of ALEX.
+backend:
+  # The storage size.
+  storage: "20Gi"
+
+# Configuration for the database.
+database:
+  # The name of the database.
+  name: alex
+  # The CPU limit.
+  cpu: "1000m"
+  # The memory limit.
+  memory: "1Gi"
+  # The storage size.
+  storage: "20Gi"
+
+# Configuration for selenium related pods.
 selenium:
+
+  # Configuration for the selenium hub.
+  hub:
+    # The amount of CPU units for the service.
+    cpu: ".5"
+    # The amount of memory for the service.
+    memory: "1Gi"
+
+  # Configuration for Chrome browsers.
   chrome:
+    # The number of available browser instances.
     replicas: 1
-    resources:
-      cpu: ".5"
-      memory: "2000Mi"
+    # The CPU limit.
+    cpu: ".5"
+    # The memory limit.
+    memory: "2Gi"
+
+  # Configuration for Firefox browsers..
   firefox:
+    # The number of available browser instances.
     replicas: 1
-    resources:
-      cpu: ".5"
-      memory: "2000Mi"
+    # The CPU limit.
+    cpu: ".5"
+    # The memory limit.
+    memory: "2Gi"

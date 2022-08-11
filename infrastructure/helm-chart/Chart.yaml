@@ -1,6 +1,7 @@
 apiVersion: v2
 name: alex
 description: A Helm chart for ALEX
+icon: https://learnlib.github.io/alex/assets/images/logo.png
 
 # A chart can be either an 'application' or a 'library' chart.
 #

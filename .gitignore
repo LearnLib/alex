@@ -22,6 +22,8 @@ frontend/src/main/javascript/npm-debug\.log
 # helm value files
 infrastructure/helm-chart/values-temp.yml
 infrastructure/helm-chart/values-temp.yaml
+infrastructure/helm-chart/secrets.yml
+infrastructure/helm-chart/secrets.yaml
 
 # uploaded files
 main/uploads

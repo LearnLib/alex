@@ -11,26 +11,60 @@ spec:
       targetPort: 8000
   selector:
     app: backend
-  type: NodePort
+  type: ClusterIP
 ---
-kind: ConfigMap
 apiVersion: v1
+kind: ConfigMap
 metadata:
-  name: backend
+  name: backend-config
 data:
-  application.properties: |-
-    spring.jpa.hibernate.ddl-auto: validate
-    spring.datasource.url: jdbc:postgresql://postgres:5432/{{ .Values.database.name }}
-    spring.datasource.username: {{ .Values.database.user }}
-    spring.datasource.password: {{ .Values.database.password }}
+  GRID_HOST: "selenium-hub"
+  GRID_PORT: "4444"
+  DATABASE_HOST: "postgres"
+  DATABASE_PORT: "5432"
+  DATABASE_NAME: {{ .Values.database.name }}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: backend-pv-volume
+  labels:
+    app: backend
+spec:
+  storageClassName: {{ .Values.storageClassName }}
+  capacity:
+    storage: {{ .Values.backend.storage }}
+  claimRef:
+    namespace: {{ .Release.Namespace }}
+    name: backend-pv-claim
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/data/alex/backend"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: backend-pv-claim
+  labels:
+    app: backend
+spec:
+  storageClassName: {{ .Values.storageClassName }}
+  volumeName: backend-pv-volume
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.backend.storage }}
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: backend
   labels:
     app: backend
 spec:
+  serviceName: backend
   replicas: 1
   selector:
     matchLabels:
@@ -43,21 +77,26 @@ spec:
       containers:
         - name: backend
           image: {{ .Values.backendImage }}
-          imagePullPolicy: {{ .Values.imageConfig.pullPolicy }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: backend-config
           env:
-            - name: GRID_HOST
-              value: "selenium-hub"
-            - name: GRID_PORT
-              value: "4444"
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: alex-secrets
+                  key: databaseUser
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: alex-secrets
+                  key: databasePassword
           volumeMounts:
-            - name: config
-              mountPath: /var/lib/alex/config/
-              readOnly: true
+            - name: backend-data
+              mountPath: /var/lib/alex/data
       restartPolicy: Always
       volumes:
-        - name: config
-          configMap:
-            name: backend
-            items:
-              - key: "application.properties"
-                path: "application.properties"
+        - name: backend-data
+          persistentVolumeClaim:
+            claimName: backend-pv-claim

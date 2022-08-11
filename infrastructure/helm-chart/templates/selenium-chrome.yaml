@@ -37,5 +37,5 @@ spec:
               value: "5900"
           resources:
             limits:
-              memory: {{ .Values.selenium.chrome.resources.memory }}
-              cpu: {{ .Values.selenium.chrome.resources.cpu }}
+              memory: {{ .Values.selenium.chrome.memory }}
+              cpu: {{ .Values.selenium.chrome.cpu }}

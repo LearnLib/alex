@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: postgres
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: postgres
   ports:
@@ -19,21 +19,40 @@ metadata:
     app: postgres
 data:
   POSTGRES_DB: {{.Values.database.name}}
-  POSTGRES_USER: {{.Values.database.user}}
-  # todo propagate passwords by kubernetes secrets
-  POSTGRES_PASSWORD: {{.Values.database.password}}
   PGDATA: /var/lib/postgresql/data/pgdata
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-pv-volume
+  labels:
+    app: postgres
+spec:
+  storageClassName: {{ .Values.storageClassName }}
+  capacity:
+    storage: {{ .Values.database.storage }}
+  claimRef:
+    namespace: {{ .Release.Namespace }}
+    name: postgres-pv-claim
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/data/alex/postgres"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: postgres-pv-claim
+  labels:
+    app: postgres
 spec:
+  storageClassName: {{ .Values.storageClassName }}
+  volumeName: postgres-pv-volume
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 10Gi
+      storage: {{ .Values.database.storage }}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -59,9 +78,24 @@ spec:
           envFrom:
             - configMapRef:
                 name: postgres
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: alex-secrets
+                  key: databaseUser
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: alex-secrets
+                  key: databasePassword
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: postgres-volume
+          resources:
+            limits:
+              memory: {{ .Values.database.memory }}
+              cpu: {{ .Values.database.cpu }}
       restartPolicy: Always
       volumes:
         - name: postgres-volume

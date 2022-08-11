@@ -17,8 +17,8 @@ module.exports = {
                 title: 'Getting started',
                 collapsable: true,
                 children: [
-                    ['/contents/getting-started/installation/', 'Installation'],
-                    ['/contents/getting-started/configuration/', 'Configuration']
+                    ['/contents/getting-started/installation-k8s/', 'Installation (Kubernetes)'],
+                    ['/contents/getting-started/installation-docker/', 'Installation (Docker)']
                 ]
             },
             {
@@ -44,13 +44,16 @@ module.exports = {
                 ]
             },
             {
-                title: 'Developer docs',
+                title: 'Development',
                 collapsable: true,
                 children: [
-                    ['/contents/dev-docs/development/', 'Develop'],
+                    ['/contents/dev-docs/development-k8s/', 'Development (Kubernetes)'],
+                    ['/contents/dev-docs/development-docker/', 'Development (Docker)'],
+                    ['/contents/dev-docs/technologies/', 'Technologies'],
                     ['/contents/dev-docs/rest-api/', 'REST API'],
                     ['/contents/dev-docs/cli/', 'CLI'],
-                    ['/contents/dev-docs/dependency/', 'ALEX as dependency']
+                    ['/contents/dev-docs/dependency/', 'ALEX as dependency'],
+                    ['/contents/dev-docs/release/', 'Performing a release']
                 ]
             },
             ['/contents/about/', 'About']

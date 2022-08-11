@@ -37,5 +37,5 @@ spec:
               value: "5900"
           resources:
             limits:
-              memory: {{ .Values.selenium.firefox.resources.memory }}
-              cpu: {{ .Values.selenium.firefox.resources.cpu }}
+              memory: {{ .Values.selenium.firefox.memory }}
+              cpu: {{ .Values.selenium.firefox.cpu }}
