@@ -8,6 +8,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   build-backend:
     runs-on: ubuntu-latest
@@ -177,6 +180,11 @@ jobs:
         with:
           node-version: '16'
       - run: cd ./docs && npm install -g npm && npm ci && npm run build
+      - name: Upload docs
+        uses: actions/upload-artifact@v3
+        with:
+          name: docs
+          path: ./docs/.vuepress/dist/
 
   package-docs:
     needs: build-docs
@@ -253,3 +261,24 @@ jobs:
           OSSRH_TOKEN_USERNAME: ${{ secrets.OSSRH_TOKEN_USERNAME }}
           OSSRH_TOKEN_PASSWORD: ${{ secrets.OSSRH_TOKEN_PASSWORD }}
         run: cd backend && mvn -B -s $GITHUB_WORKSPACE/.github/settings.xml install deploy -DskipTests
+
+  pages:
+    needs:
+      - build-docs
+      - release-images
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Create book directory
+        run: cd website && mkdir book
+      - name: Download docs
+        uses: actions/download-artifact@v3
+        with:
+          name: docs
+          path: ./website/book
+      - name: Publish pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: website
