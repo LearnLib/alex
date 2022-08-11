@@ -264,8 +264,10 @@ jobs:
 
   pages:
     needs:
-      - build-docs
-      - release-images
+      - package-frontend
+      - package-backend
+      - package-cli
+      - package-docs
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     steps:
