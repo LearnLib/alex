@@ -2,6 +2,10 @@ name: Release
 
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'The version of the release'
+        required: true
 
 jobs:
   release-cli-to-npm:
@@ -13,7 +17,7 @@ jobs:
       - name: Setup NodeJS
         uses: actions/setup-node@v1
         with:
-          node-version: 14
+          node-version: 16
           registry-url: https://registry.npmjs.org/
 
       - name: Publish CLI
@@ -29,13 +33,15 @@ jobs:
 
       - name: Tag latest images with release version
         run: |
-          VERSION="3.0.0"
+          VERSION="@@@${{github.event.inputs.version}}@@@"
           IMAGES="alex-frontend alex-backend alex-cli alex-docs"
 
           for img in $IMAGES
           do
             echo "ghcr.io/learnlib/alex/$img:$VERSION"
-            docker pull "ghcr.io/learnlib/alex/$img:latest"
-            docker tag "ghcr.io/learnlib/alex/$img:latest" "ghcr.io/learnlib/alex/$img:$VERSION"
+            docker pull "ghcr.io/learnlib/alex/$img:unstable"
+            docker tag "ghcr.io/learnlib/alex/$img:unstable" "ghcr.io/learnlib/alex/$img:$VERSION"
+            docker tag "ghcr.io/learnlib/alex/$img:unstable" "ghcr.io/learnlib/alex/$img:latest"
             docker push "ghcr.io/learnlib/alex/$img:$VERSION"
+            docker push "ghcr.io/learnlib/alex/$img:latest"
           done

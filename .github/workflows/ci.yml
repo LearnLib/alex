@@ -3,12 +3,10 @@ name: CI
 on:
   push:
     branches:
-      - developer
-      - master
+      - main
   pull_request:
     branches:
-      - developer
-      - master
+      - main
 
 jobs:
   build-backend:
@@ -177,7 +175,7 @@ jobs:
       - name: Build docs
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '16'
       - run: cd ./docs && npm install -g npm && npm ci && npm run build
 
   package-docs:

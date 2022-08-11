@@ -32,17 +32,7 @@ runs:
       run: |
         IMAGE_ID=ghcr.io/learnlib/alex/${{ inputs.image }}
         BRANCH=${GITHUB_REF#"refs/heads/"}
-        VERSION=
-
-        if [ "$BRANCH" == "developer" ]
-        then
-          VERSION="unstable"
-        elif [ "$BRANCH" == "master" ]
-        then
-          VERSION="latest"
-        else
-          VERSION="$GITHUB_SHA"
-        fi
+        VERSION=unstable
 
         docker load < ${{ inputs.image }}-image.tar.gz
         docker tag ${{ inputs.image }}:$GITHUB_SHA $IMAGE_ID:$VERSION
