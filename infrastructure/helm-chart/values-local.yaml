@@ -2,10 +2,9 @@ serverTier: local
 imagePullPolicy: Never
 database:
   name: alex
-  user: sa
-  password: sa
 ingress:
   host: alex
   deployUrl: /
+  class: public
 frontend:
   baseHref: /

@@ -28,6 +28,8 @@ ingress:
   # If the app is deployed on a sub path, e.g. /sub-path, leave the trailing slash.
   # Ensure that this value is aligned with frontend.baseHref.
   deployUrl: /
+  # The ingress class.
+  class: public
 
 # Configuration for frontend of ALEX.
 frontend:
