@@ -37,7 +37,7 @@ spec:
   accessModes:
     - ReadWriteMany
   hostPath:
-    path: "/mnt/data/alex/postgres"
+    path: {{ .Values.database.hostPath }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

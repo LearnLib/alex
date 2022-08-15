@@ -41,6 +41,8 @@ frontend:
 backend:
   # The storage size.
   storage: "20Gi"
+  # The path where the backend files are stored.
+  hostPath: "/mnt/data/alex/backend"
 
 # Configuration for the database.
 database:
@@ -52,6 +54,8 @@ database:
   memory: "1Gi"
   # The storage size.
   storage: "20Gi"
+  # The path where the database is stored.
+  hostPath: "/mnt/data/alex/postgres"
 
 # Configuration for selenium related pods.
 selenium:
