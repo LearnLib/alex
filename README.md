@@ -1,4 +1,4 @@
-![master branch ci](https://github.com/learnlib/alex/actions/workflows/ci.yml/badge.svg?branch=developer)
+![main branch ci](https://github.com/learnlib/alex/actions/workflows/ci.yml/badge.svg?branch=main)
 ![version](https://img.shields.io/badge/version-v3.0.0-blue)
 
 <p align="center">
@@ -15,10 +15,10 @@ an automaton model (a [Mealy machine][mealy]), which represents the behavior of 
 
 ## Documentation
 
-* [User manual](https://learnlib.github.io/alex/book/3.0.0/)
-* [Installation](https://learnlib.github.io/alex/book/3.0.0/contents/getting-started/installation/)
-* [Examples](https://learnlib.github.io/alex/book/3.0.0/contents/examples/todomvc/)
-* [Developer docs](https://learnlib.github.io/alex/book/3.0.0/contents/dev-docs/development/)
+* [User manual](https://learnlib.github.io/alex/book/)
+* [Installation](https://learnlib.github.io/alex/book/contents/getting-started/installation/)
+* [Examples](https://learnlib.github.io/alex/book/contents/examples/todomvc/)
+* [Developer docs](https://learnlib.github.io/alex/book/contents/dev-docs/development/)
 
 ## Background
 
