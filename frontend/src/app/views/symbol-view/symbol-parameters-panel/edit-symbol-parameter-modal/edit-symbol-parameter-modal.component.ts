@@ -50,9 +50,9 @@ export class EditSymbolParameterModalComponent {
     this.parameter.name = values.name;
     this.parameter.parameterType = values.parameterType;
 
-    this.symbolParameterApi.update(this.symbol.project, this.symbol.id, this.parameter).subscribe(
-      param => this.modal.close(param),
-      res => this.errorMessage = res.error.message
-    );
+    this.symbolParameterApi.update(this.symbol.project, this.symbol.id, this.parameter).subscribe({
+      next: param => this.modal.close(param),
+      error: res => this.errorMessage = res.error.message
+    });
   }
 }

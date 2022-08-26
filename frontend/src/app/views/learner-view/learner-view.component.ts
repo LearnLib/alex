@@ -89,10 +89,10 @@ export class LearnerViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.symbolApi.getAll(this.project.id).subscribe(
-      symbols => this.symbols = symbols,
-      console.error
-    );
+    this.symbolApi.getAll(this.project.id).subscribe({
+      next: symbols => this.symbols = symbols,
+      error: console.error
+    });
 
     this.currentRoute.queryParamMap.subscribe(params => {
       if (params.has('testNo')) {
@@ -164,8 +164,7 @@ export class LearnerViewComponent implements OnInit, OnDestroy {
             this.notificationService.notify('ALEX has finished learning the application.');
           });
         }
-      },
-      console.error
+      }
     );
   }
 
@@ -176,23 +175,23 @@ export class LearnerViewComponent implements OnInit, OnDestroy {
     const config = JSON.parse(JSON.stringify(this.resumeConfig));
     config.symbolsToAdd.forEach(ps => ps.symbol = {id: ps.symbol.id});
 
-    this.learnerApi.resume(this.project.id, this.currentResult.testNo, config).subscribe(
-      result => {
+    this.learnerApi.resume(this.project.id, this.currentResult.testNo, config).subscribe({
+      next: result => {
         this.currentResult = null;
         this.status = null;
         this.fetchLearnerResultAndStartPolling(result.testNo);
       },
-      res => {
+      error: res => {
         this.toastService.danger('<p><strong>Resume learning failed!</strong></p>' + res.error.message);
       }
-    );
+    });
   }
 
   abort(): void {
-    this.learnerApi.stop(this.project.id, this.currentResult.testNo).subscribe(
-      () => this.toastService.info('The process has been aborted and will terminate as soon as possible.'),
-      console.error
-    );
+    this.learnerApi.stop(this.project.id, this.currentResult.testNo).subscribe({
+      next: () => this.toastService.info('The process has been aborted and will terminate as soon as possible.'),
+      error: console.error
+    });
   }
 
   canAbort() {

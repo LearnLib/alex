@@ -57,13 +57,6 @@ export class SymbolGroupApiService extends BaseApiService {
       );
   }
 
-  importSymbolGroups(projectId: number, symbolGroupsImportable: any): Observable<SymbolGroup[]> {
-    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/groups/import`, symbolGroupsImportable, this.defaultHttpOptions)
-      .pipe(
-        map((body: any) => body.map(g => new SymbolGroup(g)))
-      );
-  }
-
   /**
    * Updates an existing symbol group.
    *

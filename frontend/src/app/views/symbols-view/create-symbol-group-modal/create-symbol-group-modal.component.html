@@ -32,6 +32,13 @@
       <label>Parent group</label>
       <div class="card">
         <div class="card-body p-2" style="max-height: 240px; overflow: auto">
+          <loading-indicator
+            *ngIf="symbolGroupsLoading$ | async"
+            message="Loading symbol groups..."
+            class="d-block m-2"
+          >
+          </loading-indicator>
+
           <simple-symbol-group-tree
             (groupSelected)="selectSymbolGroup($event)"
             [groups]="groups"

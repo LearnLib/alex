@@ -47,9 +47,9 @@ export class EditWebhookModalComponent {
     wh.url = this.form.controls.url.value;
     wh.method = this.form.controls.method.value;
 
-    this.webhookApi.update(wh).subscribe(
-      updatedWh => this.modal.close(updatedWh),
-      res => this.errorMessage = res.error.message
-    );
+    this.webhookApi.update(wh).subscribe({
+      next: updatedWh => this.modal.close(updatedWh),
+      error: res => this.errorMessage = res.error.message
+    });
   }
 }

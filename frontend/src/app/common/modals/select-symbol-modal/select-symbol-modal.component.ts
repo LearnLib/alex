@@ -20,12 +20,16 @@ import { SymbolGroupApiService } from '../../../services/api/symbol-group-api.se
 import { AppStoreService } from '../../../services/app-store.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Component, OnInit } from '@angular/core';
+import { handleLoadingIndicator } from '../../../operators/handle-loading-indicator';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'symbol-select-modal',
   templateUrl: './select-symbol-modal.component.html'
 })
 export class SelectSymbolModalComponent implements OnInit {
+
+  public readonly symbolGroupsLoading$ = new BehaviorSubject<boolean>(false);
 
   /** The selected symbol. */
   public selectedSymbol: AlphabetSymbol = null;
@@ -40,9 +44,11 @@ export class SelectSymbolModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.symbolGroupApi.getAll(this.appStore.project.id).subscribe(
-      groups => this.groups = groups
-    );
+    this.symbolGroupApi.getAll(this.appStore.project.id)
+      .pipe(handleLoadingIndicator(this.symbolGroupsLoading$))
+      .subscribe({
+        next: groups => this.groups = groups
+      });
   }
 
   selectSymbol(symbol: AlphabetSymbol): void {

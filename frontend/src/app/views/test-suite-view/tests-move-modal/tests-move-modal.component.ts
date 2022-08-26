@@ -79,14 +79,14 @@ export class TestsMoveModalComponent implements OnInit {
 
     const testIds: number[] = this.tests.map(t => t.id);
     const targetId: number = this.selectedTestSuite.id;
-    this.testApi.moveMany(this.project.id, testIds, targetId).subscribe(
-      movedTests => {
+    this.testApi.moveMany(this.project.id, testIds, targetId).subscribe({
+      next: movedTests => {
         this.toastService.success('The tests have been moved.');
         this.modal.close(movedTests);
       },
-      res => {
+      error: res => {
         this.errorMessage = `The tests could not be moved. ${res.error.message}`;
       }
-    );
+    });
   }
 }

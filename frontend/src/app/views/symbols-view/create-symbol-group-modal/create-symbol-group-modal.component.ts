@@ -23,6 +23,8 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { FormUtilsService } from '../../../services/form-utils.service';
+import { BehaviorSubject } from 'rxjs';
+import { handleLoadingIndicator } from '../../../operators/handle-loading-indicator';
 
 /**
  * The controller for the modal dialog that handles the creation of a new symbol group.
@@ -32,6 +34,8 @@ import { FormUtilsService } from '../../../services/form-utils.service';
   templateUrl: './create-symbol-group-modal.component.html'
 })
 export class CreateSymbolGroupModalComponent implements OnInit {
+
+  readonly symbolGroupsLoading$ = new BehaviorSubject<boolean>(false);
 
   /** All available groups of the project. */
   groups: SymbolGroup[];
@@ -61,9 +65,11 @@ export class CreateSymbolGroupModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.symbolGroupApi.getAll(this.project.id).subscribe(
-      groups => this.groups = groups
-    );
+    this.symbolGroupApi.getAll(this.project.id)
+      .pipe(handleLoadingIndicator(this.symbolGroupsLoading$))
+      .subscribe({
+        next: groups => this.groups = groups
+      });
   }
 
   /**
@@ -77,15 +83,15 @@ export class CreateSymbolGroupModalComponent implements OnInit {
     group.name = this.form.controls.name.value;
     group.project = this.project.id;
 
-    this.symbolGroupApi.create(this.project.id, group).subscribe(
-      createdGroup => {
+    this.symbolGroupApi.create(this.project.id, group).subscribe({
+      next: createdGroup => {
         this.toastService.success('Symbol group <strong>' + createdGroup.name + '</strong> created');
         this.modal.close(createdGroup);
       },
-      response => {
-        this.errorMessage = response.error.message;
+      error: res => {
+        this.errorMessage = res.error.message;
       }
-    );
+    });
   }
 
   selectSymbolGroup(group: SymbolGroup): void {

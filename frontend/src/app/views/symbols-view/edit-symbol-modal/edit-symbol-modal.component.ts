@@ -56,14 +56,14 @@ export class EditSymbolModalComponent {
     this.symbol.expectedResult = this.form.controls.expectedResult.value;
 
     // update the symbol and close the modal dialog on success with the updated symbol
-    this.symbolApi.update(this.symbol.toJson()).subscribe(
-      updatedSymbol => {
+    this.symbolApi.update(this.symbol.toJson()).subscribe({
+      next: updatedSymbol => {
         this.toastService.success('Symbol updated');
         this.modal.close(updatedSymbol);
       },
-      res => {
+      error: res => {
         this.errorMessage = res.error.message;
       }
-    );
+    });
   }
 }

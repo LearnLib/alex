@@ -36,10 +36,10 @@ export class TestConfigsViewComponent {
               private testApi: TestApiService,
               private toastService: ToastService) {
 
-    this.testConfigApi.getAll(this.appStore.project.id).subscribe(
-      testConfigs => this.testConfigs = testConfigs,
-      console.error
-    );
+    this.testConfigApi.getAll(this.appStore.project.id).subscribe({
+      next: testConfigs => this.testConfigs = testConfigs,
+      error: console.error
+    });
 
     this.testApi.getRoot(this.appStore.project.id).subscribe(root => this.root = root);
   }

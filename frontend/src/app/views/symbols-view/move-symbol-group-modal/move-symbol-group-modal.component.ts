@@ -64,16 +64,16 @@ export class MoveSymbolGroupModalComponent implements OnInit {
     const fromGroupId = this.group.parent;
     this.group.parent = this.selectedGroup == null ? null : this.selectedGroup.id;
 
-    this.symbolGroupApi.move(this.group).subscribe(
-      (movedGroup: SymbolGroup) => {
+    this.symbolGroupApi.move(this.group).subscribe({
+      next: (movedGroup: SymbolGroup) => {
         this.toastService.success('The group has been moved');
         this.modal.close(movedGroup);
       },
-      res => {
+      error: res => {
         this.errorMessage = `The group could not be moved. ${res.error.message}`;
         this.group.parent = fromGroupId;
       }
-    );
+    });
   }
 
   /**

@@ -58,6 +58,12 @@
                 <symbol-search-form (selected)="addSymbolStep($event)" [groups]="groups"></symbol-search-form>
               </div>
 
+              <loading-indicator
+                *ngIf="symbolGroupsLoading$ | async" message="Loading symbols..."
+                class="d-block mt-3"
+              >
+              </loading-indicator>
+
               <simple-symbol-group-tree
                 (symbolSelected)="addSymbolStep($event)"
                 [groups]="groups"

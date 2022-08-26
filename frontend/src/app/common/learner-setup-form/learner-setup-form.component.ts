@@ -34,6 +34,8 @@ import { SymbolGroupApiService } from '../../services/api/symbol-group-api.servi
 import { LtlFormulaSuite } from '../../entities/ltl-formula-suite';
 import { LtsFormulaSuiteApiService } from '../../services/api/lts-formula-suite-api.service';
 import { SymbolGroupUtils } from '../../utils/symbol-group-utils';
+import { BehaviorSubject } from 'rxjs';
+import { handleLoadingIndicator } from '../../operators/handle-loading-indicator';
 
 @Component({
   selector: 'learner-setup-form',
@@ -47,6 +49,8 @@ export class LearnerSetupFormComponent implements OnInit {
 
   /** The constants for learnAlgorithm names. */
   learningAlgorithms: any = learningAlgorithm;
+
+  readonly symbolGroupsLoading$ = new BehaviorSubject<boolean>(false);
 
   groups: SymbolGroup[] = [];
 
@@ -67,19 +71,21 @@ export class LearnerSetupFormComponent implements OnInit {
     this.selectedEnvironments.addItems(this.project.environments);
     this.selectedEnvironments.selectMany(this.setup.environments);
 
-    this.symbolGroupApi.getAll(this.project.id).subscribe(
-      groups => this.groups = groups,
-      console.error
-    );
+    this.symbolGroupApi.getAll(this.project.id)
+      .pipe(handleLoadingIndicator(this.symbolGroupsLoading$))
+      .subscribe({
+        next: groups => this.groups = groups,
+        error: console.error
+      });
 
-    this.formulaSuiteApi.getAll(this.project.id).subscribe(
-      formulaSuites => {
+    this.formulaSuiteApi.getAll(this.project.id).subscribe({
+      next: formulaSuites => {
         this.formulaSuites = formulaSuites;
         this.selectedFormulaSuites.addItems(this.formulaSuites);
         this.selectedFormulaSuites.selectMany(this.setup.modelCheckingConfig.formulaSuites);
       },
-      console.error
-    );
+      error: console.error
+    });
   }
 
   selectResetSymbol(): void {

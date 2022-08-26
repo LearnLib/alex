@@ -75,11 +75,9 @@ export class CreateSymbolModalComponent implements OnInit {
    */
   createSymbolAndContinue(): void {
     this.errorMessage = null;
-    this._createSymbol().subscribe(
-      () => {
-      },
-      response => this.errorMessage = response.error.message
-    );
+    this._createSymbol().subscribe({
+      error: response => this.errorMessage = response.error.message
+    });
   }
 
   /**
@@ -87,10 +85,10 @@ export class CreateSymbolModalComponent implements OnInit {
    * the symbol will be put in the default group with the id 0. Closes the modal on success.
    */
   createSymbol(): void {
-    this._createSymbol().subscribe(
-      () => this.modal.dismiss(),
-      response => this.errorMessage = response.error.message
-    );
+    this._createSymbol().subscribe({
+      next: () => this.modal.dismiss(),
+      error: response => this.errorMessage = response.error.message
+    });
   }
 
   selectSymbolGroup(group: SymbolGroup): void {

@@ -71,6 +71,12 @@
         </symbol-search-form>
       </div>
 
+      <loading-indicator
+        *ngIf="store.symbolGroupsLoading$ | async"
+        [message]="'Loading symbols...'"
+      >
+      </loading-indicator>
+
       <div *ngFor="let group of store.orderedGroups$ | async" class="mb-4">
         <symbols-symbol-group-tree [group]="group"></symbols-symbol-group-tree>
       </div>

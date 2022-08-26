@@ -63,10 +63,10 @@ export class RootViewComponent implements OnInit {
       }
     }
 
-    this.settingsApi.get().subscribe(
-      settings => this.settings = settings,
-      console.error
-    );
+    this.settingsApi.get().subscribe({
+      next: settings => this.settings = settings,
+      error: console.error
+    });
   }
 
   handleLoggedIn(): void {

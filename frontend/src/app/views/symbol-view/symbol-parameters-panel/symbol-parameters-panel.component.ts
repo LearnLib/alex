@@ -93,25 +93,25 @@ export class SymbolParametersPanelComponent {
 
   removeInput(index: number): void {
     const param = this.symbol.inputs[index];
-    this.symbolParameterApi.remove(this.symbol.project, this.symbol.id, param.id).subscribe(
-      () => {
+    this.symbolParameterApi.remove(this.symbol.project, this.symbol.id, param.id).subscribe({
+      next: () => {
         const inputs = [...this.symbol.inputs];
         inputs.splice(index, 1);
         this.inputsChange.emit(inputs);
       },
-      res => this.toastService.danger(`The input parameter could not be deleted. ${res.error.message}`)
-    );
+      error: res => this.toastService.danger(`The input parameter could not be deleted. ${res.error.message}`)
+    });
   }
 
   removeOutput(index: number): void {
     const param = this.symbol.outputs[index];
-    this.symbolParameterApi.remove(this.symbol.project, this.symbol.id, param.id).subscribe(
-      () => {
+    this.symbolParameterApi.remove(this.symbol.project, this.symbol.id, param.id).subscribe({
+      next: () => {
         const outputs = [...this.symbol.outputs];
         outputs.splice(index, 1);
         this.outputsChange.emit(outputs);
       },
-      res => this.toastService.danger(`The output parameter could not be deleted. ${res.error.message}`)
-    );
+      error: res => this.toastService.danger(`The output parameter could not be deleted. ${res.error.message}`)
+    });
   }
 }

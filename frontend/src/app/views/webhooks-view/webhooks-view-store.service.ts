@@ -83,26 +83,26 @@ export class WebhooksViewStoreService {
   }
 
   delete(webhook: Webhook): void {
-    this.webhookApi.remove(webhook).subscribe(
-      () => {
+    this.webhookApi.remove(webhook).subscribe({
+      next: () => {
         this.webhooks.next(removeItems(this.webhooks.value, w => w.id === webhook.id));
         this.webhooksSelectable.remove(webhook);
       },
-      res => this.toastService.danger(`The webhook could not be deleted. ${res.error.message}`)
-    );
+      error: res => this.toastService.danger(`The webhook could not be deleted. ${res.error.message}`)
+    });
   }
 
   deleteSelected(): void {
     const selected = this.webhooksSelectable.getSelected();
     if (selected.length > 0) {
       const ids = selected.map(w => w.id);
-      this.webhookApi.removeMany(selected).subscribe(
-        () => {
+      this.webhookApi.removeMany(selected).subscribe({
+        next: () => {
           this.webhooks.next(removeItems(this.webhooks.value, w => ids.indexOf(w.id) > -1));
           this.webhooksSelectable.removeMany(selected);
         },
-        res => this.toastService.danger(`The webhooks could not be deleted. ${res.error.message}`)
-      );
+        error: res => this.toastService.danger(`The webhooks could not be deleted. ${res.error.message}`)
+      });
     }
   }
 }

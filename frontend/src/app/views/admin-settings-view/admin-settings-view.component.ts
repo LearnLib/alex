@@ -33,16 +33,16 @@ export class AdminSettingsViewComponent {
   }
 
   updateSettings(): void {
-    this.settingsApi.update(this.settings).subscribe(
-      () => this.toastService.success('The settings have been updated.'),
-      res => this.toastService.danger('<strong>Update failed!</strong> ' + res.error.message)
-    );
+    this.settingsApi.update(this.settings).subscribe({
+      next: () => this.toastService.success('The settings have been updated.'),
+      error: res => this.toastService.danger('<strong>Update failed!</strong> ' + res.error.message)
+    });
   }
 
   private init(): void {
-    this.settingsApi.get().subscribe(
-      settings => this.settings = settings,
-      console.error
-    );
+    this.settingsApi.get().subscribe({
+      next: settings => this.settings = settings,
+      error: console.error
+    });
   }
 }

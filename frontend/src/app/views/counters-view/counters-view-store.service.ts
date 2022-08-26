@@ -80,16 +80,16 @@ export class CountersViewStoreService {
    * @param counter The updated counter.
    */
   updateCounter(counter: Counter): void {
-    this.counterApi.update(this.appStore.project.id, counter).subscribe(
-      (updatedCounter) => {
+    this.counterApi.update(this.appStore.project.id, counter).subscribe({
+      next: updatedCounter => {
         const counters = this.counters.value;
         const i = counters.findIndex(c => c.id === counter.id);
         counters[i] = updatedCounter;
         this.counters.next(counters);
         this.countersSelectable.update(updatedCounter);
       },
-      res => this.toastService.danger(`The counter could not be updated. ${res.error.message}`)
-    );
+      error: res => this.toastService.danger(`The counter could not be updated. ${res.error.message}`)
+    });
   }
 
   /**
@@ -98,16 +98,16 @@ export class CountersViewStoreService {
    * @param counter The counter that should be deleted.
    */
   deleteCounter(counter: Counter): void {
-    this.counterApi.remove(this.appStore.project.id, counter).subscribe(
-      () => {
+    this.counterApi.remove(this.appStore.project.id, counter).subscribe({
+      next: () => {
         const counters = this.counters.value.filter(c => c.id !== counter.id);
         this.counters.next(counters);
         this.countersSelectable.remove(counter);
       },
-      res => {
+      error: res => {
         this.toastService.danger('<p><strong>Deleting counter "' + counter.name + '" failed</strong></p>' + res.error.message);
       }
-    );
+    });
   }
 
   /**
@@ -116,16 +116,16 @@ export class CountersViewStoreService {
   deleteSelectedCounters(): void {
     const selectedCounters = this.countersSelectable.getSelected();
     if (selectedCounters.length > 0) {
-      this.counterApi.removeMany(this.appStore.project.id, selectedCounters).subscribe(
-        () => {
+      this.counterApi.removeMany(this.appStore.project.id, selectedCounters).subscribe({
+        next: () => {
           const counters = this.counters.value.filter(c => selectedCounters.findIndex(c2 => c.id === c2.id) === -1);
           this.counters.next(counters);
           this.countersSelectable.removeMany(selectedCounters);
         },
-        res => {
+        error: res => {
           this.toastService.danger('<p><strong>Deleting counters failed</strong></p>' + res.error.message);
         }
-      );
+      });
     } else {
       this.toastService.info('You have to select at least one counter.');
     }

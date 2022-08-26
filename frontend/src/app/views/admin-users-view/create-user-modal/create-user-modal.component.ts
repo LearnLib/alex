@@ -53,13 +53,13 @@ export class CreateUserModalComponent {
     user.password = this.form.controls.password.value;
     user.role = this.form.controls.role.value;
 
-    this.userApi.create(user).subscribe(
-      createdUser => {
+    this.userApi.create(user).subscribe({
+      next: createdUser => {
         this.toastService.success('The user has been created.');
         this.modal.close(createdUser);
       },
-      res => this.errorMessage = `Could not create the user. ${res.error.message}`
-    );
+      error: res => this.errorMessage = `Could not create the user. ${res.error.message}`
+    });
   }
 
   isInvalidFormControl(c: AbstractControl): boolean {

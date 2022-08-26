@@ -35,9 +35,9 @@ export class LatestLearnerResultWidgetComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.learnerResultApi.getLatest(this.project.id).subscribe(
-      result => this.result = result,
-      console.error
-    );
+    this.learnerResultApi.getLatest(this.project.id).subscribe({
+      next: result => this.result = result,
+      error: console.error
+    });
   }
 }

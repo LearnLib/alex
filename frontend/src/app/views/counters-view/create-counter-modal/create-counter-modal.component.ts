@@ -51,10 +51,10 @@ export class CreateCounterModalComponent {
       counter.value = this.createForm.controls.value.value;
       counter.project = this.appStore.project.id;
 
-      this.counterApi.create(this.appStore.project.id, counter).subscribe(
-        createdCounter => this.modal.close(createdCounter),
-        res => this.errorMessage = res.error.message
-      );
+      this.counterApi.create(this.appStore.project.id, counter).subscribe({
+        next: createdCounter => this.modal.close(createdCounter),
+        error: res => this.errorMessage = res.error.message
+      });
     }
   }
 }

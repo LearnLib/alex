@@ -31,11 +31,12 @@ import { TestConfigApiService } from '../../services/api/test-config-api.service
 import { TestExecutionConfig } from '../../entities/test-execution-config';
 import { TestQueueItem, TestReportStatus } from '../../entities/test-status';
 import { TestReportApiService } from '../../services/api/test-report-api.service';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ParametrizedSymbol } from '../../entities/parametrized-symbol';
 import { TestSuite } from '../../entities/test-suite';
 import { TestCase } from '../../entities/test-case';
+import { handleLoadingIndicator } from '../../operators/handle-loading-indicator';
 
 @Component({
   selector: 'test-case-view',
@@ -46,6 +47,8 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
   /** The current test. */
   @Input()
   testCase: TestCase;
+
+  readonly symbolGroupsLoading$ = new BehaviorSubject<boolean>(false);
 
   /** Map id -> symbol. */
   symbolMap: any;
@@ -77,13 +80,15 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     window.addEventListener('keydown', this.keyDownHandler);
 
-    this.symbolGroupApi.getAll(this.project.id).subscribe(
-      groups => {
-        SymbolGroupUtils.getSymbols(groups).forEach(s => this.symbolMap[s.id] = s);
-        this.groups = groups;
-      },
-      console.error
-    );
+    this.symbolGroupApi.getAll(this.project.id)
+      .pipe(handleLoadingIndicator(this.symbolGroupsLoading$))
+      .subscribe({
+        next: groups => {
+          SymbolGroupUtils.getSymbols(groups).forEach(s => this.symbolMap[s.id] = s);
+          this.groups = groups;
+        },
+        error: console.error
+      });
 
     this.testApi.getRoot(this.appStore.project.id).subscribe(root => this.root = root);
 

@@ -1,2 +1,8 @@
+<loading-indicator
+  *ngIf="loading$ | async" message="Loading tests..."
+  class="d-block m-3"
+>
+</loading-indicator>
+
 <test-case-view *ngIf="test != null && test.type === 'case'" [testCase]="test"></test-case-view>
 <test-suite-view *ngIf="test != null && test.type === 'suite'" [testSuite]="test"></test-suite-view>

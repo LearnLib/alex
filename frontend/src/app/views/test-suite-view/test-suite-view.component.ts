@@ -90,8 +90,8 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.selectedTests.addItems(this.testSuite.tests);
 
-    this.testConfigApi.getAll(this.project.id).subscribe(
-      testConfigs => {
+    this.testConfigApi.getAll(this.project.id).subscribe({
+      next: testConfigs => {
         this.testConfigs = testConfigs;
         const i = this.testConfigs.findIndex(c => c.default);
         if (i > -1) {
@@ -102,8 +102,8 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
           this.testConfig.environment = this.project.getDefaultEnvironment();
         }
       },
-      console.error
-    );
+      error: console.error
+    });
 
     this.testApi.getRoot(this.project.id).subscribe(r => this.root = r);
 
@@ -126,14 +126,14 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
           parent: this.testSuite.id,
           tests: []
         };
-        this.testApi.create(testSuite).subscribe(
-          data => {
+        this.testApi.create(testSuite).subscribe({
+          next: data => {
             this.toastService.success(`The test suite "${testSuite.name}" has been created.`);
             this.testSuite.tests.push(data);
             this.selectedTests.addItem(data);
           },
-          res => this.toastService.danger('The test suite could not be created. ' + res.error.message)
-        );
+          error: res => this.toastService.danger('The test suite could not be created. ' + res.error.message)
+        });
       });
   }
 

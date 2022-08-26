@@ -51,9 +51,9 @@ export class EditProjectModalComponent implements OnInit {
     this.project.name = this.form.controls.name.value;
     this.project.description = this.form.controls.description.value;
 
-    this.projectApi.update(this.project).subscribe(
-      updatedProject => this.modal.close(updatedProject),
-      res => this.errorMessage = res.error.message
-    );
+    this.projectApi.update(this.project).subscribe({
+      next: updatedProject => this.modal.close(updatedProject),
+      error: res => this.errorMessage = res.error.message
+    });
   }
 }

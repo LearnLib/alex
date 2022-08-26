@@ -79,16 +79,16 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
 
     currentRoute.paramMap.subscribe(map => {
       const symbolId = Number(map.get('symbolId'));
-      this.symbolApi.get(this.project.id, symbolId).subscribe(
-        symbol => {
+      this.symbolApi.get(this.project.id, symbolId).subscribe({
+        next: symbol => {
           this.symbol = symbol;
           this.symbol.steps.forEach(step => step._id = uniqueId());
           this.selectedSteps.addItems(this.symbol.steps);
         },
-        () => {
+        error: () => {
           errorViewStore.navigateToErrorPage(`The symbol with the ID "${symbolId}" could not be found`);
         }
-      );
+      });
     });
 
     this.symbolGroupApi.getAll(this.project.id).subscribe(groups => this.groups = groups);
@@ -201,18 +201,18 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
     const symbolToUpdate = this.symbol.toJson();
     symbolToUpdate.steps.forEach(s => delete s._id);
 
-    return this.symbolApi.update(symbolToUpdate).subscribe(
-      updatedSymbol => {
+    return this.symbolApi.update(symbolToUpdate).subscribe({
+      next: updatedSymbol => {
         this.toastService.success('Symbol <strong>' + updatedSymbol.name + '</strong> updated');
         this.symbol = updatedSymbol;
         this.symbol.steps.forEach(step => step._id = uniqueId());
         this.selectedSteps.clear();
         this.selectedSteps.addItems(this.symbol.steps);
       },
-      res => {
+      error: res => {
         this.toastService.danger('<strong>Error updating symbol</strong><div>' + res.error.message + '</div>');
       }
-    );
+    });
   }
 
   /** Copies actions to the clipboard. */

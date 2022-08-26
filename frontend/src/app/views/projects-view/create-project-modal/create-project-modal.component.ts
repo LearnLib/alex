@@ -54,9 +54,9 @@ export class CreateProjectModalComponent {
       description: this.form.controls.description.value
     };
 
-    this.projectApi.create(p).subscribe(
-      createdProject => this.modal.close(createdProject),
-      res => this.errorMessage = res.error.message
-    );
+    this.projectApi.create(p).subscribe({
+      next: createdProject => this.modal.close(createdProject),
+      error: res => this.errorMessage = res.error.message
+    });
   }
 }

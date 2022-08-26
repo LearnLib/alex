@@ -52,13 +52,13 @@ export class ProjectsViewStoreService {
   }
 
   load(): void {
-    this.projectApi.getAll().subscribe(
-      projects => {
+    this.projectApi.getAll().subscribe({
+      next: projects => {
         this.projects.next(projects);
         this.projectsSelectable.addItems(projects);
       },
-      console.error
-    );
+      error: console.error
+    });
   }
 
   createProject(): void {
@@ -78,15 +78,15 @@ export class ProjectsViewStoreService {
   deleteProject(project: Project): void {
     this.promptService.confirm('Do you really want to delete this project? All related data will be lost.')
       .then(() => {
-        this.projectApi.remove(project).subscribe(
-          () => {
+        this.projectApi.remove(project).subscribe({
+          next: () => {
             this.projects.next(removeItems(this.projects.value, p => p.id === project.id));
             this.toastService.success(`The project '${project.name}' has been deleted.`);
           },
-          res => {
+          error: res => {
             this.toastService.danger(`The project could not be deleted. ${res.error.message}`);
           }
-        );
+        });
       });
   }
 
@@ -94,15 +94,15 @@ export class ProjectsViewStoreService {
     this.promptService.confirm('Do you really want to delete these projects? All related data will be lost.')
       .then(() => {
         const projects = this.projectsSelectable.getSelected();
-        this.projectApi.removeMany(projects).subscribe(
-          () => {
+        this.projectApi.removeMany(projects).subscribe({
+          next: () => {
             this.toastService.success(`The projects have been deleted.`);
             const ids = projects.map(p => p.id);
             this.projects.next(removeItems(this.projects.value, (p => ids.indexOf(p.id) > -1)));
             this.projectsSelectable.removeMany(projects);
           },
-          res => this.toastService.danger(`The projects could not be deleted. ${res.error.message}`)
-        );
+          error: res => this.toastService.danger(`The projects could not be deleted. ${res.error.message}`)
+        });
       });
   }
 

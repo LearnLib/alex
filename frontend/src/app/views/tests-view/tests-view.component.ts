@@ -19,6 +19,8 @@ import { AppStoreService } from '../../services/app-store.service';
 import { ErrorViewStoreService } from '../error-view/error-view-store.service';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { handleLoadingIndicator } from '../../operators/handle-loading-indicator';
 
 /**
  * The view for the tests.
@@ -28,6 +30,8 @@ import { ActivatedRoute } from '@angular/router';
   templateUrl: './tests-view.component.html'
 })
 export class TestsViewComponent implements OnInit {
+
+  readonly loading$ = new BehaviorSubject<boolean>(true);
 
   /** The test case or test suite. */
   test: any;
@@ -44,18 +48,18 @@ export class TestsViewComponent implements OnInit {
     this.route.paramMap.subscribe(
       map => {
         this.test = null;
+        let obs: Observable<any>;
         if (map.has('testId')) {
           const testId = Number(map.get('testId'));
-          this.testApi.get(project.id, testId).subscribe(
-            data => this.test = data,
-            res => this.errorViewStore.navigateToErrorPage(res.error.message)
-          );
-        }  else {
-          this.testApi.getRoot(project.id).subscribe(
-            data => this.test = data,
-            res => this.errorViewStore.navigateToErrorPage(res.error.message)
-          );
+          obs = this.testApi.get(project.id, testId);
+        } else {
+          obs = this.testApi.getRoot(project.id);
         }
+
+        obs.pipe(handleLoadingIndicator(this.loading$)).subscribe({
+          next: data => this.test = data,
+          error: res => this.errorViewStore.navigateToErrorPage(res.error.message)
+        });
       }
     );
   }

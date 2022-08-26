@@ -18,6 +18,13 @@
 
     <div class="card mb-0">
       <div class="card-body p-2">
+        <loading-indicator
+          *ngIf="symbolGroupsLoading$ | async"
+          message="Loading symbols..."
+          class="d-block m-2"
+        >
+        </loading-indicator>
+
         <simple-symbol-group-tree
           (symbolSelected)="selectSymbol($event)"
           [groups]="groups"

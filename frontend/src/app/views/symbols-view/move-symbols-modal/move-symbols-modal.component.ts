@@ -72,15 +72,15 @@ export class MoveSymbolsModalComponent implements OnInit {
         s.group = this.selectedGroup.id;
       });
 
-      this.symbolApi.moveMany(symbolsToMove, this.selectedGroup).subscribe(
-        () => {
+      this.symbolApi.moveMany(symbolsToMove, this.selectedGroup).subscribe({
+        next: () => {
           this.toastService.success('Symbols move to group <strong>' + this.selectedGroup.name + '</strong>');
           this.modal.close(this.selectedGroup);
         },
-        res => {
+        error: res => {
           this.errorMessage = 'Failed to move symbols: ' + res.error.message;
         }
-      );
+      });
     }
   }
 

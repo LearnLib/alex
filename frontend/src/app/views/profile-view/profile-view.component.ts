@@ -62,8 +62,8 @@ export class ProfileViewComponent {
    * Changes the email of the user.
    */
   changeEmail(): void {
-    this.userApi.changeEmail(this.user, this.emailForm.controls.email.value).subscribe(
-      () => {
+    this.userApi.changeEmail(this.user, this.emailForm.controls.email.value).subscribe({
+      next: () => {
         this.toastService.success('The email has been changed');
 
         // update the jwt correspondingly
@@ -71,39 +71,39 @@ export class ProfileViewComponent {
         user.email = this.emailForm.controls.email.value;
         this.appStore.login(user);
       },
-      response => {
+      error: response => {
         this.toastService.danger('The email could not be changed. ' + response.error.message);
       }
-    );
+    });
   }
 
   /**
    * Changes the password of the user.
    */
   changePassword(): void {
-    this.userApi.changePassword(this.user, this.passwordForm.controls.old.value, this.passwordForm.controls.new.value).subscribe(
-      () => {
+    this.userApi.changePassword(this.user, this.passwordForm.controls.old.value, this.passwordForm.controls.new.value).subscribe({
+      next: () => {
         this.toastService.success('The password has been changed');
         this.passwordForm.reset();
       },
-      response => {
+      error: response => {
         this.toastService.danger('There has been an error. ' + response.error.message);
       }
-    );
+    });
   }
 
   deleteProfile(): void {
     this.promptService.confirm('Do you really want to delete this profile? All data will be permanently deleted.')
       .then(() => {
-        this.userApi.remove(this.user).subscribe(
-          () => {
+        this.userApi.remove(this.user).subscribe({
+          next: () => {
             this.toastService.success('Your account has been deleted');
             this.appStore.logout(true);
           },
-          response => {
+          error: response => {
             this.toastService.danger('The profile could not be deleted. ' + response.error.message);
           }
-        );
+        });
       }).catch(() => {
     });
   }

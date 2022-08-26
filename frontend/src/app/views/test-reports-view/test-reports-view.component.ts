@@ -69,14 +69,14 @@ export class TestReportsViewComponent implements OnInit {
 
   loadTestReports(page: number = 0): void {
     this.selectedReports.clear();
-    this.testReportApi.getAll(this.project.id, page).subscribe(
-      newPage => {
+    this.testReportApi.getAll(this.project.id, page).subscribe({
+      next: newPage => {
         this.page = newPage;
         this.reports = this.page.content;
         this.selectedReports.addItems(this.reports);
       },
-      res => this.toastService.danger(`Failed to load reports. ${res.error.message}`)
-    );
+      error: res => this.toastService.danger(`Failed to load reports. ${res.error.message}`)
+    });
   }
 
   /**

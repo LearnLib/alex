@@ -86,16 +86,16 @@ export class EditUserModalComponent implements OnInit {
 
   changeMaxAllowedProcesses(): void {
     this.error = null;
-    this.userApi.changeMaxAllowedProcesses(this.user, this.processesForm.controls.processes.value).subscribe(
-      user => {
+    this.userApi.changeMaxAllowedProcesses(this.user, this.processesForm.controls.processes.value).subscribe({
+      next: user => {
         this.toastService.success('The maximum number of allowed processes has been changed.');
         this.updated.emit(user);
         this.modal.dismiss();
       },
-      response => {
+      error: response => {
         this.error = response.error.message;
       }
-    );
+    });
   }
 
   /**
@@ -103,16 +103,16 @@ export class EditUserModalComponent implements OnInit {
    */
   changeUsername(): void {
     this.error = null;
-    this.userApi.changeUsername(this.user, this.usernameForm.controls.username.value).subscribe(
-      user => {
+    this.userApi.changeUsername(this.user, this.usernameForm.controls.username.value).subscribe({
+      next: user => {
         this.toastService.success('The username has been changed.');
         this.updated.emit(user);
         this.modal.dismiss();
       },
-      response => {
+      error: response => {
         this.error = response.error.message;
       }
-    );
+    });
   }
 
   /**
@@ -120,8 +120,8 @@ export class EditUserModalComponent implements OnInit {
    */
   changeEmail(): void {
     this.error = null;
-    this.userApi.changeEmail(this.user, this.emailForm.controls.email.value).subscribe(
-      user => {
+    this.userApi.changeEmail(this.user, this.emailForm.controls.email.value).subscribe({
+      next: user => {
         if (this.currentUser.id === this.user.id) {
           this.appStore.login(user);
         }
@@ -130,10 +130,10 @@ export class EditUserModalComponent implements OnInit {
         this.updated.emit(user);
         this.modal.dismiss();
       },
-      response => {
+      error: response => {
         this.error = response.error.message;
       }
-    );
+    });
   }
 
   /**

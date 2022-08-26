@@ -67,16 +67,16 @@ export class FilesViewStoreService {
    * @param file The name of the file to delete.
    */
   deleteFile(file: UploadableFile): void {
-    this.fileApi.remove(this.project.id, file).subscribe(
-      () => {
+    this.fileApi.remove(this.project.id, file).subscribe({
+      next: () => {
         this.toastService.success(`File "${file.name}" has been deleted.`);
         this.files.next(removeItems(this.files.value, f => f.id === file.id));
         this.filesSelectable.remove(file);
       },
-      res => {
+      error: res => {
         this.toastService.danger(`The file could not be deleted. ${res.error.message}`);
       }
-    );
+    });
   }
 
   /**
@@ -87,17 +87,17 @@ export class FilesViewStoreService {
     if (selectedFiles.length === 0) {
       this.toastService.info('You have to select at least one file');
     } else {
-      this.fileApi.removeMany(this.project.id, selectedFiles).subscribe(
-        () => {
+      this.fileApi.removeMany(this.project.id, selectedFiles).subscribe({
+        next: () => {
           const ids = selectedFiles.map(f => f.id);
           this.toastService.success(`The files have been deleted.`);
           this.files.next(removeItems(this.files.value, f => ids.indexOf(f.id) > -1));
           this.filesSelectable.removeMany(selectedFiles);
         },
-        res => {
+        error: res => {
           this.toastService.danger(`The files could not be deleted. ${res.error.message}`);
         }
-      );
+      });
     }
   }
 
@@ -134,8 +134,8 @@ export class FilesViewStoreService {
       }
 
       const file = queue.shift();
-      this.fileApi.upload(this.project.id, file).subscribe(
-        data => {
+      this.fileApi.upload(this.project.id, file).subscribe({
+        next: data => {
           this.filesToUpload.set(file.name, data);
           if (data.file != null) {
             this.files.next([...this.files.value, data.file]);
@@ -143,12 +143,12 @@ export class FilesViewStoreService {
             this.filesToUpload.delete(file.name);
           }
         },
-        err => {
+        error: err => {
           console.error(err);
           next();
         },
-        () => next()
-      );
+        complete: () => next()
+      });
     };
 
     next();

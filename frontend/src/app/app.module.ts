@@ -272,6 +272,7 @@ import { ClipboardModule } from '@angular/cdk/clipboard';
 import { GridApiService } from './services/api/grid-api.service';
 import { FuzzyStateCoverEqOracleFormComponent } from './common/eq-oracles/fuzzy-state-cover-eq-oracle-form/fuzzy-state-cover-eq-oracle-form.component';
 import { AceEditorComponent } from './common/ace-editor/ace-editor.component';
+import { LoadingIndicatorComponent } from './common/loading-indicator/loading-indicator.component';
 
 @NgModule({
   declarations: [
@@ -492,7 +493,8 @@ import { AceEditorComponent } from './common/ace-editor/ace-editor.component';
     TestSelectTreeItemComponent,
     WarningWidgetComponent,
     FuzzyStateCoverEqOracleFormComponent,
-    AceEditorComponent
+    AceEditorComponent,
+    LoadingIndicatorComponent
   ],
   imports: [
     BrowserModule,

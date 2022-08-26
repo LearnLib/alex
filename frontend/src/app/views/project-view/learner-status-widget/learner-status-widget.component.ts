@@ -55,10 +55,10 @@ export class LearnerStatusWidgetComponent implements OnInit, OnDestroy {
    * Induces the Learner to stop learning after the current hypothesis model.
    */
   abort(testNo: number): void {
-    this.learnerApi.stop(this.project.id, testNo).subscribe(
-      () => this.toastService.info('The learner stops the process as soon as possible.'),
-      console.error
-    );
+    this.learnerApi.stop(this.project.id, testNo).subscribe({
+      next: () => this.toastService.info('The learner stops the process as soon as possible.'),
+      error: console.error
+    });
   }
 
   canAbort(result: LearnerResult) {
@@ -68,10 +68,10 @@ export class LearnerStatusWidgetComponent implements OnInit, OnDestroy {
   }
 
   private getStatus(): void {
-    this.learnerApi.getStatus(this.project.id).subscribe(
-      status => this.status = status,
-      console.error
-    );
+    this.learnerApi.getStatus(this.project.id).subscribe({
+      next: status => this.status = status,
+      error: console.error
+    });
   }
 
   get project(): Project {

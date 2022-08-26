@@ -35,6 +35,7 @@ import { MoveSymbolsModalComponent } from './move-symbols-modal/move-symbols-mod
 import { Selectable } from '../../utils/selectable';
 import { map } from 'rxjs/operators';
 import { SymbolGroupLockInfo, SymbolLockInfo, SymbolPresenceService } from '../../services/symbol-presence.service';
+import { handleLoadingIndicator } from '../../operators/handle-loading-indicator';
 
 @Injectable()
 export class SymbolsViewStoreService {
@@ -42,6 +43,8 @@ export class SymbolsViewStoreService {
   readonly symbolsSelectable = new Selectable<AlphabetSymbol, number>(s => s.id);
 
   readonly groupsCollapsedMap = new Map<number, boolean>();
+
+  readonly symbolGroupsLoading$ = new BehaviorSubject<boolean>(false);
 
   private groups = new BehaviorSubject<SymbolGroup[]>([]);
 
@@ -61,17 +64,20 @@ export class SymbolsViewStoreService {
   }
 
   load(): void {
-    this.symbolGroupApi.getAll(this.appStore.project.id).subscribe(
-      groups => {
-        this.groups.next(groups);
-        groups.forEach(group => {
-          this.groupsCollapsedMap.set(group.id, false);
-          group.walk(g => {
-            this.groupsMap.set(g.id, g);
-            this.symbolsSelectable.addItems(g.symbols);
-          }, () => {
+    this.symbolGroupApi.getAll(this.appStore.project.id)
+      .pipe(handleLoadingIndicator(this.symbolGroupsLoading$))
+      .subscribe({
+        next: groups => {
+          this.groups.next(groups);
+          groups.forEach(group => {
+            this.groupsCollapsedMap.set(group.id, false);
+            group.walk(g => {
+              this.groupsMap.set(g.id, g);
+              this.symbolsSelectable.addItems(g.symbols);
+            }, () => {
+            });
           });
-        });
+        }
       }
     );
 
@@ -113,8 +119,8 @@ export class SymbolsViewStoreService {
     this.promptService.prompt('Enter a name for the new symbol', {defaultValue: newName})
       .then(name => {
 
-        this.symbolApi.export(symbol.project, {symbolIds: [symbol.id], symbolsOnly: true}).subscribe(
-          body => {
+        this.symbolApi.export(symbol.project, {symbolIds: [symbol.id], symbolsOnly: true}).subscribe({
+          next: body => {
             const symbolToCreate = body.symbols[0];
             symbolToCreate.name = name;
             symbolToCreate.group = symbol.group;
@@ -128,10 +134,10 @@ export class SymbolsViewStoreService {
               }
             );
           },
-          res => {
+          error: res => {
             this.toastService.danger(`The symbol could not be created. ${res.error.message}`);
           }
-        );
+        });
       });
   }
 
@@ -153,20 +159,22 @@ export class SymbolsViewStoreService {
   }
 
   deleteSymbol(symbol: AlphabetSymbol): void {
-    this.symbolApi.remove(symbol).subscribe(
-      () => {
+    this.symbolApi.remove(symbol).subscribe({
+      next: () => {
         this._deleteSymbol(symbol);
-      }, res => {
+      },
+      error: res => {
         this.toastService.danger(`The symbol could not be deleted. ${res.error.message}`);
-      });
+      }
+    });
   }
 
   deleteSelectedSymbols(): void {
     const selectedSymbols = this.symbolsSelectable.getSelected();
-    this.symbolApi.removeMany(this.appStore.project.id, selectedSymbols).subscribe(
-      () => selectedSymbols.forEach(s => this._deleteSymbol(s)),
-      res => this.toastService.danger(`Failed to deleted symbols. ${res.error.message}`)
-    );
+    this.symbolApi.removeMany(this.appStore.project.id, selectedSymbols).subscribe({
+      next: () => selectedSymbols.forEach(s => this._deleteSymbol(s)),
+      error: res => this.toastService.danger(`Failed to deleted symbols. ${res.error.message}`)
+    });
   }
 
   createGroup(): void {

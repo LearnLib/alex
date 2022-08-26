@@ -34,9 +34,9 @@ export class LatestTestReportWidgetComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.testReportApi.getLatest(this.project.id).subscribe(
-      report => this.report = report,
-      console.error
-    );
+    this.testReportApi.getLatest(this.project.id).subscribe({
+      next: report => this.report = report,
+      error: console.error
+    });
   }
 }

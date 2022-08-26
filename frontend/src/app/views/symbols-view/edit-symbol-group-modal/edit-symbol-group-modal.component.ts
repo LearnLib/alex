@@ -62,14 +62,14 @@ export class EditSymbolGroupModalComponent implements OnInit {
     this.group.symbols = [];
     this.group.name = this.form.controls.name.value;
 
-    this.symbolGroupApi.update(this.group).subscribe(
-      updatedGroup => {
+    this.symbolGroupApi.update(this.group).subscribe({
+      next: updatedGroup => {
         this.toastService.success('Group updated');
         this.modal.close(updatedGroup);
       },
-      res => {
+      error: res => {
         this.errorMessage = res.error.message;
       }
-    );
+    });
   }
 }
