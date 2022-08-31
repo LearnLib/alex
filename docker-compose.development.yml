@@ -7,6 +7,8 @@ services:
             - "4442:4442"
             - "4443:4443"
             - "4444:4444"
+        volumes:
+            - alex-database:/var/alex/backend/target/postgresql
 
     chrome-node:
         image: selenium/node-chrome:4.0.0

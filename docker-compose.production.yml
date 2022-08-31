@@ -5,7 +5,9 @@ services:
     image: selenium/hub:4.0.0
     ports:
       - "4444:4444"
-
+    volumes:
+      - alex-database:/var/alex/backend/target/postgresql
+  
   chrome-node:
     image: selenium/node-chrome:4.0.0
     shm_size: '2gb'

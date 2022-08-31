@@ -35,6 +35,7 @@ import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.opera.OperaOptions;
 import org.openqa.selenium.remote.AbstractDriverOptions;
+import org.openqa.selenium.remote.LocalFileDetector;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariOptions;
 
@@ -144,7 +145,8 @@ public class WebDriverConfig implements Serializable {
             options.setBrowserVersion(version);
         }
 
-        final WebDriver driver = new RemoteWebDriver(remoteURL, options);
+        final var driver = new RemoteWebDriver(remoteURL, options);
+        driver.setFileDetector(new LocalFileDetector());
         manage(driver);
         return driver;
     }

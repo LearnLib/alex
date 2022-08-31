@@ -29,6 +29,6 @@ export abstract class TestConfigsCreateEditView {
   }
 
   isValidConfig(): boolean {
-    return TestExecutionConfig.isValid(this.config) && this.store.testsSelectable.getSelected().length > 0;
+    return TestExecutionConfig.isValid(this.config);
   }
 }
