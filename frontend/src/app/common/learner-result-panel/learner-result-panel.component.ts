@@ -22,6 +22,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LearnerResultDetailsModalComponent } from '../modals/learner-result-details-modal/learner-result-details-modal.component';
 import { PromptService } from '../../services/prompt.service';
 import { DownloadService } from '../../services/download.service';
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * The directive that displays a browsable list of learn results. For each result, it can display the observation
@@ -34,6 +35,8 @@ import { DownloadService } from '../../services/download.service';
  * Content that is written inside the tag will be displayed a the top right corner beside the index browser. So
  * just add small texts or additional buttons in there.
  */
+
+@UntilDestroy()
 @Component({
   selector: 'learner-result-panel',
   templateUrl: './learner-result-panel.component.html',
@@ -75,9 +78,11 @@ export class LearnerResultPanelComponent implements OnInit {
     this.pointer = this.pointer == null ? this.result.steps.length - 1 : this.pointer;
     this.emitStep();
 
-    this.panelService.edgeSelected$.subscribe(edge => {
-      this.selectEdge.emit(edge);
-    });
+    this.panelService.edgeSelected$
+      .pipe(untilDestroyed(this))
+      .subscribe(edge => {
+        this.selectEdge.emit(edge);
+      });
   }
 
   /**

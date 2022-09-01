@@ -20,7 +20,9 @@ import { SymbolsViewStoreService } from '../../symbols-view-store.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SymbolUsagesModalComponent } from '../../../../common/modals/symbol-usages-modal/symbol-usages-modal.component';
 import { SymbolLockInfo } from '../../../../services/symbol-presence.service';
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: 'symbol-item',
   templateUrl: './symbol-item.component.html',
@@ -39,9 +41,9 @@ export class SymbolItemComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.store.symbolLocks$.subscribe(value => {
-      this.lockInfo = value?.get(this.symbol.id);
-    });
+    this.store.symbolLocks$
+      .pipe(untilDestroyed(this))
+      .subscribe(value => this.lockInfo = value?.get(this.symbol.id));
   }
 
   showSymbolUsages() {

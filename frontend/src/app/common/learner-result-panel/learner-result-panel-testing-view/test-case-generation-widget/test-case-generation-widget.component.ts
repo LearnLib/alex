@@ -25,7 +25,9 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormUtilsService } from '../../../../services/form-utils.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { LearnerResultPanelService } from '../../learner-result-panel.service';
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: 'test-case-generation-widget',
   templateUrl: './test-case-generation-widget.component.html'
@@ -61,13 +63,15 @@ export class TestCaseGenerationWidgetComponent implements OnInit {
     this.testCase = new TestCase();
     this.testCase.name = 'Test Case';
 
-    this.panelService.edgeSelected$.subscribe((data) => {
-      const step = TestCaseStep.fromSymbol(this.symbolMap[data.input].symbol);
-      step.expectedOutputSuccess = data.output.startsWith('Ok');
-      step.setExpectedOutputMessageFromOutput(data.output);
-      step.pSymbol.parameterValues = this.symbolMap[data.input].parameterValues;
-      this.testCase.steps.push(step);
-    });
+    this.panelService.edgeSelected$
+      .pipe(untilDestroyed(this))
+      .subscribe((data) => {
+        const step = TestCaseStep.fromSymbol(this.symbolMap[data.input].symbol);
+        step.expectedOutputSuccess = data.output.startsWith('Ok');
+        step.setExpectedOutputMessageFromOutput(data.output);
+        step.pSymbol.parameterValues = this.symbolMap[data.input].parameterValues;
+        this.testCase.steps.push(step);
+      });
   }
 
   get project(): Project {

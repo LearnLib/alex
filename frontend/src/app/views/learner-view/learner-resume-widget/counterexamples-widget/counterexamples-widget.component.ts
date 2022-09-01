@@ -24,6 +24,7 @@ import { LearnerResultStepApiService } from '../../../../services/api/learner-re
 import { ProjectEnvironmentApiService } from '../../../../services/api/project-environment-api.service';
 import { listEquals } from '../../../../utils/list-utils';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 interface IOPair {
   input: string;
@@ -35,6 +36,7 @@ type Counterexample = Array<IOPair>;
 /**
  * The directive for the content of the counterexample widget that is used to create and test counterexamples.
  */
+@UntilDestroy()
 @Component({
   selector: 'counterexamples-widget',
   templateUrl: './counterexamples-widget.component.html',
@@ -67,12 +69,14 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
               private learnerResultStepApi: LearnerResultStepApiService,
               private store: LearnerViewStoreService) {
 
-    this.store.edgeSelected$.subscribe((data) => {
-      this.counterexample.push({
-        input: data.input,
-        output: data.output
+    this.store.edgeSelected$
+      .pipe(untilDestroyed(this))
+      .subscribe((data) => {
+        this.counterexample.push({
+          input: data.input,
+          output: data.output
+        });
       });
-    });
   }
 
   ngOnInit(): void {
