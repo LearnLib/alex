@@ -118,7 +118,7 @@
         <jose4j.version>0.7.0</jose4j.version>
         <shiro.version>1.8.0</shiro.version>
         <xml-apis.version>1.4.01</xml-apis.version>
-        <jsoup.version>1.14.2</jsoup.version>
+        <jsoup.version>1.15.3</jsoup.version>
         <json-path.version>2.6.0</json-path.version>
         <postgresql.version>42.4.1</postgresql.version>
         <jackson-datatype.version>2.10.3</jackson-datatype.version>
