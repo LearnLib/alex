@@ -343,6 +343,15 @@ public class SymbolDAO {
         return symbols;
     }
 
+    public List<Symbol> getAll(User user, Long projectId, boolean hidden) {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        projectDAO.checkAccess(user, project);
+
+        return symbolRepository.findAllByProject_IdAndHidden(projectId, hidden).stream()
+                .peek(SymbolDAO::loadLazyRelations)
+                .toList();
+    }
+
     public Symbol get(User user, Long projectId, Long id) {
         final Project project = projectRepository.findById(projectId).orElse(null);
         return get(user, project, id);

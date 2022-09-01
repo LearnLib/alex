@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.ws.rs.core.MediaType;
@@ -120,9 +121,12 @@ public class SymbolResource {
     @GetMapping(
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity getAll(@PathVariable("projectId") Long projectId) {
-        final User user = authContext.getUser();
-        final List<Symbol> symbols = symbolDAO.getAll(user, projectId);
+    public ResponseEntity<List<Symbol>> getAll(
+            @PathVariable("projectId") Long projectId,
+            @RequestParam(value = "hidden", defaultValue = "false") Boolean hidden
+    ) {
+        final var user = authContext.getUser();
+        final var symbols = symbolDAO.getAll(user, projectId, hidden);
         return ResponseEntity.ok(symbols);
     }
 
@@ -132,7 +136,7 @@ public class SymbolResource {
      * @param projectId
      *         The ID of the project
      * @param symbolIds
-     *         The non empty list of symbol ids.
+     *         The non-empty list of symbol ids.
      * @return A list of the symbols whose ids were given
      */
     @GetMapping(

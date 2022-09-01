@@ -34,4 +34,6 @@ public interface SymbolRepository extends JpaRepository<Symbol, Long> {
     Symbol findOneByGroup_IdAndName(Long groupId, String name);
 
     List<Symbol> findAllByProject_Id(Long projectId);
+
+    List<Symbol> findAllByProject_IdAndHidden(Long projectId, boolean deleted);
 }

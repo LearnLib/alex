@@ -51,10 +51,21 @@ export class SymbolApiService extends BaseApiService {
    * Get all symbols of a project.
    *
    * @param projectId The id of the project the symbols belong to.
-   * @param includeHiddenSymbols If hidden symbols should be included or not.
    */
-  getAll(projectId: number, includeHiddenSymbols = false): Observable<AlphabetSymbol[]> {
+  getAll(projectId: number): Observable<AlphabetSymbol[]> {
     return this.http.get(`${this.env.apiUrl}/projects/${projectId}/symbols`, this.defaultHttpOptions)
+      .pipe(
+        map((body: any) => body.map(s => new AlphabetSymbol(s)))
+      );
+  }
+
+  /**
+   * Get all archived symbols in a project.
+   *
+   * @param projectId The id of the project.
+   */
+  getAllArchived(projectId: number): Observable<AlphabetSymbol[]> {
+    return this.http.get(`${this.env.apiUrl}/projects/${projectId}/symbols?hidden=true`, this.defaultHttpOptions)
       .pipe(
         map((body: any) => body.map(s => new AlphabetSymbol(s)))
       );

@@ -60,13 +60,13 @@ export class SymbolsArchiveViewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.symbolApi.getAll(this.project.id).subscribe(
-      symbols => {
-        this.symbols = symbols.filter(s => s.hidden);
+    this.symbolApi.getAllArchived(this.project.id).subscribe({
+      next: symbols => {
+        this.symbols = symbols;
         this.selectedSymbols.addItems(this.symbols);
       },
-      res => this.toastService.danger(`Could not get symbols. ${res.error.message}`)
-    );
+      error: res => this.toastService.danger(`Could not get symbols. ${res.error.message}`)
+    });
   }
 
   /**
@@ -75,16 +75,16 @@ export class SymbolsArchiveViewComponent implements OnInit {
    * @param symbol The symbol that should be recovered from the trash.
    */
   recoverSymbol(symbol: AlphabetSymbol): void {
-    this.symbolApi.recover(symbol).subscribe(
-      () => {
+    this.symbolApi.recover(symbol).subscribe({
+      next: () => {
         this.toastService.success('Symbol ' + symbol.name + ' recovered');
         this.selectedSymbols.remove(symbol);
         remove(this.symbols, {id: symbol.id});
       },
-      res => {
+      error: res => {
         this.toastService.danger('<p><strong>Error recovering symbol ' + symbol.name + '!</strong></p>' + res.error.message);
       }
-    );
+    });
   }
 
   /**
@@ -97,16 +97,16 @@ export class SymbolsArchiveViewComponent implements OnInit {
       return;
     }
 
-    this.symbolApi.recoverMany(selectedSymbols).subscribe(
-      () => {
+    this.symbolApi.recoverMany(selectedSymbols).subscribe({
+      next: () => {
         this.toastService.success('Symbols recovered');
         selectedSymbols.forEach(symbol => remove(this.symbols, {id: symbol.id}));
         this.selectedSymbols.removeMany(selectedSymbols);
       },
-      res => {
+      error: res => {
         this.toastService.danger('<p><strong>Error recovering symbols!</strong></p>' + res.error.message);
       }
-    );
+    });
   }
 
   showUsages(symbol: AlphabetSymbol): void {
@@ -130,14 +130,14 @@ export class SymbolsArchiveViewComponent implements OnInit {
   }
 
   deleteSymbol(symbol: AlphabetSymbol): void {
-    this.symbolApi.delete(symbol).subscribe(
-      () => {
+    this.symbolApi.delete(symbol).subscribe({
+      next: () => {
         this.toastService.success('The symbol has been deleted permanently.');
         this.selectedSymbols.remove(symbol);
         remove(this.symbols, {id: symbol.id});
       },
-      res => this.toastService.danger(`The symbol could be deleted permanently. ${res.error.message}`)
-    );
+      error: res => this.toastService.danger(`The symbol could be deleted permanently. ${res.error.message}`)
+    });
   }
 
   deleteSelectedSymbols(): void {
@@ -147,15 +147,15 @@ export class SymbolsArchiveViewComponent implements OnInit {
       return;
     }
 
-    this.symbolApi.deleteMany(this.project.id, symbols).subscribe(
-      () => {
+    this.symbolApi.deleteMany(this.project.id, symbols).subscribe({
+      next: () => {
         this.toastService.success('The symbols have been deleted.');
         this.selectedSymbols.removeMany(symbols);
         symbols.forEach(s1 => remove(this.symbols, s2 => s2.id === s1.id));
       },
-      res => {
+      error: res => {
         this.toastService.danger(`The symbols could not be deleted. ${res.error.message}`);
       }
-    );
+    });
   }
 }
