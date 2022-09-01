@@ -107,16 +107,33 @@ export class AdminUsersViewStoreService {
         }
 
         const ids = users.map(u => u.id);
-        this.userApi.removeManyUsers(ids).subscribe(
-          () => {
+        this.userApi.removeManyUsers(ids).subscribe({
+          next: () => {
             this.toastService.success('The users have been deleted');
             this.users.next(removeItems(this.users.value, (u => ids.indexOf(u.id) > -1)));
             this.usersSelectable.removeMany(users);
           },
-          res => {
+          error: res => {
             this.toastService.danger(`Deleting failed! ${res.error.message}`);
           }
-        );
+        });
+      }
+    );
+  }
+
+  deleteUser(user: User): void {
+    this.promptService.confirm(`Are you sure you want to delete user "${user.username}"?`).then(
+      () => {
+        this.userApi.remove(user).subscribe({
+          next: () => {
+            this.toastService.success(`User "${user.username}" has been deleted`);
+            this.users.next(removeItems(this.users.value, (u => u.id === user.id)));
+            this.usersSelectable.remove(user);
+          },
+          error: res => {
+            this.toastService.danger(`Failed to delete user: ${res.error.message}`);
+          }
+        });
       }
     );
   }
