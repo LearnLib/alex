@@ -14,40 +14,15 @@
  * limitations under the License.
  */
 
-import { Component, Input, OnInit } from '@angular/core';
-import { AppStoreService } from '../../services/app-store.service';
-import { TestApiService } from '../../services/api/test-api.service';
-import { TestSuite } from '../../entities/test-suite';
-import { TestCase } from '../../entities/test-case';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'test-config-table',
   templateUrl: './test-config-table.component.html',
   styleUrls: ['./test-config-table.component.scss']
 })
-export class TestConfigTableComponent implements OnInit {
+export class TestConfigTableComponent {
 
   @Input()
   config: any;
-
-  @Input()
-  root: TestSuite;
-
-  tests: any[] = [];
-
-  constructor(private appStore: AppStoreService,
-              private testApi: TestApiService) {
-  }
-
-  ngOnInit() {
-    if (this.config.tests.length > 0) {
-      this.testApi.getMany(this.appStore.project.id, this.config.tests).subscribe(tests => {
-        this.tests = tests;
-      });
-    }
-  }
-
-  getCasePath(test: TestCase): string {
-    return TestCase.getTestPath(this.root, test);
-  }
 }

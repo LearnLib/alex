@@ -21,11 +21,7 @@
 
           <div class="list-group">
             <div class="list-group-item d-flex flex-column flex-md-row" *ngFor="let config of testConfigs">
-              <test-config-table
-                [config]="config"
-                [root]="root"
-                class="w-100 order-2 order-md-1"
-              ></test-config-table>
+              <test-config-table [config]="config" class="w-100 order-2 order-md-1"></test-config-table>
               <div class="ml-md-3 flex-shrink-0 order-1 order-md-2 text-right">
                 <div class="btn-group btn-group-sm">
                   <button class="btn btn-success" (click)="runConfig(config)">

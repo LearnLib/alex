@@ -18,8 +18,6 @@ import { Component } from '@angular/core';
 import { AppStoreService } from '../../services/app-store.service';
 import { TestConfigApiService } from '../../services/api/test-config-api.service';
 import { ToastService } from '../../services/toast.service';
-import { TestSuite } from '../../entities/test-suite';
-import { TestApiService } from '../../services/api/test-api.service';
 
 @Component({
   selector: 'test-configs-view',
@@ -29,49 +27,44 @@ export class TestConfigsViewComponent {
 
   testConfigs: any[] = [];
 
-  root: TestSuite;
-
   constructor(private appStore: AppStoreService,
               private testConfigApi: TestConfigApiService,
-              private testApi: TestApiService,
               private toastService: ToastService) {
 
     this.testConfigApi.getAll(this.appStore.project.id).subscribe({
       next: testConfigs => this.testConfigs = testConfigs,
       error: console.error
     });
-
-    this.testApi.getRoot(this.appStore.project.id).subscribe(root => this.root = root);
   }
 
   deleteConfig(config: any): void {
-    this.testConfigApi.remove(this.appStore.project.id, config.id).subscribe(
-      () => {
+    this.testConfigApi.remove(this.appStore.project.id, config.id).subscribe({
+      next: () => {
         this.toastService.success('The config has been deleted.');
         this.testConfigs = this.testConfigs.filter(tc => tc.id !== config.id);
       },
-      console.error
-    );
+      error: console.error
+    });
   }
 
   copyConfig(config: any): void {
-    this.testConfigApi.copy(this.appStore.project.id, config.id).subscribe(
-      copiedConfig => {
+    this.testConfigApi.copy(this.appStore.project.id, config.id).subscribe({
+      next: copiedConfig => {
         this.toastService.success('The config has been copied.');
         this.testConfigs.push(copiedConfig);
       },
-      console.error
-    );
+      error: console.error
+    });
   }
 
   runConfig(config: any): void {
-    this.testConfigApi.run(this.appStore.project.id, config.id).subscribe(
-      () => {
+    this.testConfigApi.run(this.appStore.project.id, config.id).subscribe({
+      next: () => {
         this.toastService.success('The test process started successfully.');
       },
-      res => {
+      error: res => {
         this.toastService.danger('The test process could not be started. ' + res.error.message);
       }
-    );
+    });
   }
 }

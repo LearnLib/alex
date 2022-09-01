@@ -13,9 +13,7 @@
           {{config.description}}
         </ng-template>
         <ng-template #hasNoDescription>
-          <span class="text-muted" style="font-style: italic">
-            No description provided
-          </span>
+          <em class="text-muted">No description provided</em>
         </ng-template>
       </td>
     </tr>
@@ -35,12 +33,12 @@
     <tr>
       <td>Tests</td>
       <td>
-        <ng-container *ngIf="tests.length > 0; then hasTests; else hasNoTests"></ng-container>
+        <ng-container *ngIf="config.tests.length > 0; then hasTests; else hasNoTests"></ng-container>
         <ng-template #hasTests>
-          <span [ngbTooltip]="this.root ? getCasePath(test): null" class="badge badge-primary test-badge mr-2" *ngFor="let test of tests">{{test.name}}</span>
+          <span>{{config.tests.length}}</span>
         </ng-template>
         <ng-template #hasNoTests>
-          <div class="text-muted" style="font-style: italic">No tests defined</div>
+          <em class="text-muted">No tests specified</em>
         </ng-template>
       </td>
     </tr>
