@@ -22,7 +22,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LearnerResultDetailsModalComponent } from '../modals/learner-result-details-modal/learner-result-details-modal.component';
 import { PromptService } from '../../services/prompt.service';
 import { DownloadService } from '../../services/download.service';
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 /**
  * The directive that displays a browsable list of learn results. For each result, it can display the observation

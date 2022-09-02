@@ -25,7 +25,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormUtilsService } from '../../../../services/form-utils.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { LearnerResultPanelService } from '../../learner-result-panel.service';
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

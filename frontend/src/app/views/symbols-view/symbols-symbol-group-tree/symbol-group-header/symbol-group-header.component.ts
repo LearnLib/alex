@@ -18,7 +18,7 @@ import { SymbolGroup } from '../../../../entities/symbol-group';
 import { Component, Input, OnInit } from '@angular/core';
 import { SymbolsViewStoreService } from '../../symbols-view-store.service';
 import { SymbolGroupLockInfo } from '../../../../services/symbol-presence.service';
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

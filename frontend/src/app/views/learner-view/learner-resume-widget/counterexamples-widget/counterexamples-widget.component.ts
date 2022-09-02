@@ -24,7 +24,7 @@ import { LearnerResultStepApiService } from '../../../../services/api/learner-re
 import { ProjectEnvironmentApiService } from '../../../../services/api/project-environment-api.service';
 import { listEquals } from '../../../../utils/list-utils';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 interface IOPair {
   input: string;
