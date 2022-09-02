@@ -20,6 +20,9 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WindowType;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -31,14 +34,26 @@ import javax.validation.constraints.NotNull;
 @JsonTypeName("web_browser")
 public class BrowserAction extends WebSymbolAction {
 
-    /** What to to with the open browser window. */
+    /** What to do with the open browser window. */
     public enum Action {
 
         /** If the browser should be restarted. */
         RESTART,
 
         /** If the browser window should be refreshed. */
-        REFRESH
+        REFRESH,
+
+        /** Create a new tab in the browser. */
+        CREATE_TAB,
+
+        /** Create a new browser window. */
+        CREATE_WINDOW,
+
+        /** Close the active tab. */
+        CLOSE_TAB,
+
+        /** Close the active window. */
+        CLOSE_WINDOW
     }
 
     /** The action to execute on the browser window. */
@@ -54,21 +69,37 @@ public class BrowserAction extends WebSymbolAction {
     @Override
     protected ExecuteResult execute(WebSiteConnector connector) {
         try {
+            final var wd = connector.getDriver();
             switch (action) {
-                case RESTART:
-                    connector.restart();
+                case RESTART -> {
                     logger.info(LoggerMarkers.LEARNER, "Restart browser.");
-                    break;
-                case REFRESH:
-                    connector.refresh();
+                    connector.restart();
+                }
+                case REFRESH -> {
                     logger.info(LoggerMarkers.LEARNER, "Refresh browser.");
-                    break;
-                default:
-                    throw new Exception("Invalid browser action.");
+                    connector.refresh();
+                }
+                case CREATE_TAB -> {
+                    logger.info(LoggerMarkers.LEARNER, "Create a new tab.");
+                    wd.switchTo().newWindow(WindowType.TAB);
+                }
+                case CREATE_WINDOW -> {
+                    logger.info(LoggerMarkers.LEARNER, "Create a new window.");
+                    wd.switchTo().newWindow(WindowType.WINDOW);
+                }
+                case CLOSE_TAB -> {
+                    logger.info(LoggerMarkers.LEARNER, "Close the active tab.");
+                    switchToMainWindow(wd);
+                }
+                case CLOSE_WINDOW -> {
+                    logger.info(LoggerMarkers.LEARNER, "Close the active window.");
+                    switchToMainWindow(wd);
+                }
+                default -> throw new Exception("Invalid browser action.");
             }
             return getSuccessOutput();
         } catch (Exception e) {
-            logger.info(LoggerMarkers.LEARNER, "Browser could not be refreshed or restarted.", e);
+            logger.info(LoggerMarkers.LEARNER, "Browser action could not be performed.", e);
             return getFailedOutput();
         }
     }
@@ -81,4 +112,9 @@ public class BrowserAction extends WebSymbolAction {
         this.action = action;
     }
 
+    private void switchToMainWindow(WebDriver wd) {
+        wd.close();
+        final var mainHandle = wd.getWindowHandles().iterator().next();
+        wd.switchTo().window(mainHandle);
+    }
 }

@@ -20,7 +20,7 @@ import { Action } from '../action';
 /** Action for doing something with the browser window. */
 export class BrowserAction extends Action {
 
-  /** The action to execute on the browser window. ['RESTART','REFRESH']. */
+  /** The action to execute on the browser window. */
   public action: string;
 
   /**
@@ -35,6 +35,14 @@ export class BrowserAction extends Action {
   }
 
   toString(): string {
-    return `${this.action === 'RESTART' ? 'Restart' : 'Refresh'} the browser window`;
+    switch (this.action) {
+      case 'RESTART': return 'Restart the browser window';
+      case 'REFRESH': return 'Refresh the browser window';
+      case 'CREATE_TAB': return 'Create a new browser tab';
+      case 'CREATE_WINDOW': return 'Create a new browser window';
+      case 'CLOSE_TAB': return 'Close the active browser tab';
+      case 'CLOSE_WINDOW': return 'Close the active browser window';
+    }
+    return 'Invalid browser action';
   }
 }

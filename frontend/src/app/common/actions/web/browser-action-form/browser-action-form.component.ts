@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-/**
- * Component that displays a form for the browser action.
- */
 import { Component, Input } from '@angular/core';
 import { BrowserAction } from '../../../../entities/actions/web/browser-action';
 
+/**
+ * Component that displays a form for the browser action.
+ */
 @Component({
   selector: 'browser-action-form',
   templateUrl: './browser-action-form.component.html'
@@ -28,5 +28,5 @@ export class BrowserActionFormComponent {
 
   @Input() action: BrowserAction;
 
-  actions: string[] = ['REFRESH', 'RESTART'];
+  actions: string[] = ['REFRESH', 'RESTART', 'CREATE_TAB', 'CREATE_WINDOW', 'CLOSE_TAB', 'CLOSE_WINDOW'];
 }
