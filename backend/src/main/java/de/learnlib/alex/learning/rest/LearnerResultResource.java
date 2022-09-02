@@ -21,6 +21,7 @@ import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.ModelExportFormat;
 import de.learnlib.alex.learning.entities.TestSuiteGenerationConfig;
+import de.learnlib.alex.learning.rest.inputs.UpdateLearnerResultInput;
 import de.learnlib.alex.learning.services.ModelExporter;
 import de.learnlib.alex.learning.services.TestGenerator;
 import de.learnlib.alex.security.AuthContext;
@@ -35,10 +36,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -155,10 +158,39 @@ public class LearnerResultResource {
             value = "/{testNo}/copy",
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity<LearnerResult> copy(@PathVariable("projectId") Long projectId, @PathVariable("testNo") Long testNo) {
+    public ResponseEntity<LearnerResult> copy(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("testNo") Long testNo
+    ) {
         final User user = authContext.getUser();
         final LearnerResult clonedResult = learnerResultDAO.copy(user, projectId, testNo);
         return ResponseEntity.status(HttpStatus.CREATED).body(clonedResult);
+    }
+
+    /**
+     * Update meta data of a learner result.
+     *
+     * @param projectId
+     *         The ID of the project.
+     * @param testNo
+     *         The test not of the learner result.
+     * @param input
+     *         The object to update the learner result with.
+     * @return The updated learner result.
+     */
+    @PutMapping(
+            value = "/{testNo}",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity<LearnerResult> update(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("testNo") Long testNo,
+            @RequestBody @Validated UpdateLearnerResultInput input
+    ) {
+        final var user = authContext.getUser();
+        final var updatedResult = learnerResultDAO.update(user, projectId, testNo, input);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedResult);
     }
 
     @PostMapping(

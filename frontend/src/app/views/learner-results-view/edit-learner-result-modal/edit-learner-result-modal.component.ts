@@ -1,0 +1,56 @@
+/*
+ * Copyright 2015 - 2022 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { Component, Input, OnInit } from '@angular/core';
+import { LearnerResult } from '../../../entities/learner-result';
+import { LearnerResultApiService } from '../../../services/api/learner-result-api.service';
+import { FormControl, FormGroup } from '@angular/forms';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+
+@Component({
+  selector: 'edit-learner-result-modal',
+  templateUrl: './edit-learner-result-modal.component.html'
+})
+export class EditLearnerResultModalComponent implements OnInit {
+
+  @Input()
+  public result: LearnerResult;
+
+  public error: string;
+
+  public form = new FormGroup({
+    comment: new FormControl('')
+  });
+
+  constructor(
+    public modal: NgbActiveModal,
+    private learnerResultApi: LearnerResultApiService) {
+  }
+
+  ngOnInit(): void {
+    this.form.controls.comment.setValue(this.result.comment);
+  }
+
+  update(): void {
+    this.error = null;
+    let comment = this.form.value.comment;
+    comment = comment == null ? '' : comment.trim();
+    this.learnerResultApi.update(this.result.project, this.result.testNo, { comment }).subscribe({
+      next: (updatedLearnerResult: LearnerResult) => this.modal.close(updatedLearnerResult),
+      error: response => this.error = response.error.message
+    });
+  }
+}

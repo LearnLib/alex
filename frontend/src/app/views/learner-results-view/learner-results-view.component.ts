@@ -27,6 +27,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LearnerResultDetailsModalComponent } from '../../common/modals/learner-result-details-modal/learner-result-details-modal.component';
 import { Router } from '@angular/router';
 import { Page } from '../../entities/interfaces';
+import { EditLearnerResultModalComponent } from './edit-learner-result-modal/edit-learner-result-modal.component';
 
 /**
  * The controller for listing all final test results.
@@ -62,15 +63,15 @@ export class LearnerResultsViewComponent implements OnInit {
   }
 
   loadLearnerResults(p: number = 0): void {
-    this.learnerResultApi.getAllByPage(this.project.id, p, 25).subscribe(
-      page => {
+    this.learnerResultApi.getAllByPage(this.project.id, p, 25).subscribe({
+      next: page => {
         this.page = page;
         const newResults = this.page.content;
         newResults.forEach(r => this.results.push(r));
         this.selectedResults.addItems(newResults);
       },
-      res => this.toastService.danger(`Failed to load reports. ${res.error.message}`)
-    );
+      error: res => this.toastService.danger(`Failed to load reports. ${res.error.message}`)
+    });
   }
 
   loadMoreLearnerResults(): void {
@@ -83,16 +84,31 @@ export class LearnerResultsViewComponent implements OnInit {
    * @param result The test result that should be deleted.
    */
   deleteResult(result: LearnerResult): void {
-    this.learnerResultApi.remove(result).subscribe(
-      () => {
+    this.learnerResultApi.remove(result).subscribe({
+      next: () => {
         this.toastService.success('Learner result for test <strong>' + result.testNo + '</strong> deleted');
         remove(this.results, {testNo: result.testNo});
         this.selectedResults.remove(result);
       },
-      res => {
+      error: res => {
         this.toastService.danger('<p><strong>Could not delete learner result</strong></p>' + res.error.message);
       }
-    );
+    });
+  }
+
+  editResult(result: LearnerResult): void {
+    const modal = this.modalService.open(EditLearnerResultModalComponent);
+    modal.componentInstance.result = result;
+    modal.result
+      .then((updatedResult: LearnerResult) => {
+        this.selectedResults.remove(updatedResult);
+        const results = [...this.results];
+        const i = results.findIndex(r => r.id === updatedResult.id);
+        results[i] = updatedResult;
+        this.results = results;
+        this.selectedResults.addItem(updatedResult);
+      })
+      .catch(() => {});
   }
 
   /**
@@ -101,16 +117,16 @@ export class LearnerResultsViewComponent implements OnInit {
   deleteResults(): void {
     const selectedResults = this.selectedResults.getSelected();
     if (selectedResults.length > 0) {
-      this.learnerResultApi.removeMany(selectedResults).subscribe(
-        () => {
+      this.learnerResultApi.removeMany(selectedResults).subscribe({
+        next: () => {
           this.toastService.success('Learner results deleted');
           selectedResults.forEach(result => remove(this.results, {testNo: result.testNo}));
           this.selectedResults.removeMany(selectedResults);
         },
-        res => {
+        error: res => {
           this.toastService.danger('<p><strong>Could not delete learner results</strong></p>' + res.error.message);
         }
-      );
+      });
     } else {
       this.toastService.info('You have to select a least one result');
     }
@@ -164,16 +180,16 @@ export class LearnerResultsViewComponent implements OnInit {
   }
 
   cloneResult(result: LearnerResult): void {
-    this.learnerResultApi.copy(result).subscribe(
-      clonedResult => {
+    this.learnerResultApi.copy(result).subscribe({
+      next: clonedResult => {
         this.toastService.success('The result has been cloned.');
         this.results.push(clonedResult);
         this.selectedResults.addItem(clonedResult);
       },
-      res => {
+      error: res => {
         this.toastService.danger(`The result could not be cloned. ${res.error.message}`);
       }
-    );
+    });
   }
 
   openResultDetailsModal(result: LearnerResult): void {

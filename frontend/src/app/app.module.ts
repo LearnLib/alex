@@ -273,6 +273,7 @@ import { GridApiService } from './services/api/grid-api.service';
 import { FuzzyStateCoverEqOracleFormComponent } from './common/eq-oracles/fuzzy-state-cover-eq-oracle-form/fuzzy-state-cover-eq-oracle-form.component';
 import { AceEditorComponent } from './common/ace-editor/ace-editor.component';
 import { LoadingIndicatorComponent } from './common/loading-indicator/loading-indicator.component';
+import { EditLearnerResultModalComponent } from './views/learner-results-view/edit-learner-result-modal/edit-learner-result-modal.component';
 
 @NgModule({
   declarations: [
@@ -494,7 +495,8 @@ import { LoadingIndicatorComponent } from './common/loading-indicator/loading-in
     WarningWidgetComponent,
     FuzzyStateCoverEqOracleFormComponent,
     AceEditorComponent,
-    LoadingIndicatorComponent
+    LoadingIndicatorComponent,
+    EditLearnerResultModalComponent
   ],
   imports: [
     BrowserModule,

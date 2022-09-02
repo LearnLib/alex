@@ -27,6 +27,7 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;
@@ -58,6 +59,9 @@ public class LearnerResultDAOTest {
     private LearnerResultStepRepository learnerResultStepRepository;
 
     @Mock
+    private ProjectRepository projectRepository;
+
+    @Mock
     private LearnerSetupDAO learnerSetupDAO;
 
     @Mock
@@ -74,6 +78,7 @@ public class LearnerResultDAOTest {
                 projectDAO,
                 learnerResultRepository,
                 learnerResultStepRepository,
+                projectRepository,
                 learnerSetupDAO,
                 entityManager,
                 learnerResultStepDAO

@@ -20,9 +20,9 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
-import de.learnlib.alex.learning.entities.LearnerResult.Status;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;
 import java.util.ArrayList;
@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.validation.ValidationException;
+
+import de.learnlib.alex.learning.rest.inputs.UpdateLearnerResultInput;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +52,7 @@ public class LearnerResultDAO {
     private final ProjectDAO projectDAO;
     private final LearnerResultRepository learnerResultRepository;
     private final LearnerResultStepRepository learnerResultStepRepository;
+    private final ProjectRepository projectRepository;
     private final LearnerSetupDAO learnerSetupDAO;
     private final LearnerResultStepDAO learnerResultStepDAO;
 
@@ -58,6 +61,7 @@ public class LearnerResultDAO {
             ProjectDAO projectDAO,
             LearnerResultRepository learnerResultRepository,
             LearnerResultStepRepository learnerResultStepRepository,
+            ProjectRepository projectRepository,
             LearnerSetupDAO learnerSetupDAO,
             EntityManager entityManager,
             LearnerResultStepDAO learnerResultStepDAO
@@ -65,6 +69,7 @@ public class LearnerResultDAO {
         this.projectDAO = projectDAO;
         this.learnerResultRepository = learnerResultRepository;
         this.learnerResultStepRepository = learnerResultStepRepository;
+        this.projectRepository = projectRepository;
         this.learnerSetupDAO = learnerSetupDAO;
         this.entityManager = entityManager;
         this.learnerResultStepDAO = learnerResultStepDAO;
@@ -195,6 +200,18 @@ public class LearnerResultDAO {
 
         initializeLazyRelations(resultInDB);
         return resultInDB;
+    }
+
+    public LearnerResult update(User user, Long projectId, Long testNo, UpdateLearnerResultInput input) {
+        var project = projectRepository.findById(projectId).orElse(null);
+        var resultInDB = learnerResultRepository.findOneByProject_IdAndTestNo(projectId, testNo);
+        checkAccess(user, project, resultInDB);
+
+        resultInDB.setComment(input.comment);
+        final var updatedResult = learnerResultRepository.save(resultInDB);
+
+        initializeLazyRelations(updatedResult);
+        return updatedResult;
     }
 
     public LearnerResult copy(User user, Long projectId, Long testNo) {

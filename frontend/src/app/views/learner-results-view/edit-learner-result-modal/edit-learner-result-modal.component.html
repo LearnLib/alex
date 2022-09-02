@@ -1,0 +1,31 @@
+<div class="modal-header">
+  <h4 class="modal-title">Update result <strong>Test No {{result.testNo}}</strong></h4>
+  <a (click)="modal.dismiss()" class="btn btn-icon float-right">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<form (ngSubmit)="update()" [formGroup]="form">
+  <div class="modal-body">
+
+    <div class="alert alert-danger mb-3" *ngIf="error != null">
+      The learner result could not be updated: {{error}}
+    </div>
+
+    <div class="form-group mb-0">
+      <textarea
+        type="text"
+        class="form-control"
+        placeholder="Enter a description for the learner result"
+        rows="3"
+        formControlName="comment"
+      >
+      </textarea>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-primary btn-sm" type="submit">Update</button>
+    <button (click)="modal.dismiss(); $event.preventDefault()" class="btn btn-default btn-sm">Cancel</button>
+  </div>
+</form>
