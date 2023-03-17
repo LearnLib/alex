@@ -107,4 +107,16 @@ export class LearnerApiService extends BaseApiService {
   getDifferenceTree(projectId: number, hypA: any, hypB: any): Observable<any> {
     return this.http.post(`${this.env.apiUrl}/projects/${projectId}/learner/compare/differenceTree`, [hypA, hypB], this.defaultHttpOptions);
   }
+
+  /**
+   * Compare two hypotheses and return the difference automaton.
+   * Test a on b.
+   *
+   * @param projectId The ID of the project.
+   * @param hypA The first hypothesis.
+   * @param hypB The second hypothesis.
+   */
+  getDifferenceAutomaton(projectId: number, hypA: any, hypB: any): Observable<any> {
+    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/learner/compare/differenceAutomaton`, [hypA, hypB], this.defaultHttpOptions);
+  }
 }

@@ -43,9 +43,15 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealyBuilder;
+import de.learnlib.api.SUL;
+import de.learnlib.oracle.equivalence.WpMethodEQOracle;
+import de.learnlib.oracle.membership.SULOracle;
 import net.automatalib.automata.transducers.impl.compact.CompactMealy;
 import net.automatalib.util.automata.Automata;
 import net.automatalib.util.automata.conformance.WpMethodTestsIterator;
+import net.automatalib.util.automata.transducers.MealyFilter;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -351,6 +357,55 @@ public class LearnerService {
         } else {
             return new SeparatingWord();
         }
+    }
+
+    public CompactMealy<String, String> differenceAutomaton(
+            final CompactMealyMachineProxy mealyProxy1,
+            final CompactMealyMachineProxy mealyProxy2
+    ) {
+        final var alphabet1 = mealyProxy1.createAlphabet();
+        final var alphabet2 = mealyProxy2.createAlphabet();
+        checkAlphabetsAreIdentical(alphabet1, alphabet2);
+
+        final var undefinedOutput = "__";
+        final var diffSul = new DifferenceSimulatorSUL(
+                mealyProxy1.createMealyMachine(alphabet1),
+                mealyProxy2.createMealyMachine(alphabet2),
+                undefinedOutput
+        );
+
+        final var membershipOracle = new SULOracle<>(diffSul);
+
+        final var learner = new TTTLearnerMealyBuilder<String, String>()
+                .withAlphabet(alphabet1)
+                .withOracle(membershipOracle)
+                .create();
+
+        final var equivalenceOracle = new WpMethodEQOracle<>(membershipOracle, 2);
+
+        learner.startLearning();
+
+        while (true) {
+            final var hyp = learner.getHypothesisModel();
+            final var counterexample = equivalenceOracle.findCounterExample(hyp, alphabet1);
+
+            if (counterexample == null) {
+                break;
+            } else {
+                learner.refineHypothesis(counterexample);
+            }
+        }
+
+        final var hyp = learner.getHypothesisModel();
+        final var prunedHyp = MealyFilter.pruneTransitionsWithOutput(
+                hyp,
+                alphabet1,
+                undefinedOutput
+        );
+
+        return CompactMealyMachineProxy
+                .createFrom(prunedHyp, alphabet1)
+                .createMealyMachine(alphabet1);
     }
 
     /**

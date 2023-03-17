@@ -202,12 +202,33 @@ public class LearnerResource {
             throw new IllegalArgumentException("You need to specify exactly two hypotheses!");
         }
 
-        final CompactMealy<String, String> diffTree = learnerService.differenceTree(
+        final var diffTree = learnerService.differenceTree(
                 mealyMachineProxies.get(0),
                 mealyMachineProxies.get(1)
         );
 
         return ResponseEntity.ok(CompactMealyMachineProxy.createFrom(diffTree, diffTree.getInputAlphabet()));
+    }
+
+    @PostMapping(
+            value = "/compare/differenceAutomaton",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity<CompactMealyMachineProxy> differenceAutomaton(
+            @PathVariable("projectId") Long projectId,
+            @RequestBody List<CompactMealyMachineProxy> mealyMachineProxies
+    ) {
+        if (mealyMachineProxies.size() != 2) {
+            throw new IllegalArgumentException("You need to specify exactly two hypotheses!");
+        }
+
+        final var diffAutomaton = learnerService.differenceAutomaton(
+                mealyMachineProxies.get(0),
+                mealyMachineProxies.get(1)
+        );
+
+        return ResponseEntity.ok(CompactMealyMachineProxy.createFrom(diffAutomaton, diffAutomaton.getInputAlphabet()));
     }
 }
 

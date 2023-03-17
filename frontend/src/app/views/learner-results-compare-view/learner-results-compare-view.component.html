@@ -2,21 +2,23 @@
 
   <action-bar>
     <div class="d-flex flex-row align-items-center">
-      <button
-        (click)="showSeparatingWord()"
-        [disabled]="panels.length !== 2"
-        class="btn btn-sm btn-default mr-2"
-      >
-        <i class="fas fa-fw fa-bolt"></i> Separating word
-      </button>
 
-      <button
-        (click)="showDifferenceTree()"
-        [disabled]="panels.length !== 2"
-        class="btn btn-sm btn-default"
-      >
-        <i class="fas fa-fw fa-sitemap"></i> Differences
-      </button>
+      <div class="btn-group btn-group-sm mr-2" ngbDropdown>
+        <button class="btn btn-default" ngbDropdownToggle type="button" [disabled]="panels.length !== 2">
+          <i class="fas fa-fw fa-sitemap"></i> Show Differences
+        </button>
+        <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu role="menu">
+          <button (click)="showSeparatingWord()" ngbDropdownItem>
+            Separating word
+          </button>
+          <button (click)="showDifferenceTree()" ngbDropdownItem>
+            Difference Tree
+          </button>
+          <button (click)="showDifferenceAutomaton()" ngbDropdownItem>
+            Difference Automaton
+          </button>
+        </div>
+      </div>
 
       <button
         (click)="openResultListModal()"

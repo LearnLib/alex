@@ -119,7 +119,7 @@ export class HypothesisComponent implements OnInit, OnChanges, OnDestroy {
       const dot = `
         digraph hypothesis {
           __start0 [label="" shape="none"];
-          __start0 -> 0;
+          __start0 -> ${this.data.initNode};
           ${nodes.join(';\n')}
           ${links.join(';\n')}
         }

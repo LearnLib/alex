@@ -133,7 +133,7 @@ export class LearnerResultsCompareViewComponent implements OnInit {
         } else {
           this.addPanel({
               steps: [{hypothesis: data}],
-              testNo: `Diff ${this.panels[0].result.testNo} vs. ${this.panels[1].result.testNo}`,
+              testNo: `Diff. Tree ${this.panels[0].result.testNo} vs. ${this.panels[1].result.testNo}`,
               setup: {
                 algorithm: {
                   name: 'TTT'
@@ -141,6 +141,25 @@ export class LearnerResultsCompareViewComponent implements OnInit {
               }
           } as any);
         }
+      },
+      res => this.toastService.danger(res.error.message)
+    );
+  }
+  showDifferenceAutomaton(): void {
+    const hypA = this.panels[0].result.steps[this.panels[0].step].hypothesis;
+    const hypB = this.panels[1].result.steps[this.panels[1].step].hypothesis;
+
+    this.learnerApi.getDifferenceAutomaton(this.project.id, hypA, hypB).subscribe(
+      data => {
+          this.addPanel({
+            steps: [{hypothesis: data}],
+            testNo: `Diff. Automaton ${this.panels[0].result.testNo} vs. ${this.panels[1].result.testNo}`,
+            setup: {
+              algorithm: {
+                name: 'TTT'
+              }
+            }
+          } as any);
       },
       res => this.toastService.danger(res.error.message)
     );
