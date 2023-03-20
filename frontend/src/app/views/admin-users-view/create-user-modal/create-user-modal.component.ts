@@ -39,8 +39,7 @@ export class CreateUserModalComponent {
     this.form = new FormGroup({
       username: new FormControl('', [Validators.required, Validators.pattern('[a-zA-Z][a-zA-Z0-9]*'), Validators.maxLength(32)]),
       email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', [Validators.required]),
-      role: new FormControl('REGISTERED', [Validators.required])
+      password: new FormControl('', [Validators.required])
     });
   }
 
@@ -51,7 +50,6 @@ export class CreateUserModalComponent {
     user.username = this.form.controls.username.value;
     user.email = this.form.controls.email.value;
     user.password = this.form.controls.password.value;
-    user.role = this.form.controls.role.value;
 
     this.userApi.create(user).subscribe({
       next: createdUser => {

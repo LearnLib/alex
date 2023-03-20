@@ -59,14 +59,6 @@ public class UserResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void shouldHaveCreatedAnAdminAccountOnStartUp() {
-        final Response res = client.target(userApi.url() + "/login").request()
-                .post(Entity.json(createUserJson(ADMIN_EMAIL, ADMIN_PASSWORD)));
-
-        JsonPath.read(res.readEntity(String.class), "token");
-    }
-
-    @Test
     public void shouldCreateAnAccount() {
         final Response res = userApi.create(createUserJson("test@test.de", "test"));
 
@@ -79,7 +71,7 @@ public class UserResourceIT extends AbstractResourceIT {
         final Response res = client.target(userApi.url() + "/login").request()
                 .post(Entity.json(createUserJson("test@test.de", "test")));
 
-        assertEquals(HttpStatus.NOT_FOUND.value(), res.getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
 
         final String body = res.readEntity(String.class);
         assertThrows(PathNotFoundException.class, () -> JsonPath.read(body, "token"));
@@ -91,14 +83,6 @@ public class UserResourceIT extends AbstractResourceIT {
 
         assertEquals(HttpStatus.CREATED.value(), res.getStatus());
         assertEquals("REGISTERED", JsonPath.read(res.readEntity(String.class), "role"));
-    }
-
-    @Test
-    public void adminShouldCreateAnAdminAccount() {
-        final Response res = userApi.create(createUserJson("test@test.de", "test", "ADMIN"), adminJwt);
-
-        assertEquals(HttpStatus.CREATED.value(), res.getStatus());
-        assertEquals("ADMIN", JsonPath.read(res.readEntity(String.class), "role"));
     }
 
     @ParameterizedTest(name = "Use value \"{0}\" for the test")
@@ -144,9 +128,9 @@ public class UserResourceIT extends AbstractResourceIT {
 
     @Test
     public void adminShouldMakeOtherAdminsUsers() {
-        final Response res1 = userApi.create(createUserJson("test@test.de", "test", "ADMIN"), adminJwt);
+        final Response res1 = userApi.create(createUserJson("test@test.de", "test"), adminJwt);
         final int userId = JsonPath.read(res1.readEntity(String.class), "id");
-
+        userApi.changeRole(userId, UserRole.ADMIN, adminJwt);
         userApi.changeRole(userId, UserRole.REGISTERED, adminJwt);
 
         final String jwtUser = userApi.login("test@test.de", "test");
@@ -217,9 +201,11 @@ public class UserResourceIT extends AbstractResourceIT {
 
     @Test
     public void adminShouldDeleteHimselfIfHeIsNotTheOnlyAdmin() {
-        final Response res1 = userApi.create(createUserJson("admin2@alex.example", "admin", "ADMIN"), adminJwt);
+        final Response res1 = userApi.create(createUserJson("admin2@alex.example", "admin"), adminJwt);
 
         final int id = JsonPath.read(res1.readEntity(String.class), "id");
+        userApi.changeRole(id, UserRole.ADMIN, adminJwt);
+
         final String jwtAdmin2 = userApi.login("admin2@alex.example", "admin");
 
         final Response res2 = userApi.delete(id, jwtAdmin2);
@@ -348,7 +334,7 @@ public class UserResourceIT extends AbstractResourceIT {
 
     @Test
     public void userShouldNotChangeHisUsername() {
-        final String user = createUserJson("test@test.de", "test", "test", "REGISTERED");
+        final String user = createUserJson("test@test.de", "test", "test");
 
         final Response res1 = userApi.create(user);
         final String jwt = userApi.login("test@test.de", "test");
@@ -364,7 +350,7 @@ public class UserResourceIT extends AbstractResourceIT {
 
     @Test
     public void adminShouldChangeUsername() {
-        final String user = createUserJson("test@test.de", "test", "test", "REGISTERED");
+        final String user = createUserJson("test@test.de", "test", "test");
 
         final Response res1 = userApi.create(user);
         final String jwt = userApi.login("test@test.de", "test");
@@ -390,8 +376,8 @@ public class UserResourceIT extends AbstractResourceIT {
 
     @Test
     public void cannotCreateUserWithSameUsernameTwice() throws Exception {
-        final String user1 = createUserJson("test1@test.de", "test", "test", "REGISTERED");
-        final String user2 = createUserJson("test2@test.de", "test", "test", "REGISTERED");
+        final String user1 = createUserJson("test1@test.de", "test", "test");
+        final String user2 = createUserJson("test2@test.de", "test", "test");
 
         final Response res1 = userApi.create(user1);
         assertEquals(HttpStatus.CREATED.value(), res1.getStatus());
@@ -436,8 +422,8 @@ public class UserResourceIT extends AbstractResourceIT {
             "def@test.de, def, def@test.de"
     })
     public void shouldSearchUserByEmail(String searchValue, String expectedUsername, String expectedEmail) {
-        userApi.create(createUserJson("abc@test.de", "abc", "test", "REGISTERED"));
-        userApi.create(createUserJson("def@test.de", "def", "test", "REGISTERED"));
+        userApi.create(createUserJson("abc@test.de", "abc", "test"));
+        userApi.create(createUserJson("def@test.de", "def", "test"));
 
         final Response res = userApi.search(searchValue, adminJwt);
         assertEquals(HttpStatus.OK.value(), res.getStatus());
@@ -498,25 +484,20 @@ public class UserResourceIT extends AbstractResourceIT {
                 + "}";
     }
 
-    private String createUserJson(String email, String password, String role) {
-        return createUserJson(email, email.split("@")[0], password, role);
-    }
-
-    private String createUserJson(String email, String username, String password, String role) {
+    private String createUserJson(String email, String username, String password) {
         return "{"
                 + "\"username\":\"" + username + "\""
                 + ",\"email\":\"" + email + "\""
                 + ",\"password\":\"" + password + "\""
-                + ",\"role\":\"" + role + "\""
                 + "}";
     }
 
     private List<User> createDemoUsers() {
-        final User user1 = userApi.create(createUserJson("user1@test.de", "user1", "test", "REGISTERED"))
+        final User user1 = userApi.create(createUserJson("user1@test.de", "user1", "test"))
                 .readEntity(User.class);
-        final User user2 = userApi.create(createUserJson("user2@test.de", "user2", "test", "REGISTERED"))
+        final User user2 = userApi.create(createUserJson("user2@test.de", "user2", "test"))
                 .readEntity(User.class);
-        final User user3 = userApi.create(createUserJson("user3@test.de", "user3", "test", "REGISTERED"))
+        final User user3 = userApi.create(createUserJson("user3@test.de", "user3", "test"))
                 .readEntity(User.class);
 
         return Arrays.asList(user1, user2, user3);

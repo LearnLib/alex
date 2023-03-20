@@ -27,4 +27,5 @@ CMD java -jar /usr/share/java/alex/alex.jar \
     --spring.datasource.username="${DATABASE_USER}" \
     --spring.datasource.password="${DATABASE_PASSWORD}" \
     --selenium.grid.host="${GRID_HOST}" \
-    --selenium.grid.port="${GRID_PORT}"
+    --selenium.grid.port="${GRID_PORT}" \
+    --runtime="${RUNTIME}"

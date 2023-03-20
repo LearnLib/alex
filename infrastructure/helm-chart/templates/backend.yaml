@@ -74,6 +74,7 @@ spec:
       labels:
         app: backend
     spec:
+      serviceAccountName: alex-sa
       containers:
         - name: backend
           image: {{ .Values.backendImage }}
@@ -82,6 +83,10 @@ spec:
             - configMapRef:
                 name: backend-config
           env:
+            - name: RUNTIME
+              value: kubernetes
+            - name: KUBERNETES_NAMESPACE
+              value: {{ .Release.Namespace }}
             - name: DATABASE_USER
               valueFrom:
                 secretKeyRef:
@@ -100,3 +105,37 @@ spec:
         - name: backend-data
           persistentVolumeClaim:
             claimName: backend-pv-claim
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: alex-role-{{ .Release.Namespace }}
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "pods/log", "deployments"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: [ "get", "list", "watch", "create", "update", "patch", "delete" ]
+  - apiGroups: [ "extensions" ]
+    resources: [ "deployments" ]
+    verbs: [ "get", "list", "watch", "create", "update", "patch", "delete" ]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: alex-{{ .Release.Namespace }}
+subjects:
+  - kind: ServiceAccount
+    namespace: {{ .Release.Namespace }}
+    name: alex-sa
+roleRef:
+  kind: ClusterRole
+  name: alex-role-{{ .Release.Namespace }}
+  apiGroup: "rbac.authorization.k8s.io"
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: alex-sa
+---

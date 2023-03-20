@@ -69,6 +69,7 @@ services:
       - DATABASE_NAME=alex
       - DATABASE_USER=sa
       - DATABASE_PASSWORD=sa
+      - RUNTIME=docker
     ports:
       - "8000:8000"
 

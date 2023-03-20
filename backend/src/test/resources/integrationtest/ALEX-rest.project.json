@@ -1220,8 +1220,7 @@
         "scriptTimeout": 10,
         "platform": "ANY",
         "browser": "chrome",
-        "version": "",
-        "headless": false
+        "version": ""
       },
       "modelCheckingConfig": {
         "formulaSuites": [],
@@ -1241,8 +1240,7 @@
         "scriptTimeout": 10,
         "platform": "ANY",
         "browser": "chrome",
-        "version": "",
-        "headless": false
+        "version": ""
       },
       "environment": {
         "name": "Production"

@@ -601,12 +601,6 @@
       ],
       "symbols": [
         {
-          "parameterValues": [],
-          "symbol": {
-            "id": 7
-          }
-        },
-        {
           "parameterValues": [
             {
               "parameter": {
@@ -717,8 +711,7 @@
         "scriptTimeout": 10,
         "platform": "ANY",
         "browser": "chrome",
-        "version": "",
-        "headless": true
+        "version": ""
       },
       "modelCheckingConfig": {
         "formulaSuites": [],

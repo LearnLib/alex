@@ -53,3 +53,5 @@ selenium:
 
 ltsmin:
   path: ""
+
+runtime: "kubernetes"

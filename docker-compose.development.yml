@@ -67,6 +67,7 @@ services:
             - DATABASE_PASSWORD=sa
             - GRID_HOST=selenium-hub
             - GRID_PORT=4444
+            - RUNTIME=docker
         volumes:
             - ./backend/src:/var/alex/backend/src:rw
             - ./backend/pom.xml:/var/alex/backend/pom.xml:rw

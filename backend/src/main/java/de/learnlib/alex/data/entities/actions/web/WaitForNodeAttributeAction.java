@@ -31,6 +31,8 @@ import javax.validation.constraints.NotNull;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
+
 /**
  * Action to wait for a node attribute value.
  */
@@ -78,7 +80,7 @@ public class WaitForNodeAttributeAction extends WebSymbolAction {
             return getFailedOutput();
         }
 
-        final WebDriverWait wait = new WebDriverWait(connector.getDriver(), maxWaitTime);
+        final WebDriverWait wait = new WebDriverWait(connector.getDriver(), Duration.ofSeconds(maxWaitTime));
         final WebElementLocator nodeWithVariables =
                 new WebElementLocator(insertVariableValues(node.getSelector()), node.getType());
 

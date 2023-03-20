@@ -14,13 +14,14 @@ spec:
       labels:
         app: selenium-node-chrome
     spec:
+      terminationGracePeriodSeconds: 60
       volumes:
         - name: dshm
           emptyDir:
             medium: Memory
       containers:
         - name: selenium-node-chrome
-          image: selenium/node-chrome:4.0.0
+          image: selenium/node-chrome:4.8.1
           ports:
             - containerPort: 5900
             - containerPort: 7900
@@ -40,3 +41,25 @@ spec:
             limits:
               memory: {{ .Values.selenium.chrome.memory }}
               cpu: {{ .Values.selenium.chrome.cpu }}
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "curl --request POST 'localhost:5555/se/grid/node/drain' --header 'X-REGISTRATION-SECRET;'; tail --pid=$(pgrep -f '[n]ode --bind-host false --config /opt/selenium/config.toml') -f /dev/null; sleep 30s"]
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: selenium-grid-chrome-scaledobject
+  labels:
+    deploymentName: selenium-node-chrome
+spec:
+  minReplicaCount: 1
+  maxReplicaCount: 80
+  pollingInterval: 10
+  scaleTargetRef:
+    name: selenium-node-chrome
+  triggers:
+    - type: selenium-grid
+      metadata:
+        url: 'http://selenium-hub.{{ .Release.Namespace}}.svc.cluster.local:4444/graphql'
+        browserName: 'chrome'

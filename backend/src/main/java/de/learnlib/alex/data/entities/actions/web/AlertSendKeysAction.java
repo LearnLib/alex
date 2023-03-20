@@ -24,8 +24,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import org.openqa.selenium.Alert;
-import org.openqa.selenium.ElementNotSelectableException;
-import org.openqa.selenium.NoAlertPresentException;
 
 /**
  * Sends text to a prompt alert from window.prompt("...").
@@ -48,7 +46,7 @@ public class AlertSendKeysAction extends WebSymbolAction {
 
             logger.info(LoggerMarkers.LEARNER, "Send text '{}' to prompt window.", text);
             return getSuccessOutput();
-        } catch (NoAlertPresentException | ElementNotSelectableException e) {
+        } catch (Exception e) {
             logger.info(LoggerMarkers.LEARNER, "Failed to send text '{}' to prompt window.", text);
             return getFailedOutput();
         }

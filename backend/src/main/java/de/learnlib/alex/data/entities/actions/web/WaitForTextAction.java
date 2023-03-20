@@ -21,6 +21,8 @@ import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
+
+import java.time.Duration;
 import java.util.regex.Pattern;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -80,7 +82,7 @@ public class WaitForTextAction extends WebSymbolAction {
 
     @Override
     protected ExecuteResult execute(final WebSiteConnector connector) {
-        final WebDriverWait wait = new WebDriverWait(connector.getDriver(), maxWaitTime);
+        final WebDriverWait wait = new WebDriverWait(connector.getDriver(), Duration.ofSeconds(maxWaitTime));
 
         final WebElementLocator nodeWithVariables =
                 new WebElementLocator(insertVariableValues(node.getSelector()), node.getType());

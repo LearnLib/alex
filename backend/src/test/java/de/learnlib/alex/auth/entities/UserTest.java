@@ -53,7 +53,6 @@ public class UserTest {
     @ValueSource(strings = { "password", "salt" })
     public void shouldNotLeakSensibleDataWhenSerialized(String property) throws JsonProcessingException {
         final User user = new User();
-        user.setSalt("salt");
         user.setPassword("password");
 
         final String userString = om.writeValueAsString(user);
@@ -65,7 +64,7 @@ public class UserTest {
         final User user = new User();
         user.setId(1L);
         user.setUsername("user1");
-        user.setEncryptedPassword("password123");
+        user.setPassword("password123");
         user.setRole(UserRole.ADMIN);
         user.setEmail("admin@alex.com");
 
@@ -110,17 +109,5 @@ public class UserTest {
             final String userString = om.writeValueAsString(user);
             JsonPath.read(userString, "webhooks");
         });
-    }
-
-    @ParameterizedTest(name = "Use values \"{0}, {1}\" for the test")
-    @CsvSource({
-            "password123, true",
-            "Password123, false"
-    })
-    public void shouldVerifyPassword(String password, boolean valid) {
-        final var user = new User();
-        user.setPassword("password123");
-        user.setEncryptedPassword("password123");
-        assertEquals(valid, user.isValidPassword(password));
     }
 }

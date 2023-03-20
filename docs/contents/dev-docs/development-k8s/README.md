@@ -15,6 +15,11 @@ This section describes the steps that are required to deploy and run ALEX on a l
    ```
 4. Add a host alias to the `/etc/hosts` file:
    Execute `minikube ip` to get the IP address of the local cluster and add an entry `<ip> alex` to the `/etc/hosts` file.
+5. Install secret: `kubectl apply -f infrastructure/helm-chart/secrets-local.yaml`
+5. Install Keda:
+   1. `helm repo add kedacore https://kedacore.github.io/charts && helm repo update`
+   2. `kubectl create namespace keda`
+   3. `helm install keda kedacore/keda --namespace keda`
 
 ### Deploy ALEX to Minikube
 

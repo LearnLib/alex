@@ -24,6 +24,8 @@ import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.data.utils.ExecuteScriptUtils;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
+
+import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import javax.persistence.Column;
@@ -61,7 +63,7 @@ public class WaitForScriptAction extends SymbolAction {
         final WebSiteConnector webSiteConnector = connector.getConnector(WebSiteConnector.class);
 
         if (webSiteConnector.getDriver() instanceof JavascriptExecutor) {
-            final WebDriverWait wait = new WebDriverWait(webSiteConnector.getDriver(), maxWaitTime);
+            final WebDriverWait wait = new WebDriverWait(webSiteConnector.getDriver(), Duration.ofSeconds(maxWaitTime));
 
             try {
                 webSiteConnector.getDriver().manage().timeouts().setScriptTimeout(timeout, TimeUnit.SECONDS);

@@ -26,6 +26,8 @@ import de.learnlib.alex.auth.entities.UpdateUsernameInput;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.entities.UserRole;
 import de.learnlib.alex.auth.events.UserEvent;
+import de.learnlib.alex.auth.inputs.CreateUserInput;
+import de.learnlib.alex.auth.inputs.LoginInput;
 import de.learnlib.alex.common.exceptions.ForbiddenOperationException;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.security.AuthContext;
@@ -43,6 +45,7 @@ import org.jose4j.lang.JoseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -67,24 +70,27 @@ public class UserResource {
     private final UserDAO userDAO;
     private final WebhookService webhookService;
     private final SettingsDAO settingsDAO;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public UserResource(
             AuthContext authContext,
             UserDAO userDAO,
             WebhookService webhookService,
-            SettingsDAO settingsDAO
+            SettingsDAO settingsDAO,
+            PasswordEncoder passwordEncoder
     ) {
         this.authContext = authContext;
         this.userDAO = userDAO;
         this.webhookService = webhookService;
         this.settingsDAO = settingsDAO;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
      * Creates a new user.
      *
-     * @param newUser
+     * @param input
      *         The user to create
      * @return The created user (enhanced with information form the DB); an error message on failure.
      */
@@ -92,41 +98,39 @@ public class UserResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity<User> create(@RequestBody User newUser) {
+    public ResponseEntity<User> create(@RequestBody CreateUserInput input) {
         final User user = authContext.getUser();
 
-        if (!new EmailValidator().isValid(newUser.getEmail(), null)) {
+        if (!new EmailValidator().isValid(input.email, null)) {
             throw new ValidationException("The email is not valid");
         }
 
-        if (newUser.getUsername().length() > MAX_USERNAME_LENGTH || !newUser.getUsername().matches("^[a-zA-Z][a-zA-Z0-9]*$")) {
+        if (input.username.length() > MAX_USERNAME_LENGTH || !input.username.matches("^[a-zA-Z][a-zA-Z0-9]*$")) {
             throw new ValidationException("The username is not valid!");
         }
 
-        if (usernameIsAlreadyTaken(newUser.getUsername())) {
+        if (usernameIsAlreadyTaken(input.username)) {
             throw new ValidationException("The username is already taken!");
         }
 
         final Settings settings = settingsDAO.get();
 
+        final var newUser = new User();
+        newUser.setEmail(input.email);
+        newUser.setUsername(input.username);
+        newUser.setPassword(passwordEncoder.encode(input.password));
+        newUser.setRole(UserRole.REGISTERED);
+
         if (user.getId() == null) { // anonymous registration
             if (!settings.isAllowUserRegistration()) {
                 throw new ForbiddenOperationException("Public user registration is not allowed.");
             }
-
-            newUser.setRole(UserRole.REGISTERED);
-            newUser.setEncryptedPassword(newUser.getPassword());
-
-            // create user
             userDAO.create(newUser);
             return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
         } else {
             if (user.getRole().equals(UserRole.REGISTERED)) {
                 throw new UnauthorizedException("You are not allowed to create new accounts.");
             } else {
-                newUser.setEncryptedPassword(newUser.getPassword());
-
-                // create user
                 userDAO.create(newUser);
                 return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
             }
@@ -166,8 +170,6 @@ public class UserResource {
             produces = MediaType.APPLICATION_JSON
     )
     public ResponseEntity<List<User>> getManyUsers(@PathVariable("ids") List<Long> userIds) {
-        final User user = authContext.getUser();
-
         final List<User> users = new ArrayList<>();
         for (Long id : userIds) {
             users.add(userDAO.getByID(id));
@@ -245,11 +247,11 @@ public class UserResource {
         }
 
         final var realUser = userDAO.getByID(userId);
-        if (!realUser.isValidPassword(input.getOldPassword())) {
+        if (!passwordEncoder.matches(input.getOldPassword(), realUser.getPassword())) {
             throw new ValidationException("Please provide your old password!");
         }
 
-        realUser.setEncryptedPassword(input.getNewPassword());
+        realUser.setPassword(passwordEncoder.encode(input.getNewPassword()));
 
         final var updatedUser = userDAO.update(realUser);
 
@@ -429,7 +431,7 @@ public class UserResource {
     /**
      * Logs in a user by generating a unique JWT for him that needs to be send in every request.
      *
-     * @param user
+     * @param input
      *         The user to login
      * @return If the user was successfully logged in: a JSON Object with the authentication token as only field.
      */
@@ -438,15 +440,15 @@ public class UserResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    public ResponseEntity<JsonWebToken> login(@RequestBody User user) {
+    public ResponseEntity<JsonWebToken> login(@Validated @RequestBody LoginInput input) {
         try {
-            final var realUser = userDAO.getByEmail(user.getEmail());
+            final var user = userDAO.getByEmail(input.email);
 
-            if (!realUser.isValidPassword(user.getPassword())) {
+            if (!passwordEncoder.matches(input.password, user.getPassword())) {
                 throw new IllegalArgumentException("Please provide your correct password!");
             }
 
-            final var jwt = new JsonWebToken(JwtHelper.generateJWT(realUser));
+            final var jwt = new JsonWebToken(JwtHelper.generateJWT(user));
 
             return ResponseEntity.ok(jwt);
         } catch (JoseException e) {

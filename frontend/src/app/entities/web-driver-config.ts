@@ -4,7 +4,6 @@ export class WebDriverConfig {
     Chrome: 'chrome',
     Edge: 'msedge',
     Firefox: 'firefox',
-    Opera: 'opera',
     Safari: 'safari'
   };
 
@@ -16,13 +15,11 @@ export class WebDriverConfig {
   platform = 'ANY';
   browser = '';
   version = '';
-  headless: true;
 
   static fromData(data: any = {}): WebDriverConfig {
     const c = new WebDriverConfig();
     c.width = data.width;
     c.height = data.height;
-    c.headless = data.headless;
     c.implicitlyWait = data.implicitlyWait;
     c.pageLoadTimeout = data.pageLoadTimeout;
     c.scriptTimeout = data.scriptTimeout;

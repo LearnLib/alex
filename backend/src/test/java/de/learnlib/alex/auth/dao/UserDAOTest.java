@@ -244,12 +244,12 @@ public class UserDAOTest {
         User user1 = new User();
         user1.setId(42L);
         user1.setEmail("user1@mail.de");
-        user1.setEncryptedPassword("test");
+        user1.setPassword("test");
 
         User user2 = new User();
         user2.setId(21L);
         user2.setEmail("user2@mail.de");
-        user2.setEncryptedPassword("test");
+        user2.setPassword("test");
 
         BDDMockito.given(userRepository.findAllByIdIn(Arrays.asList(user1.getId(), user2.getId())))
                 .willReturn(Arrays.asList(user1, user2));
@@ -265,7 +265,7 @@ public class UserDAOTest {
         user1.setId(42L);
         user1.setEmail("user1@mail.de");
         user1.setUsername("user1");
-        user1.setEncryptedPassword("test");
+        user1.setPassword("test");
 
         userDAO.create(user1);
         assertThrows(NotFoundException.class, () -> userDAO.delete(dummyAdmin, Collections.singletonList(user1.getId())));
@@ -286,7 +286,7 @@ public class UserDAOTest {
         User user = new User();
         user.setUsername("user");
         user.setEmail("user@text.example");
-        user.setEncryptedPassword("alex");
+        user.setPassword("alex");
         return user;
     }
 
@@ -301,7 +301,7 @@ public class UserDAOTest {
         for (int i = 0; i < TEST_USER_COUNT; i++) {
             User u = new User();
             u.setEmail("user-" + i + "@mail.de");
-            u.setEncryptedPassword("test");
+            u.setPassword("test");
             users.add(u);
         }
         return users;

@@ -17,7 +17,6 @@
 package de.learnlib.alex.auth.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.webhooks.entities.Webhook;
 import java.io.Serializable;
@@ -37,8 +36,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import org.apache.shiro.crypto.SecureRandomNumberGenerator;
-import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.hibernate.annotations.Cascade;
 
 /**
@@ -50,9 +47,6 @@ public class User implements Serializable {
 
     /** Auto generated id for saving it into the db. */
     private static final long serialVersionUID = -3567360676364330143L;
-
-    /** the number of iterations to perform to create a secure hash. */
-    private static final int HASH_ITERATIONS = 2048;
 
     /** The unique id of the user. */
     @Id
@@ -72,9 +66,6 @@ public class User implements Serializable {
     /** The hash of the users password. */
     @NotBlank
     private String password;
-
-    /** The salt that is used to hash the password. */
-    private String salt;
 
     /** The role of the user. */
     private UserRole role;
@@ -169,48 +160,13 @@ public class User implements Serializable {
     }
 
     @JsonIgnore
-    @JsonProperty("password")
     public String getPassword() {
         return password;
     }
 
+    @JsonIgnore
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    /**
-     * Encrypt and set a given password.
-     *
-     * @param plainPassword
-     *         The new password of the User as plain text.
-     */
-    @JsonIgnore
-    public void setEncryptedPassword(String plainPassword) {
-        this.salt = new SecureRandomNumberGenerator().nextBytes().toBase64();
-        this.password = new Sha512Hash(plainPassword, this.salt, HASH_ITERATIONS).toBase64();
-    }
-
-    /**
-     * Checks if the given password equals the password of the user.
-     *
-     * @param plainPasswordToCheck
-     *         The password to check.
-     * @return True, if both passwords matched, false otherwise.
-     */
-    @JsonIgnore
-    public boolean isValidPassword(String plainPasswordToCheck) {
-        final var hashedPassword = new Sha512Hash(plainPasswordToCheck, this.salt, HASH_ITERATIONS).toBase64();
-        return hashedPassword.equals(this.password);
-    }
-
-    @JsonIgnore
-    @JsonProperty("salt")
-    public String getSalt() {
-        return salt;
-    }
-
-    public void setSalt(String salt) {
-        this.salt = salt;
     }
 
     public List<Webhook> getWebhooks() {

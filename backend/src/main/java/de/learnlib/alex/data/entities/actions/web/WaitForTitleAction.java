@@ -30,6 +30,8 @@ import javax.validation.constraints.NotNull;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
+
 /**
  * Action to wait for the title of a page to change.
  */
@@ -99,7 +101,7 @@ public class WaitForTitleAction extends WebSymbolAction {
             return getFailedOutput();
         }
 
-        final WebDriverWait wait = new WebDriverWait(connector.getDriver(), maxWaitTime);
+        final WebDriverWait wait = new WebDriverWait(connector.getDriver(), Duration.ofSeconds(maxWaitTime));
         final String valueWithVariables = insertVariableValues(value);
 
         try {

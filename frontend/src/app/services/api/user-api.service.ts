@@ -135,7 +135,7 @@ export class UserApiService extends BaseApiService {
   /**
    * Creates a new user.
    *
-   * @param user he user to create.
+   * @param user the user to create.
    * @returns A promise.
    */
   create(user: any): Observable<any> {

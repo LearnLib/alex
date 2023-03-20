@@ -27,13 +27,13 @@ import javax.persistence.Id;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.opera.OperaOptions;
 import org.openqa.selenium.remote.AbstractDriverOptions;
 import org.openqa.selenium.remote.LocalFileDetector;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -91,10 +91,6 @@ public class WebDriverConfig implements Serializable {
     @NotNull
     private String version;
 
-    /** If the browser should be executed in headless mode. */
-    @NotNull
-    private boolean headless;
-
     /**
      * Constructor.
      */
@@ -106,7 +102,6 @@ public class WebDriverConfig implements Serializable {
         this.scriptTimeout = DEFAULT_SCRIPT_TIMEOUT;
         this.version = "";
         this.platform = Platform.ANY;
-        this.headless = false;
     }
 
     /**
@@ -123,17 +118,12 @@ public class WebDriverConfig implements Serializable {
 
         switch (browser) {
             case "chrome" -> {
-                final var chromeOptions = new ChromeOptions();
-                chromeOptions.setHeadless(headless);
-                options = chromeOptions;
+                options = new ChromeOptions();
             }
             case "firefox" -> {
-                final FirefoxOptions firefoxOptions = new FirefoxOptions();
-                firefoxOptions.setHeadless(headless);
-                options = firefoxOptions;
+                options = new FirefoxOptions();
             }
             case "msedge" -> options = new EdgeOptions();
-            case "opera" -> options = new OperaOptions();
             case "safari" -> options = new SafariOptions();
             default -> throw new IllegalArgumentException("Invalid browser specified");
         }
@@ -240,13 +230,5 @@ public class WebDriverConfig implements Serializable {
 
     public void setVersion(String version) {
         this.version = version;
-    }
-
-    public boolean isHeadless() {
-        return headless;
-    }
-
-    public void setHeadless(boolean headless) {
-        this.headless = headless;
     }
 }

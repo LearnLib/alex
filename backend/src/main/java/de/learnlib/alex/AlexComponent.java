@@ -31,8 +31,11 @@ import java.nio.file.Paths;
 import javax.annotation.PostConstruct;
 import javax.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.cors.CorsConfiguration;
@@ -47,6 +50,9 @@ public class AlexComponent {
     private final SettingsDAO settingsDAO;
     private final TestReportDAO testReportDAO;
     private final LearnerResultDAO learnerResultDAO;
+
+    @Value("${runtime}")
+    String runtime;
 
     @Autowired
     public AlexComponent(Environment env,
@@ -72,7 +78,7 @@ public class AlexComponent {
             admin.setEmail(env.getProperty("alex.admin.email"));
             admin.setUsername(env.getProperty("alex.admin.username"));
             admin.setRole(UserRole.ADMIN);
-            admin.setEncryptedPassword(env.getProperty("alex.admin.password"));
+            admin.setPassword(new BCryptPasswordEncoder().encode(env.getProperty("alex.admin.password")));
             userDAO.create(admin);
         }
     }
@@ -103,9 +109,10 @@ public class AlexComponent {
     @PostConstruct
     public void createSystemFilesDirectory() {
         try {
-            final String path = env.getProperty("alex.filesRootDir");
-            if (Files.notExists(Paths.get(path, "system"))) {
-                Files.createDirectories(Paths.get(path, "system"));
+            final var path = env.getProperty("alex.filesRootDir");
+            final var systemPath = Paths.get(path, "system");
+            if (Files.notExists(systemPath)) {
+                Files.createDirectories(systemPath);
             }
         } catch (IOException e) {
             System.err.println("Failed to initialize system files directory.");
@@ -136,8 +143,10 @@ public class AlexComponent {
             }
         }
 
-        // overwrite web driver paths if specified as command line arguments
         try {
+            settings.setRuntime(runtime);
+            settingsDAO.update(settings);
+
             final var remoteDriverUrl = getWebdriverUrl();
             if (!remoteDriverUrl.isEmpty()) {
                 new URL(remoteDriverUrl);
@@ -148,6 +157,11 @@ public class AlexComponent {
             e.printStackTrace();
             System.exit(0);
         }
+    }
+
+    @Bean
+    public PasswordEncoder encoder() {
+        return new BCryptPasswordEncoder();
     }
 
     /**

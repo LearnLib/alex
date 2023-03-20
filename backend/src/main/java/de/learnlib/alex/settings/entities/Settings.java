@@ -48,10 +48,13 @@ public class Settings implements Serializable {
     @NotNull
     private boolean allowUserRegistration;
 
+    private String runtime;
+
     /** Constructor. */
     public Settings() {
         this.driverSettings = new DriverSettings();
         this.allowUserRegistration = true;
+        this.runtime = "kubernetes";
     }
 
     /**
@@ -102,6 +105,14 @@ public class Settings implements Serializable {
         this.allowUserRegistration = allowUserRegistration;
     }
 
+    public String getRuntime() {
+        return runtime;
+    }
+
+    public void setRuntime(String runtime) {
+        this.runtime = runtime;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -113,11 +124,12 @@ public class Settings implements Serializable {
         Settings settings = (Settings) o;
         return allowUserRegistration == settings.allowUserRegistration
                 && Objects.equals(id, settings.id)
+                && Objects.equals(runtime, settings.runtime)
                 && Objects.equals(driverSettings, settings.driverSettings);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, driverSettings, allowUserRegistration);
+        return Objects.hash(id, driverSettings, runtime, allowUserRegistration);
     }
 }

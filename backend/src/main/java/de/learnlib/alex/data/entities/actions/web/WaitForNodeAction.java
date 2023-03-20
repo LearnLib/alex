@@ -32,6 +32,8 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
+
 /**
  * Action to wait for the state of an element to change.
  */
@@ -116,7 +118,7 @@ public class WaitForNodeAction extends WebSymbolAction {
             return getFailedOutput();
         }
 
-        final WebDriverWait wait = new WebDriverWait(connector.getDriver(), maxWaitTime);
+        final WebDriverWait wait = new WebDriverWait(connector.getDriver(), Duration.ofSeconds(maxWaitTime));
         final WebElementLocator nodeWithVariables = new WebElementLocator(insertVariableValues(node.getSelector()), node.getType());
 
         try {

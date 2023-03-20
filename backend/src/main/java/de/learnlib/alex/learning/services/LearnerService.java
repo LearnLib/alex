@@ -45,7 +45,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealyBuilder;
-import de.learnlib.api.SUL;
 import de.learnlib.oracle.equivalence.WpMethodEQOracle;
 import de.learnlib.oracle.membership.SULOracle;
 import net.automatalib.automata.transducers.impl.compact.CompactMealy;
@@ -107,7 +106,6 @@ public class LearnerService {
         this.userDAO = userDAO;
         this.transactionTemplate = transactionTemplate;
         this.webhookDAO = webhookDAO;
-
         this.learnerThreads = new ConcurrentHashMap<>();
     }
 

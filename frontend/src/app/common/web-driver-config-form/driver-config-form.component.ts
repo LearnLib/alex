@@ -19,6 +19,7 @@ import { groupBy } from 'lodash';
 import { WebDriverConfig } from '../../entities/web-driver-config';
 import { GridApiService } from '../../services/api/grid-api.service';
 import { GridStatus } from '../../entities/grid';
+import { SettingsApiService } from '../../services/api/settings-api.service';
 
 /**
  * The component to configure the web driver.
@@ -51,27 +52,39 @@ export class DriverConfigFormComponent implements OnInit {
 
   public availableBrowsers: any;
 
-  constructor(private gridApi: GridApiService) {
+  constructor(private gridApi: GridApiService, private settingsApi: SettingsApiService) {
   }
 
   ngOnInit(): void {
-    this.gridApi.getStatus().subscribe(
-      status => {
-        this.gridStatus = status;
+    this.settingsApi.get().subscribe({
+      next: settings => {
+        if (settings.runtime === 'docker') {
+          this.gridApi.getStatus().subscribe(
+            status => {
+              this.gridStatus = status;
 
-        const stereotypes = this.gridStatus.value.nodes
-          .map(n => n.slots[0])
-          .map(s => s.stereotype);
+              const stereotypes = this.gridStatus.value.nodes
+                .map(n => n.slots[0])
+                .map(s => s.stereotype);
 
-        const availableBrowsers: any = groupBy(stereotypes, 'browserName');
-        Object.keys(availableBrowsers).forEach(browser => {
-          availableBrowsers[browser] = groupBy(availableBrowsers[browser], 'platformName');
-        });
+              const availableBrowsers: any = groupBy(stereotypes, 'browserName');
+              Object.keys(availableBrowsers).forEach(browser => {
+                availableBrowsers[browser] = groupBy(availableBrowsers[browser], 'platformName');
+              });
 
-        this.availableBrowsers = availableBrowsers;
+              this.availableBrowsers = availableBrowsers;
+            },
+            console.error
+          );
+        } else {
+          this.availableBrowsers = {
+            chrome: 'Chrome',
+            firefox: 'Firefox',
+          };
+        }
       },
-      console.error
-    );
+      error: console.error
+    });
   }
 
   get availableBrowsersList(): string[] {
