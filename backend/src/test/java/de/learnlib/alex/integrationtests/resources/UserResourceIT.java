@@ -74,7 +74,7 @@ public class UserResourceIT extends AbstractResourceIT {
         assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
 
         final String body = res.readEntity(String.class);
-        assertThrows(PathNotFoundException.class, () -> JsonPath.read(body, "token"));
+        assertThrows(IllegalArgumentException.class, () -> JsonPath.read(body, "token"));
     }
 
     @Test
