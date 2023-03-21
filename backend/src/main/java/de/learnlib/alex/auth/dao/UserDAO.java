@@ -29,9 +29,7 @@ import de.learnlib.alex.websocket.services.WebSocketService;
 import java.io.IOException;
 import java.util.List;
 import javax.persistence.EntityManager;
-import javax.validation.Validation;
 import javax.validation.ValidationException;
-import javax.validation.Validator;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,8 +48,6 @@ public class UserDAO {
     private static final Logger logger = LoggerFactory.getLogger(UserDAO.class);
 
     private static final int MAX_USERNAME_LENGTH = 32;
-
-    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     private final UserRepository userRepository;
     private final FileDAO fileDAO;
@@ -148,11 +144,7 @@ public class UserDAO {
         final var userInDB = userRepository.findById(user.getId())
                 .orElseThrow(() -> new NotFoundException("The user could not be found."));
 
-        for (var cve : validator.validate(input, UpdateMaxAllowedProcessesInput.class)) {
-            throw new ValidationException(cve.getMessage());
-        }
-
-        userInDB.setMaxAllowedProcesses(input.getMaxAllowedProcesses());
+        userInDB.setMaxAllowedProcesses(input.maxAllowedProcesses);
 
         return userRepository.save(userInDB);
     }

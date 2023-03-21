@@ -21,13 +21,5 @@ import javax.validation.constraints.Min;
 public class UpdateMaxAllowedProcessesInput {
 
     @Min(value = 1, message = "The number of allowed processes has to be greater than 0.")
-    private int maxAllowedProcesses;
-
-    public int getMaxAllowedProcesses() {
-        return maxAllowedProcesses;
-    }
-
-    public void setMaxAllowedProcesses(int maxAllowedProcesses) {
-        this.maxAllowedProcesses = maxAllowedProcesses;
-    }
+    public int maxAllowedProcesses = 1;
 }
