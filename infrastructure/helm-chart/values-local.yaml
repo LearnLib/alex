@@ -1,5 +1,6 @@
 serverTier: local
 imagePullPolicy: Never
+createPersistentVolumes: true
 database:
   name: alex
 ingress:

@@ -24,6 +24,7 @@ data:
   DATABASE_PORT: "5432"
   DATABASE_NAME: {{ .Values.database.name }}
 ---
+{{ if eq .Values.createPersistentVolumes true }}
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -41,6 +42,7 @@ spec:
     - ReadWriteMany
   hostPath:
     path: {{ .Values.backend.hostPath }}
+{{ end }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -50,7 +52,9 @@ metadata:
     app: backend
 spec:
   storageClassName: {{ .Values.storageClassName }}
+  {{ if eq .Values.createPersistentVolumes true }}
   volumeName: backend-pv-volume
+  {{ end }}
   accessModes:
     - ReadWriteOnce
   resources:

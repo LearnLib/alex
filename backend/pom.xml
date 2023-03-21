@@ -265,6 +265,11 @@
             <artifactId>jackson-module-jaxb-annotations</artifactId>
             <version>${jackson-datatype.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson-datatype.version}</version>
+        </dependency>
 
         <!-- database -->
         <dependency>

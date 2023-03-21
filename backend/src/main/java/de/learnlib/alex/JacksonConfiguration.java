@@ -18,6 +18,7 @@ package de.learnlib.alex;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -32,11 +33,14 @@ public class JacksonConfiguration {
      */
     @Bean
     public ObjectMapper objectMapper() {
-        Hibernate5Module hibernate5Module = new Hibernate5Module();
+        final var hibernate5Module = new Hibernate5Module();
         hibernate5Module.configure(Hibernate5Module.Feature.USE_TRANSIENT_ANNOTATION, false);
 
-        final ObjectMapper mapper = new ObjectMapper();
+        final var javaTimeModule = new JavaTimeModule();
+
+        final var mapper = new ObjectMapper();
         mapper.registerModule(hibernate5Module);
+        mapper.registerModule(javaTimeModule);
         return mapper;
     }
 }

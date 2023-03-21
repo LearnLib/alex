@@ -21,6 +21,7 @@ data:
   POSTGRES_DB: {{.Values.database.name}}
   PGDATA: /var/lib/postgresql/data/pgdata
 ---
+{{ if eq .Values.createPersistentVolumes true }}
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -38,6 +39,7 @@ spec:
     - ReadWriteMany
   hostPath:
     path: {{ .Values.database.hostPath }}
+{{ end }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -47,7 +49,9 @@ metadata:
     app: postgres
 spec:
   storageClassName: {{ .Values.storageClassName }}
+  {{ if eq .Values.createPersistentVolumes true }}
   volumeName: postgres-pv-volume
+  {{ end }}
   accessModes:
     - ReadWriteOnce
   resources:

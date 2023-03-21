@@ -34,6 +34,7 @@ import de.learnlib.alex.learning.services.LearnerService;
 import de.learnlib.alex.security.AuthContext;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -120,7 +121,7 @@ public class ProjectEnvironmentResource {
 
         final var job = new OutputsJob();
         job.id = UUID.randomUUID().toString();
-        job.statedAt = Instant.now();
+        job.startedAt = ZonedDateTime.now();
         job.projectId = projectId;
         job.environmentId = environmentId;
 
@@ -130,11 +131,11 @@ public class ProjectEnvironmentResource {
                 final var outputs = sulUtils.getSystemOutputs(user, project, env, config).stream()
                     .map(ExecuteResult::getOutput)
                     .toList();
-                job.finishedAt = Instant.now();
+                job.finishedAt = ZonedDateTime.now();
                 job.success = true;
                 job.outputs = outputs;
             } catch (Exception e) {
-                job.finishedAt = Instant.now();
+                job.finishedAt = ZonedDateTime.now();
                 job.message = e.getMessage();
                 job.success = false;
             }
@@ -307,9 +308,9 @@ public class ProjectEnvironmentResource {
 
     @Scheduled(fixedDelay = 300000)
     public void removeOldOutputJobs() {
-        final var now = Instant.now();
+        final var now = ZonedDateTime.now();
         new ArrayList<>(outputsJobMap.values()).stream()
-            .filter(job -> job.finishedAt != null && now.minus(Duration.ofMinutes(5)).isAfter(job.statedAt))
+            .filter(job -> job.finishedAt != null && now.minus(Duration.ofMinutes(5)).isAfter(job.startedAt))
             .forEach(job -> outputsJobMap.remove(job.id));
     }
 }

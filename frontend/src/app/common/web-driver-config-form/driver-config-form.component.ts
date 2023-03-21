@@ -16,7 +16,6 @@
 
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { groupBy } from 'lodash';
-import { WebDriverConfig } from '../../entities/web-driver-config';
 import { GridApiService } from '../../services/api/grid-api.service';
 import { GridStatus } from '../../entities/grid';
 import { SettingsApiService } from '../../services/api/settings-api.service';

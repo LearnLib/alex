@@ -21,6 +21,8 @@ import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
+import org.openqa.selenium.Keys;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -45,7 +47,7 @@ public class ClearAction extends WebSymbolAction {
                 new WebElementLocator(insertVariableValues(node.getSelector()), node.getType());
 
         try {
-            connector.getElement(nodeWithVariables).clear();
+            connector.getElement(nodeWithVariables).sendKeys(Keys.chord(Keys.CONTROL, "a", Keys.DELETE));
 
             logger.info(LoggerMarkers.LEARNER, "Cleared element '{}'.", nodeWithVariables);
             return getSuccessOutput();

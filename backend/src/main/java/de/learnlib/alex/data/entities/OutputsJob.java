@@ -1,6 +1,7 @@
 package de.learnlib.alex.data.entities;
 
 import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,8 +12,8 @@ public class OutputsJob {
   public Long projectId;
   public Long environmentId;
   public List<String> outputs = new ArrayList<>();
-  public Instant statedAt;
-  public Instant finishedAt;
+  public ZonedDateTime startedAt;
+  public ZonedDateTime finishedAt;
 
   public String getId() {
     return id;
@@ -62,19 +63,19 @@ public class OutputsJob {
     this.outputs = outputs;
   }
 
-  public Instant getStatedAt() {
-    return statedAt;
+  public ZonedDateTime getStartedAt() {
+    return startedAt;
   }
 
-  public void setStatedAt(Instant statedAt) {
-    this.statedAt = statedAt;
+  public void setStartedAt(ZonedDateTime startedAt) {
+    this.startedAt = startedAt;
   }
 
-  public Instant getFinishedAt() {
+  public ZonedDateTime getFinishedAt() {
     return finishedAt;
   }
 
-  public void setFinishedAt(Instant finishedAt) {
+  public void setFinishedAt(ZonedDateTime finishedAt) {
     this.finishedAt = finishedAt;
   }
 }

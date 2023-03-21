@@ -14,6 +14,9 @@ frontendImage: ghcr.io/learnlib/alex/alex-frontend:unstable
 # The image used for the backend
 backendImage: ghcr.io/learnlib/alex/alex-backend:unstable
 
+# If persistent volumes should be created
+createPersistentVolumes: false
+
 # Configuration for the cert manager.
 certManager:
   # The email the certificate is assigned to.

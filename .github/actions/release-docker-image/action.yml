@@ -37,3 +37,4 @@ runs:
         docker load < ${{ inputs.image }}-image.tar.gz
         docker tag ${{ inputs.image }}:$GITHUB_SHA $IMAGE_ID:$VERSION
         docker push $IMAGE_ID:$VERSION
+        docker push $IMAGE_ID:$GITHUB_SHA
