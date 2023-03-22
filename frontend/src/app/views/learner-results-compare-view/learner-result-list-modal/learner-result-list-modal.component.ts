@@ -22,6 +22,7 @@ import { ProjectApiService } from '../../../services/api/project-api.service';
 import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { orderBy } from 'lodash';
+import { FileLoadedData } from '../../../common/file-dropzone/file-dropzone.component';
 
 /**
  * The component for the modal that displays a selectable list of results.
@@ -82,11 +83,19 @@ export class LearnerResultListModalComponent {
   /**
    * Loads a hypothesis from a json file.
    *
-   * @param hypothesis The hypothesis as string
+   * @param data The data from the file.
    */
-  loadResultFromFile(hypothesis: string): void {
+  loadResultFromFile(data: FileLoadedData): void {
     try {
-      this.modal.close({steps: [{hypothesis: JSON.parse(hypothesis)}]});
+      this.modal.close({
+        steps: [{hypothesis: JSON.parse(data.data)}],
+        testNo: data.filename,
+        setup: {
+          algorithm: {
+            name: 'TTT'
+          }
+        }
+      });
     } catch (e) {
       this.toastService.danger('Could not parse the file.');
     }

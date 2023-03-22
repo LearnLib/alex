@@ -16,6 +16,11 @@
 
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
+export interface FileLoadedData {
+  filename: string;
+  data: string;
+}
+
 @Component({
   selector: 'file-dropzone',
   templateUrl: './file-dropzone.component.html'
@@ -26,30 +31,27 @@ export class FileDropzoneComponent {
   multiple: boolean;
 
   @Output()
-  loaded: EventEmitter<any>;
+  loaded: EventEmitter<FileLoadedData>;
 
-  @Output()
-  filesLoaded: EventEmitter<File>;
-
-  /** The file reader */
   private fileReader: FileReader;
 
   constructor() {
     this.multiple = true;
-    this.loaded = new EventEmitter<any>();
-    this.filesLoaded = new EventEmitter<File>();
-
+    this.loaded = new EventEmitter<FileLoadedData>();
     this.fileReader = new FileReader();
-    this.fileReader.addEventListener('load', this.onLoad.bind(this));
   }
 
   /**
    * Is called when the file has been loaded.
    *
    * @param e The event.
+   * @param filename The filename.
    */
-  onLoad(e: Event): void {
-    this.loaded.emit((e.target as any).result);
+  onLoadEnd(e: Event, file: File): void {
+    this.loaded.emit({
+      filename: file.name,
+      data: (e.target as any).result
+    });
   }
 
   /**
@@ -61,32 +63,9 @@ export class FileDropzoneComponent {
     input.setAttribute('multiple', `${this.multiple}`);
     input.addEventListener('change', e => {
       const files = (e.target as any).files;
-      this.filesLoaded.emit(files);
       this.readFiles(files);
     }, false);
     input.click();
-  }
-
-  /**
-   * Handle dragover event.
-   *
-   * @param e The event.
-   */
-  onDragover(e: DragEvent): void {
-    e.preventDefault();
-    e.stopPropagation();
-    e.dataTransfer.dropEffect = 'copy';
-  }
-
-  /**
-   * Handle drop event.
-   *
-   * @param e The event.
-   */
-  onDrop(e: Event): void {
-    e.preventDefault();
-    e.stopPropagation();
-    this.readFiles((e as any).dataTransfer.files);
   }
 
   /**
@@ -96,6 +75,7 @@ export class FileDropzoneComponent {
    */
   readFiles(files: File[]): void {
     for (const file of files) {
+      this.fileReader.onloadend = ((f) => (e) => this.onLoadEnd(e, f))(file);
       this.fileReader.readAsText(file);
     }
   }

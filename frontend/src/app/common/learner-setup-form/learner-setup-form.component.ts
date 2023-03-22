@@ -168,7 +168,7 @@ export class LearnerSetupFormComponent implements OnInit {
     }
 
     if (this.setup.preSymbol == null) {
-      res.push('No valid Pre Symbol selected.');
+      res.push('No valid reset symbol selected.');
     }
 
     if (this.setup.symbols.length === 0) {

@@ -18,6 +18,7 @@ import { ToastService } from '../../../services/toast.service';
 import { HypothesisEqOracle } from '../../../entities/eq-oracles/hypothesis-eq-oracle';
 import { Component, Input } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { FileLoadedData } from '../../file-dropzone/file-dropzone.component';
 
 @Component({
   selector: 'hypothesis-eq-oracle-form',
@@ -39,9 +40,9 @@ export class HypothesisEqOracleFormComponent {
    *
    * @param data A hypothesis as JSON.
    */
-  fileLoaded(data: any): void {
+  fileLoaded(data: FileLoadedData): void {
     try {
-      this.oracle.hypothesis = JSON.parse(data);
+      this.oracle.hypothesis = JSON.parse(data.data);
     } catch (e) {
       this.toastService.danger('Could not load model. The file is not properly formatted');
     }

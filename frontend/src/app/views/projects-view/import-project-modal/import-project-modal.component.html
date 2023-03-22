@@ -11,7 +11,7 @@
     <div *ngIf="errorMessage != null" class="alert alert-danger">{{errorMessage}}</div>
 
     <file-dropzone (loaded)="fileLoaded($event)" *ngIf="importData == null">
-      Drag and drop *.json file here or click to upload
+      Click here to upload a *.json file.
     </file-dropzone>
 
     <div *ngIf="importData != null">

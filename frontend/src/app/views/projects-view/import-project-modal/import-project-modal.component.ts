@@ -20,6 +20,7 @@ import { ToastService } from '../../../services/toast.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { FormUtilsService } from '../../../services/form-utils.service';
+import { FileLoadedData } from '../../../common/file-dropzone/file-dropzone.component';
 
 @Component({
   selector: 'import-project-modal',
@@ -50,8 +51,8 @@ export class ImportProjectModalComponent {
    *
    * @param data The serialized symbols.
    */
-  fileLoaded(data: string): void {
-    const importData = JSON.parse(data);
+  fileLoaded(data: FileLoadedData): void {
+    const importData = JSON.parse(data.data);
     if (importData.type == null || ['project'].indexOf(importData.type) === -1) {
       this.errorMessage = 'The file does not seem to contain a project.';
     } else {
