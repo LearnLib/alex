@@ -49,20 +49,23 @@ export class DiscriminationTreeComponent implements OnInit, OnChanges, OnDestroy
     const nodes = [];
     const links = [];
 
+    let id = 0;
+
     const buildTree = (dTree) => {
+      if (dTree.id == null) {
+        dTree.id = id++;
+      }
+
       if (dTree.discriminator) {
-        const label = this.escapeForDot(dTree.discriminator);
-        nodes.push(`${label} [shape="rectangle" label="${label}"]`);
+        nodes.push(`${dTree.id} [shape="rectangle" label="${dTree.discriminator}"]`);
       }
 
       if (dTree.data) { // node is a leaf
-        nodes.push(`${dTree.data} [shape="rectangle" label="${dTree.data}"]`);
+        nodes.push(`${dTree.id} [shape="rectangle" label="${dTree.data}"]`);
       } else if (dTree.children) {
-        dTree.children.forEach(buildTree);
         dTree.children.forEach(child => {
-          const targetId = this.escapeForDot(child.discriminator ? child.discriminator : child.data);
-          const sourceId = this.escapeForDot(dTree.discriminator);
-          links.push(`${sourceId} -> ${targetId} [label="${child.edgeLabel}"]`);
+          buildTree(child);
+          links.push(`${dTree.id} -> ${child.id} [label="${child.edgeLabel}"]`);
         });
       }
     };
@@ -79,9 +82,5 @@ export class DiscriminationTreeComponent implements OnInit, OnChanges, OnDestroy
     const graphEl = this.hostEl.nativeElement.querySelector('.graph');
     this.renderer = graphviz(graphEl);
     this.renderer.fit(true).renderDot(dot);
-  }
-
-  private escapeForDot(value: string) {
-    return value.replace(/\s/g, '_');
   }
 }

@@ -24,8 +24,11 @@ import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.dao.LearnerSetupDAO;
+import de.learnlib.alex.learning.entities.DifferenceTreeInput;
+import de.learnlib.alex.learning.entities.DifferenceTreeStrategy;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResult.Status;
+import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStatus;
@@ -34,21 +37,29 @@ import de.learnlib.alex.learning.entities.SeparatingWord;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.testing.services.TestService;
 import de.learnlib.alex.webhooks.dao.WebhookDAO;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import de.learnlib.algorithms.ttt.base.BaseTTTDiscriminationTree;
+import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealy;
 import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealyBuilder;
 import de.learnlib.oracle.equivalence.WpMethodEQOracle;
 import de.learnlib.oracle.membership.SULOracle;
 import net.automatalib.automata.transducers.impl.compact.CompactMealy;
+import net.automatalib.serialization.dot.GraphDOT;
 import net.automatalib.util.automata.Automata;
+import net.automatalib.util.automata.conformance.WMethodTestsIterator;
 import net.automatalib.util.automata.conformance.WpMethodTestsIterator;
 import net.automatalib.util.automata.transducers.MealyFilter;
 import net.automatalib.words.Alphabet;
@@ -406,6 +417,125 @@ public class LearnerService {
                 .createMealyMachine(alphabet1);
     }
 
+    public CompactMealy<String, String> differenceTree(User user, Long projectId, DifferenceTreeInput input) {
+
+        final CompactMealy<String, String> differenceTree;
+        if (input instanceof DifferenceTreeInput.AutomataInput) {
+            differenceTree = differenceTree(
+                    ((DifferenceTreeInput.AutomataInput) input).automaton1,
+                    ((DifferenceTreeInput.AutomataInput) input).automaton2,
+                    input.strategy
+            );
+        } else if (input instanceof DifferenceTreeInput.LearnerResultInput) {
+
+            final var result1 = learnerResultDAO.getByTestNo(user, projectId, ((DifferenceTreeInput.LearnerResultInput) input).result1);
+            final var step1 = result1.getSteps().get(((DifferenceTreeInput.LearnerResultInput) input).step1);
+            final var result2 = learnerResultDAO.getByTestNo(user, projectId, ((DifferenceTreeInput.LearnerResultInput) input).result2);
+            final var step2 = result2.getSteps().get(((DifferenceTreeInput.LearnerResultInput) input).step2);
+
+            differenceTree = differenceTree(
+                    result1,
+                    result2,
+                    step1,
+                    step2,
+                    input.strategy
+            );
+        } else {
+            throw new IllegalArgumentException("Invalid input!");
+        }
+
+        return differenceTree;
+    }
+
+    public CompactMealy<String, String> differenceTree(
+            final LearnerResult result1,
+            final LearnerResult result2,
+            final LearnerResultStep step1,
+            final LearnerResultStep step2,
+            final DifferenceTreeStrategy strategy
+    ) {
+        try {
+            switch (strategy) {
+                case DISCRIMINATION_TREE:
+                    final var learner1 = result1.getSetup().getAlgorithm().createLearner(step1.getHypothesis().createAlphabet(), null);
+                    result1.getSetup().getAlgorithm().resume(learner1, step1.getState());
+
+                    final var learner2 = result2.getSetup().getAlgorithm().createLearner(step2.getHypothesis().createAlphabet(), null);
+                    result2.getSetup().getAlgorithm().resume(learner2, step2.getState());
+
+                    final var tttLearner1 = (TTTLearnerMealy<String, String>) learner1;
+                    final var tttLearner2 = (TTTLearnerMealy<String, String>) learner2;
+
+                    final BaseTTTDiscriminationTree<String, Word<String>> dt1 = tttLearner1.getDiscriminationTree();
+                    final BaseTTTDiscriminationTree<String, Word<String>> dt2 = tttLearner2.getDiscriminationTree();
+
+                    final var tests = new ArrayList<Word<String>>();
+                    generateTestsDt(dt1, tests);
+                    generateTestsDt(dt2, tests);
+
+                    final var mealy1 = step1.getHypothesis().createMealyMachine(step1.getHypothesis().createAlphabet());
+                    final var mealy2 = step2.getHypothesis().createMealyMachine(step2.getHypothesis().createAlphabet());
+
+                    final Set<SeparatingWord> diffs = new HashSet<>();
+                    tests.forEach(test -> {
+                        final var o1 = mealy1.computeOutput(test);
+                        final var o2 = mealy2.computeOutput(test);
+                        if (!o1.equals(o2)) {
+                            diffs.add(new SeparatingWord(test, o1, o2));
+                        }
+                    });
+
+                    return buildDifferenceTree(diffs, step1.getHypothesis().createAlphabet());
+                default:
+                    return differenceTree(
+                            step1.getHypothesis(),
+                            step2.getHypothesis(),
+                            strategy
+                    );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IllegalArgumentException(e.getCause());
+        }
+    }
+
+    private void generateTestsDt(BaseTTTDiscriminationTree<String, Word<String>> dt1, ArrayList<Word<String>> tests) {
+        try {
+            final var sb = new StringBuffer();
+            GraphDOT.write(dt1.asNormalGraph(), sb);
+            System.out.println(sb);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        for (var e : dt1) {
+            if (e.isLeaf()) {
+                System.out.println("leaf: " + e);
+                System.out.println("  as: " + e.getData().getAccessSequence());
+
+                Word<String> accessSequence = e.getData().getAccessSequence();
+                List<String> testCaseSymbols = new ArrayList<>();
+
+                var nodeP = e;
+                while (!(nodeP.isRoot())) {
+                    nodeP = nodeP.getParent();
+                    var discriminator = nodeP.getDiscriminator();
+
+                    System.out.println("  discriminator: " + discriminator);
+
+                    testCaseSymbols.addAll(accessSequence.asList());
+                    testCaseSymbols.addAll(discriminator.asList());
+                    tests.add(Word.fromList(testCaseSymbols));
+                    testCaseSymbols.clear();
+                }
+            } else if (e.isRoot() && e.getData() != null) {
+                System.out.println("root:");
+                System.out.println("  as: " + e.getData().getAccessSequence());
+                tests.add(e.getData().getAccessSequence());
+            }
+        }
+    }
+
     /**
      * Find differences between two models.
      *
@@ -413,11 +543,14 @@ public class LearnerService {
      *         The one model.
      * @param mealyProxy2
      *         The other model.
+     * @param strategy
+     *         The strategy
      * @return The differences found as a minimized, incomplete mealy machine
      */
     public CompactMealy<String, String> differenceTree(
             final CompactMealyMachineProxy mealyProxy1,
-            final CompactMealyMachineProxy mealyProxy2
+            final CompactMealyMachineProxy mealyProxy2,
+            final DifferenceTreeStrategy strategy
     ) {
         final Alphabet<String> alphabet1 = mealyProxy1.createAlphabet();
         final Alphabet<String> alphabet2 = mealyProxy2.createAlphabet();
@@ -428,12 +561,16 @@ public class LearnerService {
 
         // the words where the output differs
         final Set<SeparatingWord> diffs = new HashSet<>();
-        findDifferences(hyp1, hyp2, alphabet1, diffs);
-        findDifferences(hyp2, hyp1, alphabet1, diffs);
+        findDifferences(hyp1, hyp2, alphabet1, diffs, strategy);
+        findDifferences(hyp2, hyp1, alphabet1, diffs, strategy);
 
+        return buildDifferenceTree(diffs, alphabet1);
+    }
+
+    private CompactMealy<String, String> buildDifferenceTree(Set<SeparatingWord> diffs, Alphabet<String> alphabet) {
         // build tree
         // the tree is organized as an incomplete mealy machine
-        final CompactMealy<String, String> diffTree = new CompactMealy<>(alphabet1);
+        final CompactMealy<String, String> diffTree = new CompactMealy<>(alphabet);
         diffTree.addInitialState();
 
         for (final SeparatingWord diff : diffs) {
@@ -464,8 +601,8 @@ public class LearnerService {
         }
 
         // minimize the tree
-        final CompactMealy<String, String> target = new CompactMealy<>(alphabet1);
-        Automata.minimize(diffTree, alphabet1, target);
+        final CompactMealy<String, String> target = new CompactMealy<>(alphabet);
+        Automata.minimize(diffTree, alphabet, target);
 
         return target;
     }
@@ -487,9 +624,16 @@ public class LearnerService {
             final CompactMealy<String, String> hyp1,
             final CompactMealy<String, String> hyp2,
             final Alphabet<String> alphabet,
-            final Set<SeparatingWord> diffs) {
+            final Set<SeparatingWord> diffs,
+            final DifferenceTreeStrategy strategy
+    ) {
+        final Iterator<Word<String>> testsIterator;
+        if (Objects.requireNonNull(strategy) == DifferenceTreeStrategy.W_METHOD) {
+            testsIterator = new WMethodTestsIterator<>(hyp2, alphabet, 0);
+        } else {
+            testsIterator = new WpMethodTestsIterator<>(hyp2, alphabet, 0);
+        }
 
-        final WpMethodTestsIterator<String> testsIterator = new WpMethodTestsIterator<>(hyp2, alphabet, 0);
         while (testsIterator.hasNext()) {
             final Word<String> word = testsIterator.next();
 

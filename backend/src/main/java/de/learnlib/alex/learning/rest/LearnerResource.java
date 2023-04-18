@@ -19,6 +19,7 @@ package de.learnlib.alex.learning.rest;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.learning.entities.DifferenceTreeInput;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
@@ -35,6 +36,7 @@ import net.automatalib.automata.transducers.impl.compact.CompactMealy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -185,7 +187,7 @@ public class LearnerResource {
     /**
      * Calculates the difference tree of two hypotheses.
      *
-     * @param mealyMachineProxies
+     * @param input
      *         A List of two (!) hypotheses, which will be compared.
      * @return The difference tree
      */
@@ -196,18 +198,12 @@ public class LearnerResource {
     )
     public ResponseEntity<CompactMealyMachineProxy> differenceTree(
             @PathVariable("projectId") Long projectId,
-            @RequestBody List<CompactMealyMachineProxy> mealyMachineProxies
+            @RequestBody @Validated DifferenceTreeInput input
     ) {
-        if (mealyMachineProxies.size() != 2) {
-            throw new IllegalArgumentException("You need to specify exactly two hypotheses!");
-        }
-
-        final var diffTree = learnerService.differenceTree(
-                mealyMachineProxies.get(0),
-                mealyMachineProxies.get(1)
-        );
-
-        return ResponseEntity.ok(CompactMealyMachineProxy.createFrom(diffTree, diffTree.getInputAlphabet()));
+        final var user = authContext.getUser();
+        final var differenceTree = learnerService.differenceTree(user, projectId, input);
+        final var proxy = CompactMealyMachineProxy.createFrom(differenceTree, differenceTree.getInputAlphabet());
+        return ResponseEntity.ok(proxy);
     }
 
     @PostMapping(

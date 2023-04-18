@@ -23,6 +23,10 @@ import { map } from 'rxjs/operators';
 import { LearnerStatus } from '../../entities/learner-status';
 import { LearnerSetup } from '../../entities/learner-setup';
 import { EnvironmentProvider } from '../../../environments/environment.provider';
+import {
+  DifferenceTreeAutomataInput,
+  DifferenceTreeLearnerResultInput
+} from '../../entities/inputs/difference-tree-input';
 
 /**
  * The service for interacting with the learner.
@@ -101,11 +105,10 @@ export class LearnerApiService extends BaseApiService {
    * Test a on b.
    *
    * @param projectId The ID of the project.
-   * @param hypA The first hypothesis.
-   * @param hypB The second hypothesis.
+   * @param input The input.
    */
-  getDifferenceTree(projectId: number, hypA: any, hypB: any): Observable<any> {
-    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/learner/compare/differenceTree`, [hypA, hypB], this.defaultHttpOptions);
+  getDifferenceTree(projectId: number, input: DifferenceTreeAutomataInput | DifferenceTreeLearnerResultInput): Observable<any> {
+    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/learner/compare/differenceTree`, input, this.defaultHttpOptions);
   }
 
   /**

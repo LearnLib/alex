@@ -26,6 +26,10 @@ import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SeparatingWordModalComponent } from '../../common/modals/separating-word-modal/separating-word-modal.component';
 import { LearnerResultListModalComponent } from './learner-result-list-modal/learner-result-list-modal.component';
+import {
+  DifferenceTreeAutomataInput,
+  DifferenceTreeLearnerResultInput
+} from '../../entities/inputs/difference-tree-input';
 
 interface Panel {
   result: LearnerResult;
@@ -123,27 +127,41 @@ export class LearnerResultsCompareViewComponent implements OnInit {
    * Gets the difference tree of the two displayed hypotheses
    */
   showDifferenceTree(): void {
-    const hypA = this.panels[0].result.steps[this.panels[0].step].hypothesis;
-    const hypB = this.panels[1].result.steps[this.panels[1].step].hypothesis;
+    const hasResult = this.panels[0].result == null ||  this.panels[1].result == null;
+    const input: DifferenceTreeAutomataInput | DifferenceTreeLearnerResultInput = hasResult
+      ? {
+        type: 'automata',
+        strategy: 'WP_METHOD',
+        automaton1: this.panels[0].result.steps[this.panels[0].step].hypothesis,
+        automaton2: this.panels[1].result.steps[this.panels[1].step].hypothesis
+      }
+      : {
+        type: 'learnerResults',
+        strategy: 'DISCRIMINATION_TREE',
+        result1: this.panels[0].result.testNo,
+        step1: this.panels[0].step,
+        result2: this.panels[1].result.testNo,
+        step2: this.panels[1].step
+      };
 
-    this.learnerApi.getDifferenceTree(this.project.id, hypA, hypB).subscribe(
-      data => {
+    this.learnerApi.getDifferenceTree(this.project.id, input).subscribe({
+      next: data => {
         if (data.edges.length === 0) {
           this.toastService.info('Cannot find a difference.');
         } else {
           this.addPanel({
-              steps: [{hypothesis: data}],
-              testNo: `Diff. Tree ${this.panels[0].result.testNo} vs. ${this.panels[1].result.testNo}`,
-              setup: {
-                algorithm: {
-                  name: 'TTT'
-                }
+            steps: [{hypothesis: data}],
+            testNo: `Diff. Tree ${this.panels[0].result.testNo} vs. ${this.panels[1].result.testNo}`,
+            setup: {
+              algorithm: {
+                name: '*'
               }
+            }
           } as any);
         }
       },
-      res => this.toastService.danger(res.error.message)
-    );
+      error: res => this.toastService.danger(res.error.message)
+    });
   }
   showDifferenceAutomaton(): void {
     const hypA = this.panels[0].result.steps[this.panels[0].step].hypothesis;
@@ -156,7 +174,7 @@ export class LearnerResultsCompareViewComponent implements OnInit {
             testNo: `Diff. Automaton ${this.panels[0].result.testNo} vs. ${this.panels[1].result.testNo}`,
             setup: {
               algorithm: {
-                name: 'TTT'
+                name: '*'
               }
             }
           } as any);
