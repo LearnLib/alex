@@ -115,7 +115,7 @@
         <learnlib.version>0.15.0</learnlib.version>
         <automatalib.version>0.10.0</automatalib.version>
         <selenium.version>4.8.1</selenium.version>
-        <jose4j.version>0.7.0</jose4j.version>
+        <jose4j.version>0.9.3</jose4j.version>
         <shiro.version>1.11.0</shiro.version>
         <xml-apis.version>1.4.01</xml-apis.version>
         <jsoup.version>1.15.3</jsoup.version>
