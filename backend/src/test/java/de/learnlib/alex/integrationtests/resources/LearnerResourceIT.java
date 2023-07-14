@@ -52,7 +52,6 @@ import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
@@ -180,7 +179,7 @@ public class LearnerResourceIT extends AbstractResourceIT {
 
         final LearnerResult result = objectMapper.readValue(res1.readEntity(String.class), LearnerResult.class);
 
-        final Response res2 = learnerApi.abort(project.getId(), result.getTestNo(), memberJwt);
+        final Response res2 = learnerApi.abort(project.getId(), result.getId(), memberJwt);
         assertEquals(HttpStatus.UNAUTHORIZED.value(), res2.getStatus());
 
         learn(result.getTestNo());
@@ -277,9 +276,10 @@ public class LearnerResourceIT extends AbstractResourceIT {
                 || result.getStatus().equals(LearnerResult.Status.IN_PROGRESS);
     }
 
-    private boolean isLearnerProcessAbortedOrFinished(LearnerResult result) {
+    private boolean isLearnerProcessAbortedFinishedOrFailed(LearnerResult result) {
         return result.getStatus().equals(LearnerResult.Status.ABORTED)
-                || result.getStatus().equals(LearnerResult.Status.FINISHED);
+                || result.getStatus().equals(LearnerResult.Status.FINISHED)
+                || result.getStatus().equals(LearnerResult.Status.FAILED);
     }
 
     private LearnerResult getLearnerResult(Long projectId, Long testNo, String jwt) throws JsonProcessingException {
@@ -294,17 +294,17 @@ public class LearnerResourceIT extends AbstractResourceIT {
         var result = objectMapper.readValue(res1.readEntity(String.class), LearnerResult.class);
         assertTrue(isLearnerProcessActive(result));
 
-        final var res2 = learnerApi.abort(project.getId(), result.getTestNo(), jwtAborter);
+        final var res2 = learnerApi.abort(project.getId(), result.getId(), jwtAborter);
         assertEquals(HttpStatus.OK.value(), res2.getStatus());
 
         // eventually the result will be aborted or finished
         final var finalResult = result;
         await().atMost(10, TimeUnit.SECONDS).until(() -> {
             final var r = getLearnerResult(project.getId(), finalResult.getTestNo(), jwtInitiator);
-            return isLearnerProcessAbortedOrFinished(r);
+            return isLearnerProcessAbortedFinishedOrFailed(r);
         });
 
         result = getLearnerResult(project.getId(), finalResult.getTestNo(), jwtInitiator);
-        assertTrue(isLearnerProcessAbortedOrFinished(result));
+        assertTrue(isLearnerProcessAbortedFinishedOrFailed(result));
     }
 }

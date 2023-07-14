@@ -42,10 +42,10 @@ public class LearnerApi extends AbstractApi {
                 .post(Entity.json(configuration));
     }
 
-    public Response abort(Long projectId, Long testNo, String jwt) {
-        return client.target(url(projectId) + "/" + testNo + "/stop").request()
+    public Response abort(Long projectId, Long resultId, String jwt) {
+        return client.target(url(projectId) + "/stop").request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
-                .get();
+                .post(Entity.json("{\"projectId\": " + projectId + ", \"resultId\": " + resultId + "}"));
     }
 
     public Response getStatus(Long projectId, String jwt) {
