@@ -241,20 +241,25 @@ public class LearnerService {
      *         The id of the project that is learned.
      */
     @Transactional(rollbackFor = Exception.class)
-    public void abort(User user, Long projectId, Long testNo) {
+    public void abort(User user, Long projectId, Long resultId) {
         final var project = projectDAO.getByID(user, projectId); // access check
-        final var result = learnerResultDAO.getByTestNo(user, projectId, testNo);
 
-        final var userIsOwner = project.getOwners().stream()
-                .map(User::getId)
-                .anyMatch(ownerId -> ownerId.equals(user.getId()));
+        try {
+            final var result = learnerResultDAO.getByID(user, projectId, resultId);
 
-        if (!userIsOwner && (result.getExecutedBy() != null && !result.getExecutedBy().equals(user))) {
-            throw new UnauthorizedException("You are not allowed to abort this learning process.");
-        }
+            final var userIsOwner = project.getOwners().stream()
+                    .map(User::getId)
+                    .anyMatch(ownerId -> ownerId.equals(user.getId()));
 
-        if (isActive(projectId)) {
-            learnerThreads.get(projectId).abort(result.getId());
+            if (!userIsOwner && (result.getExecutedBy() != null && !result.getExecutedBy().equals(user))) {
+                throw new UnauthorizedException("You are not allowed to abort this learning process.");
+            }
+
+            if (isActive(projectId)) {
+                learnerThreads.get(projectId).abort(result.getId());
+            }
+        } catch (NotFoundException e) {
+            learnerThreads.get(projectId).removeFromProcessQueue(resultId);
         }
     }
 
@@ -500,19 +505,8 @@ public class LearnerService {
     }
 
     private void generateTestsDt(BaseTTTDiscriminationTree<String, Word<String>> dt1, ArrayList<Word<String>> tests) {
-        try {
-            final var sb = new StringBuffer();
-            GraphDOT.write(dt1.asNormalGraph(), sb);
-            System.out.println(sb);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         for (var e : dt1) {
             if (e.isLeaf()) {
-                System.out.println("leaf: " + e);
-                System.out.println("  as: " + e.getData().getAccessSequence());
-
                 Word<String> accessSequence = e.getData().getAccessSequence();
                 List<String> testCaseSymbols = new ArrayList<>();
 
@@ -520,17 +514,12 @@ public class LearnerService {
                 while (!(nodeP.isRoot())) {
                     nodeP = nodeP.getParent();
                     var discriminator = nodeP.getDiscriminator();
-
-                    System.out.println("  discriminator: " + discriminator);
-
                     testCaseSymbols.addAll(accessSequence.asList());
                     testCaseSymbols.addAll(discriminator.asList());
                     tests.add(Word.fromList(testCaseSymbols));
                     testCaseSymbols.clear();
                 }
             } else if (e.isRoot() && e.getData() != null) {
-                System.out.println("root:");
-                System.out.println("  as: " + e.getData().getAccessSequence());
                 tests.add(e.getData().getAccessSequence());
             }
         }

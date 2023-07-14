@@ -111,7 +111,7 @@ public class TestGenerator {
 
         // Restore the state of the learner so that one can access the discrimination tree.
         // Leave the mq oracle null since we don't want to continue learning.
-        final Alphabet<String> alphabet = result.getSteps().get(result.getSteps().size() - 1).getHypothesis().createAlphabet();
+        final Alphabet<String> alphabet = step.getHypothesis().createAlphabet();
         final AbstractLearningAlgorithm<String, String> algorithm = result.getSetup().getAlgorithm();
         final LearningAlgorithm.MealyLearner<String, String> learner = algorithm.createLearner(alphabet, null);
         algorithm.resume(learner, step.getState());
@@ -144,7 +144,7 @@ public class TestGenerator {
                 if (learner instanceof TTTLearnerMealy) {
                     final TTTLearnerMealy<String, String> tttLearner = (TTTLearnerMealy<String, String>) learner;
                     final BaseTTTDiscriminationTree<String, Word<String>> tree = tttLearner.getDiscriminationTree();
-                    computeTestCasesDt(testCaseFn, tree, TTTState::getAccessSequence, (as) -> tttLearner.getHypothesisModel().computeOutput(as),
+                    computeTestCasesDt(testCaseFn, tree, TTTState::getAccessSequence, (as) -> step.getHypothesis().createMealyMachine(alphabet).computeOutput(as),
                             Function.identity(), Function.identity(), result, generatedTestCases);
                 } else if (learner instanceof DTLearnerMealy) {
                     final DTLearnerMealy<String, String> dtLearner = (DTLearnerMealy<String, String>) learner;

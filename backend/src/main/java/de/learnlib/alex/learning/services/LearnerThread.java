@@ -73,6 +73,10 @@ public class LearnerThread extends Thread {
         }
     }
 
+    public void removeFromProcessQueue(Long resultId) {
+        processQueue.removeIf(i -> i.resultId.equals(resultId));
+    }
+
     @Override
     public void run() {
         while (!processQueue.isEmpty()) {

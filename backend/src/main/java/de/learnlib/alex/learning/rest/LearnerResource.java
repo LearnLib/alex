@@ -27,6 +27,7 @@ import de.learnlib.alex.learning.entities.LearnerStatus;
 import de.learnlib.alex.learning.entities.SeparatingWord;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.events.LearnerEvent;
+import de.learnlib.alex.learning.rest.inputs.StopLearnerProcessInput;
 import de.learnlib.alex.learning.services.LearnerService;
 import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.webhooks.services.WebhookService;
@@ -129,16 +130,16 @@ public class LearnerResource {
      * OK, even if there is nothing to stop. To see if there is currently a learning process, the status like '/active'
      * will be returned.
      *
-     * @param projectId
-     *         The project to stop.
+     * @param input
+     *         The data to use for stopping the learner process.
      * @return The status of the current learn process.
      */
-    @GetMapping(
-            value = "/{testNo}/stop"
+    @PostMapping(
+            value = "/stop"
     )
-    public ResponseEntity<String> stop(@PathVariable("projectId") Long projectId, @PathVariable("testNo") Long testNo) {
+    public ResponseEntity<String> stop(@Validated @RequestBody StopLearnerProcessInput input) {
         final var user = authContext.getUser();
-        learnerService.abort(user, projectId, testNo);
+        learnerService.abort(user, input.projectId, input.resultId);
         return ResponseEntity.ok().build();
     }
 

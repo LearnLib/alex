@@ -188,9 +188,11 @@ export class LearnerViewComponent implements OnInit, OnDestroy {
   }
 
   abort(): void {
-    this.learnerApi.stop(this.project.id, this.currentResult.testNo).subscribe({
+    this.learnerApi.stop(this.project.id, this.currentResult.id).subscribe({
       next: () => this.toastService.info('The process has been aborted and will terminate as soon as possible.'),
-      error: console.error
+      error: res => {
+        this.toastService.danger('<p><strong>The process could not be stopped.</strong></p>' + res.error.message);
+      }
     });
   }
 

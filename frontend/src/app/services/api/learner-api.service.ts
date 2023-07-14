@@ -56,10 +56,10 @@ export class LearnerApiService extends BaseApiService {
    * with the thread handling.
    *
    * @param projectId The id of the test to resume with.
-   * @param testNo The number of the test process to abort.
+   * @param resultId The number of the test process to abort.
    */
-  stop(projectId: number, testNo: number): Observable<any> {
-    return this.http.get(`${this.env.apiUrl}/projects/${projectId}/learner/${testNo}/stop`, this.defaultHttpOptions);
+  stop(projectId: number, resultId: number): Observable<any> {
+    return this.http.post(`${this.env.apiUrl}/projects/${projectId}/learner/stop`, {projectId, resultId}, this.defaultHttpOptions);
   }
 
   /**
