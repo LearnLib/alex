@@ -54,11 +54,12 @@ services:
             - "5432:5432"
 
     alex-backend:
-        image: maven:3.8-openjdk-17
+        build:
+          dockerfile: ./dev.Dockerfile
+          context: ./backend
         depends_on:
             - selenium-hub
             - alex-database
-        working_dir: /var/alex/backend
         environment:
             - DATABASE_HOST=alex-database
             - DATABASE_PORT=5432
@@ -68,12 +69,18 @@ services:
             - GRID_HOST=selenium-hub
             - GRID_PORT=4444
             - RUNTIME=docker
+        develop:
+            watch:
+                - action: sync+restart
+                  path: ./backend/src
+                  target: /var/alex/backend/src
+                - action: rebuild
+                  path: ./backend/pom.xml
+                  target: /var/alex/backend/src/pom.xml
         volumes:
-            - ./backend/src:/var/alex/backend/src:rw
-            - ./backend/pom.xml:/var/alex/backend/pom.xml:rw
             - alex-backend-maven:/root/.m2
-            - alex-database:/var/alex/backend/target/postgresql
             - alex-backend-ltsmin:/var/ltsmin
+            - alex-database:/var/alex/backend/target/postgresql
         ports:
             - "5005:5005"
             - "8000:8000"
@@ -86,15 +93,28 @@ services:
             fi && mvn spring-boot:run -Dspring-boot.run.jvmArguments="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005" -Dspring-boot.run.arguments=\"--ltsmin.path=/var/ltsmin/bin --spring.datasource.url=jdbc:postgresql://$${DATABASE_HOST}:$${DATABASE_PORT}/$${DATABASE_NAME} --spring.datasource.username=$${DATABASE_USER} --selenium.grid.host=$${GRID_HOST} --selenium.grid.port=$${GRID_PORT}\""
 
     alex-frontend:
-        image: docker.io/library/node:16
-        working_dir: /var/alex/frontend
+        build:
+            dockerfile: ./dev.Dockerfile
+            context: ./frontend
+        develop:
+            watch:
+                - action: sync
+                  path: ./frontend/src
+                  target: /var/alex/frontend/src
+                  ignore:
+                      - node_modules/
+                      - e2e/
+                - action: rebuild
+                  path: ./frontend/package.json
+                  target: /var/alex/frontend/src/package.json
         volumes:
-            - ./frontend:/var/alex/frontend:rw
+            - /var/alex/frontend/node_modules
         ports:
             - "4200:4200"
-        command: bash -c "npm install && npm run start:docker"
+        command: >
+            bash -c "npm run start:docker"
 
 volumes:
   alex-backend-maven:
-  alex-database:
   alex-backend-ltsmin:
+  alex-database:
