@@ -94,4 +94,3 @@ The following diagram illustrates how the tool supports learning, testing and mo
 <img src="./assets/workflow.png" style="display: block; width: 100%; margin: auto">
 
 [learnlib]: https://learnlib.de/
-[learnlibStudio]: http://ls5-www.cs.tu-dortmund.de/projects/learnlib/download.php

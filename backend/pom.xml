@@ -114,7 +114,7 @@
         <spring-boot.version>2.7.9</spring-boot.version>
         <learnlib.version>0.15.0</learnlib.version>
         <automatalib.version>0.10.0</automatalib.version>
-        <selenium.version>4.8.1</selenium.version>
+        <selenium.version>4.22.0</selenium.version>
         <jose4j.version>0.7.0</jose4j.version>
         <shiro.version>1.11.0</shiro.version>
         <xml-apis.version>1.4.01</xml-apis.version>
@@ -184,7 +184,7 @@
     </contributors>
     <organization>
         <name>Chair for Programming Systems at TU Dortmund University, Germany</name>
-        <url>http://ls5-www.cs.tu-dortmund.de/</url>
+        <url>https://ps.cs.tu-dortmund.de/</url>
     </organization>
 
     <!--===== dependencies ======-->
